@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useScroll, useMotionValueEvent } from "motion/react";
 import {
   useEffect,
@@ -170,44 +171,28 @@ function Reveal({
   );
 }
 
-function Nav({
-  motionOn,
-  onToggle,
-}: {
-  motionOn: boolean;
-  onToggle: () => void;
-}) {
+// Floating motion toggle (bottom-right). Shared nav/footer chrome now comes
+// from the (site) layout; the home scene keeps only this control.
+function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
-    <nav
+    <button
+      type="button"
+      className="btn btn--ghost"
+      onClick={onToggle}
+      aria-pressed={on}
       style={{
         position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 40,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "16px clamp(20px,5vw,64px)",
+        right: "clamp(16px,4vw,40px)",
+        bottom: 22,
+        zIndex: 45,
+        padding: "8px 14px",
         backdropFilter: "blur(6px)",
-        background: "linear-gradient(180deg, rgba(7,18,11,0.7), transparent)",
+        WebkitBackdropFilter: "blur(6px)",
+        background: "rgba(7,18,11,0.6)",
       }}
     >
-      <a href="#top" aria-label="Midgard home" style={{ display: "flex", alignItems: "center" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/midgard-logo.png" alt="Midgard" style={{ height: 30, width: "auto", display: "block" }} />
-      </a>
-      <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-        {["Users", "Builders", "Partners", "How It Works", "Security", "Docs", "Testnet"].map((l) => (
-          <a key={l} href="#system" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)" }}>
-            {l}
-          </a>
-        ))}
-        <button className="btn btn--ghost" onClick={onToggle} style={{ padding: "8px 12px" }}>
-          Motion: {motionOn ? "On" : "Off"}
-        </button>
-      </div>
-    </nav>
+      Motion: {on ? "On" : "Off"}
+    </button>
   );
 }
 
@@ -239,15 +224,15 @@ function Hero() {
         trust path.
       </p>
       <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", alignItems: "center" }}>
-        <a className="btn btn--primary" href="#system">
+        <Link className="btn btn--primary" href="/builders">
           Build On Midgard
-        </a>
-        <a className="btn btn--ghost" href="#system">
+        </Link>
+        <Link className="btn btn--ghost" href="/how-it-works">
           See How It Works
-        </a>
-        <a href="#system" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+        </Link>
+        <Link href="/testnet" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
           Explore testnet
-        </a>
+        </Link>
       </div>
       <div style={{ display: "flex", gap: 10, marginTop: 26, flexWrap: "wrap" }}>
         <span className="chip chip--testnet"><span className="dot" />Pre-Alpha Testnet</span>
@@ -305,10 +290,10 @@ function MechanismIntro() {
   );
 }
 
-const AUDIENCE: { title: string; line: string; cta: string }[] = [
-  { title: "Users", line: "Understand the path.", cta: "Start with users" },
-  { title: "Builders", line: "Build with context.", cta: "Open builder path" },
-  { title: "Partners", line: "Make the system useful.", cta: "Explore partner tracks" },
+const AUDIENCE: { title: string; line: string; cta: string; href: string }[] = [
+  { title: "Users", line: "Understand the path.", cta: "Start with users", href: "/users" },
+  { title: "Builders", line: "Build with context.", cta: "Open builder path", href: "/builders" },
+  { title: "Partners", line: "Make the system useful.", cta: "Explore partner tracks", href: "/partners" },
 ];
 
 function AudiencePaths() {
@@ -338,9 +323,9 @@ function AudiencePaths() {
               </div>
               <h3 style={{ fontSize: 22, marginTop: 8 }}>{a.title}</h3>
               <p style={{ marginTop: 8, fontSize: 14.5, color: "var(--text)", flex: 1 }}>{a.line}</p>
-              <a href="#system" style={{ marginTop: 16, fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+              <Link href={a.href} style={{ marginTop: 16, fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
                 {a.cta} →
-              </a>
+              </Link>
             </div>
           </Reveal>
         ))}
@@ -445,9 +430,9 @@ function ProofObjects() {
         ))}
       </div>
       <Reveal style={{ marginTop: 28 }}>
-        <a href="#system" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+        <Link href="/testnet" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
           Explore testnet →
-        </a>
+        </Link>
       </Reveal>
     </section>
   );
@@ -468,12 +453,12 @@ function ClosingCTA() {
           L1. Start building, or read how the system holds together.
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
-          <a className="btn btn--primary" href="#system">
+          <Link className="btn btn--primary" href="/builders">
             Build On Midgard
-          </a>
-          <a className="btn btn--ghost" href="#system">
+          </Link>
+          <Link className="btn btn--ghost" href="/faq">
             Read the FAQ
-          </a>
+          </Link>
         </div>
       </Reveal>
     </section>
@@ -624,8 +609,6 @@ export default function Gateway() {
         )}
       </div>
 
-      <Nav motionOn={motionOn} onToggle={() => setMotionOn((m) => !m)} />
-
       <main className="content">
         <Hero />
         <AudiencePaths />
@@ -637,33 +620,9 @@ export default function Gateway() {
         <ProductThesis />
         <ProofObjects />
         <ClosingCTA />
-
-        <footer
-          style={{
-            padding: "60px clamp(20px,5vw,64px) 120px",
-            borderTop: "1px solid var(--panel-edge)",
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 16,
-          }}
-        >
-          <div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/midgard-logo.png" alt="Midgard" style={{ height: 26, width: "auto", display: "block" }} />
-            <p style={{ fontSize: 13, color: "var(--text-dim)", maxWidth: 380, marginTop: 8 }}>
-              Make Cardano more usable without making it less Cardano. A
-              Cardano-native optimistic rollup with the trust path anchored to
-              L1.
-            </p>
-          </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "flex-start", flexWrap: "wrap" }}>
-            <span className="chip chip--demo"><span className="dot" />All metrics simulated</span>
-            <span className="chip chip--l1"><span className="dot" />Cardano L1 anchor · claim-dependent</span>
-          </div>
-        </footer>
       </main>
 
+      <MotionToggle on={motionOn} onToggle={() => setMotionOn((m) => !m)} />
       <LiveHUD snap={snap} />
     </>
   );
