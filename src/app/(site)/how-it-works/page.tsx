@@ -7,6 +7,7 @@ import {
   Layers,
   CtaBand,
 } from "@/components/site/ui";
+import SplineShowcase from "@/components/site/SplineShowcase";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -25,6 +26,11 @@ export default function HowItWorksPage() {
           { label: "Inspect the layers", href: "#layers", variant: "primary" },
           { label: "Read docs", href: "/docs", variant: "ghost" },
         ]}
+      />
+
+      <SplineShowcase
+        eyebrow="Interactive · Spline"
+        caption="Demo scene — placeholder for an L2 batching/settlement model."
       />
 
       <Section
