@@ -211,17 +211,54 @@ function smoothPoly(poly: Pt[], iters: number): Pt[] {
   return out;
 }
 
+function blendPt(a: Pt, b: Pt, t: number): Pt {
+  return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t) };
+}
+
+function chaikinPoly(poly: Pt[], iters: number): Pt[] {
+  let out = poly.map((p) => ({ x: p.x, y: p.y }));
+  for (let k = 0; k < iters; k++) {
+    if (out.length < 3) return out;
+    const next: Pt[] = [out[0]];
+    for (let i = 0; i < out.length - 1; i++) {
+      const a = out[i];
+      const b = out[i + 1];
+      next.push(blendPt(a, b, 0.28), blendPt(a, b, 0.72));
+    }
+    next.push(out[out.length - 1]);
+    out = next;
+  }
+  return out;
+}
+
 function fitToTree(
   poly: Pt[],
   onTree: (p: Pt, radius?: number) => Pt,
   radius: number,
   passes = 2,
 ): Pt[] {
-  let out = poly.map((p) => ({ x: p.x, y: p.y }));
+  let out = smoothPoly(poly.map((p) => onTree(p, radius)), 3);
   for (let i = 0; i < passes; i++) {
-    out = smoothPoly(out.map((p) => onTree(p, radius)), 1);
+    out = smoothPoly(
+      out.map((p, idx) => {
+        const end = idx === 0 || idx === out.length - 1;
+        return blendPt(p, onTree(p, radius), end ? 0.85 : 0.35);
+      }),
+      2,
+    );
   }
-  return out.map((p) => onTree(p, radius * 0.7));
+  out = chaikinPoly(out, 2);
+  return smoothPoly(
+    out.map((p, idx) => {
+      const end = idx === 0 || idx === out.length - 1;
+      return blendPt(p, onTree(p, radius * 0.9), end ? 0.7 : 0.18);
+    }),
+    1,
+  );
+}
+
+function visualSegLen(a: Pt, b: Pt): number {
+  return Math.hypot((b.x - a.x) * IMG_ASPECT, b.y - a.y);
 }
 
 // Approximate on-screen (visual) length of a lane — x scaled by the art aspect
@@ -230,9 +267,7 @@ function fitToTree(
 function polyLen(poly: Pt[]): number {
   let L = 0;
   for (let i = 1; i < poly.length; i++) {
-    const dx = (poly[i].x - poly[i - 1].x) * IMG_ASPECT;
-    const dy = poly[i].y - poly[i - 1].y;
-    L += Math.hypot(dx, dy);
+    L += visualSegLen(poly[i - 1], poly[i]);
   }
   return L || 1;
 }
@@ -317,21 +352,61 @@ function buildTree(field?: VeinField): Tree {
   return { canopy, trunk, roots };
 }
 
-// Linear position + segment-direction tangent along the lane. The lane is
-// already a dense, Laplacian-smoothed polyline, so straight interpolation
-// between its points reads as a smooth organic glide — and, unlike a Catmull
-// pass over snapped vertices, it never overshoots a curve out past the tree.
-function sampleLane(poly: Pt[], t: number): { pt: Pt; tan: Pt } {
+// Distance-based Catmull sample along a dense softened lane. That keeps visual
+// speed even after vein fitting and gives the bead/tail a rolling curve instead
+// of visible corner turns between snapped vertices.
+function sampleLane(lane: Lane, t: number): { pt: Pt; tan: Pt } {
+  const poly = lane.poly;
   const n = poly.length - 1;
   if (n < 1) return { pt: poly[0], tan: { x: 0, y: 1 } };
-  const ft = Math.max(0, Math.min(0.99999, t)) * n;
-  const i = Math.floor(ft);
-  const f = ft - i;
+  const target = clamp(t, 0, 0.99999) * lane.len;
+  let acc = 0;
+  let i = 0;
+  let f = 0;
+  for (; i < n; i++) {
+    const seg = visualSegLen(poly[i], poly[i + 1]);
+    if (acc + seg >= target) {
+      f = seg > 0 ? (target - acc) / seg : 0;
+      break;
+    }
+    acc += seg;
+  }
+  i = Math.min(i, n - 1);
+  const p0 = poly[Math.max(0, i - 1)];
   const p1 = poly[i];
-  const p2 = poly[Math.min(n, i + 1)];
+  const p2 = poly[i + 1];
+  const p3 = poly[Math.min(n, i + 2)];
+  const f2 = f * f;
+  const f3 = f2 * f;
+  const pt = {
+    x:
+      0.5 *
+      (2 * p1.x +
+        (-p0.x + p2.x) * f +
+        (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * f2 +
+        (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * f3),
+    y:
+      0.5 *
+      (2 * p1.y +
+        (-p0.y + p2.y) * f +
+        (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * f2 +
+        (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * f3),
+  };
+  const tan = {
+    x:
+      0.5 *
+      ((-p0.x + p2.x) +
+        2 * (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * f +
+        3 * (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * f2),
+    y:
+      0.5 *
+      ((-p0.y + p2.y) +
+        2 * (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * f +
+        3 * (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * f2),
+  };
   return {
-    pt: { x: p1.x + (p2.x - p1.x) * f, y: p1.y + (p2.y - p1.y) * f },
-    tan: { x: p2.x - p1.x, y: p2.y - p1.y },
+    pt,
+    tan,
   };
 }
 
@@ -842,7 +917,8 @@ export default function StaticTreeHero({
       }
 
       for (const p of particles) {
-        const s = sampleLane(laneOf(p).poly, p.t);
+        const lane = laneOf(p);
+        const s = sampleLane(lane, p.t);
         const tan = s.tan;
         // follow the baked, vein-snapped + smoothed lane directly — no per-frame
         // re-snap (that pulled beads across gaps to other veins, which read as a
