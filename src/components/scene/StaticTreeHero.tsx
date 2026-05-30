@@ -16,10 +16,9 @@ import type { NetworkSnapshot } from "@/lib/network";
                      "break" onto their path.
      0. CANOPY     — the grown orb weaves down the branches (snake
                      pattern) to the bottom of the canopy (the fork).
-     1. GATHER     — they lump together at the fork; once a (random)
-                     number collect, they release as one BLOB — its size
-                     set by how many gathered — that drops almost dead-
-                     vertical down the trunk, fast.
+     1. GATHER     — they collect into three canopy-base batching pockets;
+                     once enough gather, they release fewer/larger proof
+                     orbs down the trunk.
      2. ROOTS      — near the lower trunk each blob breaks into smaller
                      root lights, then travels down the root veins.
      3. LOCK-IN    — at the root tip it flares a bigger glow (the tx is
@@ -55,19 +54,24 @@ const TRUNK_STRANDS = [-0.0025, -0.0009, 0.0009, 0.0025];
 const DOME = { cx: 0.72, cy: 0.305, rx: 0.185, ry: 0.135 }; // canopy foliage
 const FORK_Y = 0.42; // canopy base: branches gather to the trunk top
 const CROWN_Y = 0.575; // lower trunk base: roots begin to splay here
+const GATHER_NODES = [
+  { x: TRUNK_X - 0.029, y: FORK_Y - 0.011, strand: 0 },
+  { x: TRUNK_X - 0.002, y: FORK_Y + 0.001, strand: 1 },
+  { x: TRUNK_X + 0.026, y: FORK_Y - 0.008, strand: 3 },
+] as const;
 
 // Particle colour — luminescent green to match the vein glow.
 const PARTICLE_CORE = "#00ff66"; // primary
 const PARTICLE_ALT = "#33ff33"; // variation
 
 // Tunables
-const MAX_PARTICLES = 220;
+const MAX_PARTICLES = 280;
 // A random number of canopy orbs lump together into each trunk blob, so blob
 // sizes vary with how many gathered while avoiding oversized root exits.
-const GATHER_MIN = 5;
-const GATHER_MAX = 9;
+const GATHER_MIN = 10;
+const GATHER_MAX = 16;
 const ROOT_SPLIT_MIN = 1;
-const ROOT_SPLIT_MAX = 3;
+const ROOT_SPLIT_MAX = 2;
 const FLASH_DUR = 0.45; // length of the "locked-in to L1" flash at a root tip
 // Canopy orbs are born tiny and GROW in place (slowly, randomised per orb)
 // before they break onto their snake path down the tree.
@@ -80,7 +84,7 @@ const GROW_FAST = 0.55; // event-burst orbs grow quicker
 const BLOB_VSPEED = 0.048; // height/sec, held from fork to the very root tip
 const BLOB_VSPEED_JIT = 0.006; // tiny variance so some blobs catch up + merge
 // As blobs descend the trunk they GATHER into fewer, even larger orbs.
-const MERGE_CAP = 3.4; // max blob size after merging
+const MERGE_CAP = 4.2; // max blob size after merging
 const MERGE_DT = 0.035; // t-distance under which two trunk blobs fuse
 
 type Pt = { x: number; y: number };
@@ -103,6 +107,15 @@ type Particle = {
 };
 
 type LeafNode = { x: number; y: number; phase: number; flash: number };
+type GatherBucket = {
+  x: number;
+  y: number;
+  strand: number;
+  count: number;
+  value: number;
+  target: number;
+  glow: number;
+};
 
 // Snap helpers built from the loaded art (see makeVeinField).
 type VeinField = {
@@ -570,14 +583,15 @@ export default function StaticTreeHero({
         flash: 0,
       }));
 
-    // Spawn weights bias new orbs toward the TOP of the canopy (higher leaves).
+    // Spawn weights bias new orbs toward the top while keeping the outer canopy alive.
     let canopyW: number[] = [];
     let canopyWSum = 0;
     const computeWeights = () => {
       const top0 = DOME.cy - DOME.ry; // highest leaf y
       canopyW = tree.canopy.map((l) => {
         const top = clamp((FORK_Y - l.poly[0].y) / (FORK_Y - top0), 0, 1);
-        return 0.08 + Math.pow(top, 2.4) * 5.8 + top * l.width * 0.35;
+        const edge = clamp(Math.abs(l.poly[0].x - DOME.cx) / DOME.rx, 0, 1);
+        return 0.45 + Math.pow(top, 1.45) * 2.4 + edge * 0.85 + l.width * 0.18;
       });
       canopyWSum = canopyW.reduce((s, w) => s + w, 0);
     };
@@ -608,17 +622,22 @@ export default function StaticTreeHero({
     let W = 0,
       H = 0,
       dpr = 1;
-    const particles: Particle[] = [];
-    let gather = 0; // canopy orbs accumulated at the fork, waiting to release
     const nextTarget = () =>
       GATHER_MIN + ((Math.random() * (GATHER_MAX - GATHER_MIN + 1)) | 0);
-    let gatherTarget = nextTarget(); // how many to lump before THIS blob releases
-    let gatherGlow = 0; // brightness of the lump forming at the fork
-    let spawnTimer = 0.3; // sporadic canopy-spawn countdown
+    const particles: Particle[] = [];
+    const gatherBuckets: GatherBucket[] = GATHER_NODES.map((node) => ({
+      ...node,
+      count: 0,
+      value: 0,
+      target: nextTarget(),
+      glow: 0,
+    }));
+    let spawnTimer = 0.05; // sporadic canopy-spawn countdown
     let surge = 0; // settlement flash, decays
     let lastBatch = snapRef.current.l2.latestBatchId;
     let lastProof = snapRef.current.l2.latestProofStatus;
     let staticSeeded = false;
+    let canopyPrimed = false;
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
@@ -644,6 +663,16 @@ export default function StaticTreeHero({
       return (Math.random() * tree.canopy.length) | 0;
     };
 
+    const bucketForCanopySeg = (seg: number): GatherBucket => {
+      const leafX = tree.canopy[seg]?.poly[0]?.x ?? DOME.cx;
+      const raw = Math.floor(clamp((leafX - (DOME.cx - DOME.rx)) / (DOME.rx * 2), 0, 0.999) * gatherBuckets.length);
+      let idx = raw;
+      if (Math.random() < 0.18) {
+        idx = clamp(idx + (Math.random() < 0.5 ? -1 : 1), 0, gatherBuckets.length - 1);
+      }
+      return gatherBuckets[idx];
+    };
+
     // a small orb born at a (mostly top-of-canopy) leaf; it grows in place,
     // lingers glowing, then weaves down toward the fork.
     const spawnCanopy = (fast = false) => {
@@ -656,14 +685,19 @@ export default function StaticTreeHero({
       const hold = fast
         ? 0.25 + Math.random() * 0.65
         : 0.8 + Math.random() * 1.45;
-      const rareLarge = Math.random() < 0.08 ? 0.18 + Math.random() * 0.16 : 0;
-      const topSize = 0.22 + Math.pow(Math.random(), 1.9) * 0.42 + rareLarge;
+      const sizeRoll = Math.random();
+      const topSize =
+        sizeRoll < 0.7
+          ? 0.22 + Math.pow(Math.random(), 1.35) * 0.34
+          : sizeRoll < 0.93
+            ? 0.56 + Math.random() * 0.4
+            : 1.0 + Math.random() * 0.62;
       particles.push({
         phase: 0,
         seg,
         t: 0,
         speed: (fast ? 1.5 : 1) * (0.135 + Math.random() * 0.085),
-        size: topSize * (0.72 + w * 0.35),
+        size: topSize * (0.78 + w * 0.42),
         grow: 0,
         growRate: 1 / growTime,
         hold,
@@ -673,26 +707,38 @@ export default function StaticTreeHero({
       leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
     };
 
-    // the gathered lump releases as a smaller blob dropping down a trunk strand.
-    // A little merging still happens high in the trunk, but not enough to make
-    // the root exits feel oversized.
-    const releaseBlob = (gathered: number) => {
-      const base = 0.95 + (gathered / GATHER_MAX) * 1.05;
-      const addSize = base * (0.48 + Math.random() * 0.58);
-      if (Math.random() < 0.25) {
+    const releaseBlob = (
+      bucket: GatherBucket,
+      gatheredCount: number,
+      gatheredValue: number,
+      passThrough = false,
+    ) => {
+      const base = passThrough
+        ? 0.52 + Math.random() * 0.45
+        : 0.78 + Math.sqrt(gatheredCount) * 0.23 + Math.sqrt(gatheredValue) * 0.36;
+      const addSize = clamp(
+        base * (0.78 + Math.random() * 0.5),
+        passThrough ? 0.45 : 0.9,
+        passThrough ? 1.15 : MERGE_CAP,
+      );
+      if (!passThrough && Math.random() < 0.18) {
         let host: Particle | null = null;
         for (const p of particles)
           if (p.phase === 1 && p.t < 0.28 && (!host || p.t < host.t)) host = p;
         if (host) {
           host.size = Math.min(MERGE_CAP, Math.cbrt(host.size ** 3 + addSize ** 3));
-          gatherGlow = 1;
+          bucket.glow = 1;
           return;
         }
       }
       if (particles.length >= MAX_PARTICLES) return;
       particles.push({
         phase: 1,
-        seg: (Math.random() * tree.trunk.length) | 0,
+        seg: clamp(
+          bucket.strand + (Math.random() < 0.18 ? (Math.random() < 0.5 ? -1 : 1) : 0),
+          0,
+          tree.trunk.length - 1,
+        ),
         t: 0,
         speed: BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT,
         size: addSize,
@@ -702,7 +748,18 @@ export default function StaticTreeHero({
         alt: Math.random() < 0.5,
         age: 0,
       });
-      gatherGlow = 1;
+      bucket.glow = 1;
+    };
+
+    const collectAtBucket = (p: Particle) => {
+      const bucket = bucketForCanopySeg(p.seg);
+      if (Math.random() < 0.06) {
+        releaseBlob(bucket, 1, Math.max(0.45, p.size), true);
+        return;
+      }
+      bucket.count += 1;
+      bucket.value += Math.max(0.22, p.size);
+      bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
     };
 
     const rootFanIndices = (count: number): number[] => {
@@ -737,14 +794,14 @@ export default function StaticTreeHero({
       const count = clamp(
         Math.round(
           ROOT_SPLIT_MIN +
-            Math.pow(blob.size / MERGE_CAP, 1.35) *
+            Math.pow(blob.size / MERGE_CAP, 2.2) *
               (ROOT_SPLIT_MAX - ROOT_SPLIT_MIN),
         ),
         ROOT_SPLIT_MIN,
         ROOT_SPLIT_MAX,
       );
       const indices = rootFanIndices(count);
-      const childSize = clamp(blob.size / (count * 1.45), 0.46, 1.08);
+      const childSize = clamp(blob.size / (count * 1.12), 0.58, 1.85);
       let added = 0;
       for (const seg of indices) {
         if (particles.length >= MAX_PARTICLES) break;
@@ -754,7 +811,7 @@ export default function StaticTreeHero({
           seg,
           t: Math.random() * 0.025,
           speed: blob.speed * (0.94 + Math.random() * 0.12),
-          size: childSize * (0.72 + lane.width * 0.16 + Math.random() * 0.12),
+          size: childSize * (0.78 + lane.width * 0.18 + Math.random() * 0.12),
           grow: 1,
           growRate: 0,
           hold: 0,
@@ -763,7 +820,7 @@ export default function StaticTreeHero({
         });
         added++;
       }
-      gatherGlow = Math.max(gatherGlow, added > 0 ? 0.7 : 0);
+      if (added > 0) surge = Math.max(surge, 0.08);
     };
 
     const seedStatic = () => {
@@ -836,18 +893,22 @@ export default function StaticTreeHero({
       if (moving) {
         staticSeeded = false;
         const activity = Math.max(0, Math.min(1, s.l1.txCountWindow / 100));
+        if (!canopyPrimed) {
+          for (let i = 0; i < 70; i++) spawnCanopy();
+          canopyPrimed = true;
+        }
 
         // event: new batch -> a small flurry of canopy orbs + nudge the lump
         if (s.l2.latestBatchId !== lastBatch) {
           lastBatch = s.l2.latestBatchId;
-          for (let i = 0; i < 9; i++) spawnCanopy(true);
-          gather += 2;
+          for (let i = 0; i < 14; i++) spawnCanopy(true);
+          gatherBuckets[(Math.random() * gatherBuckets.length) | 0].glow = 1;
         }
         // event: settlement confirmed -> brighter swell + force a blob to drop
         if (s.l2.latestProofStatus === "settled" && lastProof !== "settled") {
           surge = 1;
-          for (let i = 0; i < 12; i++) spawnCanopy(true);
-          gather += 2;
+          for (let i = 0; i < 18; i++) spawnCanopy(true);
+          for (const bucket of gatherBuckets) bucket.glow = Math.max(bucket.glow, 0.5);
         }
         lastProof = s.l2.latestProofStatus;
 
@@ -855,9 +916,9 @@ export default function StaticTreeHero({
         // with many more visible canopy points while each point keeps its pace
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
-          const cluster = Math.random() < 0.22 ? 6 : Math.random() < 0.58 ? 4 : 3;
+          const cluster = Math.random() < 0.24 ? 8 : Math.random() < 0.62 ? 5 : 3;
           for (let k = 0; k < cluster; k++) spawnCanopy();
-          const meanGap = 0.1 + (1 - activity) * 0.18;
+          const meanGap = 0.08 + (1 - activity) * 0.14;
           spawnTimer = meanGap * (0.35 + Math.random() * 1.15);
         }
 
@@ -906,8 +967,7 @@ export default function StaticTreeHero({
           }
           if (p.grow < 1 || p.t < 1) continue;
           if (p.phase === 0) {
-            gather += 1;
-            gatherGlow = Math.min(1, gatherGlow + 0.22);
+            collectAtBucket(p);
             particles.splice(i, 1);
           } else if (p.phase === 1) {
             particles.splice(i, 1);
@@ -921,13 +981,20 @@ export default function StaticTreeHero({
           }
         }
 
-        // release blobs from the gathered lump (random count -> random size)
-        while (gather >= gatherTarget && particles.length < MAX_PARTICLES) {
-          releaseBlob(gatherTarget);
-          gather -= gatherTarget;
-          gatherTarget = nextTarget();
+        // Release each canopy-base batch pocket independently. This makes lots
+        // of visible L2 transactions compress into fewer proof orbs.
+        for (const bucket of gatherBuckets) {
+          while (bucket.count >= bucket.target && particles.length < MAX_PARTICLES) {
+            const batchCount = bucket.target;
+            const batchValue =
+              bucket.count > 0 ? (bucket.value / bucket.count) * batchCount : batchCount;
+            releaseBlob(bucket, batchCount, batchValue);
+            bucket.count -= batchCount;
+            bucket.value = Math.max(0, bucket.value - batchValue);
+            bucket.target = nextTarget();
+          }
+          bucket.glow = Math.max(0, bucket.glow - dt / 0.9);
         }
-        gatherGlow = Math.max(0, gatherGlow - dt / 0.7);
         surge = Math.max(0, surge - dt / 1.4);
       } else if (!staticSeeded) {
         seedStatic();
@@ -955,11 +1022,19 @@ export default function StaticTreeHero({
       }
       ctx.globalAlpha = 1;
 
-      // the lump of light gathering at the bottom of the canopy
-      if (gather > 0 || gatherGlow > 0.01) {
-        const lr = 7 + (Math.min(1, gather / gatherTarget) + gatherGlow) * 9;
-        ctx.globalAlpha = Math.min(0.6, 0.07 + gather * 0.05 + gatherGlow * 0.3);
-        ctx.drawImage(glowCore, oX + TRUNK_X * dW - lr, oY + FORK_Y * dH - lr, lr * 2, lr * 2);
+      // Three batch pockets at the canopy base: many little L2 tx lights gather
+      // here before compressing into fewer, larger proof lights.
+      for (const bucket of gatherBuckets) {
+        if (bucket.count <= 0 && bucket.glow <= 0.01) continue;
+        const fullness = Math.min(1, bucket.count / bucket.target);
+        const lr = 5 + fullness * 7 + bucket.glow * 8;
+        ctx.globalAlpha = Math.min(0.62, 0.05 + bucket.count * 0.026 + bucket.glow * 0.32);
+        ctx.drawImage(glowCore, oX + bucket.x * dW - lr, oY + bucket.y * dH - lr, lr * 2, lr * 2);
+        ctx.globalAlpha = Math.min(0.88, 0.18 + fullness * 0.52);
+        ctx.fillStyle = `rgba(204,255,219,${ctx.globalAlpha})`;
+        ctx.beginPath();
+        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 0.7 + fullness * 1.8, 0, Math.PI * 2);
+        ctx.fill();
         ctx.globalAlpha = 1;
       }
 
