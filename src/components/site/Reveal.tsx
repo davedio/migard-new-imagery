@@ -34,8 +34,8 @@ export function Reveal({
 
     // If IntersectionObserver is unavailable, just show the content.
     if (typeof IntersectionObserver === "undefined") {
-      setSeen(true);
-      return;
+      const frame = requestAnimationFrame(() => setSeen(true));
+      return () => cancelAnimationFrame(frame);
     }
 
     const io = new IntersectionObserver(

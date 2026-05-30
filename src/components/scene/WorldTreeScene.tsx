@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/immutability -- Three.js textures and uniforms are mutable renderer state. */
+
 // "three" hero fork — procedural R3F world-tree. Selected via HERO_MODE in
 // Gateway.tsx; the image-background fork lives in ./StaticTreeHero.tsx.
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";

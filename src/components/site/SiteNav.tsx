@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const NAV = [
   { label: "Users", href: "/users" },
@@ -21,12 +22,15 @@ const NAV = [
  */
 export function SiteNav() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState({ pathname: "", open: false });
+  const open = menu.open && menu.pathname === pathname;
 
-  // Close the mobile menu whenever the route changes.
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  const closeMenu = () => setMenu({ pathname, open: false });
+  const toggleMenu = () =>
+    setMenu((state) => ({
+      pathname,
+      open: state.pathname === pathname ? !state.open : true,
+    }));
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -35,7 +39,8 @@ export function SiteNav() {
     <>
       <nav className="site-nav">
         <Link href="/home" className="site-nav__logo" aria-label="Midgard home">
-          <img src="/midgard-logo.png" alt="Midgard" />
+          <Image src="/midgard-icon.png" alt="" aria-hidden width={28} height={28} />
+          <span className="wm">Midgard</span>
         </Link>
 
         <div className="site-nav__links">
@@ -53,17 +58,17 @@ export function SiteNav() {
 
         <div className="site-nav__right">
           <Link
-            href="/builders"
+            href="/testnet"
             className="btn btn--primary site-nav__cta-desktop"
           >
-            Build On Midgard
+            Explore Testnet →
           </Link>
           <button
             type="button"
             className="site-nav__burger"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
+            onClick={toggleMenu}
           >
             {open ? "✕" : "☰"}
           </button>
@@ -72,12 +77,17 @@ export function SiteNav() {
 
       <div className="site-nav__mobile" data-open={open}>
         {NAV.map((item) => (
-          <Link key={item.href} href={item.href} data-active={isActive(item.href)}>
+          <Link
+            key={item.href}
+            href={item.href}
+            data-active={isActive(item.href)}
+            onClick={closeMenu}
+          >
             {item.label}
           </Link>
         ))}
-        <Link href="/builders" className="btn btn--primary">
-          Build On Midgard
+        <Link href="/testnet" className="btn btn--primary" onClick={closeMenu}>
+          Explore Testnet →
         </Link>
       </div>
     </>

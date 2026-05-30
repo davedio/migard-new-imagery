@@ -200,7 +200,7 @@ function Hero() {
   return (
     <header
       style={{
-        minHeight: "100svh",
+        minHeight: "92svh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -224,14 +224,14 @@ function Hero() {
         trust path.
       </p>
       <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", alignItems: "center" }}>
-        <Link className="btn btn--primary" href="/builders">
-          Build On Midgard
+        <Link className="btn btn--primary" href="/testnet">
+          Explore Testnet →
         </Link>
         <Link className="btn btn--ghost" href="/how-it-works">
           See How It Works
         </Link>
-        <Link href="/testnet" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-          Explore testnet
+        <Link href="/builders" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+          Build on Midgard
         </Link>
       </div>
       <div style={{ display: "flex", gap: 10, marginTop: 26, flexWrap: "wrap" }}>
@@ -239,7 +239,7 @@ function Hero() {
         <span className="chip chip--demo"><span className="dot" />Simulated · connects to live data at launch</span>
         <span className="chip chip--l1"><span className="dot" />Cardano L1 anchor · claim-dependent</span>
       </div>
-      <div style={{ marginTop: 60, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--text-dim)", textTransform: "uppercase" }}>
+      <div style={{ marginTop: 54, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--text-dim)", textTransform: "uppercase" }}>
         ↓ Speed only matters if the path can be checked
       </div>
     </header>
@@ -356,11 +356,10 @@ function WhyItMatters() {
           elsewhere. Midgard keeps that pressure inside Cardano — you get room
           to grow without trading away what made Cardano worth building on.
         </p>
-        <ul style={{ listStyle: "none", margin: "26px 0 0", padding: 0, display: "grid", gap: 12, maxWidth: 560 }}>
+        <ul className="bullets" style={{ maxWidth: 560 }}>
           {WHY_BULLETS.map((b) => (
-            <li key={b} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-              <span style={{ marginTop: 7, width: 7, height: 7, borderRadius: 9, background: "var(--green-bright)", boxShadow: "0 0 10px var(--green-glow)", flex: "0 0 auto" }} />
-              <span style={{ fontSize: 15, color: "var(--text-hi)" }}>{b}</span>
+            <li key={b}>
+              <span>{b}</span>
             </li>
           ))}
         </ul>
@@ -456,8 +455,8 @@ function ClosingCTA() {
           <Link className="btn btn--primary" href="/builders">
             Build On Midgard
           </Link>
-          <Link className="btn btn--ghost" href="/faq">
-            Read the FAQ
+          <Link className="btn btn--ghost" href="/how-it-works">
+            How It Works
           </Link>
         </div>
       </Reveal>
@@ -493,7 +492,7 @@ function LayerSection({
       ref={ref}
       id={layer.key}
       style={{
-        minHeight: "92svh",
+        minHeight: "78svh",
         display: "flex",
         alignItems: "center",
         justifyContent: side,
@@ -515,16 +514,9 @@ function LayerSection({
 
         <div style={{ marginTop: 18, display: "grid", gap: 8 }}>
           {layer.metric(snap).map((m) => (
-            <div
-              key={m.label}
-              style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", borderTop: "1px solid var(--panel-edge)", paddingTop: 8 }}
-            >
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--text-dim)", letterSpacing: "0.04em" }}>
-                {m.label}
-              </span>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--green-bright)" }}>
-                {m.value}
-              </span>
+            <div key={m.label} className="metric-row">
+              <span className="k">{m.label}</span>
+              <span className="v">{m.value}</span>
             </div>
           ))}
         </div>
@@ -576,9 +568,9 @@ function LiveHUD({ snap }: { snap: NetworkSnapshot }) {
 
 function Row({ k, v }: { k: string; v: string }) {
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", gap: 18 }}>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--text-dim)" }}>{k}</span>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)" }}>{v}</span>
+    <div className="metric-row">
+      <span className="k">{k}</span>
+      <span className="v">{v}</span>
     </div>
   );
 }
@@ -594,7 +586,9 @@ export default function Gateway() {
   const [motionOn, setMotionOn] = useState(true);
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) setMotionOn(false);
+    if (!mq.matches) return;
+    const frame = requestAnimationFrame(() => setMotionOn(false));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   const params = deriveParams(snap);

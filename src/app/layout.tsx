@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Inter, JetBrains_Mono } from "next/font/google";
+import { Poppins, Inter, JetBrains_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -19,6 +19,12 @@ const mono = JetBrains_Mono({
   variable: "--font-jbmono",
   display: "swap",
 });
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Midgard | Cardano-Native L2 Scaling",
@@ -32,7 +38,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      className={`${display.variable} ${body.variable} ${mono.variable} ${syne.variable}`}
     >
       <body>
         <div className="world-bg" aria-hidden />

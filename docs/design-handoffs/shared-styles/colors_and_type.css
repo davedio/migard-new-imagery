@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* ============================================================
+   MIDGARD — colors_and_type.css
+   Foundational design tokens for the Midgard brand.
+   "Dark Ancient Tech / Trust Architecture"
+   Ported 1:1 from midgard-gateway/src/app/globals.css and extended
+   with semantic type roles. Load this, then the Google Fonts link:
+
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="colors_and_type.css">
+   ============================================================ */
+
+:root {
+  /* ---------- CORE PALETTE ---------- */
+  --deep-ink: #07120b;        /* page background — green-black */
+  --charcoal: #101820;
+  --midgard-green: #20be43;   /* primary brand green */
+  --gold: #cf9a2e;            /* secondary accent — proof / settlement (brighter, yellow-brown) */
+  --mist: #d7e2d8;            /* soft light foreground */
+  --paper: #f8faf5;
+  --slate: #475569;
+  --cardano-blue: #0033ad;    /* Cardano L1 reference color */
+
+  /* ---------- DERIVED DARKS (surfaces) ---------- */
+  --obsidian: #050c08;
+  --basalt: #0b1510;
+  --basalt-2: #0e1b14;
+  --panel: #0c1610;                              /* card / panel fill */
+  --panel-edge: rgba(215, 226, 216, 0.09);       /* hairline border */
+  --panel-edge-strong: rgba(215, 226, 216, 0.16);
+
+  /* ---------- SIGNAL + PROOF TINTS ---------- */
+  --green-bright: #3be863;                  /* live / active / values */
+  --green-dim: rgba(32, 190, 67, 0.55);
+  --green-ghost: rgba(32, 190, 67, 0.12);   /* faint green wash */
+  --green-glow: rgba(32, 190, 67, 0.35);    /* glow / shadow color */
+  --gold-bright: #e0a33c;                    /* eyebrow numbers, proof */
+  --gold-dim: rgba(183, 121, 31, 0.5);
+  --gold-ghost: rgba(183, 121, 31, 0.14);   /* callout background */
+  --gold-line: rgba(183, 121, 31, 0.42);    /* gold hairline / accent */
+
+  /* ---------- TEXT ---------- */
+  --text-hi: #eaf2ec;     /* headings, emphasis */
+  --text: #b7c6bc;        /* body copy */
+  --text-dim: #7c8f84;    /* secondary / captions */
+  --text-faint: #51635a;  /* legal / meta / disabled */
+
+  /* ---------- TYPE FAMILIES ---------- */
+  --font-display: "Syne", system-ui, sans-serif;     /* headings — production display face */
+  --font-display-alt: "Poppins", system-ui, sans-serif; /* prior display face, kept as fallback option */
+  --font-body: "Inter", system-ui, sans-serif;        /* body */
+  --font-mono: "JetBrains Mono", ui-monospace, monospace; /* eyebrows, chips, metrics, CTAs */
+
+  /* ---------- GEOMETRY ---------- */
+  --r-sm: 4px;
+  --r: 6px;
+  --r-lg: 8px;
+  --maxw: 1240px;
+  --gut: clamp(20px, 5vw, 64px);
+
+  /* ---------- MOTION ---------- */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ---------- AMBIENT WORLD BACKGROUND ---------- */
+  --bg-1: #08110c;
+  --bg-2: #060d09;
+  --canopy-glow: rgba(183, 121, 31, 0.1);  /* warm glow at top (canopy) */
+  --root-glow: rgba(32, 190, 67, 0.08);    /* green glow at bottom (roots) */
+
+  /* ============================================================
+     SEMANTIC TYPE ROLES — convenience vars for non-Tailwind use.
+     Mirrors the role each style plays in the live site.
+     ============================================================ */
+
+  /* Display H1 — page hero. font-display, weight 500, tight tracking */
+  --h1-font: var(--font-display);
+  --h1-size: clamp(32px, 5vw, 58px);
+  --h1-line: 1.04;
+  --h1-weight: 500;
+  --h1-spacing: -0.01em;
+
+  /* H2 — section headings */
+  --h2-font: var(--font-display);
+  --h2-size: clamp(24px, 3.2vw, 38px);
+  --h2-line: 1.12;
+  --h2-weight: 500;
+
+  /* H3 — card titles */
+  --h3-font: var(--font-display);
+  --h3-size: 18px;
+  --h3-weight: 500;
+
+  /* Lead / sub — intro paragraph under a heading */
+  --lead-size: clamp(15px, 1.6vw, 17px);
+  --lead-color: var(--text);
+
+  /* Body — default paragraph */
+  --body-size: 15px;
+  --body-line: 1.55;
+  --body-color: var(--text);
+
+  /* Eyebrow — mono uppercase label with leading gold tick */
+  --eyebrow-font: var(--font-mono);
+  --eyebrow-size: 11px;
+  --eyebrow-spacing: 0.28em;
+  --eyebrow-color: var(--text-dim);
+
+  /* Mono label — chips, metrics, CTAs, nav links */
+  --mono-size: 12.5px;
+  --mono-spacing: 0.04em;
+}
+
+/* ============================================================
+   BASE ELEMENT STYLES (optional — apply on body/headings)
+   ============================================================ */
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--deep-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: var(--body-line);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-hi);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; text-decoration: none; }
+
+/* Eyebrow — reusable kicker label */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--gold-line);
+}
+
+::selection { background: rgba(32, 190, 67, 0.28); color: #fff; }

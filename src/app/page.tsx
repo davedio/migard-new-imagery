@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import MidgardWordmark from "@/components/MidgardWordmark";
 
 export const metadata: Metadata = {
   title: "Enter Midgard",
@@ -23,7 +25,12 @@ export default function SplashPage() {
       <div className="splash__veil" aria-hidden />
 
       <div className="splash__content">
-        <img src="/midgard-logo.png" alt="Midgard" />
+        <div className="splash__lock" aria-label="Midgard">
+          <Image src="/midgard-icon.png" alt="" aria-hidden width={64} height={64} priority />
+          <span className="wm">
+            <MidgardWordmark radius={120} />
+          </span>
+        </div>
         <Link href="/home" className="splash__enter" aria-label="Enter Midgard">
           Enter Midgard
         </Link>

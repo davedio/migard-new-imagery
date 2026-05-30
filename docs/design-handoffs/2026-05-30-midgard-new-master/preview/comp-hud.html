@@ -1,0 +1,59 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../midgard.css">
+<style>
+  html, body { margin: 0; }
+  body { position: relative; height: 260px; overflow: hidden; background: var(--deep-ink); }
+  .page { position: absolute; inset: 0; }
+  .world { position: absolute; inset: 0; z-index: 0; }
+  /* faux page chrome so placement reads */
+  .nav { position: absolute; top: 0; left: 0; right: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; }
+  .nav .brand { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 500; color: var(--text-hi); font-size: 14px; }
+  .nav .brand .mk { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--green-bright); }
+  .nav .links { display: flex; gap: 16px; }
+  .nav .links span { font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+  .nav .links span.on { color: var(--green-bright); }
+  .ph { position: absolute; left: 18px; top: 64px; z-index: 4; }
+  .ph .eye { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; color: var(--text-faint); text-transform: uppercase; }
+  .ph h2 { font-family: var(--font-display); font-weight: 500; color: var(--text-hi); font-size: 22px; margin: 8px 0 0; }
+  /* the HUD — pinned TOP-RIGHT to track the live testnet */
+  .hud { position: absolute; top: 56px; right: 18px; z-index: 20; padding: 12px 14px; display: grid; gap: 7px; min-width: 210px;
+    background: linear-gradient(180deg, rgba(215,226,216,0.025), transparent 40%), rgba(12,22,16,0.82);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .hud .head { display: flex; justify-content: space-between; align-items: center; }
+  .hud .time { font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+  .tag { position: absolute; right: 18px; top: 150px; z-index: 20; font-family: var(--font-mono); font-size: 9.5px; color: var(--text-dim); text-align: right; max-width: 220px; line-height: 1.7; }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="world world-bg"></div>
+    <div class="nav">
+      <div class="brand"><span class="mk"></span>Midgard</div>
+      <div class="links"><span>Docs</span><span class="on">Testnet</span></div>
+    </div>
+    <div class="ph">
+      <div class="eye">Testnet · Live tracking</div>
+      <h2>Watch the path resolve.</h2>
+    </div>
+    <div class="hud panel">
+      <div class="head">
+        <span class="chip chip--live"><span class="dot"></span>Live L1 · sim L2</span>
+        <span class="time">3:47:22 PM</span>
+      </div>
+      <div class="metric-row"><span class="k">L1 block</span><span class="v">#4,291,860</span></div>
+      <div class="metric-row"><span class="k">Batch queue</span><span class="v">18 ops</span></div>
+      <div class="metric-row"><span class="k">Proof</span><span class="v">GENERATED</span></div>
+    </div>
+    <div class="tag">↑ pinned top-right · persists across scroll<br>so the live snapshot is always in view</div>
+  </div>
+</body>
+</html>

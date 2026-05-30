@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const EXPLORE = [
   { label: "Users", href: "/users" },
@@ -35,7 +36,10 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="site-footer__top">
         <div className="site-footer__brand">
-          <img src="/midgard-logo.png" alt="Midgard" />
+          <div className="lock">
+            <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} />
+            <span className="wm">Midgard</span>
+          </div>
           <p>
             A Cardano-native Layer 2 built for throughput and secured by math.
             Fees are paid in ADA.

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import InteriorFluidBackground from "@/components/InteriorFluidBackground";
 
 /**
  * Layout for the (site) route group — every navigable page (home + children)
@@ -14,6 +15,7 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <>
+      <InteriorFluidBackground />
       <SiteNav />
       {children}
       <SiteFooter />
