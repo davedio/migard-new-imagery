@@ -7,7 +7,7 @@ import {
   Layers,
   CtaBand,
 } from "@/components/site/ui";
-import SplineShowcase from "@/components/site/SplineShowcase";
+import MonolithShowcase from "@/components/site/MonolithShowcase";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -28,9 +28,9 @@ export default function HowItWorksPage() {
         ]}
       />
 
-      <SplineShowcase
-        eyebrow="Interactive · Spline"
-        caption="Demo scene — placeholder for an L2 batching/settlement model."
+      <MonolithShowcase
+        eyebrow="Stone + Light · Interactive"
+        caption="Verified activity descends the six trust layers into Cardano L1 settlement."
       />
 
       <Section

@@ -19,8 +19,8 @@ import type { NetworkSnapshot } from "@/lib/network";
      1. GATHER     — they collect into three canopy-base batching pockets;
                      once enough gather, they release fewer/larger proof
                      orbs down the trunk.
-     2. ROOTS      — near the lower trunk each blob breaks into smaller
-                     root lights, then travels down the root veins.
+     2. ROOTS      — near the lower trunk each proof orb bends into one
+                     root trail, staying separate all the way down.
      3. LOCK-IN    — at the root tip it flares a bigger glow (the tx is
                      "locked in" to Cardano L1), then vanishes.
 
@@ -53,7 +53,7 @@ const TRUNK_X = 0.725;
 const TRUNK_STRANDS = [-0.0025, -0.0009, 0.0009, 0.0025];
 const DOME = { cx: 0.72, cy: 0.305, rx: 0.185, ry: 0.135 }; // canopy foliage
 const FORK_Y = 0.42; // canopy base: branches gather to the trunk top
-const CROWN_Y = 0.575; // lower trunk base: roots begin to splay here
+const CROWN_Y = 0.615; // lower trunk base: roots begin to splay here
 const GATHER_NODES = [
   { x: TRUNK_X - 0.029, y: FORK_Y - 0.011, strand: 0 },
   { x: TRUNK_X - 0.002, y: FORK_Y + 0.001, strand: 1 },
@@ -70,8 +70,6 @@ const MAX_PARTICLES = 280;
 // sizes vary with how many gathered while avoiding oversized root exits.
 const GATHER_MIN = 10;
 const GATHER_MAX = 16;
-const ROOT_SPLIT_MIN = 1;
-const ROOT_SPLIT_MAX = 2;
 const FLASH_DUR = 0.45; // length of the "locked-in to L1" flash at a root tip
 // Canopy orbs are born tiny and GROW in place (slowly, randomised per orb)
 // before they break onto their snake path down the tree.
@@ -83,9 +81,7 @@ const GROW_FAST = 0.55; // event-burst orbs grow quicker
 // change at the crown. Slower than the darting canopy orbs.
 const BLOB_VSPEED = 0.048; // height/sec, held from fork to the very root tip
 const BLOB_VSPEED_JIT = 0.006; // tiny variance so some blobs catch up + merge
-// As blobs descend the trunk they GATHER into fewer, even larger orbs.
 const MERGE_CAP = 4.2; // max blob size after merging
-const MERGE_DT = 0.035; // t-distance under which two trunk blobs fuse
 
 type Pt = { x: number; y: number };
 type Lane = { poly: Pt[]; width: number; len: number };
@@ -304,10 +300,16 @@ function buildTree(field?: VeinField): Tree {
     const j = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
     const ang = Math.PI * (-0.06 + 1.12 * ((i + 0.5) / NC)); // broad upper canopy
     const rf = 0.72 + 0.26 * j;
-    const leaf = anchor({
+    const leafGuess = {
       x: DOME.cx + Math.cos(ang) * DOME.rx * rf,
       y: DOME.cy - Math.sin(ang) * DOME.ry * rf,
-    }, 0.035);
+    };
+    const leaf = field
+      ? onTree(anchor(leafGuess, 0.075), 0.09)
+      : {
+          x: clamp(leafGuess.x, DOME.cx - DOME.rx * 0.92, DOME.cx + DOME.rx * 0.98),
+          y: leafGuess.y,
+        };
     const forkInlet = {
       x: TRUNK_X + TRUNK_STRANDS[i % TRUNK_STRANDS.length] * 0.65,
       y: FORK_Y + (Math.sin(i * 1.7) * 0.004),
@@ -349,13 +351,17 @@ function buildTree(field?: VeinField): Tree {
     const j = Math.abs(Math.sin((i + 11) * 78.233) * 43758.5453) % 1;
     const tip = anchor({
       x: clamp(TRUNK_X + (u < 0 ? u * 0.31 : u * 0.18), 0.47, 0.9),
-      y: 0.66 + (1 - a) * 0.25 + j * 0.02,
+      y: 0.7 + (1 - a) * 0.22 + j * 0.018,
     }, 0.04);
+    const gate = {
+      x: lerp(crown.x, tip.x, 0.06),
+      y: CROWN_Y + 0.052 + (1 - a) * 0.01,
+    };
     const mid = anchor({
-      x: lerp(crown.x, tip.x, 0.48) + u * (0.012 + j * 0.014),
-      y: lerp(CROWN_Y, tip.y, 0.5),
+      x: lerp(crown.x, tip.x, 0.38) + u * (0.008 + j * 0.01),
+      y: lerp(CROWN_Y, tip.y, 0.62),
     }, 0.03);
-    const base = catmullRom([crown, mid, tip], 14);
+    const base = catmullRom([crown, gate, mid, tip], 14);
     // gentlest weave — roots should read as aligning to the big painted root veins
     const woven = snake(base, 0.0025 + a * 0.0025, 1, (i * 2.1 + 1) % (Math.PI * 2));
     const onT = field ? fitToTree(woven, onTree, 0.026, 2) : smoothPoly(woven, 2);
@@ -762,65 +768,23 @@ export default function StaticTreeHero({
       bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
     };
 
-    const rootFanIndices = (count: number): number[] => {
-      const used = new Set<number>();
-      const out: number[] = [];
-      const len = tree.roots.length;
-      const stride = len / (count + 1);
-      for (let i = 0; i < count; i++) {
-        let idx = Math.round(stride * (i + 1) + (Math.random() * 2 - 1) * 1.25);
-        idx = clamp(idx, 0, len - 1);
-        if (used.has(idx)) {
-          for (let step = 1; step < len; step++) {
-            const a = clamp(idx - step, 0, len - 1);
-            const b = clamp(idx + step, 0, len - 1);
-            if (!used.has(a)) {
-              idx = a;
-              break;
-            }
-            if (!used.has(b)) {
-              idx = b;
-              break;
-            }
-          }
-        }
-        used.add(idx);
-        out.push(idx);
-      }
-      return out;
+    const rootIndexForTrunk = (seg: number) => {
+      const center = (tree.roots.length - 1) / 2;
+      const offsets = [-3.2, -1.1, 1.1, 3.2];
+      return clamp(
+        Math.round(center + offsets[seg % offsets.length] + (Math.random() * 2 - 1) * 2.2),
+        0,
+        tree.roots.length - 1,
+      );
     };
 
-    const spreadIntoRoots = (blob: Particle) => {
-      const count = clamp(
-        Math.round(
-          ROOT_SPLIT_MIN +
-            Math.pow(blob.size / MERGE_CAP, 2.2) *
-              (ROOT_SPLIT_MAX - ROOT_SPLIT_MIN),
-        ),
-        ROOT_SPLIT_MIN,
-        ROOT_SPLIT_MAX,
-      );
-      const indices = rootFanIndices(count);
-      const childSize = clamp(blob.size / (count * 1.12), 0.58, 1.85);
-      let added = 0;
-      for (const seg of indices) {
-        if (particles.length >= MAX_PARTICLES) break;
-        const lane = tree.roots[seg];
-        particles.push({
-          phase: 2,
-          seg,
-          t: Math.random() * 0.025,
-          speed: blob.speed * (0.94 + Math.random() * 0.12),
-          size: childSize * (0.78 + lane.width * 0.18 + Math.random() * 0.12),
-          grow: 1,
-          growRate: 0,
-          hold: 0,
-          alt: Math.random() < 0.5,
-          age: Math.max(blob.age, 0.4),
-        });
-        added++;
-      }
-      if (added > 0) surge = Math.max(surge, 0.08);
+    const continueIntoRoot = (p: Particle) => {
+      p.phase = 2;
+      p.seg = rootIndexForTrunk(p.seg);
+      p.t = Math.random() * 0.015;
+      p.speed *= 0.96 + Math.random() * 0.08;
+      p.age = Math.max(p.age, 0.4);
+      surge = Math.max(surge, 0.06);
     };
 
     const seedStatic = () => {
@@ -940,25 +904,8 @@ export default function StaticTreeHero({
           p.t += (p.phase === 0 ? p.speed : p.speed / laneOf(p).len) * dt;
         }
 
-        // merge trunk blobs that have come close together -> fewer, larger blobs
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const a = particles[i];
-          if (a.phase !== 1) continue;
-          for (let j = i - 1; j >= 0; j--) {
-            const b = particles[j];
-            if (b.phase !== 1) continue;
-            if (Math.abs(a.t - b.t) < MERGE_DT) {
-              b.size = Math.min(MERGE_CAP, Math.cbrt(b.size ** 3 + a.size ** 3));
-              b.t = Math.max(b.t, a.t);
-              b.age = Math.max(b.age, a.age);
-              particles.splice(i, 1);
-              break;
-            }
-          }
-        }
-
-        // phase ends: flash expires -> die; canopy -> gather; trunk -> a random
-        // root (keeping its size); root tip -> the locked-in flash.
+        // phase ends: flash expires -> die; canopy -> gather; trunk proof orb
+        // bends into one root trail without merging or splitting again.
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           if (p.phase === 3) {
@@ -970,8 +917,7 @@ export default function StaticTreeHero({
             collectAtBucket(p);
             particles.splice(i, 1);
           } else if (p.phase === 1) {
-            particles.splice(i, 1);
-            spreadIntoRoots(p);
+            continueIntoRoot(p);
           } else {
             // reached a root tip -> flash "locked in to L1", then vanish
             p.phase = 3;
