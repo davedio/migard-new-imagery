@@ -20,8 +20,8 @@ import type { NetworkSnapshot } from "@/lib/network";
                      number collect, they release as one BLOB — its size
                      set by how many gathered — that drops almost dead-
                      vertical down the trunk, fast.
-     2. ROOTS      — at the root crown each blob keeps its size and picks
-                     a random big root, travelling down the root vein.
+     2. ROOTS      — near the lower trunk each blob breaks into smaller
+                     root lights, then travels down the root veins.
      3. LOCK-IN    — at the root tip it flares a bigger glow (the tx is
                      "locked in" to Cardano L1), then vanishes.
 
@@ -54,26 +54,25 @@ const TRUNK_X = 0.725;
 const TRUNK_STRANDS = [-0.0025, -0.0009, 0.0009, 0.0025];
 const DOME = { cx: 0.72, cy: 0.305, rx: 0.185, ry: 0.135 }; // canopy foliage
 const FORK_Y = 0.42; // canopy base: branches gather to the trunk top
-const CROWN_Y = 0.49; // trunk base: roots begin to splay here
+const CROWN_Y = 0.575; // lower trunk base: roots begin to splay here
 
 // Particle colour — luminescent green to match the vein glow.
 const PARTICLE_CORE = "#00ff66"; // primary
 const PARTICLE_ALT = "#33ff33"; // variation
 
 // Tunables
-const MAX_PARTICLES = 140;
+const MAX_PARTICLES = 220;
 // A random number of canopy orbs lump together into each trunk blob, so blob
-// sizes vary (small..large) with how many gathered. A small target keeps the
-// funnel quick (releases after only a few orbs collect).
-const GATHER_MIN = 3;
-const GATHER_MAX = 6;
-const ROOT_SPLIT_MIN = 3;
-const ROOT_SPLIT_MAX = 5;
+// sizes vary with how many gathered while avoiding oversized root exits.
+const GATHER_MIN = 5;
+const GATHER_MAX = 9;
+const ROOT_SPLIT_MIN = 1;
+const ROOT_SPLIT_MAX = 3;
 const FLASH_DUR = 0.45; // length of the "locked-in to L1" flash at a root tip
 // Canopy orbs are born tiny and GROW in place (slowly, randomised per orb)
 // before they break onto their snake path down the tree.
-const GROW_MIN = 0.9; // seconds to reach full size (ambient orb)
-const GROW_MAX = 2.3;
+const GROW_MIN = 0.55; // seconds to reach full size (ambient orb)
+const GROW_MAX = 1.35;
 const GROW_FAST = 0.55; // event-burst orbs grow quicker
 // Blobs glide at a CONSTANT VISUAL speed (height/sec), arc-length-normalised so
 // the short trunk and the long roots run at the same on-screen pace — no speed
@@ -81,8 +80,8 @@ const GROW_FAST = 0.55; // event-burst orbs grow quicker
 const BLOB_VSPEED = 0.048; // height/sec, held from fork to the very root tip
 const BLOB_VSPEED_JIT = 0.006; // tiny variance so some blobs catch up + merge
 // As blobs descend the trunk they GATHER into fewer, even larger orbs.
-const MERGE_CAP = 5.5; // max blob size after merging
-const MERGE_DT = 0.05; // t-distance under which two trunk blobs fuse
+const MERGE_CAP = 3.4; // max blob size after merging
+const MERGE_DT = 0.035; // t-distance under which two trunk blobs fuse
 
 type Pt = { x: number; y: number };
 type Lane = { poly: Pt[]; width: number; len: number };
@@ -98,6 +97,7 @@ type Particle = {
   size: number; // target (full-grown) size — randomised, kept varied
   grow: number; // 0..1 growth progress; while <1 the orb grows in place
   growRate: number; // growth per second (0 for already-grown blobs)
+  hold: number; // after growing, canopy orbs linger glowing before breaking loose
   alt: boolean;
   age: number;
 };
@@ -336,7 +336,7 @@ function buildTree(field?: VeinField): Tree {
     const j = Math.abs(Math.sin((i + 11) * 78.233) * 43758.5453) % 1;
     const tip = anchor({
       x: clamp(TRUNK_X + (u < 0 ? u * 0.31 : u * 0.18), 0.47, 0.9),
-      y: 0.61 + (1 - a) * 0.28 + j * 0.025,
+      y: 0.66 + (1 - a) * 0.25 + j * 0.02,
     }, 0.04);
     const mid = anchor({
       x: lerp(crown.x, tip.x, 0.48) + u * (0.012 + j * 0.014),
@@ -577,7 +577,7 @@ export default function StaticTreeHero({
       const top0 = DOME.cy - DOME.ry; // highest leaf y
       canopyW = tree.canopy.map((l) => {
         const top = clamp((FORK_Y - l.poly[0].y) / (FORK_Y - top0), 0, 1);
-        return 0.8 + top * 0.9 + l.width * 0.2; // active across the whole canopy
+        return 0.08 + Math.pow(top, 2.4) * 5.8 + top * l.width * 0.35;
       });
       canopyWSum = canopyW.reduce((s, w) => s + w, 0);
     };
@@ -644,8 +644,8 @@ export default function StaticTreeHero({
       return (Math.random() * tree.canopy.length) | 0;
     };
 
-    // a small orb born at a (mostly top-of-canopy) leaf; it grows in place, then
-    // weaves down toward the fork. Sizes stay random so orbs aren't uniform.
+    // a small orb born at a (mostly top-of-canopy) leaf; it grows in place,
+    // lingers glowing, then weaves down toward the fork.
     const spawnCanopy = (fast = false) => {
       if (particles.length >= MAX_PARTICLES) return;
       const seg = pickCanopySeg();
@@ -653,33 +653,36 @@ export default function StaticTreeHero({
       const growTime = fast
         ? GROW_FAST * (0.7 + Math.random() * 0.6)
         : GROW_MIN + Math.random() * (GROW_MAX - GROW_MIN);
+      const hold = fast
+        ? 0.25 + Math.random() * 0.65
+        : 0.8 + Math.random() * 1.45;
+      const rareLarge = Math.random() < 0.08 ? 0.18 + Math.random() * 0.16 : 0;
+      const topSize = 0.22 + Math.pow(Math.random(), 1.9) * 0.42 + rareLarge;
       particles.push({
         phase: 0,
         seg,
         t: 0,
         speed: (fast ? 1.5 : 1) * (0.135 + Math.random() * 0.085),
-        size: (0.36 + Math.random() * 0.46) * (0.6 + w * 0.6),
+        size: topSize * (0.72 + w * 0.35),
         grow: 0,
         growRate: 1 / growTime,
+        hold,
         alt: Math.random() < 0.5,
         age: 0,
       });
-      leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.5);
+      leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
     };
 
-    // the gathered lump releases as a blob dropping SLOWLY down a trunk strand.
-    // If a blob is still on the upper trunk, this release MERGES into it instead,
-    // so blobs gather into fewer, even larger orbs as they descend.
+    // the gathered lump releases as a smaller blob dropping down a trunk strand.
+    // A little merging still happens high in the trunk, but not enough to make
+    // the root exits feel oversized.
     const releaseBlob = (gathered: number) => {
-      const base = 1.25 + (gathered / GATHER_MAX) * 1.7;
-      const addSize = base * (0.55 + Math.random() * 0.85); // wide spread: small..large
-      // Only SOMETIMES merge into a blob still high on the trunk. Always-merging
-      // funnelled everything into one big orb; merging ~45% of the time lets
-      // small, medium and large blobs travel down together.
-      if (Math.random() < 0.45) {
+      const base = 0.95 + (gathered / GATHER_MAX) * 1.05;
+      const addSize = base * (0.48 + Math.random() * 0.58);
+      if (Math.random() < 0.25) {
         let host: Particle | null = null;
         for (const p of particles)
-          if (p.phase === 1 && p.t < 0.4 && (!host || p.t < host.t)) host = p;
+          if (p.phase === 1 && p.t < 0.28 && (!host || p.t < host.t)) host = p;
         if (host) {
           host.size = Math.min(MERGE_CAP, Math.cbrt(host.size ** 3 + addSize ** 3));
           gatherGlow = 1;
@@ -691,10 +694,11 @@ export default function StaticTreeHero({
         phase: 1,
         seg: (Math.random() * tree.trunk.length) | 0,
         t: 0,
-        speed: BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT, // h/s, steady
+        speed: BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT,
         size: addSize,
         grow: 1,
         growRate: 0,
+        hold: 0,
         alt: Math.random() < 0.5,
         age: 0,
       });
@@ -731,12 +735,16 @@ export default function StaticTreeHero({
 
     const spreadIntoRoots = (blob: Particle) => {
       const count = clamp(
-        Math.round(ROOT_SPLIT_MIN + (blob.size / MERGE_CAP) * (ROOT_SPLIT_MAX - ROOT_SPLIT_MIN)),
+        Math.round(
+          ROOT_SPLIT_MIN +
+            Math.pow(blob.size / MERGE_CAP, 1.35) *
+              (ROOT_SPLIT_MAX - ROOT_SPLIT_MIN),
+        ),
         ROOT_SPLIT_MIN,
         ROOT_SPLIT_MAX,
       );
       const indices = rootFanIndices(count);
-      const childSize = Math.max(0.95, blob.size / Math.sqrt(count));
+      const childSize = clamp(blob.size / (count * 1.45), 0.46, 1.08);
       let added = 0;
       for (const seg of indices) {
         if (particles.length >= MAX_PARTICLES) break;
@@ -744,11 +752,12 @@ export default function StaticTreeHero({
         particles.push({
           phase: 2,
           seg,
-          t: Math.random() * 0.035,
+          t: Math.random() * 0.025,
           speed: blob.speed * (0.94 + Math.random() * 0.12),
-          size: childSize * (0.82 + lane.width * 0.22 + Math.random() * 0.16),
+          size: childSize * (0.72 + lane.width * 0.16 + Math.random() * 0.12),
           grow: 1,
           growRate: 0,
+          hold: 0,
           alt: Math.random() < 0.5,
           age: Math.max(blob.age, 0.4),
         });
@@ -760,11 +769,44 @@ export default function StaticTreeHero({
     const seedStatic = () => {
       particles.length = 0;
       for (let i = 0; i < tree.canopy.length; i++)
-        particles.push({ phase: 0, seg: i, t: 0.55, speed: 0, size: 0.6 * (0.6 + tree.canopy[i].width * 0.6), grow: 1, growRate: 0, alt: i % 2 === 0, age: 1 });
+        particles.push({
+          phase: 0,
+          seg: i,
+          t: 0.55,
+          speed: 0,
+          size: 0.45 * (0.6 + tree.canopy[i].width * 0.6),
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: i % 2 === 0,
+          age: 1,
+        });
       for (let i = 0; i < tree.trunk.length; i++)
-        particles.push({ phase: 1, seg: i, t: 0.5, speed: 0, size: 1.6, grow: 1, growRate: 0, alt: false, age: 1 });
+        particles.push({
+          phase: 1,
+          seg: i,
+          t: 0.5,
+          speed: 0,
+          size: 1.25,
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: false,
+          age: 1,
+        });
       for (let i = 0; i < tree.roots.length; i++)
-        particles.push({ phase: 2, seg: i, t: 0.5, speed: 0, size: 1.4, grow: 1, growRate: 0, alt: i % 2 === 0, age: 1 });
+        particles.push({
+          phase: 2,
+          seg: i,
+          t: 0.5,
+          speed: 0,
+          size: 0.85,
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: i % 2 === 0,
+          age: 1,
+        });
     };
 
     let raf = 0;
@@ -798,14 +840,14 @@ export default function StaticTreeHero({
         // event: new batch -> a small flurry of canopy orbs + nudge the lump
         if (s.l2.latestBatchId !== lastBatch) {
           lastBatch = s.l2.latestBatchId;
-          for (let i = 0; i < 6; i++) spawnCanopy(true);
+          for (let i = 0; i < 9; i++) spawnCanopy(true);
           gather += 2;
         }
         // event: settlement confirmed -> brighter swell + force a blob to drop
         if (s.l2.latestProofStatus === "settled" && lastProof !== "settled") {
           surge = 1;
-          for (let i = 0; i < 8; i++) spawnCanopy(true);
-          gather += 3;
+          for (let i = 0; i < 12; i++) spawnCanopy(true);
+          gather += 2;
         }
         lastProof = s.l2.latestProofStatus;
 
@@ -813,10 +855,10 @@ export default function StaticTreeHero({
         // with many more visible canopy points while each point keeps its pace
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
-          const cluster = Math.random() < 0.18 ? 3 : Math.random() < 0.42 ? 2 : 1;
+          const cluster = Math.random() < 0.22 ? 6 : Math.random() < 0.58 ? 4 : 3;
           for (let k = 0; k < cluster; k++) spawnCanopy();
-          const meanGap = 0.16 + (1 - activity) * 0.24;
-          spawnTimer = meanGap * (0.35 + Math.random() * 1.25);
+          const meanGap = 0.1 + (1 - activity) * 0.18;
+          spawnTimer = meanGap * (0.35 + Math.random() * 1.15);
         }
 
         // grow in place, then advance along the current segment (+ cursor repel)
@@ -826,6 +868,10 @@ export default function StaticTreeHero({
           if (p.grow < 1) {
             p.grow = Math.min(1, p.grow + p.growRate * dt);
             continue; // still growing at its birth spot — doesn't move yet
+          }
+          if (p.phase === 0 && p.hold > 0) {
+            p.hold = Math.max(0, p.hold - dt);
+            continue; // hangs glowing in the canopy before breaking loose
           }
           // canopy orbs advance in lane-normalised t (kept as fast as before);
           // blobs glide at a constant VISUAL speed, so the short trunk and the
@@ -870,6 +916,7 @@ export default function StaticTreeHero({
             // reached a root tip -> flash "locked in to L1", then vanish
             p.phase = 3;
             p.t = 1;
+            p.hold = 0;
             p.age = 0;
           }
         }
@@ -951,18 +998,18 @@ export default function StaticTreeHero({
         const rgbStr = p.alt ? ALT_RGB : CORE_RGB;
 
         // soft comet tail trailing behind the bead — only once it's moving
-        if (p.grow >= 1) {
+        if (p.grow >= 1 && p.hold <= 0) {
           const tl = Math.hypot(tan.x * dW, tan.y * dH) || 1;
           const ux = (tan.x * dW) / tl;
           const uy = (tan.y * dH) / tl;
-          const tailLen = (9 + es * 7) * (rootPhase ? 1.45 : 1) * (1 + surge * 0.4);
+          const tailLen = (9 + es * 7) * (rootPhase ? 1.08 : 1) * (1 + surge * 0.4);
           const tx2 = x - ux * tailLen;
           const ty2 = y - uy * tailLen;
           const grad = ctx.createLinearGradient(x, y, tx2, ty2);
-          grad.addColorStop(0, `rgba(${rgbStr},${(rootPhase ? 0.76 : 0.62) * life})`);
+          grad.addColorStop(0, `rgba(${rgbStr},${(rootPhase ? 0.54 : 0.62) * life})`);
           grad.addColorStop(1, `rgba(${rgbStr},0)`);
           ctx.strokeStyle = grad;
-          ctx.lineWidth = (rootPhase ? 1.25 : 1) + es * (rootPhase ? 1.05 : 0.9);
+          ctx.lineWidth = (rootPhase ? 0.9 : 1) + es * (rootPhase ? 0.72 : 0.9);
           ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(x, y);
@@ -971,8 +1018,8 @@ export default function StaticTreeHero({
         }
 
         // glow halo at the head (bigger for blobs)
-        const r = (3 + es * (rootPhase ? 3.8 : 3.2)) * glowBoost;
-        ctx.globalAlpha = Math.min(1, (rootPhase ? 0.64 : 0.55) * life);
+        const r = (3 + es * (rootPhase ? 2.55 : 3.2)) * glowBoost;
+        ctx.globalAlpha = Math.min(1, (rootPhase ? 0.46 : 0.55) * life);
         ctx.drawImage(p.alt ? glowAlt : glowCore, x - r, y - r, r * 2, r * 2);
         ctx.globalAlpha = 1;
 
