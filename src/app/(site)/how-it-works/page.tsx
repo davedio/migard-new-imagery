@@ -7,6 +7,7 @@ import {
   Layers,
   CtaBand,
 } from "@/components/site/ui";
+import MonolithShowcase from "@/components/site/MonolithShowcase";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -25,6 +26,11 @@ export default function HowItWorksPage() {
           { label: "Inspect the layers", href: "#layers", variant: "primary" },
           { label: "Read docs", href: "/docs", variant: "ghost" },
         ]}
+      />
+
+      <MonolithShowcase
+        eyebrow="Stone + Light · Interactive"
+        caption="Verified activity descends the six trust layers into Cardano L1 settlement."
       />
 
       <Section
