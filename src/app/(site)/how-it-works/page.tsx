@@ -7,6 +7,7 @@ import {
   Layers,
   CtaBand,
 } from "@/components/site/ui";
+import RootworkShowcase from "@/components/site/RootworkShowcase";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -25,6 +26,11 @@ export default function HowItWorksPage() {
           { label: "Inspect the layers", href: "#layers", variant: "primary" },
           { label: "Read docs", href: "/docs", variant: "ghost" },
         ]}
+      />
+
+      <RootworkShowcase
+        eyebrow="Living Roots · Interactive"
+        caption="Verified activity flows down the roots, through the six trust layers, into Cardano L1 settlement."
       />
 
       <Section
