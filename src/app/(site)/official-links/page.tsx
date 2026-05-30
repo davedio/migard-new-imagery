@@ -7,6 +7,7 @@ import {
   Callout,
   Actions,
 } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "Midgard Official Links",
@@ -35,12 +36,13 @@ export default function OfficialLinksPage() {
       >
         <LinksTable
           rows={[
-            { k: "Website", v: "Publishing soon", pending: true },
-            { k: "Docs", v: "Publishing soon", pending: true },
+            { k: "Website", v: "midgard-gateway.vercel.app", href: OFFICIAL_LINKS.website },
+            { k: "Docs", v: "Docs page", href: "/docs" },
             { k: "Contracts", v: "Publishing soon", pending: true },
-            { k: "GitHub", v: "Publishing soon", pending: true },
-            { k: "X", v: "Publishing soon", pending: true },
-            { k: "Discord", v: "Publishing soon", pending: true },
+            { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github },
+            { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x },
+            { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord },
+            { k: "Builder/Testnet intake", v: "Google form", href: OFFICIAL_LINKS.intakeForm },
             { k: "Newsletter", v: "Publishing soon", pending: true },
             { k: "Support", v: "Publishing soon", pending: true },
             { k: "Security", v: "Publishing soon", pending: true },

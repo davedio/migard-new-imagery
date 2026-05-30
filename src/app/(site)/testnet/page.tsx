@@ -9,6 +9,7 @@ import {
   Actions,
   CtaBand,
 } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "Midgard Testnet",
@@ -37,7 +38,7 @@ export default function TestnetPage() {
         }
         actions={[
           { label: "Start testnet path", href: "#whats-live", variant: "primary" },
-          { label: "Read docs", href: "/docs", variant: "ghost" },
+          { label: "Request access", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" },
         ]}
       />
 
@@ -77,6 +78,8 @@ export default function TestnetPage() {
           <Card
             title="Source"
             body="The repository is the place to inspect implementation progress."
+            cta="Explore on GitHub"
+            href={OFFICIAL_LINKS.github}
             delay={120}
           />
           <Card
@@ -87,11 +90,15 @@ export default function TestnetPage() {
           <Card
             title="Community"
             body="Community routes should answer questions, surface feedback, and route people back to official materials."
+            cta="Join Discord"
+            href={OFFICIAL_LINKS.discord}
             delay={240}
           />
           <Card
             title="Early access"
             body="Early access should identify serious builders and partners, not collect passive hype."
+            cta="Open intake form"
+            href={OFFICIAL_LINKS.intakeForm}
             delay={300}
           />
         </CardGrid>
@@ -110,7 +117,7 @@ export default function TestnetPage() {
           ]}
         />
         <Actions
-          items={[{ label: "Join builder readiness", href: "/builders", variant: "ghost" }]}
+          items={[{ label: "Join builder readiness", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" }]}
         />
       </Section>
 
@@ -127,7 +134,7 @@ export default function TestnetPage() {
           ]}
         />
         <Actions
-          items={[{ label: "Request partner intake", href: "/partners", variant: "ghost" }]}
+          items={[{ label: "Request partner intake", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" }]}
         />
       </Section>
 
@@ -151,8 +158,8 @@ export default function TestnetPage() {
         title="Start from the official path."
         lead="Use the testnet surfaces published on official links, and bring concrete feedback."
         actions={[
-          { label: "Open official links", href: "/official-links", variant: "primary" },
-          { label: "Read docs", href: "/docs", variant: "ghost" },
+          { label: "Request testnet access", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
         ]}
       />
     </main>

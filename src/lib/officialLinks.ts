@@ -1,0 +1,8 @@
+export const OFFICIAL_LINKS = {
+  website: "https://midgard-gateway.vercel.app",
+  github: "https://github.com/Anastasia-Labs/midgard",
+  x: "https://x.com/midgardprotocol",
+  discord: "https://discord.gg/ZpjgHKWaZx",
+  intakeForm:
+    "https://docs.google.com/forms/d/e/1FAIpQLSfqXeRid4e2k_ZkMPf1t-UJYb9xi0nuc9q0jm77Bm8LdDdxAg/viewform",
+} as const;

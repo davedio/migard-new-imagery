@@ -8,6 +8,7 @@ import {
   CtaBand,
 } from "@/components/site/ui";
 import RootworkShowcase from "@/components/site/RootworkShowcase";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -24,7 +25,7 @@ export default function HowItWorksPage() {
         sub="Midgard is designed to make Cardano-native L2 activity faster to use and easier to reason about."
         actions={[
           { label: "Inspect the layers", href: "#layers", variant: "primary" },
-          { label: "Read docs", href: "/docs", variant: "ghost" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
         ]}
       />
 
@@ -164,7 +165,7 @@ export default function HowItWorksPage() {
         lead="The architecture is meant to be inspected — in the docs, and on testnet."
         actions={[
           { label: "Read docs", href: "/docs", variant: "primary" },
-          { label: "Explore testnet", href: "/testnet", variant: "ghost" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
         ]}
       />
     </main>

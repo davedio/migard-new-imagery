@@ -13,6 +13,7 @@ import {
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 const SECTION_PAD = "clamp(72px,11vh,150px) clamp(20px,5vw,64px)";
 
@@ -429,9 +430,18 @@ function ProofObjects() {
         ))}
       </div>
       <Reveal style={{ marginTop: 28 }}>
-        <Link href="/testnet" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-          Explore testnet →
-        </Link>
+        <div className="eyebrow">Official channels</div>
+        <div style={{ display: "flex", gap: 12, marginTop: 18, flexWrap: "wrap" }}>
+          <a className="btn btn--ghost" href={OFFICIAL_LINKS.github} target="_blank" rel="noreferrer">
+            Explore on GitHub
+          </a>
+          <a className="btn btn--ghost" href={OFFICIAL_LINKS.x} target="_blank" rel="noreferrer">
+            Follow on X
+          </a>
+          <a className="btn btn--ghost" href={OFFICIAL_LINKS.discord} target="_blank" rel="noreferrer">
+            Join Discord
+          </a>
+        </div>
       </Reveal>
     </section>
   );

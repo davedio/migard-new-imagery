@@ -6,6 +6,7 @@ import {
   Card,
   CtaBand,
 } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "Midgard Docs",
@@ -22,7 +23,7 @@ export default function DocsPage() {
         sub="Midgard docs are where builders inspect the architecture, constraints, contracts, SDK, examples, and testnet behavior."
         actions={[
           { label: "Open docs", href: "#sections", variant: "primary" },
-          { label: "View GitHub", href: "/official-links", variant: "ghost" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
         ]}
       />
 
@@ -42,8 +43,10 @@ export default function DocsPage() {
           />
           <Card
             num="03"
-            title="Contracts"
-            body="Inspect current preprod contracts and related deployment information."
+            title="Source and contracts"
+            body="Inspect implementation progress, contracts, SDK, node surfaces, and related deployment information."
+            cta="Explore on GitHub"
+            href={OFFICIAL_LINKS.github}
             delay={120}
           />
           <Card
@@ -72,8 +75,8 @@ export default function DocsPage() {
         title="A good integration starts with a constraint map."
         lead="Before building a user-facing flow, map the environment, support assumptions, wallet path, error states, settlement path, and fallback behavior."
         actions={[
-          { label: "Open integration checklist", href: "/official-links", variant: "primary" },
-          { label: "Explore testnet", href: "/testnet", variant: "ghost" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "primary" },
+          { label: "Open builder intake", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" },
         ]}
       />
     </main>

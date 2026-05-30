@@ -598,7 +598,7 @@ button.panel:hover {
 }
 .site-footer__top {
   display: grid;
-  grid-template-columns: minmax(240px, 1.5fr) repeat(2, minmax(140px, 1fr));
+  grid-template-columns: minmax(240px, 1.5fr) repeat(3, minmax(140px, 1fr));
   gap: 36px;
   max-width: var(--maxw);
   margin: 0 auto;

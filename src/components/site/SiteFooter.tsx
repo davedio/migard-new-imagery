@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 const EXPLORE = [
   { label: "Users", href: "/users" },
@@ -16,14 +17,20 @@ const RESOURCES = [
   { label: "Official Links", href: "/official-links" },
 ] as const;
 
-// Placeholder destinations — Dave supplies the real URLs / legal pages later.
+const CHANNELS = [
+  { label: "GitHub", href: OFFICIAL_LINKS.github },
+  { label: "X", href: OFFICIAL_LINKS.x },
+  { label: "Discord", href: OFFICIAL_LINKS.discord },
+  { label: "Builder Intake", href: OFFICIAL_LINKS.intakeForm },
+] as const;
+
+// Placeholder destinations — Dave supplies the real legal/support pages later.
 const LEGAL = [
   "Terms",
   "Privacy",
   "Testnet Terms",
   "Risks",
   "Support",
-  "GitHub",
 ] as const;
 
 /**
@@ -73,6 +80,19 @@ export function SiteFooter() {
             {RESOURCES.map((l) => (
               <li key={l.href}>
                 <Link href={l.href}>{l.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="site-footer__col">
+          <h4>Channels</h4>
+          <ul>
+            {CHANNELS.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} target="_blank" rel="noreferrer">
+                  {l.label}
+                </a>
               </li>
             ))}
           </ul>

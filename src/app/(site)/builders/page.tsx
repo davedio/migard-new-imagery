@@ -8,6 +8,7 @@ import {
   Layers,
   CtaBand,
 } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "Build On Midgard",
@@ -25,7 +26,7 @@ export default function BuildersPage() {
         body="Your users should not have to leave the ecosystem. Your team should not have to rebuild around a foreign stack just to reach a higher-capacity path."
         actions={[
           { label: "Read technical docs", href: "/docs", variant: "primary" },
-          { label: "Inspect GitHub", href: "/official-links", variant: "ghost" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
         ]}
       />
 
@@ -69,6 +70,8 @@ export default function BuildersPage() {
             num="02"
             title="Inspect the implementation"
             body="Review the repository, contracts, SDK, node surfaces, and testnet materials."
+            cta="Explore on GitHub"
+            href={OFFICIAL_LINKS.github}
             delay={70}
           />
           <Card
@@ -143,8 +146,8 @@ export default function BuildersPage() {
         title="Bring the proof with you."
         lead="If you are building on Midgard, do not build from a headline. Build from the architecture, the source, the docs, the testnet behavior, and the constraints you can actually inspect."
         actions={[
-          { label: "Open docs", href: "/docs", variant: "primary" },
-          { label: "Join builder readiness", href: "/testnet", variant: "ghost" },
+          { label: "Open builder intake", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
         ]}
       />
     </main>

@@ -7,6 +7,7 @@ import {
   Card,
   CtaBand,
 } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "Partner With Midgard",
@@ -23,7 +24,7 @@ export default function PartnersPage() {
         sub="Midgard partner work starts with function: what role you play, what flow you support, and what the system becomes better at because you are there."
         actions={[
           { label: "Explore readiness tracks", href: "#readiness", variant: "primary" },
-          { label: "Request partner intake", href: "/official-links", variant: "ghost" },
+          { label: "Request partner intake", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" },
         ]}
       />
 
@@ -93,8 +94,8 @@ export default function PartnersPage() {
         title="Start with the job."
         lead="Tell us what you want to make easier, safer, faster, or more inspectable. Midgard partnerships should start with utility and become public only when the work is real."
         actions={[
-          { label: "Request partner intake", href: "/official-links", variant: "primary" },
-          { label: "Read partner tracks", href: "#readiness", variant: "ghost" },
+          { label: "Request partner intake", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
         ]}
       />
     </main>

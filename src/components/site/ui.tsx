@@ -201,6 +201,7 @@ export function Card({
   href?: string;
   delay?: number;
 }) {
+  const external = href ? /^https?:\/\//.test(href) : false;
   const inner = (
     <>
       {num ? <div className="card__num">{num}</div> : null}
@@ -212,7 +213,17 @@ export function Card({
 
   return (
     <Reveal delay={delay} style={{ display: "flex" }}>
-      {href ? (
+      {href && external ? (
+        <a
+          href={href}
+          className="card panel"
+          style={{ width: "100%" }}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {inner}
+        </a>
+      ) : href ? (
         <Link href={href} className="card panel" style={{ width: "100%" }}>
           {inner}
         </Link>
@@ -360,10 +371,14 @@ export function LinksTable({ rows }: { rows: LinkRow[] }) {
           <span className="k">{r.k}</span>
           {r.pending || !r.href ? (
             <span className="v pending">{r.v}</span>
-          ) : (
+          ) : /^https?:\/\//.test(r.href) ? (
             <a className="v" href={r.href} target="_blank" rel="noreferrer">
               {r.v}
             </a>
+          ) : (
+            <Link className="v" href={r.href}>
+              {r.v}
+            </Link>
           )}
         </div>
       ))}
