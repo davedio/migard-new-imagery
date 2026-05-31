@@ -209,6 +209,9 @@ function Hero() {
         maxWidth: 720,
       }}
     >
+      <div className="eyebrow" style={{ marginBottom: 22 }}>
+        Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
+      </div>
       <h1 style={{ fontSize: "clamp(30px, 4.6vw, 54px)", lineHeight: 1.05 }}>
         Built for Throughput.<br />
         Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>.
