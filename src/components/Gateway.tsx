@@ -205,13 +205,10 @@ function Hero() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "104px clamp(20px,5vw,64px) 156px",
+        padding: "92px clamp(20px,5vw,64px) 168px",
         maxWidth: 720,
       }}
     >
-      <div className="eyebrow" style={{ marginBottom: 22 }}>
-        Cardano-native optimistic rollup
-      </div>
       <h1 style={{ fontSize: "clamp(30px, 4.6vw, 54px)", lineHeight: 1.05 }}>
         Built for Throughput.<br />
         Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>.
