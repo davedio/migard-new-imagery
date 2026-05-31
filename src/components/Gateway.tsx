@@ -199,33 +199,24 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 
 function Hero() {
   return (
-    <header
-      style={{
-        minHeight: "92svh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        padding: "clamp(132px,15vh,188px) var(--gut) clamp(112px,15vh,178px)",
-        maxWidth: 900,
-      }}
-    >
-      <div className="eyebrow" style={{ marginBottom: 22 }}>
+    <header className="home-hero">
+      <div className="eyebrow home-hero__eyebrow">
         Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
       </div>
-      <h1 style={{ fontSize: "clamp(42px, 6vw, 78px)", lineHeight: 1.02, maxWidth: 840 }}>
+      <h1>
         Built for Throughput.<br />
         Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>.
       </h1>
-      <p style={{ marginTop: 24, maxWidth: 640, color: "var(--text)", fontSize: "clamp(17px,1.6vw,21px)" }}>
+      <p className="home-hero__lead">
         Midgard is a Cardano-native optimistic Layer 2 rollup. It runs
         applications at L2 speed and settles them through a trust path anchored
         to Cardano L1.
       </p>
-      <p style={{ marginTop: 14, maxWidth: 620, color: "var(--text-dim)", fontSize: "clamp(15px,1.35vw,17px)" }}>
+      <p className="home-hero__sublead">
         Same eUTXO model, familiar tooling, fees paid in ADA. Speed you can
         inspect without trading away correctness.
       </p>
-      <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", alignItems: "center" }}>
+      <div className="home-hero__actions">
         <Link className="btn btn--primary" href="/get-started">
           Get Started
         </Link>
@@ -233,7 +224,7 @@ function Hero() {
           See How It Works
         </Link>
       </div>
-      <div style={{ marginTop: 54, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--text-dim)", textTransform: "uppercase" }}>
+      <div className="home-hero__cue">
         ↓ Speed only matters if the path can be checked
       </div>
     </header>

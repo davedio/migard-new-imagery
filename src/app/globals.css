@@ -168,6 +168,144 @@ a {
   z-index: 10;
 }
 
+/* ---- homepage hero ---- */
+.home-hero {
+  min-height: 92svh;
+  width: min(640px, calc(100vw - (var(--gut) * 2)));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 132px 142px;
+  padding-inline: var(--gut) 0;
+}
+
+.home-hero__eyebrow {
+  margin-bottom: 22px;
+}
+
+.home-hero h1 {
+  max-width: 100%;
+  color: var(--text-hi);
+  font-size: 58px;
+  line-height: 1.03;
+  letter-spacing: 0;
+}
+
+.home-hero__lead {
+  max-width: 620px;
+  margin-top: 24px;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.home-hero__sublead {
+  max-width: 600px;
+  margin-top: 14px;
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.home-hero__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.home-hero__cue {
+  margin-top: 54px;
+  color: var(--text-dim);
+  font: 11px/1.4 var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 1600px) {
+  .home-hero {
+    width: min(860px, 48vw);
+    padding-inline-start: clamp(96px, 6vw, 148px);
+  }
+
+  .home-hero h1 {
+    font-size: 74px;
+  }
+
+  .home-hero__lead {
+    max-width: 700px;
+    font-size: 20px;
+  }
+
+  .home-hero__sublead {
+    max-width: 680px;
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 2200px) {
+  .home-hero {
+    width: min(980px, 46vw);
+    padding-inline-start: 140px;
+  }
+
+  .home-hero h1 {
+    font-size: 88px;
+  }
+
+  .home-hero__lead {
+    max-width: 760px;
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 1320px) {
+  .home-hero {
+    width: min(590px, calc(100vw - (var(--gut) * 2)));
+    padding-block: 126px 132px;
+  }
+
+  .home-hero h1 {
+    font-size: 52px;
+  }
+
+  .home-hero__lead {
+    font-size: 17px;
+  }
+}
+
+@media (max-width: 720px) {
+  .home-hero {
+    width: auto;
+    min-height: 92svh;
+    padding: 128px 22px 112px;
+  }
+
+  .home-hero h1 {
+    font-size: 40px;
+    line-height: 1.06;
+  }
+
+  .home-hero__eyebrow {
+    margin-bottom: 26px;
+  }
+
+  .home-hero__lead {
+    margin-top: 24px;
+    font-size: 18px;
+  }
+
+  .home-hero__sublead {
+    font-size: 15.5px;
+  }
+
+  .home-hero__actions .btn {
+    flex: 1 1 150px;
+    justify-content: center;
+  }
+}
+
 /* ---- layout helpers ---- */
 .wrap {
   max-width: var(--maxw);
