@@ -42,6 +42,8 @@ const BG_SRC = "/hero-tree-green.png";
 const IMG_ASPECT = 1672 / 941;
 // Matches the CSS background `scale(1.06)` so the particle field sits on the art.
 const ZOOM = 1.06;
+const mobileBgAnchorX = (width: number) =>
+  width <= 420 ? 0.7 : width <= 720 ? 0.68 : 0.5;
 
 // Geometry of the painted tree, read off the art in the PNG's normalised
 // 0..1 space: a rounded canopy DOME, a short VERTICAL trunk right-of-centre,
@@ -1079,7 +1081,7 @@ export default function StaticTreeHero({
         dH = H * ZOOM;
         dW = H * IMG_ASPECT * ZOOM;
       }
-      const oX = (W - dW) / 2;
+      const oX = (W - dW) * mobileBgAnchorX(W);
       const oY = (H - dH) / 2;
 
       // Hover: convert the cursor to art coords and warm any pocket it's over.
@@ -1347,13 +1349,14 @@ export default function StaticTreeHero({
     <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
       <div
         ref={bgRef}
+        className="static-tree-hero__bg"
         style={{
           position: "absolute",
           inset: 0,
           backgroundColor: "#040a06",
           backgroundImage: `radial-gradient(85% 75% at 72% 32%, rgba(26,84,40,0.22), transparent 58%), url("${BG_SRC}")`,
           backgroundSize: "cover, cover",
-          backgroundPosition: "center, center",
+          backgroundPosition: "center, var(--static-tree-bg-position, 50% 50%)",
           backgroundRepeat: "no-repeat, no-repeat",
           transform: `scale(${ZOOM})`,
           willChange: "transform",

@@ -163,6 +163,19 @@ a {
   z-index: 1;
   pointer-events: none;
 }
+.static-tree-hero__bg {
+  --static-tree-bg-position: 50% 50%;
+}
+@media (max-width: 720px) {
+  .static-tree-hero__bg {
+    --static-tree-bg-position: 68% 50%;
+  }
+}
+@media (max-width: 420px) {
+  .static-tree-hero__bg {
+    --static-tree-bg-position: 70% 50%;
+  }
+}
 .content {
   position: relative;
   z-index: 10;
