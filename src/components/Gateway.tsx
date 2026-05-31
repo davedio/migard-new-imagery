@@ -291,6 +291,7 @@ const AUDIENCE: { title: string; line: string; cta: string; href: string }[] = [
   { title: "How It Works", line: "Understand the mechanism.", cta: "Follow the path", href: "/how-it-works" },
   { title: "Security", line: "Inspect the guarantees.", cta: "See the trust case", href: "/security" },
   { title: "Get Started", line: "Build, operate, watch, integrate, or support.", cta: "Choose your role", href: "/get-started" },
+  { title: "About", line: "Learn who builds it and why.", cta: "Read the thesis", href: "/about" },
 ];
 
 function AudiencePaths() {
@@ -298,7 +299,7 @@ function AudiencePaths() {
     <section id="paths" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
         <div className="eyebrow">Site path</div>
-        <h2 style={h2Style}>Understand it, trust it, get started.</h2>
+        <h2 style={h2Style}>Understand it, trust it, get started, know who builds it.</h2>
       </Reveal>
       <div
         style={{
