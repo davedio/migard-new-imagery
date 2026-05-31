@@ -491,6 +491,19 @@ button.panel:hover {
   transform: translateY(-2px);
 }
 
+/* Homepage Explore cards: more translucent than the solid --panel so the
+   world-tree reads through them, with a dark tint + blur to keep copy legible. */
+#explore .panel {
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.03), transparent 42%),
+    rgba(5, 11, 8, 0.5);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+#explore a.panel:hover {
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.05), transparent 42%),
+    rgba(5, 11, 8, 0.64);
+}
+
 .metric-row {
   display: flex;
   justify-content: space-between;
