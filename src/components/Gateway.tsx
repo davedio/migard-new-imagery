@@ -310,7 +310,7 @@ function Hero() {
         Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
       </div>
       <h1>
-        Built to Scale.<br />
+        Built to Scale<br />
         Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>
       </h1>
       <p className="home-hero__lead">
