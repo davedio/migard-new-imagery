@@ -437,7 +437,7 @@ button.panel:hover {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  filter: brightness(1.08) saturate(1.08) contrast(1.03);
+  filter: brightness(0.62) saturate(1) contrast(1.03);
   opacity: 1;
 }
 
