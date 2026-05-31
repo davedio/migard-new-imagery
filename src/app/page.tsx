@@ -28,7 +28,7 @@ export default function SplashPage() {
         <div className="splash__lock" aria-label="Midgard">
           <Image src="/midgard-icon.png" alt="" aria-hidden width={64} height={64} priority />
           <span className="wm">
-            <MidgardWordmark radius={120} />
+            <MidgardWordmark radius={180} />
           </span>
         </div>
         <Link href="/home" className="splash__enter" aria-label="Enter Midgard">
