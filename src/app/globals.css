@@ -48,8 +48,9 @@
   --r-sm: 4px;
   --r: 6px;
   --r-lg: 8px;
-  --maxw: 1240px;
-  --gut: clamp(20px, 5vw, 64px);
+  --maxw: 1320px;
+  --copy-max: 760px;
+  --gut: clamp(22px, 4.8vw, 80px);
 
   /* motion */
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -61,16 +62,16 @@
   --root-glow: rgba(32, 190, 67, 0.08);
 
   /* semantic type roles from the Midgard NEW handoff */
-  --h1-size: clamp(32px, 5vw, 58px);
+  --h1-size: clamp(34px, 4.8vw, 62px);
   --h1-line: 1.04;
   --h1-weight: 500;
   --h1-spacing: -0.01em;
-  --h2-size: clamp(24px, 3.2vw, 38px);
+  --h2-size: clamp(25px, 3vw, 40px);
   --h2-line: 1.12;
   --h2-weight: 500;
   --h3-size: 18px;
   --h3-weight: 500;
-  --lead-size: clamp(15px, 1.6vw, 17px);
+  --lead-size: clamp(16px, 1.45vw, 18px);
   --body-size: 15px;
   --body-line: 1.55;
   --eyebrow-size: 11px;
@@ -405,6 +406,7 @@ button.panel:hover {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
+  overflow-x: clip;
 }
 
 .page-main--how-it-works {
@@ -414,7 +416,7 @@ button.panel:hover {
 /* ---- How It Works lifecycle port ---- */
 .lifecycle {
   position: relative;
-  padding: clamp(118px, 16vh, 176px) clamp(20px, 5vw, 64px) clamp(72px, 11vh, 128px);
+  padding: clamp(112px, 14vh, 156px) var(--gut) clamp(68px, 10vh, 118px);
   border-bottom: 1px solid var(--panel-edge);
   background:
     radial-gradient(62% 52% at 74% 18%, rgba(32, 190, 67, 0.11), transparent 64%),
@@ -439,11 +441,11 @@ button.panel:hover {
 .lifecycle__inner {
   position: relative;
   z-index: 1;
-  max-width: var(--maxw);
+  max-width: min(1400px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  gap: clamp(40px, 6vw, 78px);
+  grid-template-columns: clamp(92px, 8vw, 126px) minmax(0, 1fr);
+  gap: clamp(34px, 4.8vw, 72px);
   align-items: start;
 }
 
@@ -563,29 +565,30 @@ button.panel:hover {
 }
 
 .lifecycle__hero {
-  max-width: 780px;
-  margin-bottom: clamp(38px, 6vh, 64px);
+  max-width: min(880px, 100%);
+  margin-bottom: clamp(32px, 5vh, 58px);
 }
 
 .lifecycle__hero h1 {
   margin-top: 16px;
   color: var(--text-hi);
-  font-size: 64px;
+  font-size: clamp(42px, 4.6vw, 68px);
   line-height: 1.02;
   letter-spacing: 0;
 }
 
 .lifecycle__hero p {
-  max-width: 700px;
+  max-width: min(760px, 100%);
   margin-top: 18px;
   color: var(--text);
-  font-size: 20px;
+  font-size: clamp(17px, 1.45vw, 21px);
   line-height: 1.55;
 }
 
 .lifecycle__steps {
   display: grid;
-  gap: 16px;
+  gap: clamp(14px, 1.2vw, 20px);
+  max-width: 1080px;
 }
 
 .lifecycle-card {
@@ -613,7 +616,7 @@ button.panel:hover {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 18px 20px;
+  padding: clamp(16px, 1.45vw, 20px) clamp(18px, 1.8vw, 24px);
   border-bottom: 1px solid var(--panel-edge);
   background: rgba(11, 21, 16, 0.58);
 }
@@ -680,14 +683,14 @@ button.panel:hover {
 }
 
 .lifecycle-card__body {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
   background: rgba(3, 7, 4, 0.45);
 }
 
 .lifecycle-card__side {
-  flex: 1 1 0;
   min-width: 0;
-  padding: 20px;
+  padding: clamp(18px, 1.7vw, 24px);
 }
 
 .lifecycle-card__side[data-muted="true"] {
@@ -723,11 +726,14 @@ button.panel:hover {
 }
 
 .lifecycle-card__bridge {
-  flex: 0 0 44px;
   display: grid;
   place-items: center;
   border-inline: 1px solid var(--panel-edge);
   background: rgba(5, 12, 8, 0.54);
+}
+
+.lifecycle-card__bridge[data-empty="true"] {
+  opacity: 0.45;
 }
 
 .lifecycle-card__flow {
@@ -743,7 +749,7 @@ button.panel:hover {
 
 @media (max-width: 900px) {
   .lifecycle {
-    padding-top: 112px;
+    padding-top: 106px;
   }
 
   .lifecycle__inner {
@@ -756,11 +762,11 @@ button.panel:hover {
   }
 
   .lifecycle__hero h1 {
-    font-size: 48px;
+    font-size: clamp(36px, 8vw, 48px);
   }
 
   .lifecycle__hero p {
-    font-size: 18px;
+    font-size: clamp(16px, 3.2vw, 18px);
   }
 }
 
@@ -788,13 +794,17 @@ button.panel:hover {
   }
 
   .lifecycle-card__body {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
 
   .lifecycle-card__bridge {
     min-height: 36px;
     border-block: 1px solid var(--panel-edge);
     border-inline: 0;
+  }
+
+  .lifecycle-card__bridge[data-empty="true"] {
+    display: none;
   }
 }
 
@@ -864,7 +874,7 @@ button.panel:hover {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 14px clamp(20px, 5vw, 64px);
+  padding: 14px var(--gut);
   background: linear-gradient(180deg, rgba(7, 18, 11, 0.86), rgba(7, 18, 11, 0.2) 75%, transparent);
   backdrop-filter: blur(9px);
   -webkit-backdrop-filter: blur(9px);
@@ -950,7 +960,7 @@ button.panel:hover {
     z-index: 49;
     display: flex;
     flex-direction: column;
-    padding: 10px clamp(20px, 5vw, 64px) 22px;
+    padding: 10px var(--gut) 22px;
     background: rgba(6, 13, 9, 0.97);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -988,7 +998,7 @@ button.panel:hover {
   margin-top: auto;
   border-top: 1px solid var(--panel-edge);
   background: linear-gradient(180deg, transparent, rgba(5, 12, 8, 0.7));
-  padding: 56px clamp(20px, 5vw, 64px) 64px;
+  padding: 56px var(--gut) 64px;
 }
 .site-footer__top {
   display: grid;
@@ -1090,12 +1100,15 @@ button.panel:hover {
 
 /* ---- page hero ---- */
 .page-hero {
-  padding: clamp(120px, 18vh, 190px) clamp(20px, 5vw, 64px) clamp(40px, 7vh, 80px);
+  display: flex;
+  justify-content: center;
+  padding: clamp(118px, 16vh, 178px) var(--gut) clamp(46px, 7vh, 84px);
 }
 .page-hero__inner {
-  max-width: 760px;
+  width: min(var(--maxw), 100%);
 }
 .page-hero h1 {
+  max-width: 900px;
   font-size: var(--h1-size);
   line-height: var(--h1-line);
   font-weight: var(--h1-weight);
@@ -1104,30 +1117,31 @@ button.panel:hover {
 }
 .page-hero .sub {
   margin-top: 20px;
-  max-width: 600px;
-  font-size: clamp(16px, 1.8vw, 19px);
+  max-width: 680px;
+  font-size: clamp(16px, 1.55vw, 20px);
   color: var(--text);
 }
 .page-hero .body {
   margin-top: 16px;
-  max-width: 600px;
+  max-width: 680px;
   font-size: clamp(14px, 1.5vw, 16px);
   color: var(--text-dim);
 }
 
 /* ---- section ---- */
 .section {
-  padding: clamp(54px, 9vh, 110px) clamp(20px, 5vw, 64px);
+  padding: clamp(58px, 8vh, 112px) var(--gut);
 }
 .section--tight {
-  padding-block: clamp(36px, 6vh, 64px);
+  padding-block: clamp(38px, 5.8vh, 68px);
 }
 .section__inner {
   max-width: var(--maxw);
   margin: 0 auto;
+  width: 100%;
 }
 .section__head {
-  max-width: 700px;
+  max-width: 760px;
 }
 .section h2 {
   font-size: var(--h2-size);
@@ -1137,13 +1151,13 @@ button.panel:hover {
 }
 .lead {
   margin-top: 18px;
-  max-width: 660px;
+  max-width: 720px;
   font-size: var(--lead-size);
   color: var(--text);
 }
 .prose {
   margin-top: 18px;
-  max-width: 660px;
+  max-width: 720px;
   display: grid;
   gap: 14px;
 }
@@ -1164,15 +1178,15 @@ button.panel:hover {
 .card-grid {
   margin-top: 36px;
   display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+  gap: clamp(16px, 1.4vw, 22px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
 }
 .card-grid--2 {
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  max-width: 940px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  max-width: 1040px;
 }
 .card {
-  padding: 24px 24px 22px;
+  padding: clamp(22px, 1.8vw, 28px);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -1333,7 +1347,7 @@ button.panel:hover {
 
 /* ---- cta band ---- */
 .cta-band {
-  padding: clamp(80px, 14vh, 170px) clamp(20px, 5vw, 64px);
+  padding: clamp(80px, 13vh, 158px) var(--gut);
 }
 .cta-band__inner {
   max-width: 720px;

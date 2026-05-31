@@ -15,7 +15,7 @@ import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
-const SECTION_PAD = "clamp(72px,11vh,150px) clamp(20px,5vw,64px)";
+const SECTION_PAD = "clamp(76px,10vh,142px) var(--gut)";
 
 // Two hero forks coexist. Flip this to switch:
 //   "static" — green PNG background + 2D canvas sap particles (StaticTreeHero)
@@ -205,23 +205,23 @@ function Hero() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "118px clamp(20px,5vw,64px) 142px",
-        maxWidth: 720,
+        padding: "clamp(132px,15vh,188px) var(--gut) clamp(112px,15vh,178px)",
+        maxWidth: 900,
       }}
     >
       <div className="eyebrow" style={{ marginBottom: 22 }}>
         Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
       </div>
-      <h1 style={{ fontSize: "clamp(30px, 4.6vw, 54px)", lineHeight: 1.05 }}>
+      <h1 style={{ fontSize: "clamp(42px, 6vw, 78px)", lineHeight: 1.02, maxWidth: 840 }}>
         Built for Throughput.<br />
         Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>.
       </h1>
-      <p style={{ marginTop: 22, maxWidth: 540, color: "var(--text)", fontSize: "clamp(15px,1.6vw,18px)" }}>
+      <p style={{ marginTop: 24, maxWidth: 640, color: "var(--text)", fontSize: "clamp(17px,1.6vw,21px)" }}>
         Midgard is a Cardano-native optimistic Layer 2 rollup. It runs
         applications at L2 speed and settles them through a trust path anchored
         to Cardano L1.
       </p>
-      <p style={{ marginTop: 14, maxWidth: 540, color: "var(--text-dim)", fontSize: "clamp(14px,1.5vw,16px)" }}>
+      <p style={{ marginTop: 14, maxWidth: 620, color: "var(--text-dim)", fontSize: "clamp(15px,1.35vw,17px)" }}>
         Same eUTXO model, familiar tooling, fees paid in ADA. Speed you can
         inspect without trading away correctness.
       </p>
@@ -502,7 +502,7 @@ function CommonQuestions() {
 
 function ClosingCTA() {
   return (
-    <section style={{ padding: "clamp(96px,16vh,200px) clamp(20px,5vw,64px)" }}>
+    <section style={{ padding: "clamp(96px,15vh,188px) var(--gut)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
         <div className="eyebrow" style={{ justifyContent: "center", display: "inline-flex" }}>
           Closing
@@ -560,7 +560,7 @@ function LayerSection({
         display: "flex",
         alignItems: "center",
         justifyContent: side,
-        padding: "0 clamp(20px,5vw,64px)",
+        padding: "0 var(--gut)",
       }}
     >
       <div

@@ -315,11 +315,9 @@ function StepCard({
           </div>
           <p>{step.l2}</p>
         </div>
-        {step.flow ? (
-          <div className="lifecycle-card__bridge">
-            <FlowIcon flow={step.flow} active={active} />
-          </div>
-        ) : null}
+        <div className="lifecycle-card__bridge" data-empty={!step.flow}>
+          <FlowIcon flow={step.flow} active={active} />
+        </div>
         <div className="lifecycle-card__side" data-muted={!step.l1}>
           <div className="lifecycle-card__network">
             <span />
