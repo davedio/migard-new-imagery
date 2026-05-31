@@ -3,34 +3,31 @@ import Image from "next/image";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 const EXPLORE = [
-  { label: "Users", href: "/users" },
-  { label: "Builders", href: "/builders" },
-  { label: "Partners", href: "/partners" },
+  { label: "Home", href: "/home" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Security", href: "/security" },
+  { label: "Get Started", href: "/get-started" },
+  { label: "About", href: "/about" },
 ] as const;
 
 const RESOURCES = [
-  { label: "Docs", href: "/docs" },
-  { label: "Testnet", href: "/testnet" },
+  { label: "Testnet status", href: "/testnet" },
   { label: "FAQ", href: "/faq" },
-  { label: "Official Links", href: "/official-links" },
+  { label: "Official links", href: "/official-links" },
+  { label: "Security contact", href: "/official-links#security-contact" },
 ] as const;
 
 const CHANNELS = [
+  { label: "Docs", href: OFFICIAL_LINKS.docs },
   { label: "GitHub", href: OFFICIAL_LINKS.github },
-  { label: "X", href: OFFICIAL_LINKS.x },
   { label: "Discord", href: OFFICIAL_LINKS.discord },
-  { label: "Builder Intake", href: OFFICIAL_LINKS.intakeForm },
+  { label: "X", href: OFFICIAL_LINKS.x },
 ] as const;
 
 // Placeholder destinations — Dave supplies the real legal/support pages later.
 const LEGAL = [
   "Terms",
   "Privacy",
-  "Testnet Terms",
-  "Risks",
-  "Support",
 ] as const;
 
 /**
@@ -48,17 +45,21 @@ export function SiteFooter() {
             <span className="wm">Midgard</span>
           </div>
           <p>
-            A Cardano-native Layer 2 built for throughput and secured by math.
-            Fees are paid in ADA.
+            Built by Anastasia Labs. A Cardano-native Layer 2 built for
+            throughput and a trust path you can inspect.
           </p>
           <div className="chips">
             <span className="chip chip--demo">
               <span className="dot" />
-              Simulated data
+              Fees paid in ADA
             </span>
             <span className="chip chip--testnet">
               <span className="dot" />
-              Pre-alpha
+              Settles on Cardano L1
+            </span>
+            <span className="chip chip--demo">
+              <span className="dot" />
+              Pre-alpha testnet
             </span>
           </div>
         </div>
@@ -108,7 +109,7 @@ export function SiteFooter() {
           ))}
         </div>
         <span className="meta">
-          © 2026 Midgard · Simulated · connects to live data at launch
+          © 2026 Midgard · Always start from official links
         </span>
       </div>
     </footer>

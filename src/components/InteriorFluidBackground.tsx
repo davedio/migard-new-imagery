@@ -12,6 +12,8 @@ import SecurityPageBackdrop from "./SecurityPageBackdrop";
 export default function InteriorFluidBackground() {
   const pathname = usePathname();
   if (pathname === "/" || pathname === "/home") return null;
-  if (pathname === "/security") return <SecurityPageBackdrop />;
+  if (pathname === "/security") {
+    return <SecurityPageBackdrop />;
+  }
   return <FluidScene />;
 }

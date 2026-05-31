@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero, Section, Faq, CtaBand } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "Midgard FAQ",
@@ -13,7 +14,7 @@ export default function FaqPage() {
       <PageHero
         label="FAQ"
         title="Questions, answered plainly."
-        sub="Common questions about what Midgard is, how it works, ADA fees, users, builders, wallets, partners, security, and testnet."
+        sub="Common questions about what Midgard is, how it works, ADA fees, builders, participant roles, security, and testnet status."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
           { label: "Open official links", href: "/official-links", variant: "ghost" },
@@ -32,7 +33,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Why does Midgard matter?",
-                  a: "Because promising Cardano applications should not have to leave Cardano when they need more capacity. Midgard gives builders a way to scale while staying aligned with Cardano's architecture, wallets, tooling, and ADA-based economics.",
+                  a: "Because promising Cardano applications should not have to leave Cardano when they need more capacity. Midgard gives builders a path to scale while staying aligned with Cardano's architecture, tooling, and ADA-based economics.",
                 },
                 {
                   q: "How are fees paid?",
@@ -40,7 +41,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Is Midgard a sidechain?",
-                  a: "No. Midgard is a rollup path, not a separate chain asking users to accept an unrelated security model.",
+                  a: "No. Midgard is positioned as a rollup path: L2 execution with commitments, challenge mechanics, and settlement tied back to Cardano L1.",
                 },
                 {
                   q: "What does optimistic rollup mean?",
@@ -53,11 +54,11 @@ export default function FaqPage() {
               items: [
                 {
                   q: "Can existing Cardano apps use Midgard?",
-                  a: "Midgard is designed to preserve Cardano-native development patterns where possible. The goal is to reduce migration pain and keep builders in the Cardano mental model.",
+                  a: "Midgard is designed to preserve Cardano-native development patterns where possible. The goal is to reduce migration burden and keep builders in the Cardano mental model.",
                 },
                 {
                   q: "Where should builders start?",
-                  a: "Start with the docs, repository, contracts page, and builder readiness path.",
+                  a: "Start with the Get Started page, source repository, docs, testnet status, and builder readiness path.",
                 },
                 {
                   q: "What should builders inspect first?",
@@ -74,7 +75,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Can my wallet, dApp, or infrastructure project integrate?",
-                  a: "Yes. Midgard needs serious wallets, dApps, infrastructure providers, analytics teams, security contributors, and community educators.",
+                  a: "Yes. Midgard needs serious wallets, dApps, infrastructure providers, analytics teams, security contributors, operators, and Watchers.",
                 },
                 {
                   q: "What makes a good partner?",
@@ -87,11 +88,11 @@ export default function FaqPage() {
               items: [
                 {
                   q: "What is the security story?",
-                  a: "Midgard's trust story is built around Cardano L1 anchoring, eUTXO-aware design, batching, challenge mechanics, and settlement.",
+                  a: "Midgard's trust story is built around Cardano L1 anchoring, eUTXO-aware design, commitments, challenge mechanics, watchers, and settlement.",
                 },
                 {
                   q: "Where do I report a security issue?",
-                  a: "Use the official security route once published.",
+                  a: "Use the official security contact route once published. Until then, start from Official Links and preserve evidence.",
                 },
                 {
                   q: "Where do I get support?",
@@ -108,7 +109,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "What should I do first?",
-                  a: "Start from the official Midgard site, read the docs, and use official links.",
+                  a: "Start from the official Midgard site, read the status label, inspect the docs/source, and use official links.",
                 },
               ],
             },
@@ -122,7 +123,7 @@ export default function FaqPage() {
         lead="Use official links, read the docs, and explore the testnet path."
         actions={[
           { label: "Open official links", href: "/official-links", variant: "primary" },
-          { label: "Read docs", href: "/docs", variant: "ghost" },
+          { label: "Read docs ↗", href: OFFICIAL_LINKS.docs, variant: "ghost" },
         ]}
       />
     </main>

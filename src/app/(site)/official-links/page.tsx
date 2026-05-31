@@ -21,10 +21,10 @@ export default function OfficialLinksPage() {
       <PageHero
         label="Official links"
         title="Start from the official path."
-        sub="Midgard should be easy to inspect and hard to impersonate. Use official links for docs, contracts, GitHub, community, support, and security routes."
+        sub="Midgard should be easy to inspect and hard to impersonate. Use official links for docs, GitHub, community, status, support, and security routes."
         actions={[
           { label: "View official links", href: "#links", variant: "primary" },
-          { label: "Open docs", href: "/docs", variant: "ghost" },
+          { label: "Open docs ↗", href: OFFICIAL_LINKS.docs, variant: "ghost" },
         ]}
       />
 
@@ -37,16 +37,16 @@ export default function OfficialLinksPage() {
         <LinksTable
           rows={[
             { k: "Website", v: "midgard-gateway.vercel.app", href: OFFICIAL_LINKS.website },
-            { k: "Docs", v: "Docs page", href: "/docs" },
-            { k: "Contracts", v: "Publishing soon", pending: true },
+            { k: "Docs", v: "GitHub source/docs", href: OFFICIAL_LINKS.docs },
+            { k: "Contracts", v: "Testnet status", href: "/testnet#contracts" },
             { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github },
             { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x },
             { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord },
             { k: "Builder/Testnet intake", v: "Google form", href: OFFICIAL_LINKS.intakeForm },
             { k: "Newsletter", v: "Publishing soon", pending: true },
             { k: "Support", v: "Publishing soon", pending: true },
-            { k: "Security", v: "Publishing soon", pending: true },
-            { k: "Status", v: "Publishing soon", pending: true },
+            { k: "Security contact", v: "Publishing soon", pending: true },
+            { k: "Status", v: "Testnet status", href: "/testnet" },
           ]}
         />
       </Section>
@@ -66,16 +66,16 @@ export default function OfficialLinksPage() {
         />
       </Section>
 
-      <Section eyebrow="Reporting" title="Preserve evidence. Use official routes." tight>
+      <Section id="security-contact" eyebrow="Security contact" title="Preserve evidence. Use official routes." tight>
         <Prose
           items={[
             {
-              text: "If you see a suspicious link or account, do not connect your wallet. Preserve the URL, account name, screenshot, timestamp, and where you saw it. Report through the official support, security, or community route.",
+              text: "If you see a suspicious link, account, or security issue, do not connect your wallet. Preserve the URL, account name, screenshot, timestamp, and where you saw it. Report through the official support, security, or community route once published.",
             },
           ]}
         />
         <Actions
-          items={[{ label: "Report suspicious activity", href: "#links", variant: "ghost" }]}
+          items={[{ label: "Check official routes", href: "#links", variant: "ghost" }]}
         />
       </Section>
     </main>

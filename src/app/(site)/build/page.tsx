@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function BuildersRedirect() {
+export default function BuildRedirect() {
   redirect("/get-started");
 }

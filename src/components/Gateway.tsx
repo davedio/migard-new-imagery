@@ -205,7 +205,7 @@ function Hero() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "0 clamp(20px,5vw,64px)",
+        padding: "104px clamp(20px,5vw,64px) 156px",
         maxWidth: 720,
       }}
     >
@@ -217,28 +217,24 @@ function Hero() {
         Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>.
       </h1>
       <p style={{ marginTop: 22, maxWidth: 540, color: "var(--text)", fontSize: "clamp(15px,1.6vw,18px)" }}>
-        Midgard brings high-throughput Layer 2 blockchain performance, rooted
-        directly in the mathematical rigor of Cardano.
+        Midgard is a Cardano-native optimistic Layer 2 rollup. It runs
+        applications at L2 speed and settles them through a trust path anchored
+        to Cardano L1.
       </p>
       <p style={{ marginTop: 14, maxWidth: 540, color: "var(--text-dim)", fontSize: "clamp(14px,1.5vw,16px)" }}>
-        This is not speed for the sake of a number. It is throughput with a
-        trust path.
+        Same eUTXO model, familiar tooling, fees paid in ADA. Speed you can
+        inspect without trading away correctness.
       </p>
       <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", alignItems: "center" }}>
         <Link className="btn btn--primary" href="/testnet">
-          Explore Testnet →
+          Explore testnet status
         </Link>
         <Link className="btn btn--ghost" href="/how-it-works">
           See How It Works
         </Link>
-        <Link href="/builders" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-          Build on Midgard
+        <Link href="/get-started" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+          Get Started
         </Link>
-      </div>
-      <div style={{ display: "flex", gap: 10, marginTop: 26, flexWrap: "wrap" }}>
-        <span className="chip chip--testnet"><span className="dot" />Pre-Alpha Testnet</span>
-        <span className="chip chip--demo"><span className="dot" />Simulated · connects to live data at launch</span>
-        <span className="chip chip--l1"><span className="dot" />Cardano L1 anchor · claim-dependent</span>
       </div>
       <div style={{ marginTop: 54, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--text-dim)", textTransform: "uppercase" }}>
         ↓ Speed only matters if the path can be checked
@@ -264,16 +260,16 @@ function MechanismIntro() {
   return (
     <section id="system" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Trust architecture</div>
-        <h2 style={h2Style}>Speed only matters if the path can be checked.</h2>
+        <div className="eyebrow">How it works</div>
+        <h2 style={h2Style}>Instant execution. On-chain verification.</h2>
         <p style={leadStyle}>
-          Activity happens on L2. Transactions are batched. State transitions
-          anchor back to Cardano L1. Disputes have a challenge path. Settlement
-          returns to the base layer.
+          A transaction is valid when it is checked against eUTXO rules, then
+          ordered, committed, watched, and settled through the Cardano L1 trust
+          path.
         </p>
         <p style={{ ...leadStyle, marginTop: 14, color: "var(--text-dim)" }}>
-          Not a detached network. Not another bridge maze. A Cardano-native
-          execution path with Cardano still in the trust loop.
+          Independent Watchers can replay committed blocks and use fraud proofs
+          to contest invalid state. Speed up front, verification underneath.
         </p>
         <div
           style={{
@@ -292,17 +288,17 @@ function MechanismIntro() {
 }
 
 const AUDIENCE: { title: string; line: string; cta: string; href: string }[] = [
-  { title: "Users", line: "Understand the path.", cta: "Start with users", href: "/users" },
-  { title: "Builders", line: "Build with context.", cta: "Open builder path", href: "/builders" },
-  { title: "Partners", line: "Make the system useful.", cta: "Explore partner tracks", href: "/partners" },
+  { title: "How It Works", line: "Understand the mechanism.", cta: "Follow the path", href: "/how-it-works" },
+  { title: "Security", line: "Inspect the guarantees.", cta: "See the trust case", href: "/security" },
+  { title: "Get Started", line: "Build, operate, watch, integrate, or support.", cta: "Choose your role", href: "/get-started" },
 ];
 
 function AudiencePaths() {
   return (
     <section id="paths" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Choose your path</div>
-        <h2 style={h2Style}>One system. Three ways in.</h2>
+        <div className="eyebrow">Site path</div>
+        <h2 style={h2Style}>Understand it, trust it, get started.</h2>
       </Reveal>
       <div
         style={{
@@ -336,26 +332,29 @@ function AudiencePaths() {
 }
 
 const WHY_BULLETS = [
-  "More capacity.",
   "Cardano-native development patterns.",
-  "ADA fees.",
+  "Fees paid in ADA.",
   "L1 settlement.",
   "Inspectable proof paths.",
-  "A user experience that can become normal instead of foreign.",
+  "Lower-friction application flow.",
+  "A user experience that can feel native instead of foreign.",
 ];
 
 function WhyItMatters() {
   return (
     <section style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">The category problem</div>
+        <div className="eyebrow">The problem</div>
         <h2 style={h2Style}>
-          Throughput pressure should not become ecosystem exit pressure.
+          Security should not be the price you pay for scale.
         </h2>
         <p style={leadStyle}>
-          When an ecosystem cannot scale, builders leave to find capacity
-          elsewhere. Midgard keeps that pressure inside Cardano — you get room
-          to grow without trading away what made Cardano worth building on.
+          As activity grows on Cardano, fees rise and throughput hits a ceiling.
+          The usual escape routes ask builders and users to accept a weaker or
+          less familiar security model.
+        </p>
+        <p style={{ ...leadStyle, marginTop: 14, color: "var(--text-dim)" }}>
+          Midgard scales Cardano without leaving the trust path behind.
         </p>
         <ul className="bullets" style={{ maxWidth: 560 }}>
           {WHY_BULLETS.map((b) => (
@@ -373,12 +372,11 @@ function ProductThesis() {
   return (
     <section style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Product thesis</div>
-        <h2 style={h2Style}>Midgard is practical scaling.</h2>
+        <div className="eyebrow">Who builds it</div>
+        <h2 style={h2Style}>Built by Anastasia Labs.</h2>
         <p style={leadStyle}>
-          Not a new world that asks you to abandon the old one. A higher-throughput
-          execution path for the apps, wallets, and assets that already live on
-          Cardano — with the trust path intact.
+          Midgard comes from a team building Cardano infrastructure and
+          open-source tooling for serious on-chain systems.
         </p>
         <p
           style={{
@@ -389,27 +387,32 @@ function ProductThesis() {
             color: "var(--text-hi)",
           }}
         >
-          That is the point: make Cardano more usable without making it{" "}
+          The point is simple: make Cardano more usable without making it{" "}
           <span style={{ color: "var(--green-bright)" }}>less Cardano</span>.
         </p>
+        <Link href="/about" style={{ display: "inline-flex", marginTop: 24, fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+          About Midgard →
+        </Link>
       </Reveal>
     </section>
   );
 }
 
 const PROOFS: { title: string; line: string }[] = [
-  { title: "Cardano-native execution", line: "Runs in Cardano's model, not adjacent to it." },
-  { title: "Developer continuity", line: "Familiar patterns, wallets, and tooling carry over." },
-  { title: "Trust architecture", line: "Proofs, challenges, and L1 settlement keep the path checkable." },
-  { title: "ADA economics", line: "Fees are paid in ADA. The economic loop stays on Cardano." },
+  { title: "Anchored to Cardano", line: "State commitments and settlement route through the L1 trust path." },
+  { title: "Verifiable by anyone", line: "Watchers and challenge mechanics keep invalid state contestable." },
+  { title: "Same Cardano", line: "The builder path is designed around eUTXO continuity and familiar tooling." },
+  { title: "Fees paid in ADA", line: "Scaling should extend the Cardano economy, not route value through a bridge token." },
+  { title: "Live status path", line: "Pre-alpha testnet surfaces separate live, simulated, and pending facts." },
+  { title: "Official links", line: "The safest user path starts from canonical channels and clear status labels." },
 ];
 
 function ProofObjects() {
   return (
     <section style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">What it brings into focus</div>
-        <h2 style={h2Style}>What Midgard brings into focus</h2>
+        <div className="eyebrow">Security and economics</div>
+        <h2 style={h2Style}>Scale Cardano. Keep the proof.</h2>
       </Reveal>
       <div
         style={{
@@ -447,26 +450,79 @@ function ProofObjects() {
   );
 }
 
+const QUESTIONS = [
+  {
+    q: "What is Midgard?",
+    a: "A Cardano-native optimistic rollup that runs applications at Layer 2 speed and settles through a trust path anchored to Cardano L1.",
+  },
+  {
+    q: "How are fees paid?",
+    a: "In ADA.",
+  },
+  {
+    q: "Is it a sidechain?",
+    a: "No. Midgard is positioned as a rollup path with commitments, challenge mechanics, and settlement tied back to Cardano L1.",
+  },
+  {
+    q: "What is live now?",
+    a: "A pre-alpha testnet/status path, with website activity clearly labeled where demonstration data is being used.",
+  },
+];
+
+function CommonQuestions() {
+  return (
+    <section style={{ padding: SECTION_PAD }}>
+      <Reveal style={{ maxWidth: 680 }}>
+        <div className="eyebrow">Common questions</div>
+        <h2 style={h2Style}>Answered plainly.</h2>
+      </Reveal>
+      <div
+        style={{
+          marginTop: 28,
+          display: "grid",
+          gap: 14,
+          maxWidth: 860,
+        }}
+      >
+        {QUESTIONS.map((item, i) => (
+          <Reveal key={item.q} delay={i * 70}>
+            <div className="panel" style={{ padding: "20px 22px" }}>
+              <h3 style={{ fontSize: 17, color: "var(--text-hi)" }}>{item.q}</h3>
+              <p style={{ marginTop: 8, color: "var(--text-dim)", fontSize: 14.5 }}>{item.a}</p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+      <Reveal style={{ marginTop: 24 }}>
+        <Link href="/faq" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
+          Read the FAQ →
+        </Link>
+      </Reveal>
+    </section>
+  );
+}
+
 function ClosingCTA() {
   return (
     <section style={{ padding: "clamp(96px,16vh,200px) clamp(20px,5vw,64px)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
         <div className="eyebrow" style={{ justifyContent: "center", display: "inline-flex" }}>
-          Build on Midgard
+          Closing
         </div>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
-          Build where the path can be verified.
+          Scale Cardano. Keep the proof.
         </h2>
         <p style={{ ...leadStyle, marginInline: "auto" }}>
-          Higher throughput, Cardano-native, with a trust path that resolves to
-          L1. Start building, or read how the system holds together.
+          Midgard is live in testnet/status form now. Read the architecture,
+          inspect the source, and build on a scaling path you can verify end to
+          end.
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
-          <Link className="btn btn--primary" href="/builders">
-            Build On Midgard
+          <Link className="btn btn--primary" href="/get-started">
+            Get Started
           </Link>
-          <Link className="btn btn--ghost" href="/how-it-works">
-            How It Works
+          <Link className="btn btn--ghost" href="/testnet">
+            Explore testnet status
           </Link>
         </div>
       </Reveal>
@@ -551,8 +607,8 @@ function LiveHUD({ snap }: { snap: NetworkSnapshot }) {
       className="panel"
       style={{
         position: "fixed",
-        left: "clamp(16px,4vw,40px)",
-        bottom: 22,
+        right: "clamp(16px,4vw,40px)",
+        bottom: 72,
         zIndex: 40,
         padding: "12px 16px",
         display: "grid",
@@ -623,6 +679,7 @@ export default function Gateway() {
         <WhyItMatters />
         <ProductThesis />
         <ProofObjects />
+        <CommonQuestions />
         <ClosingCTA />
       </main>
 

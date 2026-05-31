@@ -12,18 +12,18 @@ import {
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
-  title: "Midgard Testnet",
+  title: "Midgard Testnet Status",
   description:
-    "Midgard testnet is the place for builders, partners, and users to inspect the Cardano-native L2 path before it carries production weight.",
+    "Midgard testnet status: what is live, what is simulated, and where builders can inspect the Cardano-native L2 path.",
 };
 
 export default function TestnetPage() {
   return (
     <main className="page-main">
       <PageHero
-        label="Testnet"
-        title="Test the path before the path carries weight."
-        sub="Midgard testnet is where the architecture becomes tangible: docs, contracts, integrations, wallets, dashboards, feedback, and proof."
+        label="Testnet status"
+        title="Live on Cardano preprod."
+        sub="Midgard is a pre-alpha testnet. The protocol status surface is where builders inspect what is deployed, what is simulated, and what still needs confirmation."
         chips={
           <>
             <span className="chip chip--testnet">
@@ -37,76 +37,75 @@ export default function TestnetPage() {
           </>
         }
         actions={[
-          { label: "Start testnet path", href: "#whats-live", variant: "primary" },
-          { label: "Request access", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" },
+          { label: "What is live", href: "#whats-live", variant: "primary" },
+          { label: "Get Started", href: "/get-started", variant: "ghost" },
         ]}
       />
 
-      <Section eyebrow="What testnet is for" title="Make the path real.">
+      <Section id="whats-live" eyebrow="What is live" title="Deployed and verifiable surfaces.">
         <Prose
           items={[
             {
-              text: "Testnet is not a marketing checkpoint. It is where the system gets sharper.",
+              text: "The public status path should show preprod contract deployment information, source references, deployment history, and a clear label for any activity that is simulated in this preview.",
             },
-          ]}
-        />
-        <Bullets
-          items={[
-            "Builders test integration paths.",
-            "Wallets test user flow.",
-            "dApps test useful activity.",
-            "Infrastructure teams test reliability.",
-            "Analytics teams make activity legible.",
-            "Security contributors test assumptions.",
-            "Community educators make the category understandable.",
+            {
+              text: "Some activity shown in the website prototype is simulated and connects to live data at launch; the contract and deployment surfaces should be checked against the latest status source before public amplification.",
+              variant: "dim",
+            },
           ]}
         />
       </Section>
 
-      <Section id="whats-live" eyebrow="What is live now" title="Current surfaces">
+      <Section id="contracts" eyebrow="Contracts" title="Inspect the contract path.">
         <CardGrid>
           <Card
-            title="Website"
-            body="The public site is the gateway for users, builders, partners, docs, and launch updates."
+            title="Protocol contracts"
+            body="Use the status surface to inspect the current preprod contract addresses and understand which validators each address represents."
             delay={0}
           />
           <Card
-            title="Contracts"
-            body="The contracts page is the place to inspect preprod deployment information."
+            title="State anchors"
+            body="State anchors should show the current public handles for committed blocks, confirmed state, and settlement-relevant surfaces."
             delay={60}
           />
           <Card
             title="Source"
-            body="The repository is the place to inspect implementation progress."
+            body="The repository is where builders inspect implementation progress, SDK surfaces, node behavior, and proof machinery."
             cta="Explore on GitHub"
             href={OFFICIAL_LINKS.github}
             delay={120}
           />
           <Card
-            title="Docs"
-            body="Docs and whitepaper routes should turn curiosity into builder action."
+            title="Deployment history"
+            body="The deployment history should make the path from genesis to first settlement legible and refreshable."
             delay={180}
           />
           <Card
-            title="Community"
-            body="Community routes should answer questions, surface feedback, and route people back to official materials."
-            cta="Join Discord"
-            href={OFFICIAL_LINKS.discord}
+            title="Live node view"
+            body="A node view can show soft confirmations and block sealing, but the page must label simulated versus live data clearly."
             delay={240}
           />
           <Card
-            title="Early access"
-            body="Early access should identify serious builders and partners, not collect passive hype."
-            cta="Open intake form"
-            href={OFFICIAL_LINKS.intakeForm}
+            title="Contract caveats"
+            body="Counts, addresses, and parameter values should be refreshed before press, investor, or policy use."
             delay={300}
           />
         </CardGrid>
       </Section>
 
+      <Section eyebrow="How to engage" title="Inspect, build, report.">
+        <Bullets
+          items={[
+            "Builders read the docs, inspect source and contracts, test supported flows, and bring concrete feedback.",
+            "Partners enter through function: wallet flow, app flow, infrastructure, analytics, monitoring, or security review.",
+            "Users read status labels, start from official links, and watch the network mature.",
+          ]}
+        />
+      </Section>
+
       <Section
         eyebrow="Builders"
-        title="Builders can help make the path real."
+        title="Builders make the path real."
         tight
       >
         <Prose
@@ -117,7 +116,7 @@ export default function TestnetPage() {
           ]}
         />
         <Actions
-          items={[{ label: "Join builder readiness", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" }]}
+          items={[{ label: "Get Started", href: "/get-started", variant: "ghost" }]}
         />
       </Section>
 
@@ -134,7 +133,7 @@ export default function TestnetPage() {
           ]}
         />
         <Actions
-          items={[{ label: "Request partner intake", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" }]}
+          items={[{ label: "Get Started", href: "/get-started", variant: "ghost" }]}
         />
       </Section>
 
@@ -156,9 +155,9 @@ export default function TestnetPage() {
       <CtaBand
         eyebrow="Testnet"
         title="Start from the official path."
-        lead="Use the testnet surfaces published on official links, and bring concrete feedback."
+        lead="Use the status surfaces published on official links, and bring concrete feedback."
         actions={[
-          { label: "Request testnet access", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+          { label: "Get Started", href: "/get-started", variant: "primary" },
           { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
         ]}
       />

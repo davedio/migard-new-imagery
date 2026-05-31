@@ -3,113 +3,111 @@ import {
   PageHero,
   Section,
   Prose,
-  Bullets,
+  Layers,
+  Callout,
   Actions,
   CtaBand,
 } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
-  title: "Midgard Security And Trust",
+  title: "Midgard Security",
   description:
-    "Midgard's trust story is built around Cardano L1 anchoring, mathematical rigor, eUTXO-aware design, batching, challenge mechanics, and settlement.",
+    "Midgard's trust posture is built around Cardano L1 anchoring, eUTXO-aware fraud proofs, watchers, challenge paths, and public status surfaces.",
 };
 
 export default function SecurityPage() {
   return (
     <main className="page-main">
       <PageHero
-        label="Trust posture"
-        title="Security starts at the base."
-        sub="Midgard's trust path is rooted directly in Cardano Layer 1: formal methods, functional programming, eUTXO-aware design, challenge mechanics, and settlement."
+        label="Security"
+        title="Secured by Cardano. Provable by anyone."
+        sub="Midgard's trust rests on Cardano Layer 1 and a set of mechanisms the public surface should make inspectable."
         actions={[
-          { label: "Explore trust architecture", href: "#posture", variant: "primary" },
-          { label: "Read docs", href: "/docs", variant: "ghost" },
+          { label: "Get Started", href: "/get-started", variant: "primary" },
+          { label: "Read docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
         ]}
       />
 
-      <Section
-        id="posture"
-        eyebrow="Trust posture"
-        title="Security should be explained, not performed."
-      >
+      <Section eyebrow="Anchored to Cardano L1" title="The trust path returns to the base layer.">
         <Prose
           items={[
             {
-              text: "Midgard's security story is not a magic word. It is a sequence of mechanisms:",
-            },
-          ]}
-        />
-        <Bullets
-          items={[
-            "Cardano L1 anchoring",
-            "mathematical rigor",
-            "formal-methods engineering culture",
-            "functional programming roots",
-            "eUTXO-aware design",
-            "batch publication",
-            "fraud-proof and challenge paths",
-            "settlement assumptions",
-            "operational readiness",
-          ]}
-        />
-        <Prose
-          items={[
-            { text: "The more legible the mechanism, the stronger the brand.", variant: "emph" },
-          ]}
-        />
-      </Section>
-
-      <Section eyebrow="Cardano L1" title="Cardano stays in the loop.">
-        <Prose
-          items={[
-            {
-              text: "Midgard is designed so L2 activity does not drift into a detached security model. State transitions and settlement tie back to Cardano L1.",
+              text: "Midgard is designed to anchor L2 state transitions to Cardano L1 and use Cardano smart contracts for verification.",
             },
             {
-              text: "That is why Midgard can be bold without sounding reckless. The system has a path back to the base layer.",
+              text: "That means the security story should be explained as a mechanism: commitments, challenge paths, settlement assumptions, and the base-layer contracts that make invalid state contestable.",
               variant: "dim",
             },
           ]}
         />
       </Section>
 
-      <Section
-        eyebrow="Watchers and challenge culture"
-        title="The system should invite inspection."
-      >
-        <Prose
+      <Section id="guarantees" eyebrow="Guarantees" title="Four guarantees to inspect.">
+        <Layers
           items={[
             {
-              text: "The strongest rollup systems are not built on vibes. They are built around the ability to inspect, challenge, and prove.",
+              n: "01",
+              name: "Finality",
+              desc: "Midgard separates fast soft confirmation from later L1-anchored settlement after the challenge or maturity period.",
             },
             {
-              text: "Midgard's trust architecture should make that inspection culture visible to users, builders, and partners.",
-              variant: "dim",
+              n: "02",
+              name: "Censorship resistance",
+              desc: "The protocol design uses L1 deadlines and challenge surfaces so ordering and inclusion rules can be enforced instead of merely promised.",
+            },
+            {
+              n: "03",
+              name: "Liveness",
+              desc: "Midgard is designed with L1-enforced escape and recovery paths, with public failure modes still needing careful status copy.",
+            },
+            {
+              n: "04",
+              name: "L1 anchoring",
+              desc: "State transitions are designed to route through Cardano L1 verification and settlement surfaces.",
             },
           ]}
         />
       </Section>
 
-      <Section eyebrow="Reporting" title="Security belongs in the open path." tight>
+      <Section eyebrow="Watchers" title="The network should pay attention to itself.">
         <Prose
           items={[
             {
-              text: "As Midgard matures, security reporting, review, monitoring, and incident routes should become part of the public trust surface. The goal is not to hide complexity. The goal is to route it clearly.",
+              text: "Every committed block should be inspectable. Watchers replay transactions against the public state and use the fraud-proof path when an operator submits invalid state.",
+            },
+            {
+              text: "Midgard's eUTXO-localized design is intended to make fraud proofs more targeted than global account-state replay, but public cost and operations claims should stay qualified until benchmarked.",
+              variant: "dim",
             },
           ]}
         />
         <Actions
-          items={[{ label: "Open security route", href: "/official-links", variant: "ghost" }]}
+          items={[
+            { label: "Become a Watcher", href: OFFICIAL_LINKS.intakeForm, variant: "ghost" },
+          ]}
+        />
+      </Section>
+
+      <Section id="security-contact" eyebrow="Disclosure" title="Security reporting belongs in the open path." tight>
+        <Callout
+          title="Responsible disclosure route pending."
+          body="As Midgard matures, security review, monitoring, and a responsible-disclosure route should become part of the public trust surface. For now, start from official links and preserve evidence."
+        />
+        <Actions
+          items={[
+            { label: "Open official links", href: "/official-links#security-contact", variant: "ghost" },
+          ]}
         />
       </Section>
 
       <CtaBand
         eyebrow="Trust path"
-        title="Read the path, then test it."
-        lead="The trust story is meant to be inspected. Read how it fits together, then watch it behave on testnet."
+        title="Trust is something the page should let you check."
+        lead="Read the mechanism, inspect the source, and use the testnet status surface to separate live, simulated, and pending claims."
         actions={[
-          { label: "How it works", href: "/how-it-works", variant: "primary" },
-          { label: "Explore testnet", href: "/testnet", variant: "ghost" },
+          { label: "Get Started", href: "/get-started", variant: "primary" },
+          { label: "View status", href: "/testnet", variant: "ghost" },
         ]}
       />
     </main>

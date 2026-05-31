@@ -1,0 +1,95 @@
+import type { Metadata } from "next";
+import {
+  PageHero,
+  Section,
+  Prose,
+  CardGrid,
+  Card,
+  Actions,
+  CtaBand,
+} from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+
+export const metadata: Metadata = {
+  title: "About Midgard",
+  description:
+    "Midgard is a Cardano-native optimistic rollup from Anastasia Labs, built so Cardano can scale without becoming less Cardano.",
+};
+
+export default function AboutPage() {
+  return (
+    <main className="page-main">
+      <PageHero
+        label="About"
+        title="Scale Cardano without making it less Cardano."
+        sub="Midgard is a Cardano-native optimistic rollup from Anastasia Labs, built so Cardano can scale while keeping the model, tooling, and rigor that made it Cardano."
+        actions={[
+          { label: "Read how it works", href: "/how-it-works", variant: "primary" },
+          { label: "Explore docs ↗", href: OFFICIAL_LINKS.docs, variant: "ghost" },
+        ]}
+      />
+
+      <Section eyebrow="The thesis" title="Throughput, with correctness intact.">
+        <Prose
+          items={[
+            {
+              text: "The usual way to scale a chain is to leave it: move to a faster network, accept a weaker or less familiar security model, learn a foreign stack, and fragment liquidity on the way out.",
+            },
+            {
+              text: "Midgard takes the harder route. Applications run at Layer 2 speed in a Cardano-native environment, and the trust path settles back to Cardano L1.",
+              variant: "emph",
+            },
+            {
+              text: "Scale is the goal. Correctness is the constraint that does not move.",
+              variant: "dim",
+            },
+          ]}
+        />
+      </Section>
+
+      <Section eyebrow="Who builds it" title="Built by Anastasia Labs.">
+        <Prose
+          items={[
+            {
+              text: "Midgard comes from Anastasia Labs, a team building Cardano infrastructure and open-source tooling for serious on-chain systems.",
+            },
+            {
+              text: "The protocol is open, the implementation can be inspected, and the status surface should make what is live, planned, and simulated clear.",
+              variant: "dim",
+            },
+          ]}
+        />
+        <Actions
+          items={[
+            { label: "View GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
+          ]}
+        />
+      </Section>
+
+      <Section eyebrow="Where we are" title="Live on testnet surfaces, not mainnet promises.">
+        <CardGrid cols={2}>
+          <Card
+            title="Pre-alpha testnet"
+            body="The preview should keep pre-alpha and testnet status visible, especially where simulated data or pending status surfaces are involved."
+          />
+          <Card
+            title="Public status path"
+            body="The status page is the right place for contracts, deployment history, supported flows, and current caveats."
+            cta="View status"
+            href="/testnet"
+          />
+        </CardGrid>
+      </Section>
+
+      <CtaBand
+        eyebrow="Trust The Path"
+        title="Read the mechanism before the metaphor."
+        lead="Midgard's story is not just speed. It is a Cardano-native trust architecture that builders, partners, and users can inspect."
+        actions={[
+          { label: "How it works", href: "/how-it-works", variant: "primary" },
+          { label: "Get Started", href: "/get-started", variant: "ghost" },
+        ]}
+      />
+    </main>
+  );
+}

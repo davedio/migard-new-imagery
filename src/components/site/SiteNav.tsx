@@ -4,28 +4,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
-const NAV = [
-  { label: "Users", href: "/users" },
-  { label: "Builders", href: "/builders" },
-  { label: "Partners", href: "/partners" },
+type NavLeaf = {
+  label: string;
+  href: string;
+  external?: boolean;
+};
+
+const NAV: readonly NavLeaf[] = [
+  { label: "Home", href: "/home" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Security", href: "/security" },
-  { label: "Docs", href: "/docs" },
-  { label: "Testnet", href: "/testnet" },
+  { label: "About", href: "/about" },
+  { label: "Docs ↗", href: OFFICIAL_LINKS.docs, external: true },
 ] as const;
+
+const MOBILE_NAV: NavLeaf[] = NAV.filter((item) => !item.external);
 
 /**
  * Fixed top navigation shared across every page in the (site) route group.
- * Collapses to a burger menu at <= 940px (see globals.css). The primary CTA
- * ("Build On Midgard") routes to /builders.
+ * Collapses to a burger menu at <= 940px (see globals.css).
  */
 export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
   const open = menu.open && menu.pathname === pathname;
 
-  const closeMenu = () => setMenu({ pathname, open: false });
+  const closeMenu = () => {
+    setMenu({ pathname, open: false });
+  };
   const toggleMenu = () =>
     setMenu((state) => ({
       pathname,
@@ -34,6 +42,11 @@ export function SiteNav() {
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
+
+  const linkClass = (href: string) => ({
+    className: "site-nav__link",
+    "data-active": isActive(href),
+  });
 
   return (
     <>
@@ -44,24 +57,32 @@ export function SiteNav() {
         </Link>
 
         <div className="site-nav__links">
-          {NAV.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="site-nav__link"
-              data-active={isActive(item.href)}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {NAV.map((item) =>
+            item.external ? (
+              <a
+                key={item.href}
+                href={item.href}
+                className="site-nav__link"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {item.label}
+              </a>
+            ) : (
+              <Link key={item.href} href={item.href} {...linkClass(item.href)}>
+                {item.label}
+              </Link>
+            ),
+          )}
         </div>
 
         <div className="site-nav__right">
-          <Link
-            href="/testnet"
-            className="btn btn--primary site-nav__cta-desktop"
-          >
-            Explore Testnet →
+          <Link href="/testnet" className="chip chip--testnet site-nav__status">
+            <span className="dot" />
+            Pre-alpha testnet
+          </Link>
+          <Link href="/get-started" className="btn btn--primary site-nav__cta-desktop">
+            Get Started
           </Link>
           <button
             type="button"
@@ -76,7 +97,7 @@ export function SiteNav() {
       </nav>
 
       <div className="site-nav__mobile" data-open={open}>
-        {NAV.map((item) => (
+        {MOBILE_NAV.map((item) => (
           <Link
             key={item.href}
             href={item.href}
@@ -86,8 +107,16 @@ export function SiteNav() {
             {item.label}
           </Link>
         ))}
-        <Link href="/testnet" className="btn btn--primary" onClick={closeMenu}>
-          Explore Testnet →
+        <a
+          href={OFFICIAL_LINKS.docs}
+          target="_blank"
+          rel="noreferrer"
+          onClick={closeMenu}
+        >
+          Docs ↗
+        </a>
+        <Link href="/get-started" className="btn btn--primary" onClick={closeMenu}>
+          Get Started
         </Link>
       </div>
     </>
