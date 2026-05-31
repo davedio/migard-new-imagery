@@ -426,43 +426,41 @@ button.panel:hover {
 .security-backdrop__wash {
   background-image: url("/backdrops/security-tree-roots.png");
   background-size: cover;
-  background-position: 58% 46%;
-  filter: blur(22px) brightness(0.34) saturate(0.9);
-  transform: scale(1.08);
-  opacity: 0.72;
+  background-position: center;
+  filter: blur(12px) brightness(0.96) saturate(1.04);
+  transform: scale(1.02);
+  opacity: 0.22;
 }
 
 .security-backdrop__image {
   background-image: url("/backdrops/security-tree-roots.png");
   background-repeat: no-repeat;
-  background-size: auto 136%;
-  background-position: right 44%;
-  filter: brightness(0.58) saturate(0.98) contrast(1.04);
-  opacity: 0.9;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 44%, rgba(0, 0, 0, 0.38) 54%, #000 67%);
-  mask-image: linear-gradient(90deg, transparent 0%, transparent 44%, rgba(0, 0, 0, 0.38) 54%, #000 67%);
+  background-size: cover;
+  background-position: center;
+  filter: brightness(1.08) saturate(1.08) contrast(1.03);
+  opacity: 1;
 }
 
 .security-backdrop__veil {
   background:
-    radial-gradient(72% 58% at 82% 30%, rgba(59, 232, 99, 0.14), transparent 58%),
-    radial-gradient(72% 66% at 76% 80%, rgba(224, 120, 44, 0.16), transparent 66%),
-    linear-gradient(90deg, rgba(4, 9, 5, 0.96) 0%, rgba(4, 9, 5, 0.84) 36%, rgba(4, 9, 5, 0.24) 72%, rgba(4, 9, 5, 0.5) 100%),
-    linear-gradient(180deg, rgba(4, 9, 5, 0.8), rgba(4, 9, 5, 0.2) 44%, rgba(4, 9, 5, 0.78) 100%);
+    radial-gradient(64% 52% at 76% 36%, rgba(59, 232, 99, 0.08), transparent 58%),
+    radial-gradient(72% 58% at 73% 86%, rgba(224, 120, 44, 0.1), transparent 66%),
+    linear-gradient(90deg, rgba(4, 9, 5, 0.56) 0%, rgba(4, 9, 5, 0.34) 31%, rgba(4, 9, 5, 0.1) 62%, rgba(4, 9, 5, 0.16) 100%),
+    linear-gradient(180deg, rgba(4, 9, 5, 0.18), rgba(4, 9, 5, 0.04) 42%, rgba(4, 9, 5, 0.34) 100%);
 }
 
 @media (max-width: 760px) {
   .security-backdrop__image {
-    background-size: auto 112%;
-    background-position: 73% center;
-    opacity: 0.68;
+    background-size: cover;
+    background-position: 72% center;
+    opacity: 1;
   }
 
   .security-backdrop__veil {
     background:
-      radial-gradient(88% 48% at 68% 22%, rgba(59, 232, 99, 0.12), transparent 62%),
-      linear-gradient(180deg, rgba(4, 9, 5, 0.9), rgba(4, 9, 5, 0.52) 42%, rgba(4, 9, 5, 0.86) 100%),
-      linear-gradient(90deg, rgba(4, 9, 5, 0.86), rgba(4, 9, 5, 0.48), rgba(4, 9, 5, 0.86));
+      radial-gradient(92% 52% at 72% 24%, rgba(59, 232, 99, 0.1), transparent 64%),
+      linear-gradient(180deg, rgba(4, 9, 5, 0.24), rgba(4, 9, 5, 0.08) 42%, rgba(4, 9, 5, 0.42) 100%),
+      linear-gradient(90deg, rgba(4, 9, 5, 0.5), rgba(4, 9, 5, 0.16), rgba(4, 9, 5, 0.22));
   }
 }
 
