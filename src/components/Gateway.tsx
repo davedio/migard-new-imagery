@@ -13,7 +13,6 @@ import {
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
-import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 const SECTION_PAD = "clamp(76px,10vh,142px) var(--gut)";
 
@@ -148,102 +147,6 @@ function deriveParams(s: NetworkSnapshot): SceneParams {
   };
 }
 
-const fmt = (n: number) => n.toLocaleString("en-US");
-const short = (hash: string) => `${hash.slice(0, 8)}…${hash.slice(-6)}`;
-
-type Layer = {
-  n: string;
-  key: string;
-  name: string;
-  role: string;
-  desc: string;
-  chips: [string, string][];
-  metric: (s: NetworkSnapshot) => { label: string; value: string }[];
-};
-
-const LAYERS: Layer[] = [
-  {
-    n: "01",
-    key: "activity",
-    name: "Activity",
-    role: "Users & apps create activity on L2",
-    desc: "Users and applications create activity in the higher-throughput L2 environment. Nothing is settled yet — it is fast movement that still owes a trip back to Cardano.",
-    chips: [["testnet", "Pre-Alpha Testnet"], ["demo", "Simulated data"]],
-    metric: (s) => [
-      { label: "Txns / block window", value: fmt(s.l1.txCountWindow) },
-      { label: "L1 estimate", value: `${s.l1.tps} tps` },
-    ],
-  },
-  {
-    n: "02",
-    key: "batch",
-    name: "Batch",
-    role: "Activity is aggregated off-chain",
-    desc: "Activity is organized into batches and state transitions off-chain. Aggregation is where throughput comes from — many actions resolve against a single anchor back to L1.",
-    chips: [["testnet", "Pre-Alpha Testnet"], ["demo", "Simulated data"]],
-    metric: (s) => [
-      { label: "Queue depth", value: `${fmt(s.l2.batchQueueDepth)} ops` },
-      { label: "L2 throughput", value: `${s.l2.throughput} ops/s` },
-      { label: "Latest batch", value: short(s.l2.latestBatchId) },
-    ],
-  },
-  {
-    n: "03",
-    key: "proof",
-    name: "Proof",
-    role: "State transitions are committed",
-    desc: "The system publishes commitments and evidence so the path can be checked. The proof is the unit of trust, not the operator.",
-    chips: [["proof", "Proof object"], ["demo", "Simulated data"]],
-    metric: (s) => [
-      { label: "Proof status", value: s.l2.latestProofStatus.toUpperCase() },
-      { label: "Commitment", value: short(s.l2.latestBatchId) },
-    ],
-  },
-  {
-    n: "04",
-    key: "challenge",
-    name: "Challenge",
-    role: "Disputed activity can be contested",
-    desc: "Disputed activity can be contested through the protocol's challenge mechanics. Trust does not require believing the operator — it requires that someone can prove them wrong.",
-    chips: [["testnet", "Design intent"], ["demo", "Simulated data"]],
-    metric: (s) => [
-      {
-        label: "Challenge window",
-        value: s.l2.challengeWindowOpen ? "OPEN" : "CLOSED",
-      },
-      { label: "Watchers", value: s.l2.challengeWindowOpen ? "8 active" : "idle" },
-    ],
-  },
-  {
-    n: "05",
-    key: "settlement",
-    name: "Settlement",
-    role: "The path returns to the base layer",
-    desc: "Settlement brings the path back to Cardano L1. Fast L2 activity and final L1 settlement are different pieces of the same trust path.",
-    chips: [["proof", "Settlement cue"], ["demo", "Simulated data"]],
-    metric: (s) => [
-      {
-        label: "Finalized",
-        value: s.l2.latestProofStatus === "settled" ? "YES" : "pending",
-      },
-      { label: "Settlement tx", value: short(s.l2.latestSettlementTx) },
-    ],
-  },
-  {
-    n: "06",
-    key: "l1",
-    name: "Cardano L1",
-    role: "Cardano stays in the trust loop",
-    desc: "Cardano remains the base layer for the trust story. Fees are paid in ADA, and the path resolves to the chain you already trust.",
-    chips: [["l1", "Cardano L1"], ["planned", "Claim approval-dependent"]],
-    metric: (s) => [
-      { label: "Block height", value: fmt(s.l1.blockHeight) },
-      { label: "Epoch", value: fmt(s.l1.epoch) },
-      { label: "Latest block", value: short(s.l1.latestBlockHash) },
-    ],
-  },
-];
-
 function Reveal({
   children,
   style,
@@ -350,249 +253,132 @@ const leadStyle: CSSProperties = {
   color: "var(--text)",
 };
 
-function MechanismIntro() {
-  return (
-    <section id="system" style={{ padding: SECTION_PAD }}>
-      <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">How it works</div>
-        <h2 style={h2Style}>Instant execution. On-chain verification.</h2>
-        <p style={leadStyle}>
-          A transaction is valid when it is checked against eUTXO rules, then
-          ordered, committed, watched, and settled through the Cardano L1 trust
-          path.
-        </p>
-        <p style={{ ...leadStyle, marginTop: 14, color: "var(--text-dim)" }}>
-          Independent Watchers can replay committed blocks and use fraud proofs
-          to contest invalid state. Speed up front, verification underneath.
-        </p>
-        <div
-          style={{
-            marginTop: 26,
-            fontFamily: "var(--font-mono)",
-            fontSize: "clamp(12px,1.3vw,14px)",
-            letterSpacing: "0.12em",
-            color: "var(--green-bright)",
-          }}
-        >
-          Activity. Batch. Proof. Challenge. Settlement. Cardano L1.
-        </div>
-      </Reveal>
-    </section>
-  );
-}
-
-const AUDIENCE: { title: string; line: string; cta: string; href: string }[] = [
-  { title: "How It Works", line: "Understand the mechanism.", cta: "Follow the path", href: "/how-it-works" },
-  { title: "Security", line: "Inspect the guarantees.", cta: "See the trust case", href: "/security" },
-  { title: "Get Started", line: "Build, operate, watch, integrate, or support.", cta: "Choose your role", href: "/get-started" },
-  { title: "About", line: "Learn who builds it and why.", cta: "Read the thesis", href: "/about" },
+// Compact directory of the site. Each card is a small summary that links
+// straight to the matching child page (deep-linked where a section anchor
+// exists), so the home page stays short instead of duplicating every child
+// page inline.
+const EXPLORE: { n: string; title: string; line: string; cta: string; href: string }[] = [
+  {
+    n: "01",
+    title: "How It Works",
+    line: "The lifecycle — Activity, Batch, Proof, Challenge, Settlement, then Cardano L1.",
+    cta: "Follow the path",
+    href: "/how-it-works",
+  },
+  {
+    n: "02",
+    title: "Security",
+    line: "The trust path, the guarantees, and the watchers that keep it honest.",
+    cta: "See the trust case",
+    href: "/security#guarantees",
+  },
+  {
+    n: "03",
+    title: "Get Started",
+    line: "Build, operate, watch, integrate, or support — pick your role.",
+    cta: "Choose your role",
+    href: "/get-started#roles",
+  },
+  {
+    n: "04",
+    title: "About",
+    line: "Who builds it, and the thesis: scale Cardano without making it less Cardano.",
+    cta: "Read the thesis",
+    href: "/about",
+  },
+  {
+    n: "05",
+    title: "Testnet",
+    line: "What is live now, the deployed contracts, and the proof queue.",
+    cta: "Check status",
+    href: "/testnet#whats-live",
+  },
+  {
+    n: "06",
+    title: "FAQ",
+    line: "Plain answers on the rollup, fees in ADA, and what is real today.",
+    cta: "Read the FAQ",
+    href: "/faq",
+  },
+  {
+    n: "07",
+    title: "Official Links",
+    line: "Start from canonical channels — GitHub, X, and Discord.",
+    cta: "Stay safe",
+    href: "/official-links#links",
+  },
 ];
 
-function AudiencePaths() {
+function ExploreGrid() {
   return (
-    <section id="paths" style={{ padding: SECTION_PAD }}>
+    <section id="explore" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Site path</div>
-        <h2 style={h2Style}>Understand it, trust it, get started, know who builds it.</h2>
+        <div className="eyebrow">Explore</div>
+        <h2 style={h2Style}>Go straight to what you need.</h2>
+        <p style={leadStyle}>
+          Every part of Midgard has its own page. Pick a thread and follow it
+          all the way down.
+        </p>
       </Reveal>
       <div
         style={{
           marginTop: 34,
-          display: "grid",
-          gap: 16,
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          maxWidth: 980,
-        }}
-      >
-        {AUDIENCE.map((a, i) => (
-          <Reveal key={a.title} delay={i * 90}>
-            <div
-              className="panel"
-              style={{ padding: "24px 24px 22px", height: "100%", display: "flex", flexDirection: "column" }}
-            >
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--gold-bright)" }}>
-                0{i + 1}
-              </div>
-              <h3 style={{ fontSize: 22, marginTop: 8 }}>{a.title}</h3>
-              <p style={{ marginTop: 8, fontSize: 14.5, color: "var(--text)", flex: 1 }}>{a.line}</p>
-              <Link href={a.href} style={{ marginTop: 16, fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-                {a.cta} →
-              </Link>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-const WHY_BULLETS = [
-  "Cardano-native development patterns.",
-  "Fees paid in ADA.",
-  "L1 settlement.",
-  "Inspectable proof paths.",
-  "Lower-friction application flow.",
-  "A user experience that can feel native instead of foreign.",
-];
-
-function WhyItMatters() {
-  return (
-    <section style={{ padding: SECTION_PAD }}>
-      <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">The problem</div>
-        <h2 style={h2Style}>
-          Security should not be the price you pay for scale.
-        </h2>
-        <p style={leadStyle}>
-          As activity grows on Cardano, fees rise and throughput hits a ceiling.
-          The usual escape routes ask builders and users to accept a weaker or
-          less familiar security model.
-        </p>
-        <p style={{ ...leadStyle, marginTop: 14, color: "var(--text-dim)" }}>
-          Midgard scales Cardano without leaving the trust path behind.
-        </p>
-        <ul className="bullets" style={{ maxWidth: 560 }}>
-          {WHY_BULLETS.map((b) => (
-            <li key={b}>
-              <span>{b}</span>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
-    </section>
-  );
-}
-
-function ProductThesis() {
-  return (
-    <section style={{ padding: SECTION_PAD }}>
-      <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Who builds it</div>
-        <h2 style={h2Style}>Built by Anastasia Labs.</h2>
-        <p style={leadStyle}>
-          Midgard comes from a team building Cardano infrastructure and
-          open-source tooling for serious on-chain systems.
-        </p>
-        <p
-          style={{
-            marginTop: 22,
-            maxWidth: 640,
-            fontSize: "clamp(17px,2vw,22px)",
-            lineHeight: 1.3,
-            color: "var(--text-hi)",
-          }}
-        >
-          The point is simple: make Cardano more usable without making it{" "}
-          <span style={{ color: "var(--green-bright)" }}>less Cardano</span>.
-        </p>
-        <Link href="/about" style={{ display: "inline-flex", marginTop: 24, fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-          About Midgard →
-        </Link>
-      </Reveal>
-    </section>
-  );
-}
-
-const PROOFS: { title: string; line: string }[] = [
-  { title: "Anchored to Cardano", line: "State commitments and settlement route through the L1 trust path." },
-  { title: "Verifiable by anyone", line: "Watchers and challenge mechanics keep invalid state contestable." },
-  { title: "Same Cardano", line: "The builder path is designed around eUTXO continuity and familiar tooling." },
-  { title: "Fees paid in ADA", line: "Scaling should extend the Cardano economy, not route value through a bridge token." },
-  { title: "Live status path", line: "Pre-alpha testnet surfaces separate live, simulated, and pending facts." },
-  { title: "Official links", line: "The safest user path starts from canonical channels and clear status labels." },
-];
-
-function ProofObjects() {
-  return (
-    <section style={{ padding: SECTION_PAD }}>
-      <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Security and economics</div>
-        <h2 style={h2Style}>Scale Cardano. Keep the proof.</h2>
-      </Reveal>
-      <div
-        style={{
-          marginTop: 34,
-          display: "grid",
-          gap: 16,
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-          maxWidth: 980,
-        }}
-      >
-        {PROOFS.map((p, i) => (
-          <Reveal key={p.title} delay={i * 80}>
-            <div className="panel" style={{ padding: "22px 22px 20px", height: "100%" }}>
-              <h3 style={{ fontSize: 18, color: "var(--text-hi)" }}>{p.title}</h3>
-              <p style={{ marginTop: 8, fontSize: 14, color: "var(--text-dim)" }}>{p.line}</p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-      <Reveal style={{ marginTop: 28 }}>
-        <div className="eyebrow">Official channels</div>
-        <div style={{ display: "flex", gap: 12, marginTop: 18, flexWrap: "wrap" }}>
-          <a className="btn btn--ghost" href={OFFICIAL_LINKS.github} target="_blank" rel="noreferrer">
-            Explore on GitHub
-          </a>
-          <a className="btn btn--ghost" href={OFFICIAL_LINKS.x} target="_blank" rel="noreferrer">
-            Follow on X
-          </a>
-          <a className="btn btn--ghost" href={OFFICIAL_LINKS.discord} target="_blank" rel="noreferrer">
-            Join Discord
-          </a>
-        </div>
-      </Reveal>
-    </section>
-  );
-}
-
-const QUESTIONS = [
-  {
-    q: "What is Midgard?",
-    a: "A Cardano-native optimistic rollup that runs applications at Layer 2 speed and settles through a trust path anchored to Cardano L1.",
-  },
-  {
-    q: "How are fees paid?",
-    a: "In ADA.",
-  },
-  {
-    q: "Is it a sidechain?",
-    a: "No. Midgard is positioned as a rollup path with commitments, challenge mechanics, and settlement tied back to Cardano L1.",
-  },
-  {
-    q: "What is live now?",
-    a: "A pre-alpha testnet/status path, with website activity clearly labeled where demonstration data is being used.",
-  },
-];
-
-function CommonQuestions() {
-  return (
-    <section style={{ padding: SECTION_PAD }}>
-      <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Common questions</div>
-        <h2 style={h2Style}>Answered plainly.</h2>
-      </Reveal>
-      <div
-        style={{
-          marginTop: 28,
           display: "grid",
           gap: 14,
-          maxWidth: 860,
+          gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
+          maxWidth: 1040,
         }}
       >
-        {QUESTIONS.map((item, i) => (
-          <Reveal key={item.q} delay={i * 70}>
-            <div className="panel" style={{ padding: "20px 22px" }}>
-              <h3 style={{ fontSize: 17, color: "var(--text-hi)" }}>{item.q}</h3>
-              <p style={{ marginTop: 8, color: "var(--text-dim)", fontSize: 14.5 }}>{item.a}</p>
-            </div>
+        {EXPLORE.map((a, i) => (
+          <Reveal key={a.title} delay={i * 70}>
+            <Link
+              href={a.href}
+              className="panel"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                padding: "20px 20px 18px",
+                textDecoration: "none",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 11,
+                  letterSpacing: "0.2em",
+                  color: "var(--gold-bright)",
+                }}
+              >
+                {a.n}
+              </div>
+              <h3 style={{ fontSize: 19, marginTop: 8, color: "var(--text-hi)" }}>
+                {a.title}
+              </h3>
+              <p
+                style={{
+                  marginTop: 8,
+                  fontSize: 14,
+                  color: "var(--text-dim)",
+                  flex: 1,
+                }}
+              >
+                {a.line}
+              </p>
+              <span
+                style={{
+                  marginTop: 14,
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 12,
+                  color: "var(--green-bright)",
+                }}
+              >
+                {a.cta} →
+              </span>
+            </Link>
           </Reveal>
         ))}
       </div>
-      <Reveal style={{ marginTop: 24 }}>
-        <Link href="/faq" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--green-bright)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-          Read the FAQ →
-        </Link>
-      </Reveal>
     </section>
   );
 }
@@ -621,76 +407,6 @@ function ClosingCTA() {
           </Link>
         </div>
       </Reveal>
-    </section>
-  );
-}
-
-function LayerSection({
-  layer,
-  snap,
-  index,
-}: {
-  layer: Layer;
-  snap: NetworkSnapshot;
-  index: number;
-}) {
-  const ref = useRef<HTMLElement>(null);
-  const [seen, setSeen] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setSeen(true)),
-      { threshold: 0.35 },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const side = index % 2 === 0 ? "flex-start" : "flex-end";
-  return (
-    <section
-      ref={ref}
-      id={layer.key}
-      style={{
-        minHeight: "78svh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: side,
-        padding: "0 var(--gut)",
-      }}
-    >
-      <div
-        className={`panel reveal ${seen ? "in" : ""}`}
-        style={{ width: "min(420px, 100%)", padding: "26px 26px 22px" }}
-      >
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.22em", color: "var(--gold-bright)" }}>
-          LAYER {layer.n} / 06
-        </div>
-        <h2 style={{ fontSize: 26, marginTop: 8 }}>{layer.name}</h2>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--text-dim)", marginTop: 4 }}>
-          {layer.role}
-        </div>
-        <p style={{ marginTop: 14, fontSize: 14.5, color: "var(--text)" }}>{layer.desc}</p>
-
-        <div style={{ marginTop: 18, display: "grid", gap: 8 }}>
-          {layer.metric(snap).map((m) => (
-            <div key={m.label} className="metric-row">
-              <span className="k">{m.label}</span>
-              <span className="v">{m.value}</span>
-            </div>
-          ))}
-        </div>
-
-        <div style={{ display: "flex", gap: 8, marginTop: 16, flexWrap: "wrap" }}>
-          {layer.chips.map(([cls, txt]) => (
-            <span className={`chip chip--${cls}`} key={txt}>
-              <span className="dot" />
-              {txt}
-            </span>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
@@ -725,15 +441,7 @@ export default function Gateway() {
 
       <main className="content">
         <Hero />
-        <AudiencePaths />
-        <MechanismIntro />
-        {LAYERS.map((layer, i) => (
-          <LayerSection key={layer.key} layer={layer} snap={snap} index={i} />
-        ))}
-        <WhyItMatters />
-        <ProductThesis />
-        <ProofObjects />
-        <CommonQuestions />
+        <ExploreGrid />
         <ClosingCTA />
       </main>
 
