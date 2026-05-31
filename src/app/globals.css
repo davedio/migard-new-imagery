@@ -313,6 +313,11 @@ a {
     margin-bottom: 18px;
   }
 
+  /* Drop the leading gold dash on mobile so the eyebrow sits flush left. */
+  .home-hero__eyebrow::before {
+    display: none;
+  }
+
   .home-hero__lead {
     margin-top: 24px;
   }
