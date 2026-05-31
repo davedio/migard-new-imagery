@@ -205,7 +205,7 @@ function Hero() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "92px clamp(20px,5vw,64px) 168px",
+        padding: "118px clamp(20px,5vw,64px) 142px",
         maxWidth: 720,
       }}
     >
@@ -223,14 +223,11 @@ function Hero() {
         inspect without trading away correctness.
       </p>
       <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", alignItems: "center" }}>
-        <Link className="btn btn--primary" href="/testnet">
-          Explore testnet status
+        <Link className="btn btn--primary" href="/get-started">
+          Get Started
         </Link>
         <Link className="btn btn--ghost" href="/how-it-works">
           See How It Works
-        </Link>
-        <Link href="/get-started" style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--text-dim)", textDecoration: "underline", textUnderlineOffset: 4 }}>
-          Get Started
         </Link>
       </div>
       <div style={{ marginTop: 54, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.2em", color: "var(--text-dim)", textTransform: "uppercase" }}>
@@ -520,7 +517,7 @@ function ClosingCTA() {
             Get Started
           </Link>
           <Link className="btn btn--ghost" href="/testnet">
-            Explore testnet status
+            Testnet status
           </Link>
         </div>
       </Reveal>
@@ -598,47 +595,6 @@ function LayerSection({
   );
 }
 
-function LiveHUD({ snap }: { snap: NetworkSnapshot }) {
-  const live = snap.source !== "demo";
-  return (
-    <div
-      className="panel"
-      style={{
-        position: "fixed",
-        right: "clamp(16px,4vw,40px)",
-        bottom: 72,
-        zIndex: 40,
-        padding: "12px 16px",
-        display: "grid",
-        gap: 6,
-        minWidth: 220,
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 16 }}>
-        <span className={`chip chip--${live ? "live" : "demo"}`}>
-          <span className="dot" />
-          {live ? "Live L1 · sim L2" : "Simulated feed"}
-        </span>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--text-faint)" }}>
-          {new Date(snap.updatedAt).toLocaleTimeString("en-US")}
-        </span>
-      </div>
-      <Row k="L1 block" v={`#${fmt(snap.l1.blockHeight)}`} />
-      <Row k="Batch queue" v={`${fmt(snap.l2.batchQueueDepth)} ops`} />
-      <Row k="Proof" v={snap.l2.latestProofStatus.toUpperCase()} />
-    </div>
-  );
-}
-
-function Row({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="metric-row">
-      <span className="k">{k}</span>
-      <span className="v">{v}</span>
-    </div>
-  );
-}
-
 export default function Gateway() {
   const { data: snap } = useNetworkSnapshot();
   const progress = useRef(0);
@@ -682,7 +638,6 @@ export default function Gateway() {
       </main>
 
       <MotionToggle on={motionOn} onToggle={() => setMotionOn((m) => !m)} />
-      <LiveHUD snap={snap} />
     </>
   );
 }

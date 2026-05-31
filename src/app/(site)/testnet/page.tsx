@@ -9,6 +9,7 @@ import {
   Actions,
   CtaBand,
 } from "@/components/site/ui";
+import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -54,6 +55,7 @@ export default function TestnetPage() {
             },
           ]}
         />
+        <NetworkStatusWidget />
       </Section>
 
       <Section id="contracts" eyebrow="Contracts" title="Inspect the contract path.">

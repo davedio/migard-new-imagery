@@ -77,12 +77,12 @@ export function SiteNav() {
         </div>
 
         <div className="site-nav__right">
-          <Link href="/testnet" className="chip chip--testnet site-nav__status">
-            <span className="dot" />
-            Pre-alpha testnet
-          </Link>
           <Link href="/get-started" className="btn btn--primary site-nav__cta-desktop">
             Get Started
+          </Link>
+          <Link href="/testnet" className="chip chip--testnet site-nav__status">
+            <span className="dot" />
+            Testnet status
           </Link>
           <button
             type="button"
