@@ -896,9 +896,10 @@ button.panel:hover {
 }
 .site-nav__link {
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-  color: var(--text-dim);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text);
   white-space: nowrap;
   transition: color 0.2s var(--ease);
 }
