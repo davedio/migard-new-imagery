@@ -170,8 +170,13 @@ a {
 
 /* ---- homepage hero ---- */
 .home-hero {
+  --hero-fit: 1;
+  --home-hero-width: 640px;
+  --home-h1-size: 58px;
+  --home-lead-size: 18px;
+  --home-sublead-size: 16px;
   min-height: 92svh;
-  width: min(640px, calc(100vw - (var(--gut) * 2)));
+  width: min(calc(var(--home-hero-width) * var(--hero-fit)), calc(100vw - (var(--gut) * 2)));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -186,25 +191,28 @@ a {
 .home-hero h1 {
   max-width: 100%;
   color: var(--text-hi);
-  font-size: 58px;
+  font-size: calc(var(--home-h1-size) * var(--hero-fit));
   line-height: 1.03;
   letter-spacing: 0;
+  transition: font-size 0.16s var(--ease);
 }
 
 .home-hero__lead {
   max-width: 620px;
   margin-top: 24px;
   color: var(--text);
-  font-size: 18px;
+  font-size: calc(var(--home-lead-size) * var(--hero-fit));
   line-height: 1.55;
+  transition: font-size 0.16s var(--ease);
 }
 
 .home-hero__sublead {
   max-width: 600px;
   margin-top: 14px;
   color: var(--text-dim);
-  font-size: 16px;
+  font-size: calc(var(--home-sublead-size) * var(--hero-fit));
   line-height: 1.55;
+  transition: font-size 0.16s var(--ease);
 }
 
 .home-hero__actions {
@@ -225,65 +233,58 @@ a {
 
 @media (min-width: 1600px) {
   .home-hero {
-    width: min(860px, 48vw);
+    --home-hero-width: 860px;
+    --home-h1-size: 74px;
+    --home-lead-size: 20px;
+    --home-sublead-size: 17px;
+    width: min(calc(var(--home-hero-width) * var(--hero-fit)), 48vw);
     padding-inline-start: clamp(96px, 6vw, 148px);
-  }
-
-  .home-hero h1 {
-    font-size: 74px;
   }
 
   .home-hero__lead {
     max-width: 700px;
-    font-size: 20px;
   }
 
   .home-hero__sublead {
     max-width: 680px;
-    font-size: 17px;
   }
 }
 
 @media (min-width: 2200px) {
   .home-hero {
-    width: min(980px, 46vw);
+    --home-hero-width: 980px;
+    --home-h1-size: 88px;
+    --home-lead-size: 22px;
+    width: min(calc(var(--home-hero-width) * var(--hero-fit)), 46vw);
     padding-inline-start: 140px;
-  }
-
-  .home-hero h1 {
-    font-size: 88px;
   }
 
   .home-hero__lead {
     max-width: 760px;
-    font-size: 22px;
   }
 }
 
 @media (max-width: 1320px) {
   .home-hero {
-    width: min(590px, calc(100vw - (var(--gut) * 2)));
+    --home-hero-width: 590px;
+    --home-h1-size: 52px;
+    --home-lead-size: 17px;
+    width: min(calc(var(--home-hero-width) * var(--hero-fit)), calc(100vw - (var(--gut) * 2)));
     padding-block: 126px 132px;
-  }
-
-  .home-hero h1 {
-    font-size: 52px;
-  }
-
-  .home-hero__lead {
-    font-size: 17px;
   }
 }
 
 @media (max-width: 720px) {
   .home-hero {
+    --home-h1-size: 40px;
+    --home-lead-size: 18px;
+    --home-sublead-size: 15.5px;
     width: auto;
     min-height: 92svh;
     padding: 128px 22px 112px;
   }
 
   .home-hero h1 {
-    font-size: 40px;
     line-height: 1.06;
   }
 
@@ -293,11 +294,6 @@ a {
 
   .home-hero__lead {
     margin-top: 24px;
-    font-size: 18px;
-  }
-
-  .home-hero__sublead {
-    font-size: 15.5px;
   }
 
   .home-hero__actions .btn {

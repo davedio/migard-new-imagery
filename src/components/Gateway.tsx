@@ -32,6 +32,110 @@ const StaticTreeHero = dynamic(() => import("./scene/StaticTreeHero"), {
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
+function getHeroSafeRightEdge(viewportWidth: number) {
+  if (viewportWidth <= 720) return viewportWidth - 22;
+  if (viewportWidth <= 1599) return viewportWidth * 0.42;
+  if (viewportWidth <= 1900) return viewportWidth * 0.5;
+  return viewportWidth * 0.58;
+}
+
+function useHeroAutoFit() {
+  const ref = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const hero = ref.current;
+    if (!hero || typeof window === "undefined") return;
+
+    let frame = 0;
+
+    const computeFit = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(() => {
+        const title = hero.querySelector<HTMLElement>("h1");
+        if (!title) return;
+
+        hero.style.setProperty("--hero-fit", "1");
+
+        const viewportWidth =
+          window.visualViewport?.width ?? document.documentElement.clientWidth;
+        const viewportHeight =
+          window.visualViewport?.height ?? document.documentElement.clientHeight;
+        const heroRect = hero.getBoundingClientRect();
+        const copyRects = Array.from(
+          hero.querySelectorAll<HTMLElement>(
+            "h1, .home-hero__lead, .home-hero__sublead",
+          ),
+        ).map((node) => node.getBoundingClientRect());
+        const childRects = Array.from(hero.children).map((child) =>
+          child.getBoundingClientRect(),
+        );
+
+        const copyLeft = Math.min(...copyRects.map((rect) => rect.left));
+        const copyRight = Math.max(...copyRects.map((rect) => rect.right));
+        const copyWidth = Math.max(1, copyRight - copyLeft);
+        const safeRight = getHeroSafeRightEdge(viewportWidth);
+        const edgeFit =
+          viewportWidth <= 720 ? 1 : (safeRight - copyLeft) / copyWidth;
+
+        const contentTop = Math.min(...childRects.map((rect) => rect.top));
+        const contentBottom = Math.max(...childRects.map((rect) => rect.bottom));
+        const contentHeight = Math.max(1, contentBottom - contentTop);
+        const usableHeight =
+          Math.min(heroRect.height, viewportHeight * 0.92) -
+          (viewportWidth <= 720 ? 28 : 54);
+        const heightFit = usableHeight / contentHeight;
+        const titleHeightLimit =
+          viewportWidth <= 720
+            ? viewportHeight * 0.26
+            : viewportWidth <= 1599
+              ? 156
+              : viewportHeight * 0.2;
+        const titleHeightFit =
+          titleHeightLimit / Math.max(1, title.getBoundingClientRect().height);
+        const titleWidthFit =
+          title.clientWidth / Math.max(1, title.scrollWidth);
+        const minFit = viewportWidth <= 720 ? 0.82 : 0.68;
+        const nextFit = clamp(
+          Math.min(edgeFit, heightFit, titleHeightFit, titleWidthFit),
+          minFit,
+          1,
+        );
+
+        hero.style.setProperty("--hero-fit", nextFit.toFixed(3));
+      });
+    };
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(computeFit);
+    resizeObserver?.observe(hero);
+    Array.from(hero.children).forEach((child) => resizeObserver?.observe(child));
+
+    const mutationObserver = new MutationObserver(computeFit);
+    mutationObserver.observe(hero, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
+
+    window.addEventListener("resize", computeFit);
+    window.addEventListener("orientationchange", computeFit);
+    void document.fonts?.ready.then(computeFit);
+    computeFit();
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      resizeObserver?.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener("resize", computeFit);
+      window.removeEventListener("orientationchange", computeFit);
+    };
+  }, []);
+
+  return ref;
+}
+
 function deriveParams(s: NetworkSnapshot): SceneParams {
   const activity = clamp(s.l1.txCountWindow / 110);
   const speed = 0.05 + clamp((s.l2.throughput - 6) / 18) * 0.09;
@@ -198,8 +302,10 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
 }
 
 function Hero() {
+  const heroRef = useHeroAutoFit();
+
   return (
-    <header className="home-hero">
+    <header ref={heroRef} className="home-hero">
       <div className="eyebrow home-hero__eyebrow">
         Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
       </div>
