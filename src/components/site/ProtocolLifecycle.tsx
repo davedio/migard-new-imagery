@@ -26,7 +26,7 @@ const STEPS: Step[] = [
   {
     number: "01",
     stage: "SUBMIT",
-    title: "Submit",
+    title: "Transact on Midgard",
     annotation: "Off-chain · L2",
     Icon: ZapIcon,
     l2: "The Midgard node validates activity against eUTXO rules and issues a soft confirmation. No L1 fee. No block wait.",
@@ -36,7 +36,7 @@ const STEPS: Step[] = [
   {
     number: "02",
     stage: "SEQUENCE",
-    title: "Sequence",
+    title: "Sequence & Batch",
     annotation: "L2 Operator",
     Icon: LayersIcon,
     l2: "The active operator orders transactions and assembles a block using the same eUTXO model as Cardano L1.",
@@ -46,7 +46,7 @@ const STEPS: Step[] = [
   {
     number: "03",
     stage: "COMMIT",
-    title: "Commit",
+    title: "Settle to Cardano L1",
     annotation: "L1 State Queue",
     Icon: UploadIcon,
     l2: "The block is assembled, signed, and prepared for the Cardano anchor.",
@@ -56,7 +56,7 @@ const STEPS: Step[] = [
   {
     number: "04",
     stage: "WATCH",
-    title: "Watch",
+    title: "Watch for Fraud",
     annotation: "Challenge Window",
     Icon: ShieldIcon,
     l2: "Block data stays public. Watchers replay each transaction and check the path against the L1 header.",
@@ -66,7 +66,7 @@ const STEPS: Step[] = [
   {
     number: "05",
     stage: "SETTLE",
-    title: "Settle",
+    title: "Final Settlement",
     annotation: "L1 Confirmed",
     Icon: CheckIcon,
     l2: "No fraud is detected. Soft finality becomes permanent application history.",
