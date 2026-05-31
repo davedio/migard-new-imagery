@@ -453,9 +453,9 @@ button.panel:hover {
 
 @media (max-width: 760px) {
   .security-backdrop__image {
-    background-size: auto 106%;
-    background-position: 58% center;
-    opacity: 0.66;
+    background-size: auto 112%;
+    background-position: 73% center;
+    opacity: 0.68;
   }
 
   .security-backdrop__veil {
