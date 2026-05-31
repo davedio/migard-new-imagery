@@ -294,7 +294,10 @@ a {
     --home-sublead-size: 15.5px;
     width: auto;
     min-height: 92svh;
-    padding: 128px 22px 112px;
+    /* Top-align (not centre) and clear only the ~64px nav, so the heading
+       rides at the very top of the screen, above the canopy orbs. */
+    justify-content: flex-start;
+    padding: 78px 22px 96px;
   }
 
   .home-hero h1 {
@@ -302,7 +305,17 @@ a {
   }
 
   .home-hero__eyebrow {
-    margin-bottom: 26px;
+    /* Shrink via the eyebrow CSS vars (consumed by .eyebrow) + nowrap so
+       "Scalability | Speed | Security" stays on a single iPhone line. */
+    --eyebrow-size: clamp(8.5px, 2.5vw, 10px);
+    --eyebrow-spacing: 0.2em;
+    white-space: nowrap;
+    margin-bottom: 18px;
+  }
+
+  /* Drop the leading gold dash on mobile so the eyebrow sits flush left. */
+  .home-hero__eyebrow::before {
+    display: none;
   }
 
   .home-hero__lead {

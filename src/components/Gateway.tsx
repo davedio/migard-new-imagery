@@ -310,8 +310,8 @@ function Hero() {
         Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
       </div>
       <h1>
-        Built for Throughput.<br />
-        Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>.
+        Built to Scale.<br />
+        Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>
       </h1>
       <p className="home-hero__lead">
         Midgard is a Cardano-native optimistic Layer 2 rollup. It runs
