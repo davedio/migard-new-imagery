@@ -442,11 +442,7 @@ button.panel:hover {
 }
 
 .security-backdrop__veil {
-  background:
-    radial-gradient(64% 52% at 76% 36%, rgba(59, 232, 99, 0.08), transparent 58%),
-    radial-gradient(72% 58% at 73% 86%, rgba(224, 120, 44, 0.1), transparent 66%),
-    linear-gradient(90deg, rgba(4, 9, 5, 0.56) 0%, rgba(4, 9, 5, 0.34) 31%, rgba(4, 9, 5, 0.1) 62%, rgba(4, 9, 5, 0.16) 100%),
-    linear-gradient(180deg, rgba(4, 9, 5, 0.18), rgba(4, 9, 5, 0.04) 42%, rgba(4, 9, 5, 0.34) 100%);
+  background: none;
 }
 
 @media (max-width: 760px) {
@@ -454,13 +450,6 @@ button.panel:hover {
     background-size: cover;
     background-position: 72% center;
     opacity: 1;
-  }
-
-  .security-backdrop__veil {
-    background:
-      radial-gradient(92% 52% at 72% 24%, rgba(59, 232, 99, 0.1), transparent 64%),
-      linear-gradient(180deg, rgba(4, 9, 5, 0.24), rgba(4, 9, 5, 0.08) 42%, rgba(4, 9, 5, 0.42) 100%),
-      linear-gradient(90deg, rgba(4, 9, 5, 0.5), rgba(4, 9, 5, 0.16), rgba(4, 9, 5, 0.22));
   }
 }
 
