@@ -7,7 +7,6 @@ import {
   CardGrid,
   Card,
   Actions,
-  CtaBand,
 } from "@/components/site/ui";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -43,7 +42,7 @@ export default function TestnetPage() {
         ]}
       />
 
-      <Section id="whats-live" eyebrow="What is live" title="Deployed and verifiable surfaces.">
+      <Section id="whats-live" title="Deployed and verifiable surfaces.">
         <Prose
           items={[
             {
@@ -58,7 +57,7 @@ export default function TestnetPage() {
         <NetworkStatusWidget />
       </Section>
 
-      <Section id="contracts" eyebrow="Contracts" title="Inspect the contract path.">
+      <Section id="contracts" title="Inspect the contract path.">
         <CardGrid>
           <Card
             title="Protocol contracts"
@@ -95,7 +94,7 @@ export default function TestnetPage() {
         </CardGrid>
       </Section>
 
-      <Section eyebrow="How to engage" title="Inspect, build, report.">
+      <Section title="Inspect, build, report.">
         <Bullets
           items={[
             "Builders read the docs, inspect source and contracts, test supported flows, and bring concrete feedback.",
@@ -106,7 +105,6 @@ export default function TestnetPage() {
       </Section>
 
       <Section
-        eyebrow="Builders"
         title="Builders make the path real."
         tight
       >
@@ -123,7 +121,6 @@ export default function TestnetPage() {
       </Section>
 
       <Section
-        eyebrow="Partners"
         title="Partners should enter through function."
         tight
       >
@@ -139,7 +136,7 @@ export default function TestnetPage() {
         />
       </Section>
 
-      <Section eyebrow="Proof queue" title="What should become visible next">
+      <Section title="What should become visible next">
         <Bullets
           items={[
             "Clear docs path.",
@@ -154,15 +151,6 @@ export default function TestnetPage() {
         />
       </Section>
 
-      <CtaBand
-        eyebrow="Testnet"
-        title="Start from the official path."
-        lead="Use the status surfaces published on official links, and bring concrete feedback."
-        actions={[
-          { label: "Get Started", href: "/get-started", variant: "primary" },
-          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
-        ]}
-      />
     </main>
   );
 }
