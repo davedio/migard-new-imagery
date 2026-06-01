@@ -68,8 +68,8 @@ const PARTICLE_ALT = "#33ff33"; // variation
 const MAX_PARTICLES = 760;
 // A random number of canopy orbs lump together into each trunk blob, so blob
 // sizes vary with how many gathered while avoiding oversized root exits.
-const GATHER_MIN = 8;
-const GATHER_MAX = 13;
+const GATHER_MIN = 14;
+const GATHER_MAX = 22;
 const FLASH_DUR = 1.5; // length of the "locked-in to L1" flash at a root tip — long, slow fade
 // Canopy orbs are born tiny and GROW in place (slowly, randomised per orb)
 // before they break onto their snake path down the tree.
@@ -122,6 +122,7 @@ type GatherBucket = {
   value: number;
   target: number;
   glow: number;
+  pulse: number;
 };
 
 // Snap helpers built from the loaded art (see makeVeinField).
@@ -682,6 +683,7 @@ export default function StaticTreeHero({
       value: 0,
       target: nextTarget(),
       glow: 0,
+      pulse: 0,
     }));
     let spawnTimer = FIRST_GLOW_DELAY; // short pause before the first orbs drip in (#4)
     let surge = 0; // settlement flash, decays
@@ -830,19 +832,20 @@ export default function StaticTreeHero({
     ) => {
       const base = passThrough
         ? 0.52 + Math.random() * 0.45
-        : 0.78 + Math.sqrt(gatheredCount) * 0.23 + Math.sqrt(gatheredValue) * 0.36;
+        : 0.86 + Math.sqrt(gatheredCount) * 0.22 + Math.sqrt(gatheredValue) * 0.32;
       const addSize = clamp(
-        base * (0.78 + Math.random() * 0.5),
-        passThrough ? 0.45 : 0.9,
+        base * (0.82 + Math.random() * 0.32),
+        passThrough ? 0.45 : 1.05,
         passThrough ? 1.15 : MERGE_CAP,
       );
-      if (!passThrough && Math.random() < 0.18) {
+      if (!passThrough && Math.random() < 0.24) {
         let host: Particle | null = null;
         for (const p of particles)
           if (p.phase === 1 && p.t < 0.28 && (!host || p.t < host.t)) host = p;
         if (host) {
           host.size = Math.min(MERGE_CAP, Math.cbrt(host.size ** 3 + addSize ** 3));
           bucket.glow = 1;
+          bucket.pulse = Math.max(bucket.pulse, 0.8);
           return;
         }
       }
@@ -864,22 +867,16 @@ export default function StaticTreeHero({
         age: 0,
       });
       bucket.glow = 1;
+      bucket.pulse = Math.max(bucket.pulse, 0.9);
     };
 
     const collectAtBucket = (p: Particle) => {
       const bucket = bucketForCanopySeg(p.seg);
-      if (p.micro && Math.random() < 0.58) {
-        bucket.glow = Math.min(1, bucket.glow + 0.08 + p.size * 0.04);
-        return;
-      }
-      if (Math.random() < 0.06) {
-        releaseBlob(bucket, 1, Math.max(0.45, p.size), true);
-        return;
-      }
-      const txWeight = p.micro ? 0.35 : 1;
+      const txWeight = p.micro ? 0.22 : 1;
       bucket.count += txWeight;
       bucket.value += Math.max(0.22, p.size) * (p.micro ? 0.45 : 1);
-      bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
+      bucket.glow = Math.min(1, bucket.glow + (p.micro ? 0.12 : 0.32) + p.size * 0.08);
+      bucket.pulse = Math.min(1, bucket.pulse + (p.micro ? 0.16 : 0.38) + p.size * 0.08);
     };
 
     // send proof orbs down a handful of MAJOR root systems (not every tip) so
@@ -984,7 +981,10 @@ export default function StaticTreeHero({
         if (!openingReleaseDone && runTime >= 1.65) {
           openingReleaseDone = true;
           const bucket = gatherBuckets[(Math.random() * gatherBuckets.length) | 0];
-          releaseBlob(bucket, GATHER_MIN, GATHER_MIN * 0.8);
+          bucket.count = Math.max(bucket.count, bucket.target * 0.62);
+          bucket.value = Math.max(bucket.value, bucket.target * 0.42);
+          bucket.glow = Math.max(bucket.glow, 0.78);
+          bucket.pulse = Math.max(bucket.pulse, 0.72);
         }
 
         // event: new batch -> a small flurry of canopy orbs + nudge the lump
@@ -1086,7 +1086,8 @@ export default function StaticTreeHero({
             bucket.value = Math.max(0, bucket.value - batchValue);
             bucket.target = nextTarget();
           }
-          bucket.glow = Math.max(0, bucket.glow - dt / 0.9);
+          bucket.glow = Math.max(0, bucket.glow - dt / 1.1);
+          bucket.pulse = Math.max(0, bucket.pulse - dt / 0.42);
         }
         surge = Math.max(0, surge - dt / 1.4);
       } else if (!staticSeeded) {
@@ -1118,15 +1119,29 @@ export default function StaticTreeHero({
       // Three batch pockets at the canopy base: many little L2 tx lights gather
       // here before compressing into fewer, larger proof lights.
       for (const bucket of gatherBuckets) {
-        if (bucket.count <= 0 && bucket.glow <= 0.01) continue;
+        if (bucket.count <= 0 && bucket.glow <= 0.01 && bucket.pulse <= 0.01) continue;
         const fullness = Math.min(1, bucket.count / bucket.target);
-        const lr = 5 + fullness * 7 + bucket.glow * 8;
-        ctx.globalAlpha = Math.min(0.62, 0.05 + bucket.count * 0.026 + bucket.glow * 0.32);
+        const valueFullness = Math.min(1, bucket.value / (bucket.target * 0.65));
+        const mass = Math.max(fullness, valueFullness * 0.72);
+        const pulse = smooth01(bucket.pulse);
+        const lr = 6 + mass * 13 + bucket.glow * 6 + pulse * 5;
+        ctx.globalAlpha = Math.min(0.68, 0.06 + mass * 0.34 + bucket.glow * 0.25 + pulse * 0.18);
         ctx.drawImage(glowCore, oX + bucket.x * dW - lr, oY + bucket.y * dH - lr, lr * 2, lr * 2);
-        ctx.globalAlpha = Math.min(0.88, 0.18 + fullness * 0.52);
+        ctx.globalAlpha = Math.min(0.9, 0.24 + mass * 0.44 + pulse * 0.22);
         ctx.fillStyle = `rgba(204,255,219,${ctx.globalAlpha})`;
         ctx.beginPath();
-        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 0.7 + fullness * 1.8, 0, Math.PI * 2);
+        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 1.1 + mass * 3.2 + pulse * 1.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = Math.min(0.42, 0.08 + mass * 0.24 + pulse * 0.18);
+        ctx.strokeStyle = `rgba(118,255,156,${ctx.globalAlpha})`;
+        ctx.lineWidth = 0.55 + pulse * 0.8;
+        ctx.beginPath();
+        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 4.2 + mass * 5.8 + pulse * 2.6, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = Math.min(0.88, 0.16 + fullness * 0.44);
+        ctx.fillStyle = `rgba(177,255,201,${ctx.globalAlpha})`;
+        ctx.beginPath();
+        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 0.55 + fullness * 1.35, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 1;
       }
