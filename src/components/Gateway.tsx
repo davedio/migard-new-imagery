@@ -215,9 +215,6 @@ function Hero() {
         faster execution layer while keeping Cardano as the root of trust.
       </p>
       <div className="home-hero__actions">
-        <Link className="btn btn--primary" href="/how-it-works">
-          How It Works
-        </Link>
         <a
           className="btn btn--ghost"
           href="https://anastasia-labs.github.io/midgard/midgard.pdf"
@@ -226,6 +223,9 @@ function Hero() {
         >
           Whitepaper
         </a>
+        <Link className="btn btn--primary" href="/how-it-works">
+          How It Works
+        </Link>
       </div>
     </header>
   );
