@@ -80,8 +80,9 @@ const FIRST_GLOW_DELAY = 0.5; // first visible transaction glow after page open
 const STARTUP_RAMP_SECONDS = 4.4;
 const OPENING_BURST_COUNT = 18;
 const BASE_CANOPY_LANES = 150;
-const HIGH_CANOPY_EXTRA_LANES = 200;
-const HIGH_MICRO_OPENING_BURST = 190;
+const HIGH_CANOPY_EXTRA_LANES = 150;
+const SIDE_CANOPY_EXTRA_LANES = 64;
+const HIGH_MICRO_OPENING_BURST = 164;
 const HIGH_MICRO_BATCH_BURST = 38;
 const HIGH_MICRO_SETTLE_BURST = 52;
 // Blobs glide at a CONSTANT VISUAL speed (height/sec), arc-length-normalised so
@@ -92,7 +93,7 @@ const BLOB_VSPEED_JIT = 0.006; // tiny variance so some blobs catch up + merge
 const MERGE_CAP = 4.2; // max blob size after merging
 
 type Pt = { x: number; y: number };
-type Lane = { poly: Pt[]; width: number; len: number; gi?: number; ang?: number; high?: boolean }; // gi = base pocket; ang = birth angle (canopy)
+type Lane = { poly: Pt[]; width: number; len: number; gi?: number; ang?: number; high?: boolean; side?: boolean }; // gi = base pocket; ang = birth angle (canopy)
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
 // phase 0 = canopy orb (grows in place, then descends), 1 = trunk blob,
@@ -305,27 +306,36 @@ function buildTree(field?: VeinField): Tree {
   // CANOPY: leaf tip on the dome -> sweep in -> fork. Snake-woven branches that
   // all converge at the bottom of the canopy (the fork) where orbs gather.
   const canopy: Lane[] = [];
-  const NC = BASE_CANOPY_LANES + HIGH_CANOPY_EXTRA_LANES;
+  const NC = BASE_CANOPY_LANES + HIGH_CANOPY_EXTRA_LANES + SIDE_CANOPY_EXTRA_LANES;
   for (let i = 0; i < NC; i++) {
     const isHighMicro = i >= BASE_CANOPY_LANES;
+    const isSideMicro = i >= BASE_CANOPY_LANES + HIGH_CANOPY_EXTRA_LANES;
     // RANDOM scatter across the crown (not a grid): random angle + random DEPTH,
     // capped at 0.8 of the dome so tips never reach the outer edge / sky. Snapped
     // onto the nearest bright vein so orbs RIDE the branches + bunch lower-centre.
     const jAng = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
     const jRad = Math.abs(Math.sin(i * 78.233 + 2.1) * 43758.5453) % 1;
     const jW = Math.abs(Math.sin(i * 39.42 + 0.7) * 43758.5453) % 1;
-    const ang = isHighMicro
-      ? Math.PI * (0.18 + 0.64 * jAng)
-      : Math.PI * (-0.04 + 1.08 * jAng); // across the crown arc
-    const rf = isHighMicro
-      ? 0.56 + 0.2 * jRad
-      : 0.3 + 0.5 * jRad; // never the very edge
+    const sideRight = i % 2 === 0;
+    const ang = isSideMicro
+      ? Math.PI * ((sideRight ? 0.1 : 0.72) + 0.18 * jAng)
+      : isHighMicro
+        ? Math.PI * (0.18 + 0.64 * jAng)
+        : Math.PI * (-0.04 + 1.08 * jAng); // across the crown arc
+    const rf = isSideMicro
+      ? 0.56 + 0.18 * jRad
+      : isHighMicro
+        ? 0.56 + 0.2 * jRad
+        : 0.3 + 0.5 * jRad; // never the very edge
     const leafGuess = {
       x: DOME.cx + Math.cos(ang) * DOME.rx * rf,
       y: DOME.cy - Math.sin(ang) * DOME.ry * rf,
     };
     const leaf = field
-      ? onTree(anchor(leafGuess, isHighMicro ? 0.026 : 0.055), isHighMicro ? 0.028 : 0.06)
+      ? onTree(
+          anchor(leafGuess, isSideMicro ? 0.018 : isHighMicro ? 0.026 : 0.055),
+          isSideMicro ? 0.022 : isHighMicro ? 0.028 : 0.06,
+        )
       : {
           x: clamp(leafGuess.x, DOME.cx - DOME.rx * 0.8, DOME.cx + DOME.rx * 0.8),
           y: leafGuess.y,
@@ -343,16 +353,16 @@ function buildTree(field?: VeinField): Tree {
     const mid = anchor({
       x: lerp(leaf.x, gather.x, 0.6),
       y: lerp(leaf.y, gather.y, 0.62),
-    }, isHighMicro ? 0.016 : 0.028);
+    }, isSideMicro ? 0.014 : isHighMicro ? 0.016 : 0.028);
     const base = catmullRom([leaf, mid, forkInlet], 14);
     const woven = snake(
       base,
-      isHighMicro ? 0.0025 + jW * 0.0025 : 0.005 + jW * 0.004,
+      isSideMicro ? 0.003 + jW * 0.0028 : isHighMicro ? 0.0025 + jW * 0.0025 : 0.005 + jW * 0.004,
       1 + (i % 2),
       (i * 1.3) % (Math.PI * 2),
     );
     const onT = field
-      ? fitToTree(woven, onTree, isHighMicro ? 0.012 : 0.022, 2)
+      ? fitToTree(woven, onTree, isSideMicro ? 0.01 : isHighMicro ? 0.012 : 0.022, 2)
       : smoothPoly(woven, 2);
     if (field) onT[0] = leaf; // pin the birth point to the snapped vein tip
     canopy.push({
@@ -362,6 +372,7 @@ function buildTree(field?: VeinField): Tree {
       gi,
       ang,
       high: isHighMicro,
+      side: isSideMicro,
     });
   }
 
@@ -635,13 +646,18 @@ export default function StaticTreeHero({
     // Spawn weights bias new orbs toward the top while keeping the outer canopy alive.
     let canopyW: number[] = [];
     let highCanopyIdx: number[] = [];
+    let sideCanopyIdx: number[] = [];
     let canopyWSum = 0;
     const computeWeights = () => {
       // near-uniform: the random vein-snapped lanes already bunch in the lit
       // lower-centre, so let that lane density set where the orbs concentrate.
-      canopyW = tree.canopy.map((l) => 1.0 + l.width * 0.2 + (l.high ? 0.35 : 0));
+      canopyW = tree.canopy.map((l) => 1.0 + l.width * 0.2 + (l.high ? 0.24 : 0) + (l.side ? 0.55 : 0));
       highCanopyIdx = tree.canopy.reduce<number[]>((acc, l, i) => {
         if (l.high) acc.push(i);
+        return acc;
+      }, []);
+      sideCanopyIdx = tree.canopy.reduce<number[]>((acc, l, i) => {
+        if (l.side) acc.push(i);
         return acc;
       }, []);
       canopyWSum = canopyW.reduce((s, w) => s + w, 0);
@@ -725,6 +741,7 @@ export default function StaticTreeHero({
 
     const laneOf = (p: Particle): Lane =>
       p.phase === 0 ? tree.canopy[p.seg] : p.phase === 1 ? tree.trunk[p.seg] : tree.roots[p.seg];
+    const recentBirths: number[] = [];
 
     const pickBaseCanopySeg = (): number => {
       if (canopyWSum <= 0) return (Math.random() * tree.canopy.length) | 0;
@@ -736,16 +753,57 @@ export default function StaticTreeHero({
       return (Math.random() * tree.canopy.length) | 0;
     };
 
+    const birthDist = (a: number, b: number) => {
+      const pa = tree.canopy[a]?.poly[0];
+      const pb = tree.canopy[b]?.poly[0];
+      if (!pa || !pb) return 1;
+      return Math.hypot((pa.x - pb.x) * IMG_ASPECT, pa.y - pb.y);
+    };
+
+    const rememberBirth = (seg: number) => {
+      recentBirths.push(seg);
+      if (recentBirths.length > 24) recentBirths.shift();
+      return seg;
+    };
+
+    const pickSpreadCanopySeg = (pool: number[]): number => {
+      if (pool.length === 0) return pickBaseCanopySeg();
+      if (recentBirths.length === 0) {
+        return rememberBirth(pool[(Math.random() * pool.length) | 0]);
+      }
+      let best = pool[(Math.random() * pool.length) | 0];
+      let bestScore = -Infinity;
+      for (let tries = 0; tries < 8; tries++) {
+        const idx = pool[(Math.random() * pool.length) | 0];
+        let minDist = Infinity;
+        for (const recent of recentBirths) minDist = Math.min(minDist, birthDist(idx, recent));
+        const sideBoost = tree.canopy[idx]?.side ? 0.035 : 0;
+        const score = minDist + sideBoost + Math.random() * 0.012;
+        if (score > bestScore) {
+          bestScore = score;
+          best = idx;
+        }
+      }
+      return rememberBirth(best);
+    };
+
+    const pickSideCanopySeg = (): number => {
+      if (sideCanopyIdx.length === 0) return pickSpreadCanopySeg(highCanopyIdx);
+      return pickSpreadCanopySeg(sideCanopyIdx);
+    };
+
     const pickHighCanopySeg = (): number => {
       if (highCanopyIdx.length === 0) return pickBaseCanopySeg();
-      return highCanopyIdx[(Math.random() * highCanopyIdx.length) | 0];
+      if (sideCanopyIdx.length > 0 && Math.random() < 0.28) return pickSideCanopySeg();
+      return pickSpreadCanopySeg(highCanopyIdx);
     };
 
     const pickCanopySeg = (): number => {
       // Keep a portion of births spread across the whole crown so the top reads
       // like many independent transactions rather than one tight swarm.
-      if (Math.random() < 0.42) return pickHighCanopySeg();
-      if (Math.random() < 0.18) return pickBaseCanopySeg();
+      if (Math.random() < 0.16) return pickSideCanopySeg();
+      if (Math.random() < 0.34) return pickHighCanopySeg();
+      if (Math.random() < 0.2) return pickBaseCanopySeg();
 
       // base lane density × proximity to the current focus angle, which slowly
       // sweeps so the drip bunches on one side then rotates around the crown (#4)
