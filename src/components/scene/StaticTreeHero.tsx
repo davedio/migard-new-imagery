@@ -85,6 +85,11 @@ const SIDE_CANOPY_EXTRA_LANES = 64;
 const HIGH_MICRO_OPENING_BURST = 164;
 const HIGH_MICRO_BATCH_BURST = 38;
 const HIGH_MICRO_SETTLE_BURST = 52;
+const HOVER_ACCEL_RADIUS = 0.095;
+const HOVER_CANOPY_SPEED_BOOST = 5.8;
+const HOVER_PROOF_SPEED_BOOST = 3.6;
+const HOVER_GROW_BOOST = 5.2;
+const HOVER_HOLD_BOOST = 8.5;
 // Blobs glide at a CONSTANT VISUAL speed (height/sec), arc-length-normalised so
 // the short trunk and the long roots run at the same on-screen pace — no speed
 // change at the crown. Slower than the darting canopy orbs.
@@ -704,6 +709,20 @@ export default function StaticTreeHero({
     const glowCore = makeGlow(CORE_RGB);
     const glowAlt = makeGlow(ALT_RGB);
     const glowGold = makeGlow(FLASH_RGB); // brown-gold root lock-in flash (#8)
+    const pointer = {
+      x: 0,
+      y: 0,
+      active: false,
+      fine: false,
+    };
+    const finePointerQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const syncFinePointer = () => {
+      pointer.fine =
+        finePointerQuery.matches &&
+        (window.visualViewport?.width ?? document.documentElement.clientWidth) > 720;
+      if (!pointer.fine) pointer.active = false;
+    };
+    syncFinePointer();
 
     let W = 0,
       H = 0,
@@ -751,10 +770,31 @@ export default function StaticTreeHero({
       dpr = Math.min(2, window.devicePixelRatio || 1);
       canvas.width = Math.round(W * dpr);
       canvas.height = Math.round(H * dpr);
+      syncFinePointer();
     };
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
+
+    const updatePointer = (event: PointerEvent) => {
+      if (!pointer.fine || event.pointerType === "touch") return;
+      const r = canvas.getBoundingClientRect();
+      const x = event.clientX - r.left;
+      const y = event.clientY - r.top;
+      pointer.x = x;
+      pointer.y = y;
+      pointer.active = x >= 0 && x <= r.width && y >= 0 && y <= r.height;
+    };
+    const clearPointer = () => {
+      pointer.active = false;
+    };
+    const clearPointerOnWindowExit = (event: PointerEvent) => {
+      if (!event.relatedTarget) clearPointer();
+    };
+    finePointerQuery.addEventListener("change", syncFinePointer);
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    window.addEventListener("pointerout", clearPointerOnWindowExit);
+    window.addEventListener("blur", clearPointer);
 
     const laneOf = (p: Particle): Lane =>
       p.phase === 0 ? tree.canopy[p.seg] : p.phase === 1 ? tree.trunk[p.seg] : tree.roots[p.seg];
@@ -1040,6 +1080,18 @@ export default function StaticTreeHero({
       const baseY = (H - coverH) * bgPosY;
       const oX = W / 2 + (baseX - W / 2) * bgZoom;
       const oY = H / 2 + (baseY - H / 2) * bgZoom;
+      const pointerArt =
+        pointer.fine && pointer.active && dW > 0 && dH > 0
+          ? { x: (pointer.x - oX) / dW, y: (pointer.y - oY) / dH }
+          : null;
+      const hoverAt = (pt: Pt) => {
+        if (!pointerArt) return 0;
+        const dx = (pt.x - pointerArt.x) * IMG_ASPECT;
+        const dy = pt.y - pointerArt.y;
+        const d = Math.hypot(dx, dy);
+        if (d >= HOVER_ACCEL_RADIUS) return 0;
+        return smooth01(1 - d / HOVER_ACCEL_RADIUS);
+      };
 
       if (moving) {
         staticSeeded = false;
@@ -1100,22 +1152,28 @@ export default function StaticTreeHero({
         for (const p of particles) {
           p.age += dt;
           if (p.phase === 3) continue; // flashing at a root tip — stays put
+          const hover = hoverAt(sampleLane(laneOf(p), p.t).pt);
           // staggered birth: a brief delay before each orb starts swelling, so
           // they pop in as an irregular drip rather than all at once (#4/#5)
-          if (p.phase === 0 && p.growDelay && p.age < p.growDelay) continue;
+          if (p.phase === 0 && p.growDelay && p.age < p.growDelay) {
+            if (hover <= 0) continue;
+            p.growDelay = Math.max(0, p.growDelay - dt * HOVER_HOLD_BOOST * hover);
+            if (p.age < p.growDelay) continue;
+          }
           if (p.grow < 1) {
-            p.grow = Math.min(1, p.grow + p.growRate * dt);
+            p.grow = Math.min(1, p.grow + p.growRate * dt * (1 + hover * HOVER_GROW_BOOST));
             continue; // still growing at its birth spot — doesn't move yet
           }
           if (p.phase === 0 && p.hold > 0) {
-            p.hold = Math.max(0, p.hold - dt);
+            p.hold = Math.max(0, p.hold - dt * (1 + hover * HOVER_HOLD_BOOST));
             continue; // hangs glowing in the canopy before breaking loose
           }
           // canopy orbs advance in lane-normalised t (kept as fast as before);
           // blobs glide at a constant VISUAL speed, so the short trunk and the
           // long roots run at the same on-screen pace (no jump at the crown).
           const advance = p.phase === 0 ? p.speed : p.speed / laneOf(p).len;
-          p.t += advance * dt;
+          const hoverBoost = p.phase === 0 ? HOVER_CANOPY_SPEED_BOOST : HOVER_PROOF_SPEED_BOOST;
+          p.t += advance * dt * (1 + hover * hoverBoost);
         }
 
         // phase ends: flash expires -> die; canopy -> gather; trunk proof orb
@@ -1295,6 +1353,10 @@ export default function StaticTreeHero({
     return () => {
       cancelAnimationFrame(raf);
       veinImg.onload = null;
+      finePointerQuery.removeEventListener("change", syncFinePointer);
+      window.removeEventListener("pointermove", updatePointer);
+      window.removeEventListener("pointerout", clearPointerOnWindowExit);
+      window.removeEventListener("blur", clearPointer);
       ro.disconnect();
     };
   }, []);
