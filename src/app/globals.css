@@ -185,7 +185,7 @@ a {
 .home-hero {
   --hero-fit: 1;
   --home-hero-width: 640px;
-  --home-h1-size: 58px;
+  --home-h1-size: 54px;
   --home-lead-size: 18px;
   --home-sublead-size: 16px;
   min-height: 92svh;
@@ -368,7 +368,7 @@ a {
 @media (min-width: 1600px) {
   .home-hero {
     --home-hero-width: 860px;
-    --home-h1-size: 74px;
+    --home-h1-size: 70px;
     --home-lead-size: 20px;
     --home-sublead-size: 17px;
     width: min(calc(var(--home-hero-width) * var(--hero-fit)), 48vw);
@@ -391,7 +391,7 @@ a {
 @media (min-width: 2200px) {
   .home-hero {
     --home-hero-width: 980px;
-    --home-h1-size: 88px;
+    --home-h1-size: 82px;
     --home-lead-size: 22px;
     width: min(calc(var(--home-hero-width) * var(--hero-fit)), 46vw);
     padding-inline-start: 140px;
@@ -405,7 +405,7 @@ a {
 @media (max-width: 1320px) {
   .home-hero {
     --home-hero-width: 590px;
-    --home-h1-size: 52px;
+    --home-h1-size: 49px;
     --home-lead-size: 17px;
     width: min(calc(var(--home-hero-width) * var(--hero-fit)), calc(100vw - (var(--gut) * 2)));
     padding-block: 126px 132px;
@@ -414,7 +414,7 @@ a {
 
 @media (max-width: 720px) {
   .home-hero {
-    --home-h1-size: 40px;
+    --home-h1-size: 38px;
     --home-lead-size: 18px;
     --home-sublead-size: 15.5px;
     width: auto;
