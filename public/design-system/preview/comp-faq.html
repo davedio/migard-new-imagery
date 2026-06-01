@@ -1,0 +1,50 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../midgard.css">
+<style>
+  body { margin: 0; background: var(--deep-ink); padding: 28px 30px; }
+  .cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 16px; }
+  .faq { max-width: 620px; display: grid; gap: 26px; }
+  .faq-group h3 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-bright); margin: 0; }
+  .faq-list { margin-top: 10px; }
+  .faq-item { padding: 16px 0; border-top: 1px solid var(--panel-edge); }
+  .faq-item .q { font-family: var(--font-display); font-weight: 500; font-size: 16px; color: var(--text-hi); }
+  .faq-item .a { margin-top: 8px; font-family: var(--font-body); font-size: 14.5px; color: var(--text-dim); line-height: 1.55; }
+</style>
+</head>
+<body>
+  <div class="cap">FAQ — grouped questions, mist hairlines</div>
+  <div class="faq">
+    <div class="faq-group">
+      <h3>Product status</h3>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="q">What is Midgard?</div>
+          <div class="a">A Cardano-native optimistic rollup. It gives Cardano applications a higher-throughput L2 path while keeping Cardano L1 in the trust and settlement story.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">How are fees paid?</div>
+          <div class="a">Fees are paid in ADA.</div>
+        </div>
+      </div>
+    </div>
+    <div class="faq-group">
+      <h3>Security and support</h3>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="q">What is the security story?</div>
+          <div class="a">Built around Cardano L1 anchoring, eUTXO-aware design, commitments, challenge mechanics, watchers, and settlement.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../midgard.css">
+<style>
+  body { margin: 0; background:
+    radial-gradient(120% 90% at 50% -10%, rgba(207,154,46,0.06), transparent 55%),
+    radial-gradient(100% 70% at 50% 130%, rgba(32,190,67,0.07), transparent 60%), var(--deep-ink);
+    padding: 30px; }
+  .cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 26px; }
+  .rail { display: flex; align-items: flex-start; gap: 0; flex-wrap: wrap; }
+  .node { display: flex; flex-direction: column; align-items: center; gap: 9px; min-width: 86px; }
+  .dot { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+    font-family: var(--font-mono); font-size: 11px; color: var(--green-bright);
+    border: 1px solid rgba(32,190,67,0.5); background: rgba(32,190,67,0.10); box-shadow: 0 0 16px rgba(32,190,67,0.14); }
+  .node.l1 .dot { color: var(--gold-bright); border-color: rgba(207,154,46,0.6); background: var(--gold-ghost); box-shadow: 0 0 16px rgba(207,154,46,0.14); }
+  .name { font-family: var(--font-mono); font-size: 11px; color: var(--text); text-align: center; letter-spacing: 0.02em; }
+  .node.l1 .name { color: var(--gold-bright); }
+  .arrow { align-self: flex-start; margin-top: 8px; color: var(--text-faint); font-family: var(--font-mono); font-size: 15px; padding: 0 2px; }
+  .note { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-top: 26px; line-height: 1.8; }
+</style>
+</head>
+<body>
+  <div class="cap">Protocol lifecycle — one trust path, end to end</div>
+  <div class="rail">
+    <div class="node"><div class="dot">01</div><div class="name">Activity</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="dot">02</div><div class="name">Batch</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="dot">03</div><div class="name">Proof</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="dot">04</div><div class="name">Challenge</div></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="dot">05</div><div class="name">Settlement</div></div>
+    <div class="arrow">→</div>
+    <div class="node l1"><div class="dot">06</div><div class="name">Cardano L1</div></div>
+  </div>
+  <div class="note">Activity executes on L2 · batched · committed as proof · disputes challenged · settled back to Cardano L1 (gold) — the base layer stays in the loop.</div>
+</body>
+</html>

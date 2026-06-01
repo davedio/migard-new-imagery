@@ -207,17 +207,16 @@ function Hero() {
       </div>
       <h1>
         Built to scale.<br />
-        Secure settlement on{" "}
+        Rooted in{" "}
         <span style={{ color: "var(--green-bright)" }}>Cardano.</span>
       </h1>
       <p className="home-hero__lead">
-        Midgard is a Cardano-native optimistic rollup: applications execute on
-        L2 and settlement returns to Cardano L1.
+        Midgard is a Cardano-native optimistic rollup that gives applications a
+        faster execution layer while keeping Cardano as the root of trust.
       </p>
       <p className="home-hero__sublead">
-        For users, that should feel like faster wallet activity. For builders,
-        it is a faster execution path for dApps, DEXs, lending protocols,
-        wallets, and other Cardano flows that need more capacity.
+        Faster transaction execution for dApps, DEXs, lending protocols,
+        wallets, and other flows that require speed and throughput.
       </p>
       <ol className="home-hero__mechanism" aria-label="Midgard mechanism">
         {["Activity", "Batch", "Proof", "Challenge", "Settlement", "Cardano L1"].map(
@@ -228,10 +227,10 @@ function Hero() {
       </ol>
       <div className="home-hero__actions">
         <Link className="btn btn--primary" href="/how-it-works">
-          See the mechanism
+          How It Works
         </Link>
         <Link className="btn btn--ghost" href="/get-started">
-          Start with your use case
+          Get Started
         </Link>
       </div>
     </header>
@@ -292,7 +291,6 @@ function ExploreGrid() {
   return (
     <section id="explore" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Start here</div>
         <h2 style={h2Style}>Start with your question, not a label.</h2>
         <p style={leadStyle}>
           Users, builders, and partners can overlap. Pick the path that matches

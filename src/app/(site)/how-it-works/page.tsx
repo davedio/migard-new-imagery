@@ -20,7 +20,7 @@ export default function HowItWorksPage() {
         id="layers"
         eyebrow="Layer explainer"
         title="Five lifecycle steps, one trust path."
-        lead="The lifecycle above shows the moving system. The layer rows below show the underlying architecture Midgard keeps inspectable."
+        lead="The lifecycle is the moving system. The layer rows below show the underlying architecture Midgard keeps inspectable."
         glow="green"
       >
         <Layers

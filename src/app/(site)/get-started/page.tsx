@@ -6,7 +6,6 @@ import {
   CardGrid,
   Card,
   Layers,
-  Bullets,
   Callout,
   Actions,
   CtaBand,
@@ -34,23 +33,9 @@ export default function GetStartedPage() {
 
       <Section
         id="builder-quickstart"
-        eyebrow="Builder quickstart"
-        title="Start with the architecture and source."
+        eyebrow="Where to start"
+        title="One concrete builder sequence."
       >
-        <Prose
-          items={[
-            {
-              text: "Midgard is designed to preserve the Cardano/eUTXO developer model as much as possible: validator logic, transaction assumptions, off-chain tooling, and application architecture stay recognizable.",
-            },
-            {
-              text: "The practical work is mapping which flows need L2 throughput, which state remains on L1, and where the wallet path must stay clear for users.",
-              variant: "dim",
-            },
-          ]}
-        />
-      </Section>
-
-      <Section eyebrow="Where to start" title="One concrete builder sequence.">
         <CardGrid cols={2}>
           <Card
             num="01"
@@ -187,21 +172,6 @@ export default function GetStartedPage() {
         <Actions
           items={[
             { label: "Open official links", href: "/official-links", variant: "ghost" },
-          ]}
-        />
-      </Section>
-
-      <Section eyebrow="Proof queue" title="What should become visible next">
-        <Bullets
-          items={[
-            "Clear docs path.",
-            "Contracts and deployment surfaces.",
-            "Builder quickstart.",
-            "Wallet and dApp integration tracks.",
-            "Activity and settlement dashboards.",
-            "Security reporting route.",
-            "Support route.",
-            "Post-testnet proof report.",
           ]}
         />
       </Section>

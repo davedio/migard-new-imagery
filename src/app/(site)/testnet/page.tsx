@@ -6,7 +6,6 @@ import {
   Bullets,
   CardGrid,
   Card,
-  Actions,
   CtaBand,
 } from "@/components/site/ui";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
@@ -93,50 +92,6 @@ export default function TestnetPage() {
             delay={300}
           />
         </CardGrid>
-      </Section>
-
-      <Section eyebrow="How to engage" title="Inspect, build, report.">
-        <Bullets
-          items={[
-            "Builders read the docs, inspect source and contracts, test supported flows, and bring concrete feedback.",
-            "Partners enter through function: wallet flow, app flow, infrastructure, analytics, monitoring, or security review.",
-            "Users read status labels, start from official links, and watch the network mature.",
-          ]}
-        />
-      </Section>
-
-      <Section
-        eyebrow="Builders"
-        title="Builders make the path real."
-        tight
-      >
-        <Prose
-          items={[
-            {
-              text: "Review the docs, inspect source, test supported flows, identify integration blockers, and bring concrete feedback. Midgard needs builders who can turn architecture into usable applications.",
-            },
-          ]}
-        />
-        <Actions
-          items={[{ label: "Get Started", href: "/get-started", variant: "ghost" }]}
-        />
-      </Section>
-
-      <Section
-        eyebrow="Partners"
-        title="Partners should enter through function."
-        tight
-      >
-        <Prose
-          items={[
-            {
-              text: "Wallets, dApps, infrastructure providers, analytics teams, security contributors, and community educators should start with a clear role. What do you make easier, safer, faster, or more inspectable?",
-            },
-          ]}
-        />
-        <Actions
-          items={[{ label: "Get Started", href: "/get-started", variant: "ghost" }]}
-        />
       </Section>
 
       <Section eyebrow="Proof queue" title="What should become visible next">
