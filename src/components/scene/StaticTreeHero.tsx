@@ -40,8 +40,8 @@ const BG_SRC = "/hero-tree-green.png";
 
 // Intrinsic size of the background art — used to mirror `cover` in the canvas.
 const IMG_ASPECT = 1672 / 941;
-// Matches the CSS background `scale(1.06)` so the particle field sits on the art.
-const ZOOM = 1.06;
+// Matches the default CSS background zoom so the particle field sits on the art.
+const DEFAULT_TREE_ZOOM = 1.06;
 
 // Geometry of the painted tree, read off the art in the PNG's normalised
 // 0..1 space: a rounded canopy DOME, a short VERTICAL trunk right-of-centre,
@@ -147,6 +147,24 @@ const smooth01 = (x: number) => {
   const c = clamp(x, 0, 1);
   return c * c * (3 - 2 * c);
 };
+
+function parseBgPosition(value: string): [number, number] {
+  const parts = value.trim().split(/\s+/);
+  const parsePart = (part: string | undefined) => {
+    if (!part) return 0.5;
+    const normalized = part.toLowerCase();
+    if (normalized === "left" || normalized === "top") return 0;
+    if (normalized === "center") return 0.5;
+    if (normalized === "right" || normalized === "bottom") return 1;
+    if (normalized.endsWith("%")) {
+      const n = Number.parseFloat(normalized);
+      return Number.isFinite(n) ? clamp(n / 100, 0, 1) : 0.5;
+    }
+    return 0.5;
+  };
+
+  return [parsePart(parts[0]), parsePart(parts[1])];
+}
 
 // Smooth curve through waypoints (Catmull-Rom), ends clamped.
 function catmullRom(points: Pt[], samplesPer: number): Pt[] {
@@ -690,6 +708,9 @@ export default function StaticTreeHero({
     let W = 0,
       H = 0,
       dpr = 1;
+    let bgZoom = DEFAULT_TREE_ZOOM;
+    let bgPosX = 0.5;
+    let bgPosY = 0.5;
     const nextTarget = () =>
       GATHER_MIN + ((Math.random() * (GATHER_MAX - GATHER_MIN + 1)) | 0);
     const particles: Particle[] = [];
@@ -711,7 +732,19 @@ export default function StaticTreeHero({
     let openingBurstDone = false;
     let openingReleaseDone = false;
 
+    const readBackgroundVars = () => {
+      const style = window.getComputedStyle(bg);
+      const zoom = Number.parseFloat(
+        style.getPropertyValue("--static-tree-zoom"),
+      );
+      bgZoom = Number.isFinite(zoom) ? zoom : DEFAULT_TREE_ZOOM;
+      [bgPosX, bgPosY] = parseBgPosition(
+        style.getPropertyValue("--static-tree-bg-position") || "50% 50%",
+      );
+    };
+
     const resize = () => {
+      readBackgroundVars();
       const r = canvas.getBoundingClientRect();
       W = r.width;
       H = r.height;
@@ -990,20 +1023,23 @@ export default function StaticTreeHero({
       const moving = motionRef.current;
       const s = snapRef.current;
 
-      // Mirror CSS `background-size: cover` (+ ZOOM) so normalised art coords land
-      // on the painted tree. The background is static (no mouse parallax), so the
-      // bead layer and the art share one fixed transform.
+      // Mirror CSS `background-size: cover` plus the responsive crop/zoom vars so
+      // normalised art coords land on the painted tree at every viewport.
       const va = W / H;
-      let dW: number, dH: number;
+      let coverW: number, coverH: number;
       if (va > IMG_ASPECT) {
-        dW = W * ZOOM;
-        dH = (W / IMG_ASPECT) * ZOOM;
+        coverW = W;
+        coverH = W / IMG_ASPECT;
       } else {
-        dH = H * ZOOM;
-        dW = H * IMG_ASPECT * ZOOM;
+        coverH = H;
+        coverW = H * IMG_ASPECT;
       }
-      const oX = (W - dW) / 2;
-      const oY = (H - dH) / 2;
+      const dW = coverW * bgZoom;
+      const dH = coverH * bgZoom;
+      const baseX = (W - coverW) * bgPosX;
+      const baseY = (H - coverH) * bgPosY;
+      const oX = W / 2 + (baseX - W / 2) * bgZoom;
+      const oY = H / 2 + (baseY - H / 2) * bgZoom;
 
       if (moving) {
         staticSeeded = false;
@@ -1267,15 +1303,17 @@ export default function StaticTreeHero({
     <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
       <div
         ref={bgRef}
+        className="static-tree-hero__bg"
         style={{
           position: "absolute",
           inset: 0,
           backgroundColor: "#040a06",
           backgroundImage: `radial-gradient(85% 75% at 72% 32%, rgba(26,84,40,0.22), transparent 58%), url("${BG_SRC}")`,
           backgroundSize: "cover, cover",
-          backgroundPosition: "center, center",
+          backgroundPosition:
+            "var(--static-tree-bg-position), var(--static-tree-bg-position)",
           backgroundRepeat: "no-repeat, no-repeat",
-          transform: `scale(${ZOOM})`,
+          transform: "scale(var(--static-tree-zoom))",
           willChange: "transform",
         }}
       />
