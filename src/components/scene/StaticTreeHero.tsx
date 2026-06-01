@@ -65,17 +65,20 @@ const PARTICLE_CORE = "#00ff66"; // primary
 const PARTICLE_ALT = "#33ff33"; // variation
 
 // Tunables
-const MAX_PARTICLES = 400;
+const MAX_PARTICLES = 540;
 // A random number of canopy orbs lump together into each trunk blob, so blob
 // sizes vary with how many gathered while avoiding oversized root exits.
-const GATHER_MIN = 13; // raised ~25% -> ~20% fewer, bigger blobs down the trunk
-const GATHER_MAX = 20;
+const GATHER_MIN = 8;
+const GATHER_MAX = 13;
 const FLASH_DUR = 1.5; // length of the "locked-in to L1" flash at a root tip — long, slow fade
 // Canopy orbs are born tiny and GROW in place (slowly, randomised per orb)
 // before they break onto their snake path down the tree.
-const GROW_MIN = 0.55; // seconds to reach full size (ambient orb)
-const GROW_MAX = 1.35;
-const GROW_FAST = 0.55; // event-burst orbs grow quicker
+const GROW_MIN = 0.38; // seconds to reach full size (ambient orb)
+const GROW_MAX = 0.95;
+const GROW_FAST = 0.32; // event-burst orbs grow quicker
+const FIRST_GLOW_DELAY = 0.5; // first visible transaction glow after page open
+const STARTUP_RAMP_SECONDS = 4.4;
+const OPENING_BURST_COUNT = 18;
 // Blobs glide at a CONSTANT VISUAL speed (height/sec), arc-length-normalised so
 // the short trunk and the long roots run at the same on-screen pace — no speed
 // change at the crown. Slower than the darting canopy orbs.
@@ -650,13 +653,15 @@ export default function StaticTreeHero({
       target: nextTarget(),
       glow: 0,
     }));
-    let spawnTimer = 0.75; // dark pause before the first orbs drip in (#4)
+    let spawnTimer = FIRST_GLOW_DELAY; // short pause before the first orbs drip in (#4)
     let surge = 0; // settlement flash, decays
     let lastBatch = snapRef.current.l2.latestBatchId;
     let lastProof = snapRef.current.l2.latestProofStatus;
     let staticSeeded = false;
     let runTime = 0; // seconds of active animation — drives the drip ramp (#4)
     let focusAngle = Math.PI / 2; // sweeping spawn-concentration angle (#4)
+    let openingBurstDone = false;
+    let openingReleaseDone = false;
 
     // cursor speed-field (#9): orbs within CURSOR_R of the pointer move faster
     const cursor = { px: -1, py: -1, active: false };
@@ -689,7 +694,21 @@ export default function StaticTreeHero({
     const laneOf = (p: Particle): Lane =>
       p.phase === 0 ? tree.canopy[p.seg] : p.phase === 1 ? tree.trunk[p.seg] : tree.roots[p.seg];
 
+    const pickBaseCanopySeg = (): number => {
+      if (canopyWSum <= 0) return (Math.random() * tree.canopy.length) | 0;
+      let r = Math.random() * canopyWSum;
+      for (let i = 0; i < canopyW.length; i++) {
+        r -= canopyW[i];
+        if (r <= 0) return i;
+      }
+      return (Math.random() * tree.canopy.length) | 0;
+    };
+
     const pickCanopySeg = (): number => {
+      // Keep a portion of births spread across the whole crown so the top reads
+      // like many independent transactions rather than one tight swarm.
+      if (Math.random() < 0.28) return pickBaseCanopySeg();
+
       // base lane density × proximity to the current focus angle, which slowly
       // sweeps so the drip bunches on one side then rotates around the crown (#4)
       const focusW: number[] = [];
@@ -697,8 +716,8 @@ export default function StaticTreeHero({
       for (let i = 0; i < canopyW.length; i++) {
         const a = tree.canopy[i].ang ?? Math.PI / 2;
         const d = a - focusAngle;
-        const prox = Math.exp(-(d * d) / (2 * 0.5 * 0.5));
-        const wgt = (canopyW[i] || 1) * (0.3 + prox);
+        const prox = Math.exp(-(d * d) / (2 * 0.68 * 0.68));
+        const wgt = (canopyW[i] || 1) * (0.55 + prox * 0.9);
         focusW.push(wgt);
         sum += wgt;
       }
@@ -741,12 +760,14 @@ export default function StaticTreeHero({
           ? GROW_FAST * (0.7 + Math.random() * 0.6)
           : GROW_MIN + Math.random() * (GROW_MAX - GROW_MIN)) *
         (0.7 + sizeN * 0.9);
-      const hold = (0.35 + sizeN * 1.9) * (0.6 + Math.random() * 0.8);
+      const hold =
+        (fast ? 0.1 + sizeN * 0.55 : 0.22 + sizeN * 1.05) *
+        (0.55 + Math.random() * 0.65);
       particles.push({
         phase: 0,
         seg,
         t: 0,
-        speed: (fast ? 1.5 : 1) * (0.135 + Math.random() * 0.085) * (1.15 - sizeN * 0.3),
+        speed: (fast ? 1.75 : 1) * (0.18 + Math.random() * 0.12) * (1.15 - sizeN * 0.3),
         size,
         grow: 0,
         growRate: 1 / growTime,
@@ -754,7 +775,7 @@ export default function StaticTreeHero({
         alt: Math.random() < 0.5,
         age: 0,
         r0: Math.random(),
-        growDelay: fast ? Math.random() * 0.15 : Math.random() * 0.5,
+        growDelay: fast ? Math.random() * 0.06 : Math.random() * 0.26,
       });
       leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
     };
@@ -903,7 +924,20 @@ export default function StaticTreeHero({
         const activity = Math.max(0, Math.min(1, s.l1.txCountWindow / 100));
         // advance the drip ramp + sweep the spawn-focus angle around the crown (#4)
         runTime += dt;
-        focusAngle = Math.PI * 0.5 + Math.PI * 0.55 * Math.sin((now / 1000) * 0.4);
+        focusAngle = Math.PI * 0.5 + Math.PI * 0.72 * Math.sin((now / 1000) * 0.65);
+
+        if (!openingBurstDone && runTime >= FIRST_GLOW_DELAY) {
+          openingBurstDone = true;
+          for (let i = 0; i < OPENING_BURST_COUNT; i++) spawnCanopy(true);
+          for (const bucket of gatherBuckets) bucket.glow = Math.max(bucket.glow, 0.55);
+          spawnTimer = 0.06;
+        }
+
+        if (!openingReleaseDone && runTime >= 1.65) {
+          openingReleaseDone = true;
+          const bucket = gatherBuckets[(Math.random() * gatherBuckets.length) | 0];
+          releaseBlob(bucket, GATHER_MIN, GATHER_MIN * 0.8);
+        }
 
         // event: new batch -> a small flurry of canopy orbs + nudge the lump
         if (s.l2.latestBatchId !== lastBatch) {
@@ -923,13 +957,13 @@ export default function StaticTreeHero({
         // with many more visible canopy points while each point keeps its pace
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
-          // ramp 0->1 over the first ~7s: a sparse drip that builds to a heavy
+          // ramp 0->1 over the first few seconds: a sparse drip that builds to a heavy
           // dotting — bigger clusters + shorter gaps as the ramp climbs (#4).
-          const ramp = Math.min(1, runTime / 7);
-          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.5 ? 6 : 3));
-          for (let k = 0; k < cluster; k++) spawnCanopy();
-          const meanGap = (0.5 - ramp * 0.42) + (1 - activity) * 0.1;
-          spawnTimer = meanGap * (0.35 + Math.random() * 1.15);
+          const ramp = Math.min(1, runTime / STARTUP_RAMP_SECONDS);
+          const cluster = 2 + Math.floor(ramp * (Math.random() < 0.55 ? 5 : 3));
+          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.16 + ramp * 0.14);
+          const meanGap = Math.max(0.08, (0.34 - ramp * 0.22) + (1 - activity) * 0.06);
+          spawnTimer = meanGap * (0.42 + Math.random() * 0.9);
         }
 
         // cursor focus point in normalised art coords (for the speed-field #9)
