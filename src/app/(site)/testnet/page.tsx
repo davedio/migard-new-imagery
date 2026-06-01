@@ -23,7 +23,7 @@ export default function TestnetPage() {
     <main className="page-main">
       <PageHero
         label="Testnet status"
-        title="Live on Cardano preprod."
+        title="Midgard on Cardano preprod."
         sub="Midgard is a pre-alpha testnet. The protocol status surface is where builders inspect what is deployed, what is simulated, and what still needs confirmation."
         chips={
           <>
@@ -33,7 +33,7 @@ export default function TestnetPage() {
             </span>
             <span className="chip chip--demo">
               <span className="dot" />
-              Simulated · connects to live data at launch
+              Demo L2 activity; live data source pending
             </span>
           </>
         }

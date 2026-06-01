@@ -6,7 +6,7 @@ import MidgardWordmark from "@/components/MidgardWordmark";
 export const metadata: Metadata = {
   title: "Enter Midgard",
   description:
-    "Midgard — a Cardano-native Layer 2. Built to scale, secured by math.",
+    "Midgard is a Cardano-native optimistic rollup for faster L2 execution with settlement back to Cardano L1.",
 };
 
 /**

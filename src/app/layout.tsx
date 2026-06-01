@@ -27,9 +27,40 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://midgard-website.vercel.app"),
   title: "Midgard | Cardano-Native L2 Scaling",
   description:
-    "Midgard is a Cardano-native optimistic rollup for applications that need more throughput without leaving Cardano's security assumptions, wallets, tooling, and ecosystem alignment.",
+    "Midgard is a Cardano-native optimistic rollup for applications that need faster L2 execution with settlement back to Cardano L1.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Midgard | Cardano-Native L2 Scaling",
+    description:
+      "A Cardano-native optimistic rollup for faster L2 execution with settlement back to Cardano L1.",
+    url: "/",
+    siteName: "Midgard",
+    images: [
+      {
+        url: "/hero-tree-green.png",
+        width: 1672,
+        height: 941,
+        alt: "Midgard world-tree protocol architecture",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Midgard | Cardano-Native L2 Scaling",
+    description:
+      "A Cardano-native optimistic rollup for faster L2 execution with settlement back to Cardano L1.",
+    images: ["/hero-tree-green.png"],
+  },
+  icons: {
+    icon: "/midgard-icon.png",
+    apple: "/midgard-icon.png",
+  },
 };
 
 export default function RootLayout({

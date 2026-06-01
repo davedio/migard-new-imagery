@@ -82,9 +82,9 @@ export default function AboutPage() {
       </Section>
 
       <CtaBand
-        eyebrow="Trust The Path"
-        title="Read the mechanism before the metaphor."
-        lead="Midgard's story is not just speed. It is a Cardano-native trust architecture that builders, partners, and users can inspect."
+        eyebrow="In short"
+        title="Not just speed. A trust path you can check."
+        lead="Midgard is L2 execution, challengeable invalid state, and settlement back to Cardano L1 — fast where it can be, final where it must be."
         actions={[
           { label: "How it works", href: "/how-it-works", variant: "primary" },
           { label: "Get Started", href: "/get-started", variant: "ghost" },

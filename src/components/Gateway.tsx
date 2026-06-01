@@ -185,21 +185,13 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     <button
       type="button"
-      className="btn btn--ghost"
+      className="motion-toggle"
       onClick={onToggle}
       aria-pressed={on}
-      style={{
-        position: "fixed",
-        right: "clamp(16px,4vw,40px)",
-        bottom: 22,
-        zIndex: 45,
-        padding: "8px 14px",
-        backdropFilter: "blur(6px)",
-        WebkitBackdropFilter: "blur(6px)",
-        background: "rgba(7,18,11,0.6)",
-      }}
+      aria-label={`Motion ${on ? "on" : "off"}`}
+      title={`Motion ${on ? "on" : "off"}`}
     >
-      Motion: {on ? "On" : "Off"}
+      <span className="motion-toggle__glyph" data-on={on} aria-hidden />
     </button>
   );
 }
@@ -210,31 +202,36 @@ function Hero() {
   return (
     <header ref={heroRef} className="home-hero">
       <div className="eyebrow home-hero__eyebrow">
-        Scalability&nbsp;&nbsp;|&nbsp;&nbsp;Speed&nbsp;&nbsp;|&nbsp;&nbsp;Security
+        Scalability | Speed | Security
       </div>
       <h1>
-        Built to Scale<br />
-        Secured by <span style={{ color: "var(--green-bright)" }}>Math</span>
+        Built to scale.<br />
+        Secure settlement on{" "}
+        <span style={{ color: "var(--green-bright)" }}>Cardano.</span>
       </h1>
       <p className="home-hero__lead">
-        Midgard is a Cardano-native optimistic Layer 2 rollup. It runs
-        applications at L2 speed and settles them through a trust path anchored
-        to Cardano L1.
+        Midgard is a Cardano-native optimistic rollup: applications execute on
+        L2 and settlement returns to Cardano L1.
       </p>
       <p className="home-hero__sublead">
-        Same eUTXO model, familiar tooling, fees paid in ADA. Speed you can
-        inspect without trading away correctness.
+        For users, that should feel like faster wallet activity. For builders,
+        it is a faster execution path for dApps, DEXs, lending protocols,
+        wallets, and other Cardano flows that need more capacity.
       </p>
+      <ol className="home-hero__mechanism" aria-label="Midgard mechanism">
+        {["Activity", "Batch", "Proof", "Challenge", "Settlement", "Cardano L1"].map(
+          (step) => (
+            <li key={step}>{step}</li>
+          ),
+        )}
+      </ol>
       <div className="home-hero__actions">
-        <Link className="btn btn--primary" href="/get-started">
-          Get Started
+        <Link className="btn btn--primary" href="/how-it-works">
+          See the mechanism
         </Link>
-        <Link className="btn btn--ghost" href="/how-it-works">
-          See How It Works
+        <Link className="btn btn--ghost" href="/get-started">
+          Start with your use case
         </Link>
-      </div>
-      <div className="home-hero__cue">
-        ↓ Speed only matters if the path can be checked
       </div>
     </header>
   );
@@ -253,59 +250,40 @@ const leadStyle: CSSProperties = {
   color: "var(--text)",
 };
 
-// Compact directory of the site. Each card is a small summary that links
-// straight to the matching child page (deep-linked where a section anchor
-// exists), so the home page stays short instead of duplicating every child
-// page inline.
-const EXPLORE: { n: string; title: string; line: string; cta: string; href: string }[] = [
+const AUDIENCE_PATHS: {
+  n: string;
+  title: string;
+  line: string;
+  cta: string;
+  href: string;
+}[] = [
   {
     n: "01",
-    title: "How It Works",
-    line: "The lifecycle — Activity, Batch, Proof, Challenge, Settlement, then Cardano L1.",
-    cta: "Follow the path",
-    href: "/how-it-works",
+    title: "Using Midgard",
+    line: "Start here if Midgard reaches you through a wallet or app: what changes, what stays Cardano, and what to check before action.",
+    cta: "Start as a user",
+    href: "/get-started#users",
   },
   {
     n: "02",
-    title: "Security",
-    line: "The trust path, the guarantees, and the watchers that keep it honest.",
-    cta: "See the trust case",
-    href: "/security#guarantees",
+    title: "Building or porting",
+    line: "For dApps, DEXs, lending markets, wallets, and protocols: inspect the source, then map the flow that needs L2 capacity.",
+    cta: "Open builder path",
+    href: "/get-started#builder-quickstart",
   },
   {
     n: "03",
-    title: "Get Started",
-    line: "Build, operate, watch, integrate, or support — pick your role.",
-    cta: "Choose your role",
+    title: "Operating Midgard",
+    line: "For operators, batchers, and watchers: sequence activity into blocks, then replay and challenge anything invalid before it settles to Cardano L1.",
+    cta: "See the protocol roles",
     href: "/get-started#roles",
   },
   {
     n: "04",
-    title: "About",
-    line: "Who builds it, and the thesis: scale Cardano without making it less Cardano.",
-    cta: "Read the thesis",
-    href: "/about",
-  },
-  {
-    n: "05",
-    title: "Testnet",
-    line: "What is live now, the deployed contracts, and the proof queue.",
-    cta: "Check status",
-    href: "/testnet#whats-live",
-  },
-  {
-    n: "06",
-    title: "FAQ",
-    line: "Plain answers on the rollup, fees in ADA, and what is real today.",
-    cta: "Read the FAQ",
-    href: "/faq",
-  },
-  {
-    n: "07",
-    title: "Official Links",
-    line: "Start from canonical channels — GitHub, X, and Discord.",
-    cta: "Stay safe",
-    href: "/official-links#links",
+    title: "Inspecting the mechanism",
+    line: "Follow the full route from activity to batch, proof, challenge, settlement, and Cardano L1.",
+    cta: "See how it works",
+    href: "/how-it-works",
   },
 ];
 
@@ -313,11 +291,11 @@ function ExploreGrid() {
   return (
     <section id="explore" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <div className="eyebrow">Explore</div>
-        <h2 style={h2Style}>Go straight to what you need.</h2>
+        <div className="eyebrow">Start here</div>
+        <h2 style={h2Style}>Start with your question, not a label.</h2>
         <p style={leadStyle}>
-          Every part of Midgard has its own page. Pick a thread and follow it
-          all the way down.
+          Users, builders, and partners can overlap. Pick the path that matches
+          what you need to understand first.
         </p>
       </Reveal>
       <div
@@ -329,7 +307,7 @@ function ExploreGrid() {
           maxWidth: 1040,
         }}
       >
-        {EXPLORE.map((a, i) => (
+        {AUDIENCE_PATHS.map((a, i) => (
           <Reveal key={a.title} delay={i * 70}>
             <Link
               href={a.href}
@@ -395,12 +373,12 @@ function ClosingCTA() {
         </h2>
         <p style={{ ...leadStyle, marginInline: "auto" }}>
           Midgard is live in testnet/status form now. Read the architecture,
-          inspect the source, and build on a scaling path you can verify end to
-          end.
+          inspect the source, and bring a concrete flow that needs more
+          Cardano throughput.
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
           <Link className="btn btn--primary" href="/get-started">
-            Get Started
+            Start with a use case
           </Link>
           <Link className="btn btn--ghost" href="/testnet">
             Testnet status

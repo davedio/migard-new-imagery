@@ -32,7 +32,11 @@ export default function GetStartedPage() {
         ]}
       />
 
-      <Section eyebrow="Builder path" title="Verify first. Then build.">
+      <Section
+        id="builder-quickstart"
+        eyebrow="Builder quickstart"
+        title="Start with the architecture and source."
+      >
         <Prose
           items={[
             {
@@ -46,7 +50,7 @@ export default function GetStartedPage() {
         />
       </Section>
 
-      <Section eyebrow="Where to start" title="Start from the source and status.">
+      <Section eyebrow="Where to start" title="One concrete builder sequence.">
         <CardGrid cols={2}>
           <Card
             num="01"
@@ -83,7 +87,11 @@ export default function GetStartedPage() {
         </CardGrid>
       </Section>
 
-      <Section id="roles" eyebrow="Roles" title="Choose the job you can make real.">
+      <Section
+        id="roles"
+        eyebrow="Roles"
+        title="Find the role you can fill."
+      >
         <CardGrid>
           <Card
             num="01"

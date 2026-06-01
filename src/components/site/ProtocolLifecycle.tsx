@@ -29,7 +29,7 @@ const STEPS: Step[] = [
     title: "Transact on Midgard",
     annotation: "Off-chain · L2",
     Icon: ZapIcon,
-    l2: "The Midgard node validates activity against eUTXO rules and issues a soft confirmation. No L1 fee. No block wait.",
+    l2: "The Midgard node validates activity against eUTXO rules and issues a soft confirmation without waiting for an L1 block at this step.",
     l1: null,
     flow: null,
   },
@@ -390,7 +390,7 @@ export default function ProtocolLifecycle() {
         <div className="lifecycle__main">
           <header className="lifecycle__hero">
             <div className="eyebrow">The Optimistic Lifecycle</div>
-            <h1>Instant execution. On-chain verification.</h1>
+            <h1>Fast execution. Checkable settlement.</h1>
             <p>
               Midgard assumes L2 activity is valid for fast soft finality, then
               keeps the path inspectable through commitments, watchers, fraud

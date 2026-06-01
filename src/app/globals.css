@@ -228,10 +228,39 @@ a {
   transition: font-size 0.16s var(--ease);
 }
 
+.home-hero__mechanism {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  max-width: 620px;
+}
+
+.home-hero__mechanism li {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 6px 10px;
+  border: 1px solid rgba(183, 121, 31, 0.32);
+  border-radius: var(--r-sm);
+  background: rgba(5, 12, 8, 0.48);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: calc(11px * var(--hero-fit));
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
 .home-hero__actions {
   display: flex;
   gap: 12px;
-  margin-top: 30px;
+  margin-top: 28px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -260,6 +289,10 @@ a {
 
   .home-hero__sublead {
     max-width: 680px;
+  }
+
+  .home-hero__mechanism {
+    max-width: 760px;
   }
 }
 
@@ -325,6 +358,19 @@ a {
   .home-hero__actions .btn {
     flex: 1 1 150px;
     justify-content: center;
+  }
+
+  .home-hero__mechanism {
+    gap: 7px;
+  }
+
+  .home-hero__mechanism li {
+    font-size: 10.5px;
+    min-height: 28px;
+  }
+
+  .home-hero__cue {
+    display: none;
   }
 }
 
@@ -502,6 +548,48 @@ button.panel:hover {
 #explore a.panel:hover {
   background: linear-gradient(180deg, rgba(215, 226, 216, 0.05), transparent 42%),
     rgba(5, 11, 8, 0.64);
+}
+
+.motion-toggle {
+  position: fixed;
+  right: clamp(16px, 4vw, 40px);
+  bottom: 22px;
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(32, 190, 67, 0.32);
+  border-radius: var(--r);
+  background: rgba(7, 18, 11, 0.62);
+  color: var(--text-hi);
+  cursor: pointer;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.motion-toggle:hover {
+  border-color: var(--gold-line);
+  background: rgba(11, 21, 16, 0.78);
+}
+
+.motion-toggle__glyph {
+  width: 18px;
+  height: 18px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: linear-gradient(90deg, currentColor 50%, transparent 50%);
+  color: var(--text-dim);
+  box-shadow: inset 0 0 0 2px rgba(7, 18, 11, 0.82);
+}
+
+.motion-toggle__glyph[data-on="true"] {
+  color: var(--green-bright);
+  box-shadow:
+    inset 0 0 0 2px rgba(7, 18, 11, 0.82),
+    0 0 14px rgba(32, 190, 67, 0.35);
 }
 
 .metric-row {
@@ -1248,7 +1336,8 @@ button.panel:hover {
   gap: 14px;
   flex-wrap: wrap;
 }
-.site-footer__legal a {
+.site-footer__legal a,
+.site-footer__legal span {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-faint);
