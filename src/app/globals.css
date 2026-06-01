@@ -228,73 +228,6 @@ a {
   transition: font-size 0.16s var(--ease);
 }
 
-.home-hero__mechanism {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  list-style: none;
-  margin: 22px 0 0;
-  padding: 0;
-  max-width: 620px;
-}
-
-.home-hero__mechanism li {
-  --mechanism-border: rgba(215, 226, 216, 0.11);
-  --mechanism-bg-start: rgba(5, 12, 8, 0.54);
-  --mechanism-bg-end: rgba(9, 17, 12, 0.42);
-  --mechanism-color: var(--text-faint);
-  --mechanism-shadow: transparent;
-
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 30px;
-  padding: 6px 10px;
-  border: 1px solid var(--mechanism-border);
-  border-radius: var(--r-sm);
-  background:
-    linear-gradient(90deg, var(--mechanism-bg-start), var(--mechanism-bg-end));
-  box-shadow: 0 0 16px var(--mechanism-shadow);
-  color: var(--mechanism-color);
-  font-family: var(--font-mono);
-  font-size: calc(11px * var(--hero-fit));
-  letter-spacing: 0.02em;
-  line-height: 1.2;
-  white-space: nowrap;
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
-}
-
-.home-hero__mechanism li:nth-child(2) {
-  --mechanism-border: rgba(32, 190, 67, 0.24);
-  --mechanism-bg-start: rgba(5, 12, 8, 0.52);
-  --mechanism-bg-end: rgba(32, 190, 67, 0.08);
-  --mechanism-color: var(--text-dim);
-}
-
-.home-hero__mechanism li:nth-child(3) {
-  --mechanism-border: rgba(32, 190, 67, 0.36);
-  --mechanism-bg-start: rgba(32, 190, 67, 0.1);
-  --mechanism-bg-end: rgba(207, 154, 46, 0.08);
-  --mechanism-color: var(--text);
-}
-
-.home-hero__mechanism li:nth-child(4) {
-  --mechanism-border: rgba(207, 154, 46, 0.48);
-  --mechanism-bg-start: rgba(32, 190, 67, 0.13);
-  --mechanism-bg-end: rgba(207, 154, 46, 0.14);
-  --mechanism-color: var(--text-hi);
-  --mechanism-shadow: rgba(207, 154, 46, 0.08);
-}
-
-.home-hero__mechanism li:nth-child(5) {
-  --mechanism-border: rgba(0, 51, 173, 0.72);
-  --mechanism-bg-start: rgba(0, 51, 173, 0.26);
-  --mechanism-bg-end: rgba(127, 160, 240, 0.18);
-  --mechanism-color: #b8cbff;
-  --mechanism-shadow: rgba(0, 51, 173, 0.28);
-}
-
 .home-hero__actions {
   display: flex;
   gap: 12px;
@@ -329,9 +262,6 @@ a {
     max-width: 680px;
   }
 
-  .home-hero__mechanism {
-    max-width: 760px;
-  }
 }
 
 @media (min-width: 2200px) {
@@ -396,15 +326,6 @@ a {
   .home-hero__actions .btn {
     flex: 1 1 150px;
     justify-content: center;
-  }
-
-  .home-hero__mechanism {
-    gap: 7px;
-  }
-
-  .home-hero__mechanism li {
-    font-size: 10.5px;
-    min-height: 28px;
   }
 
   .home-hero__cue {

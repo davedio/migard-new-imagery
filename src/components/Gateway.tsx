@@ -214,13 +214,6 @@ function Hero() {
         Midgard is a Cardano-native optimistic rollup that gives applications a
         faster execution layer while keeping Cardano as the root of trust.
       </p>
-      <ol className="home-hero__mechanism" aria-label="Midgard mechanism">
-        {["Transactions", "Batch", "Proof", "Challenge", "Cardano Settlement"].map(
-          (step) => (
-            <li key={step}>{step}</li>
-          ),
-        )}
-      </ol>
       <div className="home-hero__actions">
         <Link className="btn btn--primary" href="/how-it-works">
           How It Works
