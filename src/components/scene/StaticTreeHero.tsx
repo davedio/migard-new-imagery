@@ -42,8 +42,6 @@ const BG_SRC = "/hero-tree-green.png";
 const IMG_ASPECT = 1672 / 941;
 // Matches the CSS background `scale(1.06)` so the particle field sits on the art.
 const ZOOM = 1.06;
-const mobileBgAnchorX = (width: number) =>
-  width <= 420 ? 0.7 : width <= 720 ? 0.68 : 0.5;
 
 // Geometry of the painted tree, read off the art in the PNG's normalised
 // 0..1 space: a rounded canopy DOME, a short VERTICAL trunk right-of-centre,
@@ -53,13 +51,13 @@ const mobileBgAnchorX = (width: number) =>
 // vertical — blobs drop straight down a lit vein, never into dark bark.
 const TRUNK_X = 0.725;
 const TRUNK_STRANDS = [-0.0025, -0.0009, 0.0009, 0.0025];
-const DOME = { cx: 0.72, cy: 0.305, rx: 0.185, ry: 0.175 }; // cx,cy = crown centre (silhouette ray origin); ry = top-weight reference (~apex)
+const DOME = { cx: 0.72, cy: 0.305, rx: 0.185, ry: 0.135 }; // canopy foliage
 const FORK_Y = 0.42; // canopy base: branches gather to the trunk top
 const CROWN_Y = 0.615; // lower trunk base: roots begin to splay here
 const GATHER_NODES = [
-  { x: TRUNK_X - 0.046, y: FORK_Y - 0.011, strand: 0 },
+  { x: TRUNK_X - 0.029, y: FORK_Y - 0.011, strand: 0 },
   { x: TRUNK_X - 0.002, y: FORK_Y + 0.001, strand: 1 },
-  { x: TRUNK_X + 0.042, y: FORK_Y - 0.008, strand: 3 },
+  { x: TRUNK_X + 0.026, y: FORK_Y - 0.008, strand: 3 },
 ] as const;
 
 // Particle colour — luminescent green to match the vein glow.
@@ -67,26 +65,26 @@ const PARTICLE_CORE = "#00ff66"; // primary
 const PARTICLE_ALT = "#33ff33"; // variation
 
 // Tunables
-const MAX_PARTICLES = 560;
+const MAX_PARTICLES = 400;
 // A random number of canopy orbs lump together into each trunk blob, so blob
 // sizes vary with how many gathered while avoiding oversized root exits.
-const GATHER_MIN = 13; // raised ~25% -> ~20% fewer (slightly bigger) blobs down the trunk
+const GATHER_MIN = 13; // raised ~25% -> ~20% fewer, bigger blobs down the trunk
 const GATHER_MAX = 20;
 const FLASH_DUR = 1.5; // length of the "locked-in to L1" flash at a root tip — long, slow fade
 // Canopy orbs are born tiny and GROW in place (slowly, randomised per orb)
 // before they break onto their snake path down the tree.
-const GROW_MIN = 0.5; // seconds to reach full size (ambient orb)
-const GROW_MAX = 1.95; // wide range so orbs don't grow/break off in sync
+const GROW_MIN = 0.55; // seconds to reach full size (ambient orb)
+const GROW_MAX = 1.35;
 const GROW_FAST = 0.55; // event-burst orbs grow quicker
 // Blobs glide at a CONSTANT VISUAL speed (height/sec), arc-length-normalised so
 // the short trunk and the long roots run at the same on-screen pace — no speed
 // change at the crown. Slower than the darting canopy orbs.
-const BLOB_VSPEED = 0.037; // height/sec, held from fork to the very root tip
+const BLOB_VSPEED = 0.038; // height/sec, held from fork to the very root tip — slightly slower drop
 const BLOB_VSPEED_JIT = 0.006; // tiny variance so some blobs catch up + merge
 const MERGE_CAP = 4.2; // max blob size after merging
 
 type Pt = { x: number; y: number };
-type Lane = { poly: Pt[]; width: number; len: number; gi?: number }; // gi = which base-gather pocket (canopy only)
+type Lane = { poly: Pt[]; width: number; len: number; gi?: number; ang?: number }; // gi = base pocket; ang = birth angle (canopy)
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
 // phase 0 = canopy orb (grows in place, then descends), 1 = trunk blob,
@@ -102,10 +100,8 @@ type Particle = {
   hold: number; // after growing, canopy orbs linger glowing before breaking loose
   alt: boolean;
   age: number;
-  growDelay?: number; // seconds to wait (tiny) before it begins growing — desyncs the field
-  r0?: number; // stable per-orb random (0..1) -> slightly organic, non-circular shape
-  swirl?: number; // remaining seconds of a hover-triggered spiral before the descent
-  speedMul?: number; // descent speed multiplier (hover makes a clump drop a bit faster)
+  r0?: number; // stable per-orb random (0..1) -> slightly squashed/rotated organic shape
+  growDelay?: number; // tiny per-orb wait before it begins growing — desyncs the field
 };
 
 type LeafNode = { x: number; y: number; phase: number; flash: number };
@@ -117,19 +113,12 @@ type GatherBucket = {
   value: number;
   target: number;
   glow: number;
-  hot: number; // 0..1 cursor-hover intensity (decays) — speeds + swirls its clump
 };
 
 // Snap helpers built from the loaded art (see makeVeinField).
 type VeinField = {
   snapBright: (p: Pt, radius?: number) => Pt; // brightest vein within radius — anchors lane ends
   keepOnTree: (p: Pt, radius?: number) => Pt; // nudge an off-tree point to the nearest lit pixel
-  // Walk OUT from (ox,oy) along `ang` and return the outermost real-foliage point
-  // (pulled in by `inset`) — places a birth tip exactly on a canopy edge, never sky.
-  silhouette: (ox: number, oy: number, ang: number, maxR?: number, inset?: number) => Pt;
-  // Evenly-spread points across the whole canopy (one per occupied grid cell) —
-  // birth tips sampled from here cover the full crown, far lobes included.
-  canopyPoints: Pt[];
 };
 
 function rgb(hex: string): string {
@@ -138,7 +127,7 @@ function rgb(hex: string): string {
 }
 const CORE_RGB = rgb(PARTICLE_CORE);
 const ALT_RGB = rgb(PARTICLE_ALT);
-const FLASH_RGB = rgb("#c8964a"); // brown-gold for the L1 lock-in flash
+const FLASH_RGB = rgb("#c8964a"); // brown-gold for the L1 lock-in flash at root tips
 
 const clamp = (v: number, lo: number, hi: number) =>
   v < lo ? lo : v > hi ? hi : v;
@@ -303,36 +292,33 @@ function buildTree(field?: VeinField): Tree {
   const onTree = field ? field.keepOnTree : (p: Pt) => p;
   const crown: Pt = { x: TRUNK_X, y: CROWN_Y };
 
-  // CANOPY: a birth tip per spot across the WHOLE crown -> weave down to one of 3
-  // base pockets where orbs gather -> drop the trunk. With the loaded art the tips
-  // are one-per-grid-cell over the real leaf-blob (so the far lobes are covered,
-  // which a trunk-centred radial fan can't reach); before it loads a parametric
-  // fan stands in.
+  // CANOPY: leaf tip on the dome -> sweep in -> fork. Snake-woven branches that
+  // all converge at the bottom of the canopy (the fork) where orbs gather.
   const canopy: Lane[] = [];
-  const FAN = 120;
-  const tipSeeds: Pt[] =
-    field && field.canopyPoints.length
-      ? field.canopyPoints
-      : Array.from({ length: FAN }, (_, k) => {
-          const ang = Math.PI * (-0.06 + 1.12 * ((k + 0.5) / FAN));
-          return {
-            x: clamp(DOME.cx + Math.cos(ang) * DOME.rx, DOME.cx - DOME.rx * 0.92, DOME.cx + DOME.rx * 0.98),
-            y: DOME.cy - Math.sin(ang) * DOME.ry,
-          };
-        });
-  for (let i = 0; i < tipSeeds.length; i++) {
-    const j = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
-    const j2 = Math.abs(Math.sin(i * 78.233 + 1.3) * 43758.5453) % 1;
-    const seed = tipSeeds[i];
-    // tiny jitter so a tip never sits dead-centre of its cell
-    const leaf: Pt = { x: seed.x + (j - 0.5) * 0.003, y: seed.y + (j2 - 0.5) * 0.003 };
-    const sideX = seed.x;
-    const a = clamp(Math.abs(leaf.x - DOME.cx) / DOME.rx, 0, 1); // edge-ness -> width + weave
-    // Route to ONE of the 3 base pockets by which SIDE of the crown the tip sits,
-    // so dots collect at 3 distinct spots at the canopy base, then drop the trunk.
+  const NC = 150;
+  for (let i = 0; i < NC; i++) {
+    // RANDOM scatter across the crown (not a grid): random angle + random DEPTH,
+    // capped at 0.8 of the dome so tips never reach the outer edge / sky. Snapped
+    // onto the nearest bright vein so orbs RIDE the branches + bunch lower-centre.
+    const jAng = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
+    const jRad = Math.abs(Math.sin(i * 78.233 + 2.1) * 43758.5453) % 1;
+    const jW = Math.abs(Math.sin(i * 39.42 + 0.7) * 43758.5453) % 1;
+    const ang = Math.PI * (-0.04 + 1.08 * jAng); // across the crown arc
+    const rf = 0.3 + 0.5 * jRad; // 0.30 .. 0.80 of the dome radius — never the very edge
+    const leafGuess = {
+      x: DOME.cx + Math.cos(ang) * DOME.rx * rf,
+      y: DOME.cy - Math.sin(ang) * DOME.ry * rf,
+    };
+    const leaf = field
+      ? onTree(anchor(leafGuess, 0.055), 0.06)
+      : {
+          x: clamp(leafGuess.x, DOME.cx - DOME.rx * 0.8, DOME.cx + DOME.rx * 0.8),
+          y: leafGuess.y,
+        };
+    // route this lane to ONE of the 3 base pockets (by which side of the crown)
     const gi = Math.min(
       GATHER_NODES.length - 1,
-      Math.max(0, Math.floor(((sideX - (DOME.cx - DOME.rx)) / (DOME.rx * 2)) * GATHER_NODES.length)),
+      Math.max(0, Math.floor(((leaf.x - (DOME.cx - DOME.rx)) / (DOME.rx * 2)) * GATHER_NODES.length)),
     );
     const gather = GATHER_NODES[gi];
     const forkInlet = {
@@ -344,26 +330,25 @@ function buildTree(field?: VeinField): Tree {
       y: lerp(leaf.y, gather.y, 0.62),
     }, 0.028);
     const base = catmullRom([leaf, mid, forkInlet], 14);
-    // gentle, low-frequency weave (organic flow, not a jagged wiggle)
-    const woven = snake(base, 0.005 + a * 0.004, 1 + (i % 2), (i * 1.3) % (Math.PI * 2));
+    const woven = snake(base, 0.005 + jW * 0.004, 1 + (i % 2), (i * 1.3) % (Math.PI * 2));
     const onT = field ? fitToTree(woven, onTree, 0.022, 2) : smoothPoly(woven, 2);
-    if (field) onT[0] = leaf; // keep the birth point pinned to the leaf tip
-    canopy.push({ poly: onT, width: clamp(1.1 - a * 0.6, 0.45, 1.1), len: polyLen(onT), gi });
+    if (field) onT[0] = leaf; // pin the birth point to the snapped vein tip
+    canopy.push({ poly: onT, width: clamp(0.55 + jW * 0.6, 0.45, 1.15), len: polyLen(onT), gi, ang });
   }
 
-  // TRUNK: each strand STARTS at the gather pocket that feeds it (so a clump forms
-  // there), slides in to the trunk's middle line, then drops dead-vertical into the
-  // roots. Strands with no pocket just start on the centre line.
+  // TRUNK: a few perfectly-vertical parallel strands, fork -> crown. NOT snapped
+  // to veins (that kinked them sideways) — at constant x they already sit on the
+  // painted trunk, so blobs drop almost dead-vertical into the root system.
   const trunk: Lane[] = TRUNK_STRANDS.map((off, si) => {
     const x = TRUNK_X + off; // central vertical column
     const node = GATHER_NODES.find((n) => n.strand === si);
     const startX = node ? node.x : x;
     const poly = catmullRom(
       [
-        { x: startX, y: FORK_Y },
-        { x: lerp(startX, x, 0.6), y: FORK_Y + 0.03 }, // make their way to the middle line
+        { x: startX, y: FORK_Y }, // a clump forms at the pocket...
+        { x: lerp(startX, x, 0.6), y: FORK_Y + 0.03 }, // ...slides to the middle line...
         { x, y: lerp(FORK_Y, CROWN_Y, 0.5) },
-        { x, y: CROWN_Y },
+        { x, y: CROWN_Y }, // ...then drops straight down
       ],
       10,
     );
@@ -484,8 +469,7 @@ function makeVeinField(img: HTMLImageElement): VeinField {
   const g = c.getContext("2d")!;
   g.drawImage(img, 0, 0, sw, sh);
   const d = g.getImageData(0, 0, sw, sh).data;
-  const vein = new Float32Array(sw * sh); // bright lit veins — anchors the descending paths
-  const green = new Uint8Array(sw * sh); // GREEN-DOMINANT tree pixels (excludes neutral storm-cloud)
+  const vein = new Float32Array(sw * sh);
   for (let i = 0; i < sw * sh; i++) {
     const k = i * 4;
     const r = d[k];
@@ -511,148 +495,7 @@ function makeVeinField(img: HTMLImageElement): VeinField {
       nearTree && gg > 34
         ? vividGreen * 2.4 + yellowGreen * 0.8 + saturation * 0.18 + lum * 0.035
         : 0;
-
-    // Canopy SHAPE for edge tracing — keyed on GREEN-BIAS (how far green sits
-    // above the average of red+blue). The whole leafy crown — even the dark
-    // green-black lobes — suppresses BLUE, so it reads ~3-5 here; the neutral grey
-    // storm-cloud reads ~0-1.7. That gap separates leaf from cloud even where the
-    // foliage is nearly black. (Brightness or green-minus-brightest-channel both
-    // failed: brightness swallowed the lit clouds, the other dropped the dark
-    // leaves.) A flood-fill below then keeps only the crown connected to the
-    // trunk, discarding stray green-tinted cloud specks. The y-floor trims the
-    // hazy cloud line just above the painted canopy.
-    const greenBias = gg - (r + b) / 2;
-    // LOWER threshold so the dark upper foliage DOME is captured, not just the lit
-    // veins — that dome is where the canopy tips live, and it was being excluded.
-    // Connectivity + erosion below keep the neutral sky out; the left x-floor (0.55)
-    // cuts the stray far-left cloud cluster; the high y-floor (0.12) reaches the top.
-    green[i] =
-      greenBias > 1.8 && gg > 11 && nx > 0.55 && nx < 0.885 && ny > 0.105 && ny < 0.55
-        ? 1
-        : 0;
   }
-
-  // Keep only the canopy CONNECTED to the trunk. Flood-fill from a known tree
-  // pixel over the green mask; disconnected green-tinted cloud specks are left
-  // out, so a traced tip can never jump onto a cloud.
-  const blob = new Uint8Array(sw * sh);
-  {
-    let seed = -1;
-    const sx0 = Math.round(0.72 * sw);
-    const sy0 = Math.round(0.34 * sh);
-    for (let rr = 0; rr < 40 && seed < 0; rr++)
-      for (let dy = -rr; dy <= rr && seed < 0; dy++)
-        for (let dx = -rr; dx <= rr && seed < 0; dx++) {
-          const x = sx0 + dx;
-          const y = sy0 + dy;
-          if (x >= 0 && x < sw && y >= 0 && y < sh && green[y * sw + x]) seed = y * sw + x;
-        }
-    if (seed >= 0) {
-      const stack = [seed];
-      blob[seed] = 1;
-      while (stack.length) {
-        const i = stack.pop() as number;
-        const x = i % sw;
-        const y = (i / sw) | 0;
-        for (let dy = -1; dy <= 1; dy++)
-          for (let dx = -1; dx <= 1; dx++) {
-            const X = x + dx;
-            const Y = y + dy;
-            if (X < 0 || X >= sw || Y < 0 || Y >= sh) continue;
-            const ni = Y * sw + X;
-            if (!blob[ni] && green[ni]) {
-              blob[ni] = 1;
-              stack.push(ni);
-            }
-          }
-      }
-    }
-  }
-
-  // ERODE the canopy by a small margin so sampled birth tips sit strictly INSIDE
-  // the foliage — never on the boundary, where a tip (or its glow) could read as
-  // touching the sky. A pixel survives only if its whole RxR neighbourhood is leaf.
-  const eroded = new Uint8Array(sw * sh);
-  {
-    const R = 2;
-    for (let y = R; y < sh - R; y++) {
-      for (let x = R; x < sw - R; x++) {
-        if (!blob[y * sw + x]) continue;
-        let ok = true;
-        for (let dy = -R; dy <= R && ok; dy++)
-          for (let dx = -R; dx <= R && ok; dx++)
-            if (!blob[(y + dy) * sw + (x + dx)]) ok = false;
-        if (ok) eroded[y * sw + x] = 1;
-      }
-    }
-  }
-  // Re-connect to the trunk: erosion can pinch a thin cloud-edge bridge in two, so
-  // flood-fill the ERODED mask from the trunk and keep only that piece. Any island
-  // the erosion split off the leaf line (the stray far-left cloud dots) is dropped.
-  const inner = new Uint8Array(sw * sh);
-  {
-    let seed = -1;
-    const sx0 = Math.round(0.72 * sw);
-    const sy0 = Math.round(0.34 * sh);
-    for (let rr = 0; rr < 60 && seed < 0; rr++)
-      for (let dy = -rr; dy <= rr && seed < 0; dy++)
-        for (let dx = -rr; dx <= rr && seed < 0; dx++) {
-          const x = sx0 + dx;
-          const y = sy0 + dy;
-          if (x >= 0 && x < sw && y >= 0 && y < sh && eroded[y * sw + x]) seed = y * sw + x;
-        }
-    if (seed >= 0) {
-      const stack = [seed];
-      inner[seed] = 1;
-      while (stack.length) {
-        const i = stack.pop() as number;
-        const x = i % sw;
-        const y = (i / sw) | 0;
-        for (let dy = -1; dy <= 1; dy++)
-          for (let dx = -1; dx <= 1; dx++) {
-            const X = x + dx;
-            const Y = y + dy;
-            if (X < 0 || X >= sw || Y < 0 || Y >= sh) continue;
-            const ni = Y * sw + X;
-            if (!inner[ni] && eroded[ni]) {
-              inner[ni] = 1;
-              stack.push(ni);
-            }
-          }
-      }
-    }
-  }
-
-  // Even spatial sampling of the (eroded) canopy for birth tips: one representative
-  // pixel per occupied grid cell, so tips cover the WHOLE crown — including the wide
-  // far lobes (the canopy is widest BELOW trunk-centre, where a radial fan barely
-  // reaches). Row-major scan keeps them in spatial order for even striding.
-  const canopyPoints: Pt[] = [];
-  {
-    const GX = 26;
-    const GY = 22;
-    const bx0 = 0.54;
-    const bx1 = 0.89;
-    const by0 = 0.11;
-    const by1 = 0.46;
-    const seen = new Uint8Array(GX * GY);
-    for (let y = 0; y < sh; y++) {
-      const ny = y / sh;
-      if (ny < by0 || ny >= by1) continue;
-      const cyc = Math.min(GY - 1, Math.floor(((ny - by0) / (by1 - by0)) * GY));
-      for (let x = 0; x < sw; x++) {
-        if (!inner[y * sw + x]) continue;
-        const nx = x / sw;
-        if (nx < bx0 || nx >= bx1) continue;
-        const cxc = Math.min(GX - 1, Math.floor(((nx - bx0) / (bx1 - bx0)) * GX));
-        const key = cyc * GX + cxc;
-        if (seen[key]) continue;
-        seen[key] = 1;
-        canopyPoints.push({ x: nx, y: ny });
-      }
-    }
-  }
-
   const at = (nx: number, ny: number) => {
     const x = clamp(Math.round(nx * sw), 0, sw - 1);
     const y = clamp(Math.round(ny * sh), 0, sh - 1);
@@ -721,38 +564,7 @@ function makeVeinField(img: HTMLImageElement): VeinField {
     return bestD < Infinity ? { x: bx, y: by } : p;
   };
 
-  const inBlob = (nx: number, ny: number) => {
-    const x = clamp(Math.round(nx * sw), 0, sw - 1);
-    const y = clamp(Math.round(ny * sh), 0, sh - 1);
-    return blob[y * sw + x] === 1;
-  };
-  // March OUT from the crown centre and remember the FARTHEST connected-canopy
-  // pixel along this ray — the real lit leaf tip in that direction. Dark gaps
-  // between branches are simply passed over (we keep the farthest hit), and the
-  // result is pulled in by `inset` so the orb sits on the leaf, not its edge.
-  // Because only the trunk-connected canopy counts, a tip can never reach a cloud.
-  const silhouette = (
-    ox: number,
-    oy: number,
-    ang: number,
-    maxR = 0.24,
-    inset = 0.01,
-  ): Pt => {
-    const dx = Math.cos(ang);
-    const dy = -Math.sin(ang);
-    const ds = 0.0025;
-    let lastR = 0;
-    for (let r = ds; r <= maxR; r += ds) {
-      const x = ox + dx * r;
-      const y = oy + dy * r;
-      if (x < 0 || x > 1 || y < 0 || y > 1) break;
-      if (inBlob(x, y)) lastR = r;
-    }
-    const r = Math.max(0, lastR - inset);
-    return { x: ox + dx * r, y: oy + dy * r };
-  };
-
-  return { snapBright, keepOnTree, silhouette, canopyPoints };
+  return { snapBright, keepOnTree };
 }
 
 export default function StaticTreeHero({
@@ -795,15 +607,9 @@ export default function StaticTreeHero({
     let canopyW: number[] = [];
     let canopyWSum = 0;
     const computeWeights = () => {
-      const top0 = DOME.cy - DOME.ry; // highest leaf y
-      canopyW = tree.canopy.map((l) => {
-        const top = clamp((FORK_Y - l.poly[0].y) / (FORK_Y - top0), 0, 1);
-        const edge = clamp(Math.abs(l.poly[0].x - DOME.cx) / DOME.rx, 0, 1);
-        // Strong pull to the TOP so the dots climb up and touch the crown (they were
-        // sitting too low, down in the vein/branch structure), with some spread to
-        // the outer edge so it isn't only the centre.
-        return 0.6 + Math.pow(top, 1.4) * 2.4 + edge * 0.5 + l.width * 0.1;
-      });
+      // near-uniform: the random vein-snapped lanes already bunch in the lit
+      // lower-centre, so let that lane density set where the orbs concentrate.
+      canopyW = tree.canopy.map((l) => 1.0 + l.width * 0.2);
       canopyWSum = canopyW.reduce((s, w) => s + w, 0);
     };
 
@@ -829,7 +635,7 @@ export default function StaticTreeHero({
 
     const glowCore = makeGlow(CORE_RGB);
     const glowAlt = makeGlow(ALT_RGB);
-    const glowGold = makeGlow(FLASH_RGB);
+    const glowGold = makeGlow(FLASH_RGB); // brown-gold root lock-in flash (#8)
 
     let W = 0,
       H = 0,
@@ -843,30 +649,30 @@ export default function StaticTreeHero({
       value: 0,
       target: nextTarget(),
       glow: 0,
-      hot: 0,
     }));
-    let spawnTimer = 0.05; // sporadic canopy-spawn countdown
+    let spawnTimer = 0.75; // dark pause before the first orbs drip in (#4)
+    let surge = 0; // settlement flash, decays
+    let lastBatch = snapRef.current.l2.latestBatchId;
+    let lastProof = snapRef.current.l2.latestProofStatus;
+    let staticSeeded = false;
+    let runTime = 0; // seconds of active animation — drives the drip ramp (#4)
+    let focusAngle = Math.PI / 2; // sweeping spawn-concentration angle (#4)
 
-    // Cursor in normalised art coords (set by a window listener; converted each
-    // frame). Hovering a gather pocket swirls + speeds its clump down the trunk.
+    // cursor speed-field (#9): orbs within CURSOR_R of the pointer move faster
     const cursor = { px: -1, py: -1, active: false };
+    const CURSOR_R = 0.04;
+    const CURSOR_BOOST = 3;
     const onPointerMove = (e: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      cursor.px = e.clientX - rect.left;
-      cursor.py = e.clientY - rect.top;
+      const r = canvas.getBoundingClientRect();
+      cursor.px = e.clientX - r.left;
+      cursor.py = e.clientY - r.top;
       cursor.active = true;
     };
     const onPointerLeave = () => {
       cursor.active = false;
     };
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerout", onPointerLeave, { passive: true });
-    const HOVER_R = 0.05; // hover radius around a pocket, in art units
-    let surge = 0; // settlement flash, decays
-    let lastBatch = snapRef.current.l2.latestBatchId;
-    let lastProof = snapRef.current.l2.latestProofStatus;
-    let staticSeeded = false;
-    let canopyPrimed = false;
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerout", onPointerLeave);
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
@@ -884,17 +690,28 @@ export default function StaticTreeHero({
       p.phase === 0 ? tree.canopy[p.seg] : p.phase === 1 ? tree.trunk[p.seg] : tree.roots[p.seg];
 
     const pickCanopySeg = (): number => {
-      let r = Math.random() * canopyWSum;
+      // base lane density × proximity to the current focus angle, which slowly
+      // sweeps so the drip bunches on one side then rotates around the crown (#4)
+      const focusW: number[] = [];
+      let sum = 0;
       for (let i = 0; i < canopyW.length; i++) {
-        r -= canopyW[i];
+        const a = tree.canopy[i].ang ?? Math.PI / 2;
+        const d = a - focusAngle;
+        const prox = Math.exp(-(d * d) / (2 * 0.5 * 0.5));
+        const wgt = (canopyW[i] || 1) * (0.3 + prox);
+        focusW.push(wgt);
+        sum += wgt;
+      }
+      let r = Math.random() * sum;
+      for (let i = 0; i < focusW.length; i++) {
+        r -= focusW[i];
         if (r <= 0) return i;
       }
       return (Math.random() * tree.canopy.length) | 0;
     };
 
     const bucketForCanopySeg = (seg: number): GatherBucket => {
-      // Collect into the SAME pocket the lane was routed to (stored on the lane),
-      // so the dots visibly stream into the 3 base spots they appear to flow toward.
+      // route to the pocket this lane was already aimed at during construction (#6)
       let idx = tree.canopy[seg]?.gi ?? 1;
       if (Math.random() < 0.12) {
         idx = clamp(idx + (Math.random() < 0.5 ? -1 : 1), 0, gatherBuckets.length - 1);
@@ -908,12 +725,8 @@ export default function StaticTreeHero({
       if (particles.length >= MAX_PARTICLES) return;
       const seg = pickCanopySeg();
       const w = tree.canopy[seg].width;
-      const growTime = fast
-        ? GROW_FAST * (0.7 + Math.random() * 0.6)
-        : GROW_MIN + Math.random() * (GROW_MAX - GROW_MIN);
-      const hold = fast
-        ? 0.2 + Math.random() * 0.8
-        : 0.5 + Math.random() * 2.4;
+      // pick the FINAL size first, then correlate timing to it (#5): small orbs
+      // grow fast + break off quickly; large orbs grow slowly + linger longer.
       const sizeRoll = Math.random();
       const topSize =
         sizeRoll < 0.7
@@ -921,19 +734,27 @@ export default function StaticTreeHero({
           : sizeRoll < 0.93
             ? 0.56 + Math.random() * 0.4
             : 1.0 + Math.random() * 0.62;
+      const size = topSize * (0.78 + w * 0.42);
+      const sizeN = clamp(size / 1.6, 0, 1); // 0 (tiny) .. 1 (largest)
+      const growTime =
+        (fast
+          ? GROW_FAST * (0.7 + Math.random() * 0.6)
+          : GROW_MIN + Math.random() * (GROW_MAX - GROW_MIN)) *
+        (0.7 + sizeN * 0.9);
+      const hold = (0.35 + sizeN * 1.9) * (0.6 + Math.random() * 0.8);
       particles.push({
         phase: 0,
         seg,
         t: 0,
-        speed: (fast ? 1.5 : 1) * (0.135 + Math.random() * 0.085),
-        size: topSize * (0.78 + w * 0.42),
+        speed: (fast ? 1.5 : 1) * (0.135 + Math.random() * 0.085) * (1.15 - sizeN * 0.3),
+        size,
         grow: 0,
         growRate: 1 / growTime,
         hold,
         alt: Math.random() < 0.5,
         age: 0,
-        growDelay: fast ? Math.random() * 0.12 : Math.random() * 0.4,
         r0: Math.random(),
+        growDelay: fast ? Math.random() * 0.15 : Math.random() * 0.5,
       });
       leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
     };
@@ -978,11 +799,6 @@ export default function StaticTreeHero({
         hold: 0,
         alt: Math.random() < 0.5,
         age: 0,
-        r0: Math.random(),
-        // if the cursor is hovering this pocket, the clump swirls briefly then
-        // drops the trunk a bit faster than its normal pace
-        swirl: bucket.hot > 0.3 ? 0.45 + bucket.hot * 0.25 : 0,
-        speedMul: bucket.hot > 0.3 ? 1.35 + bucket.hot * 0.35 : 1,
       });
       bucket.glow = 1;
     };
@@ -998,19 +814,17 @@ export default function StaticTreeHero({
       bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
     };
 
-    const rootIndexForTrunk = (seg: number) => {
-      const center = (tree.roots.length - 1) / 2;
-      const offsets = [-3.2, -1.1, 1.1, 3.2];
-      return clamp(
-        Math.round(center + offsets[seg % offsets.length] + (Math.random() * 2 - 1) * 2.2),
-        0,
-        tree.roots.length - 1,
-      );
+    // send proof orbs down a handful of MAJOR root systems (not every tip) so
+    // the lock-in flashes cluster on the big light-green roots — ~6 of them (#8)
+    const MAJOR_ROOT_FRACS = [0.12, 0.27, 0.42, 0.55, 0.71, 0.88];
+    const rootIndexForTrunk = () => {
+      const frac = MAJOR_ROOT_FRACS[(Math.random() * MAJOR_ROOT_FRACS.length) | 0];
+      return clamp(Math.round(frac * (tree.roots.length - 1)), 0, tree.roots.length - 1);
     };
 
     const continueIntoRoot = (p: Particle) => {
       p.phase = 2;
-      p.seg = rootIndexForTrunk(p.seg);
+      p.seg = rootIndexForTrunk();
       p.t = Math.random() * 0.015;
       p.speed *= 0.96 + Math.random() * 0.08;
       p.age = Math.max(p.age, 0.4);
@@ -1081,35 +895,15 @@ export default function StaticTreeHero({
         dH = H * ZOOM;
         dW = H * IMG_ASPECT * ZOOM;
       }
-      const oX = (W - dW) * mobileBgAnchorX(W);
+      const oX = (W - dW) / 2;
       const oY = (H - dH) / 2;
-
-      // Hover: convert the cursor to art coords and warm any pocket it's over.
-      const curX = cursor.active ? (cursor.px - oX) / dW : -1;
-      const curY = cursor.active ? (cursor.py - oY) / dH : -1;
-      for (const bucket of gatherBuckets) {
-        const over =
-          cursor.active &&
-          Math.hypot((curX - bucket.x) * IMG_ASPECT, curY - bucket.y) < HOVER_R;
-        bucket.hot = over
-          ? Math.min(1, bucket.hot + dt * 5)
-          : Math.max(0, bucket.hot - dt * 2.2);
-        if (over) bucket.glow = Math.max(bucket.glow, 0.55);
-      }
 
       if (moving) {
         staticSeeded = false;
         const activity = Math.max(0, Math.min(1, s.l1.txCountWindow / 100));
-        if (!canopyPrimed) {
-          for (let i = 0; i < 170; i++) spawnCanopy();
-          // Dave likes the canopy DARK & blank for ~a second on load, THEN the orbs
-          // bloom in. Give the initial fill a staggered grow-delay so nothing shows
-          // for ~0.7s, then they fade in over the next second.
-          for (const p of particles) {
-            if (p.phase === 0) p.growDelay = 0.7 + Math.random() * 0.9;
-          }
-          canopyPrimed = true;
-        }
+        // advance the drip ramp + sweep the spawn-focus angle around the crown (#4)
+        runTime += dt;
+        focusAngle = Math.PI * 0.5 + Math.PI * 0.55 * Math.sin((now / 1000) * 0.4);
 
         // event: new batch -> a small flurry of canopy orbs + nudge the lump
         if (s.l2.latestBatchId !== lastBatch) {
@@ -1129,38 +923,45 @@ export default function StaticTreeHero({
         // with many more visible canopy points while each point keeps its pace
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
-          const cluster = Math.random() < 0.3 ? 8 : Math.random() < 0.6 ? 5 : 3;
+          // ramp 0->1 over the first ~7s: a sparse drip that builds to a heavy
+          // dotting — bigger clusters + shorter gaps as the ramp climbs (#4).
+          const ramp = Math.min(1, runTime / 7);
+          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.5 ? 6 : 3));
           for (let k = 0; k < cluster; k++) spawnCanopy();
-          const meanGap = 0.06 + (1 - activity) * 0.12;
+          const meanGap = (0.5 - ramp * 0.42) + (1 - activity) * 0.1;
           spawnTimer = meanGap * (0.35 + Math.random() * 1.15);
         }
 
-        // grow in place, then advance along the current segment (+ cursor repel)
+        // cursor focus point in normalised art coords (for the speed-field #9)
+        const curX = cursor.active ? (cursor.px - oX) / dW : -1;
+        const curY = cursor.active ? (cursor.py - oY) / dH : -1;
+
+        // grow in place, then advance along the current segment (+ cursor boost)
         for (const p of particles) {
           p.age += dt;
           if (p.phase === 3) continue; // flashing at a root tip — stays put
+          // staggered birth: a brief delay before each orb starts swelling, so
+          // they pop in as an irregular drip rather than all at once (#4/#5)
+          if (p.phase === 0 && p.growDelay && p.age < p.growDelay) continue;
           if (p.grow < 1) {
-            // wait a tiny per-orb delay before growing, so the field doesn't all
-            // swell + break off in unison
-            if (p.age >= (p.growDelay ?? 0)) p.grow = Math.min(1, p.grow + p.growRate * dt);
-            continue; // waiting or still growing — doesn't move yet
+            p.grow = Math.min(1, p.grow + p.growRate * dt);
+            continue; // still growing at its birth spot — doesn't move yet
           }
-          // is THIS canopy orb feeding a pocket the cursor is hovering?
-          const hotHere =
-            p.phase === 0 ? gatherBuckets[tree.canopy[p.seg]?.gi ?? 1]?.hot ?? 0 : 0;
+          // cursor speed-field: orbs within a small circle of the pointer shed
+          // their hold + advance faster, then resume the normal path (#9)
+          let near = false;
+          if (cursor.active) {
+            const pos = sampleLane(laneOf(p), p.t).pt;
+            near = Math.hypot((pos.x - curX) * IMG_ASPECT, pos.y - curY) < CURSOR_R;
+          }
           if (p.phase === 0 && p.hold > 0) {
-            p.hold = Math.max(0, p.hold - dt * (1 + hotHere * 4)); // hovered: break off sooner
+            p.hold = Math.max(0, p.hold - dt * (near ? 6 : 1));
             continue; // hangs glowing in the canopy before breaking loose
           }
           // canopy orbs advance in lane-normalised t (kept as fast as before);
           // blobs glide at a constant VISUAL speed, so the short trunk and the
           // long roots run at the same on-screen pace (no jump at the crown).
-          let advance = (p.phase === 0 ? p.speed : p.speed / laneOf(p).len) * (p.speedMul ?? 1);
-          if (hotHere > 0.3) advance *= 1.5; // rush toward a hovered pocket
-          if (p.swirl && p.swirl > 0) {
-            p.swirl -= dt;
-            advance *= 0.3; // crawl at the pocket while it spins, then release downward
-          }
+          const advance = (p.phase === 0 ? p.speed : p.speed / laneOf(p).len) * (near ? CURSOR_BOOST : 1);
           p.t += advance * dt;
         }
 
@@ -1190,12 +991,8 @@ export default function StaticTreeHero({
         // Release each canopy-base batch pocket independently. This makes lots
         // of visible L2 transactions compress into fewer proof orbs.
         for (const bucket of gatherBuckets) {
-          // a hovered pocket fires its clump early so the swirl + faster drop feels
-          // responsive to the cursor
-          const effTarget =
-            bucket.hot > 0.3 ? Math.max(3, Math.ceil(bucket.target * 0.45)) : bucket.target;
-          while (bucket.count >= effTarget && particles.length < MAX_PARTICLES) {
-            const batchCount = Math.min(bucket.count, effTarget);
+          while (bucket.count >= bucket.target && particles.length < MAX_PARTICLES) {
+            const batchCount = bucket.target;
             const batchValue =
               bucket.count > 0 ? (bucket.value / bucket.count) * batchCount : batchCount;
             releaseBlob(bucket, batchCount, batchValue);
@@ -1256,33 +1053,24 @@ export default function StaticTreeHero({
         // re-snap (that pulled beads across gaps to other veins, which read as a
         // jagged zig-zag and threw them far off the tree).
         const pt = s.pt;
-        let x = oX + pt.x * dW;
-        let y = oY + pt.y * dH;
-        // hover swirl: a brief decaying spiral around the pocket before it descends
-        if (p.swirl && p.swirl > 0) {
-          const sp = clamp(p.swirl / 0.5, 0, 1); // 1 -> 0 as it unwinds
-          const ang = (1 - sp) * Math.PI * 7;
-          const rad = 16 * sp;
-          x += Math.cos(ang) * rad;
-          y += Math.sin(ang) * rad;
-        }
+        const x = oX + pt.x * dW;
+        const y = oY + pt.y * dH;
         // current rendered size: grows from a seed up to the orb's random target
         const es = p.size * (0.12 + 0.88 * smooth01(p.grow));
         const rootPhase = p.phase === 2;
 
-        // phase 3: a soft brown-GOLD "locked in to L1" bloom — rises quickly, then
-        // fades out slowly, dimmer than before.
+        // phase 3: a bright "locked in to L1" bloom that swells, then vanishes
         if (p.phase === 3) {
           const fl = clamp(p.age / FLASH_DUR, 0, 1);
-          // fast rise over the first ~12%, then a long slow fall for the rest
+          // quick rise, long slow fall — a dim brown-gold settle, not a bright pop (#8)
           const bloom = fl < 0.12 ? fl / 0.12 : Math.pow(1 - (fl - 0.12) / 0.88, 1.7);
-          const rr = (6 + es * 3.6) * (1 + bloom * 2.2);
-          ctx.globalAlpha = Math.min(0.6, 0.12 + bloom * 0.34); // dimmer halo
+          const rr = (7 + es * 4.5) * (1 + bloom * 1.8);
+          ctx.globalAlpha = Math.min(0.7, 0.12 + bloom * 0.4);
           ctx.drawImage(glowGold, x - rr, y - rr, rr * 2, rr * 2);
-          ctx.globalAlpha = bloom * 0.5; // dimmer core
-          ctx.fillStyle = `rgba(236,206,150,${bloom * 0.5})`; // warm gold core
+          ctx.globalAlpha = bloom * 0.7;
+          ctx.fillStyle = `rgba(236,206,150,${bloom * 0.7})`;
           ctx.beginPath();
-          ctx.arc(x, y, 1.2 + es * 0.9 + bloom * 4, 0, Math.PI * 2);
+          ctx.arc(x, y, 1.2 + es * 0.9 + bloom * 3, 0, Math.PI * 2);
           ctx.fill();
           ctx.globalAlpha = 1;
           continue;
@@ -1312,15 +1100,15 @@ export default function StaticTreeHero({
           ctx.stroke();
         }
 
-        // glow halo + head, drawn as a slightly squashed + rotated ellipse per orb
-        // (from its stable r0) so they read as organic blobs, not identical circles.
-        const r = (3 + es * (rootPhase ? 2.55 : 3.2)) * glowBoost;
+        // glow halo + core drawn as a slightly squashed, rotated ellipse so the
+        // orbs read as organic sap droplets rather than perfect circles (#3)
         const r0 = p.r0 ?? 0.5;
         const sq = 0.8 + ((r0 * 7.13) % 1) * 0.4; // 0.8 .. 1.2 aspect
+        const r = (3 + es * (rootPhase ? 2.55 : 3.2)) * glowBoost;
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(r0 * Math.PI);
-        ctx.scale(sq, 1 / sq); // area-preserving — varies the shape, not the brightness
+        ctx.scale(sq, 1 / sq);
         ctx.globalAlpha = Math.min(1, (rootPhase ? 0.46 : 0.55) * life);
         ctx.drawImage(p.alt ? glowAlt : glowCore, -r, -r, r * 2, r * 2);
         ctx.globalAlpha = 1;
@@ -1349,14 +1137,13 @@ export default function StaticTreeHero({
     <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
       <div
         ref={bgRef}
-        className="static-tree-hero__bg"
         style={{
           position: "absolute",
           inset: 0,
           backgroundColor: "#040a06",
           backgroundImage: `radial-gradient(85% 75% at 72% 32%, rgba(26,84,40,0.22), transparent 58%), url("${BG_SRC}")`,
           backgroundSize: "cover, cover",
-          backgroundPosition: "center, var(--static-tree-bg-position, 50% 50%)",
+          backgroundPosition: "center, center",
           backgroundRepeat: "no-repeat, no-repeat",
           transform: `scale(${ZOOM})`,
           willChange: "transform",
