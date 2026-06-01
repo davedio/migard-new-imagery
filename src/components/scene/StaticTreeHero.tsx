@@ -711,22 +711,6 @@ export default function StaticTreeHero({
     let openingBurstDone = false;
     let openingReleaseDone = false;
 
-    // cursor speed-field (#9): orbs within CURSOR_R of the pointer move faster
-    const cursor = { px: -1, py: -1, active: false };
-    const CURSOR_R = 0.04;
-    const CURSOR_BOOST = 3;
-    const onPointerMove = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      cursor.px = e.clientX - r.left;
-      cursor.py = e.clientY - r.top;
-      cursor.active = true;
-    };
-    const onPointerLeave = () => {
-      cursor.active = false;
-    };
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerout", onPointerLeave);
-
     const resize = () => {
       const r = canvas.getBoundingClientRect();
       W = r.width;
@@ -1076,11 +1060,7 @@ export default function StaticTreeHero({
           spawnTimer = meanGap * (0.42 + Math.random() * 0.9);
         }
 
-        // cursor focus point in normalised art coords (for the speed-field #9)
-        const curX = cursor.active ? (cursor.px - oX) / dW : -1;
-        const curY = cursor.active ? (cursor.py - oY) / dH : -1;
-
-        // grow in place, then advance along the current segment (+ cursor boost)
+        // grow in place, then advance along the current segment
         for (const p of particles) {
           p.age += dt;
           if (p.phase === 3) continue; // flashing at a root tip — stays put
@@ -1091,21 +1071,14 @@ export default function StaticTreeHero({
             p.grow = Math.min(1, p.grow + p.growRate * dt);
             continue; // still growing at its birth spot — doesn't move yet
           }
-          // cursor speed-field: orbs within a small circle of the pointer shed
-          // their hold + advance faster, then resume the normal path (#9)
-          let near = false;
-          if (cursor.active) {
-            const pos = sampleLane(laneOf(p), p.t).pt;
-            near = Math.hypot((pos.x - curX) * IMG_ASPECT, pos.y - curY) < CURSOR_R;
-          }
           if (p.phase === 0 && p.hold > 0) {
-            p.hold = Math.max(0, p.hold - dt * (near ? 6 : 1));
+            p.hold = Math.max(0, p.hold - dt);
             continue; // hangs glowing in the canopy before breaking loose
           }
           // canopy orbs advance in lane-normalised t (kept as fast as before);
           // blobs glide at a constant VISUAL speed, so the short trunk and the
           // long roots run at the same on-screen pace (no jump at the crown).
-          const advance = (p.phase === 0 ? p.speed : p.speed / laneOf(p).len) * (near ? CURSOR_BOOST : 1);
+          const advance = p.phase === 0 ? p.speed : p.speed / laneOf(p).len;
           p.t += advance * dt;
         }
 
@@ -1287,8 +1260,6 @@ export default function StaticTreeHero({
       cancelAnimationFrame(raf);
       veinImg.onload = null;
       ro.disconnect();
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerout", onPointerLeave);
     };
   }, []);
 
