@@ -218,9 +218,14 @@ function Hero() {
         <Link className="btn btn--primary" href="/how-it-works">
           How It Works
         </Link>
-        <Link className="btn btn--ghost" href="/get-started">
-          Get Started
-        </Link>
+        <a
+          className="btn btn--ghost"
+          href="https://anastasia-labs.github.io/midgard/midgard.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          White Paper
+        </a>
       </div>
     </header>
   );
