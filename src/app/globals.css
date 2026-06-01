@@ -210,60 +210,6 @@ a {
   transition: font-size 0.16s var(--ease);
 }
 
-.home-hero__headline {
-  position: relative;
-  display: inline-block;
-  align-self: flex-start;
-  user-select: none;
-}
-
-.home-hero__headline-cardano {
-  color: var(--green-bright);
-}
-
-.cursor-glow-text__base {
-  position: relative;
-  z-index: 0;
-  display: block;
-}
-
-.cursor-glow-text__glow {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: block;
-  pointer-events: none;
-  color: #3be863;
-  letter-spacing: var(--ls, 0em);
-  opacity: var(--o, 0);
-  text-shadow:
-    0 0 8px rgba(59, 232, 99, 0.26),
-    0 0 30px rgba(59, 232, 99, 0.62);
-  -webkit-text-fill-color: #3be863;
-  -webkit-mask-image: radial-gradient(
-    circle var(--r, 180px) at var(--mx, -600px) var(--my, -600px),
-    #000 0%,
-    #000 50%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    circle var(--r, 180px) at var(--mx, -600px) var(--my, -600px),
-    #000 0%,
-    #000 50%,
-    transparent 100%
-  );
-}
-
-.cursor-glow-text__glow .home-hero__headline-cardano {
-  color: inherit;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cursor-glow-text__glow {
-    display: none;
-  }
-}
-
 .home-hero__lead {
   max-width: 620px;
   margin-top: 24px;
