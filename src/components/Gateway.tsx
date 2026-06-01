@@ -197,7 +197,90 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   );
 }
 
-function Hero() {
+function CursorGlowHeadline({ motionOn }: { motionOn: boolean }) {
+  const ref = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const headline = ref.current;
+    if (!headline) return;
+
+    if (!motionOn) {
+      headline.style.setProperty("--mx", "-600px");
+      headline.style.setProperty("--my", "-600px");
+      headline.style.setProperty("--o", "0");
+      headline.style.setProperty("--ls", "0em");
+      return;
+    }
+
+    let smx = -600;
+    let smy = -600;
+    let tx = -600;
+    let ty = -600;
+    let o = 0;
+    let ls = 0;
+    let inside = false;
+    let raf = 0;
+
+    const onMove = (e: MouseEvent) => {
+      const r = headline.getBoundingClientRect();
+      tx = e.clientX - r.left;
+      ty = e.clientY - r.top;
+      const m = 76;
+      inside =
+        e.clientX > r.left - m &&
+        e.clientX < r.right + m &&
+        e.clientY > r.top - m &&
+        e.clientY < r.bottom + m;
+    };
+    const onLeave = () => {
+      inside = false;
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    document.addEventListener("mouseleave", onLeave);
+
+    const loop = () => {
+      smx += (tx - smx) * 0.18;
+      smy += (ty - smy) * 0.18;
+      const to = inside ? 1 : 0;
+      o += (to - o) * (to > o ? 0.12 : 0.025);
+      const targetSpacing = inside ? 0.006 : 0;
+      ls += (targetSpacing - ls) * (targetSpacing > ls ? 0.05 : 0.007);
+      headline.style.setProperty("--mx", `${smx.toFixed(1)}px`);
+      headline.style.setProperty("--my", `${smy.toFixed(1)}px`);
+      headline.style.setProperty("--o", o.toFixed(3));
+      headline.style.setProperty("--ls", `${ls.toFixed(4)}em`);
+      raf = requestAnimationFrame(loop);
+    };
+
+    raf = requestAnimationFrame(loop);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseleave", onLeave);
+    };
+  }, [motionOn]);
+
+  return (
+    <h1
+      ref={ref}
+      className="home-hero__headline cursor-glow-text"
+      style={{ "--r": "clamp(126px, 13vw, 230px)" } as CSSProperties}
+    >
+      <span className="cursor-glow-text__base">
+        Built to scale<br />
+        Rooted in <span className="home-hero__headline-cardano">Cardano</span>
+      </span>
+      <span className="cursor-glow-text__glow" aria-hidden="true">
+        Built to scale<br />
+        Rooted in <span className="home-hero__headline-cardano">Cardano</span>
+      </span>
+    </h1>
+  );
+}
+
+function Hero({ motionOn }: { motionOn: boolean }) {
   const heroRef = useHeroAutoFit();
 
   return (
@@ -205,11 +288,7 @@ function Hero() {
       <div className="eyebrow home-hero__eyebrow">
         Scalability | Speed | Security
       </div>
-      <h1>
-        Built to scale<br />
-        Rooted in{" "}
-        <span style={{ color: "var(--green-bright)" }}>Cardano</span>
-      </h1>
+      <CursorGlowHeadline motionOn={motionOn} />
       <p className="home-hero__lead">
         Midgard is a Cardano-native optimistic rollup that gives applications a
         faster execution layer while keeping Cardano as the root of trust.
@@ -407,7 +486,7 @@ export default function Gateway() {
       </div>
 
       <main className="content">
-        <Hero />
+        <Hero motionOn={motionOn} />
         <ExploreGrid />
         <ClosingCTA />
       </main>
