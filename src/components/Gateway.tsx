@@ -215,7 +215,7 @@ function Hero() {
         faster execution layer while keeping Cardano as the root of trust.
       </p>
       <ol className="home-hero__mechanism" aria-label="Midgard mechanism">
-        {["Activity", "Batch", "Proof", "Challenge", "Settlement", "Cardano L1"].map(
+        {["Transactions", "Batch", "Proof", "Challenge", "Cardano Settlement"].map(
           (step) => (
             <li key={step}>{step}</li>
           ),
