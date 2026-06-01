@@ -1609,7 +1609,7 @@ button.panel:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 46px;
+  gap: 42px;
 }
 .splash__lock {
   display: flex;
@@ -1617,14 +1617,14 @@ button.panel:hover {
   gap: 14px;
 }
 .splash__lock img {
-  height: clamp(60px, 9vw, 108px);
+  height: clamp(54px, 8.2vw, 98px);
   width: auto;
   display: block;
 }
 .splash__lock .wm {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(54px, 9.5vw, 104px);
+  font-size: clamp(50px, 8.8vw, 94px);
   line-height: 1;
   letter-spacing: -0.01em;
   color: var(--text-hi);
@@ -1634,11 +1634,11 @@ button.panel:hover {
   align-items: center;
   gap: 14px;
   font-family: var(--font-mono);
-  font-size: clamp(15px, 1.6vw, 19px);
+  font-size: clamp(14px, 1.5vw, 17px);
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--text-hi);
-  padding: 22px 52px;
+  padding: 20px 46px;
   border: 1px solid rgba(32, 190, 67, 0.5);
   border-radius: var(--r);
   background: linear-gradient(180deg, rgba(32, 190, 67, 0.14), rgba(32, 190, 67, 0.04));
