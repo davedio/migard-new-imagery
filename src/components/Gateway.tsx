@@ -206,9 +206,9 @@ function Hero() {
         Scalability | Speed | Security
       </div>
       <h1>
-        Built to scale.<br />
+        Built to scale<br />
         Rooted in{" "}
-        <span style={{ color: "var(--green-bright)" }}>Cardano.</span>
+        <span style={{ color: "var(--green-bright)" }}>Cardano</span>
       </h1>
       <p className="home-hero__lead">
         Midgard is a Cardano-native optimistic rollup that gives applications a
