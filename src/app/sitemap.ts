@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL = "https://midgard-website.vercel.app";
+const SITE_URL = "https://midgard-gateway.vercel.app";
 
 const ROUTES = [
   "",

@@ -27,7 +27,7 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://midgard-website.vercel.app"),
+  metadataBase: new URL("https://midgard-gateway.vercel.app"),
   title: "Midgard | Cardano-Native L2 Scaling",
   description:
     "Midgard is a Cardano-native optimistic rollup for applications that need faster L2 execution with settlement back to Cardano L1.",

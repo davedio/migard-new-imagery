@@ -29,15 +29,15 @@
   --green-ghost: rgba(32, 190, 67, 0.12);
   --green-glow: rgba(32, 190, 67, 0.35);
   --gold-bright: #e0a33c;
-  --gold-dim: rgba(183, 121, 31, 0.5);
-  --gold-ghost: rgba(183, 121, 31, 0.14);
-  --gold-line: rgba(183, 121, 31, 0.42);
+  --gold-dim: rgba(207, 154, 46, 0.5);
+  --gold-ghost: rgba(207, 154, 46, 0.14);
+  --gold-line: rgba(207, 154, 46, 0.42);
 
   /* text */
   --text-hi: #eaf2ec;
   --text: #b7c6bc;
-  --text-dim: #7c8f84;
-  --text-faint: #51635a;
+  --text-dim: #8fa39a;
+  --text-faint: #6d7f76;
 
   /* type — wired to next/font css variables */
   --font-display: var(--font-syne), var(--font-poppins), system-ui, sans-serif;
@@ -74,7 +74,7 @@
   --lead-size: clamp(16px, 1.45vw, 18px);
   --body-size: 15px;
   --body-line: 1.55;
-  --eyebrow-size: 11px;
+  --eyebrow-size: 12px;
   --eyebrow-spacing: 0.28em;
   --mono-size: 12.5px;
   --mono-spacing: 0.04em;
@@ -244,7 +244,7 @@ a {
   align-items: center;
   min-height: 30px;
   padding: 6px 10px;
-  border: 1px solid rgba(183, 121, 31, 0.32);
+  border: 1px solid rgba(207, 154, 46, 0.32);
   border-radius: var(--r-sm);
   background: rgba(5, 12, 8, 0.48);
   color: var(--text);
@@ -430,7 +430,7 @@ a {
 }
 .chip--testnet {
   color: var(--gold-bright);
-  border-color: rgba(183, 121, 31, 0.6);
+  border-color: rgba(207, 154, 46, 0.6);
   background: var(--gold-ghost);
 }
 .chip--demo {
@@ -439,7 +439,7 @@ a {
 }
 .chip--proof {
   color: var(--gold-bright);
-  border-color: rgba(183, 121, 31, 0.6);
+  border-color: rgba(207, 154, 46, 0.6);
   background: var(--gold-ghost);
 }
 .chip--planned {
