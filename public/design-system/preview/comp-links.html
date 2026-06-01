@@ -1,0 +1,36 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="../midgard.css">
+<style>
+  body { margin: 0; background: var(--deep-ink); padding: 28px 30px; }
+  .cap { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 14px; }
+  .links-table { max-width: 560px; }
+  .links-row { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; padding: 13px 2px; border-top: 1px solid var(--panel-edge); }
+  .links-row .k { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--text-dim); }
+  .links-row .v { font-family: var(--font-mono); font-size: 13px; color: var(--green-bright); }
+  .links-row .v.pending { color: var(--text-faint); }
+  .note { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); margin-top: 18px; line-height: 1.8; max-width: 560px; }
+</style>
+</head>
+<body>
+  <div class="cap">Links table — canonical official links</div>
+  <div class="links-table">
+    <div class="links-row"><span class="k">Website</span><span class="v">midgard-gateway.vercel.app</span></div>
+    <div class="links-row"><span class="k">Docs</span><span class="v">GitHub source/docs</span></div>
+    <div class="links-row"><span class="k">GitHub</span><span class="v">Anastasia-Labs/midgard</span></div>
+    <div class="links-row"><span class="k">X</span><span class="v">@midgardprotocol</span></div>
+    <div class="links-row"><span class="k">Discord</span><span class="v">Midgard Discord</span></div>
+    <div class="links-row"><span class="k">Builder/Testnet intake</span><span class="v">Google form</span></div>
+    <div class="links-row"><span class="k">Security contact</span><span class="v pending">Publishing soon</span></div>
+  </div>
+  <div class="note">Mono key/value rows on mist hairlines · live links read green · pending routes drop to faint. Anything not listed here is not official.</div>
+</body>
+</html>

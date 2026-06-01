@@ -1,0 +1,108 @@
+/* ============================================================
+   MIDGARD — midgard.css
+   Component layer. Load colors_and_type.css FIRST, then this.
+   Ports the button / chip / panel / card / eyebrow system from
+   midgard-gateway/src/app/globals.css. Used by preview cards,
+   UI kit, and slides.
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+/* ---- ambient world background (use on a fixed full-bleed layer) ---- */
+.world-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--canopy-glow), transparent 55%),
+    radial-gradient(100% 60% at 50% 115%, var(--root-glow), transparent 60%),
+    radial-gradient(140% 100% at 50% 50%, var(--bg-1), var(--bg-2) 70%, var(--obsidian));
+}
+.world-grain {
+  position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  opacity: 0.4; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+/* ---- chips ---- */
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+  padding: 6px 12px; border-radius: var(--r-sm);
+  border: 1px solid var(--panel-edge-strong);
+  background: rgba(11, 21, 16, 0.6);
+  color: var(--text); white-space: nowrap;
+}
+.chip .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip--live { color: var(--green-bright); border-color: rgba(32, 190, 67, 0.5); background: rgba(32, 190, 67, 0.10); }
+.chip--live .dot { box-shadow: 0 0 8px var(--green-bright); animation: live-pulse 1.8s var(--ease) infinite; }
+.chip--testnet { color: var(--gold-bright); border-color: rgba(207, 154, 46, 0.6); background: var(--gold-ghost); }
+.chip--demo { color: var(--text); border-color: var(--panel-edge-strong); }
+.chip--proof { color: var(--gold-bright); border-color: rgba(207, 154, 46, 0.6); background: var(--gold-ghost); }
+.chip--planned { color: var(--slate); border-color: rgba(71, 85, 105, 0.5); }
+.chip--l1 { color: #7fa0f0; border-color: rgba(0, 51, 173, 0.65); background: rgba(127, 160, 240, 0.08); }
+@keyframes live-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
+  font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.06em;
+  padding: 12px 20px; border-radius: var(--r);
+  border: 1px solid transparent; cursor: pointer;
+  transition: all 0.25s var(--ease); background: none; color: var(--text-hi);
+}
+.btn--primary {
+  background: linear-gradient(180deg, rgba(32, 190, 67, 0.42), rgba(32, 190, 67, 0.19));
+  border-color: rgba(32, 190, 67, 0.9); color: var(--green-bright);
+  box-shadow: inset 0 0 0 1px rgba(32, 190, 67, 0.18), inset 0 0 20px rgba(32, 190, 67, 0.12);
+}
+.btn--primary:hover {
+  border-color: var(--midgard-green);
+  box-shadow: inset 0 0 24px rgba(32, 190, 67, 0.22), 0 8px 30px -12px var(--green-glow);
+  transform: translateY(-1px);
+}
+.btn--ghost { border-color: rgba(32, 190, 67, 0.32); background: rgba(32, 190, 67, 0.06); color: var(--text-hi); }
+.btn--ghost:hover { border-color: var(--gold-line); color: var(--gold-bright); background: var(--gold-ghost); }
+
+/* ---- panel ---- */
+.panel {
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.025), transparent 40%), var(--panel);
+  border: 1px solid var(--panel-edge); border-radius: var(--r-lg); position: relative;
+}
+.panel::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-line), transparent); opacity: 0.5;
+}
+
+/* ---- card ---- */
+.card { padding: 24px 24px 22px; height: 100%; display: flex; flex-direction: column; }
+.card__num { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; color: var(--gold-bright); }
+.card h3 { margin-top: 10px; color: var(--text-hi); font-size: 18px; }
+.card p { margin-top: 9px; font-size: 14px; color: var(--text-dim); flex: 1; }
+.card__cta { margin-top: 16px; font-family: var(--font-mono); font-size: 12.5px; color: var(--green-bright); }
+
+/* ---- callout ---- */
+.callout {
+  max-width: 740px; padding: 24px 26px; border-radius: var(--r-lg);
+  border: 1px solid var(--gold-line); background: var(--gold-ghost);
+}
+.callout h3 { color: var(--gold-bright); font-size: 18px; }
+.callout p { margin-top: 10px; font-size: 14.5px; color: var(--text); }
+
+/* ---- layer row ---- */
+.layer-row {
+  display: grid; grid-template-columns: 54px 160px 1fr; gap: 18px;
+  align-items: baseline; padding: 18px 22px;
+}
+.layer-row .n { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.18em; color: var(--gold-bright); }
+.layer-row .name { font-family: var(--font-display); font-size: 17px; color: var(--text-hi); }
+.layer-row .desc { font-size: 14px; color: var(--text-dim); }
+
+/* ---- metric row (HUD / layer stats) ---- */
+.metric-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 1px solid var(--panel-edge); gap: 16px; padding-top: 8px;
+}
+.metric-row .k { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); letter-spacing: 0.04em; white-space: nowrap; }
+.metric-row .v { font-family: var(--font-mono); font-size: 14px; color: var(--green-bright); text-align: right; white-space: nowrap; }
+
+/* ---- focus / a11y ---- */
+:focus-visible { outline: 2px solid var(--green-bright); outline-offset: 3px; border-radius: 2px; }
