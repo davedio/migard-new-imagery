@@ -118,6 +118,7 @@ export function Section({
   title,
   lead,
   tight,
+  glow,
   children,
 }: {
   id?: string;
@@ -125,11 +126,22 @@ export function Section({
   title?: ReactNode;
   lead?: ReactNode;
   tight?: boolean;
+  /** Add a soft ambient corner glow behind the section to fill below-fold voids. */
+  glow?: "green" | "gold";
   children?: ReactNode;
 }) {
   const hasHead = eyebrow || title || lead;
+  const glowClass =
+    glow === "green"
+      ? " section--glow"
+      : glow === "gold"
+        ? " section--glow-gold"
+        : "";
   return (
-    <section id={id} className={`section${tight ? " section--tight" : ""}`}>
+    <section
+      id={id}
+      className={`section${tight ? " section--tight" : ""}${glowClass}`}
+    >
       <div className="section__inner">
         {hasHead ? (
           <Reveal>

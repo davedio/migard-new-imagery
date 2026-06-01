@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Section, Layers, CtaBand } from "@/components/site/ui";
+import { HudDivider } from "@/components/site/Hud";
 import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
 
 export const metadata: Metadata = {
@@ -13,11 +14,14 @@ export default function HowItWorksPage() {
     <main className="page-main page-main--how-it-works">
       <ProtocolLifecycle />
 
+      <HudDivider left="// LAYER_EXPLAINER" right="06 LAYERS" />
+
       <Section
         id="layers"
         eyebrow="Layer explainer"
         title="Five lifecycle steps, one trust path."
         lead="The lifecycle above shows the moving system. The layer rows below show the underlying architecture Midgard keeps inspectable."
+        glow="green"
       >
         <Layers
           items={[
