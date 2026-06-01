@@ -13,8 +13,8 @@ export default function FaqPage() {
     <main className="page-main">
       <PageHero
         label="FAQ"
-        title="Frequently asked questions"
-        sub="Common questions about what Midgard is, how it works, network roles, security, fees, and testnet status."
+        title="Questions, answered plainly."
+        sub="Common questions about what Midgard is, how it works, ADA fees, builders, participant roles, security, and testnet status."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
           { label: "Open official links", href: "/official-links", variant: "ghost" },

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Section, Layers } from "@/components/site/ui";
+import { Section, Layers, CtaBand } from "@/components/site/ui";
 import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
 
 export const metadata: Metadata = {
@@ -15,8 +15,9 @@ export default function HowItWorksPage() {
 
       <Section
         id="layers"
+        eyebrow="Layer explainer"
         title="Five lifecycle steps, one trust path."
-        lead="The lifecycle above shows the moving system. The layer rows below show the underlying architecture Midgard keeps inspectable."
+        lead="The lifecycle is the moving system. The layer rows below show the underlying architecture Midgard keeps inspectable."
       >
         <Layers
           items={[
@@ -53,6 +54,16 @@ export default function HowItWorksPage() {
           ]}
         />
       </Section>
+
+      <CtaBand
+        eyebrow="Go deeper"
+        title="Go deeper than the headline."
+        lead="Midgard's architecture is meant to be inspected in source, docs, status surfaces, and the security path."
+        actions={[
+          { label: "Get Started", href: "/get-started", variant: "primary" },
+          { label: "Security", href: "/security", variant: "ghost" },
+        ]}
+      />
     </main>
   );
 }

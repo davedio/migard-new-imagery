@@ -214,10 +214,6 @@ function Hero() {
         faster execution layer while keeping Cardano as the root of trust.
       </p>
       <p className="home-hero__sublead">
-        Midgard gives Cardano applications a faster execution layer while
-        keeping Cardano in the trust path.
-      </p>
-      <p className="home-hero__sublead">
         Faster transaction execution for dApps, DEXs, lending protocols,
         wallets, and other flows that require speed and throughput.
       </p>
@@ -367,6 +363,9 @@ function ClosingCTA() {
   return (
     <section style={{ padding: "clamp(96px,15vh,188px) var(--gut)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
+        <div className="eyebrow" style={{ justifyContent: "center", display: "inline-flex" }}>
+          Closing
+        </div>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
           Scale Cardano. Keep the proof.
         </h2>

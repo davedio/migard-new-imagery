@@ -5,7 +5,6 @@ import {
   Prose,
   LinksTable,
   Callout,
-  Actions,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -51,7 +50,7 @@ export default function OfficialLinksPage() {
         />
       </Section>
 
-      <Section title="Stay safe">
+      <Section eyebrow="Safety" title="Stay safe">
         <Callout
           title="Midgard will never ask for private wallet secrets."
           body="Do not share your seed phrase, private key, recovery phrase, password, or unnecessary personal information. Do not sign approvals you do not understand. Do not trust unsolicited support messages."
@@ -66,16 +65,13 @@ export default function OfficialLinksPage() {
         />
       </Section>
 
-      <Section id="security-contact" title="Preserve evidence. Use official routes." tight>
+      <Section id="security-contact" eyebrow="Security contact" title="Preserve evidence. Use official routes." tight>
         <Prose
           items={[
             {
               text: "If you see a suspicious link, account, or security issue, do not connect your wallet. Preserve the URL, account name, screenshot, timestamp, and where you saw it. Report through the official support, security, or community route once published.",
             },
           ]}
-        />
-        <Actions
-          items={[{ label: "Check official routes", href: "#links", variant: "ghost" }]}
         />
       </Section>
     </main>

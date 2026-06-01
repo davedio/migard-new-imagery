@@ -389,12 +389,11 @@ export default function ProtocolLifecycle() {
         </aside>
         <div className="lifecycle__main">
           <header className="lifecycle__hero">
-            <div className="eyebrow">The Optimistic Lifecycle</div>
-            <h1>Fast execution. Checkable settlement.</h1>
+            <div className="eyebrow">How it works</div>
+            <h1>One trust path, end to end.</h1>
             <p>
-              Midgard assumes L2 activity is valid for fast soft finality, then
-              keeps the path inspectable through commitments, watchers, fraud
-              proofs, and settlement back to Cardano L1.
+              Midgard runs as a Cardano-native optimistic rollup: submit,
+              sequence, commit, watch, and settle back through Cardano L1.
             </p>
           </header>
           <ol className="lifecycle__steps" aria-label="Protocol lifecycle steps">

@@ -6,9 +6,9 @@ import {
   CardGrid,
   Card,
   Layers,
-  Bullets,
   Callout,
   Actions,
+  CtaBand,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -33,28 +33,14 @@ export default function GetStartedPage() {
 
       <Section
         id="builder-quickstart"
-        eyebrow="Builder quickstart"
-        title="Start with the architecture and source."
+        eyebrow="Where to start"
+        title="One concrete builder sequence."
       >
-        <Prose
-          items={[
-            {
-              text: "Midgard is designed to preserve the Cardano/eUTXO developer model as much as possible: validator logic, transaction assumptions, off-chain tooling, and application architecture stay recognizable.",
-            },
-            {
-              text: "The practical work is mapping which flows need L2 throughput, which state remains on L1, and where the wallet path must stay clear for users.",
-              variant: "dim",
-            },
-          ]}
-        />
-      </Section>
-
-      <Section title="One concrete builder sequence.">
         <CardGrid cols={2}>
           <Card
             num="01"
             title="Read the architecture"
-            body="Review the rollup model, state queue, settlement path, and challenge mechanics."
+            body="Review the rollup model, state queue, settlement path, and challenge mechanics before you ship a user flow."
             cta="Read docs"
             href={OFFICIAL_LINKS.docs}
             delay={0}
@@ -88,6 +74,7 @@ export default function GetStartedPage() {
 
       <Section
         id="roles"
+        eyebrow="Roles"
         title="Find the role you can fill."
       >
         <CardGrid>
@@ -122,13 +109,21 @@ export default function GetStartedPage() {
           <Card
             num="05"
             title="Apps and infrastructure"
-            body="Keep moving with dApp flows, endpoints, indexing, monitoring, reliability surfaces, and clear failure states."
+            body="Keep users and builders moving with dApp flows, endpoints, indexing, monitoring, reliability surfaces, and clear failure states."
             delay={240}
+          />
+          <Card
+            num="06"
+            title="Partners"
+            body="The strongest partner enters through function: what you make easier, safer, faster, or more inspectable."
+            cta="Join a readiness track"
+            href={OFFICIAL_LINKS.intakeForm}
+            delay={300}
           />
         </CardGrid>
       </Section>
 
-      <Section title="Map the flows before users touch them.">
+      <Section eyebrow="Integration" title="Map the flows before users touch them.">
         <Layers
           items={[
             {
@@ -155,7 +150,7 @@ export default function GetStartedPage() {
         />
       </Section>
 
-      <Section id="users" title="Faster Cardano apps. Same wallet. Same ADA.">
+      <Section id="users" eyebrow="For users" title="Faster Cardano apps. Same wallet. Same ADA.">
         <Prose
           items={[
             {
@@ -169,7 +164,7 @@ export default function GetStartedPage() {
         />
       </Section>
 
-      <Section title="Use official links." tight>
+      <Section eyebrow="Stay safe" title="Use official links." tight>
         <Callout
           title="Midgard will never ask for private wallet secrets."
           body="Do not share your seed phrase, private key, recovery phrase, password, or wallet-draining approval. Ignore unsolicited support messages and start from official links."
@@ -181,21 +176,15 @@ export default function GetStartedPage() {
         />
       </Section>
 
-      <Section title="What should become visible next">
-        <Bullets
-          items={[
-            "Clear docs path.",
-            "Contracts and deployment surfaces.",
-            "Builder quickstart.",
-            "Wallet and dApp integration tracks.",
-            "Activity and settlement dashboards.",
-            "Security reporting route.",
-            "Support route.",
-            "Post-testnet proof report.",
-          ]}
-        />
-      </Section>
-
+      <CtaBand
+        eyebrow="Get Started"
+        title="Bring a role, not just attention."
+        lead="Tell us where you plug in: building, operating, watching, integrating, monitoring, educating, or making the user path safer."
+        actions={[
+          { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
+        ]}
+      />
     </main>
   );
 }

@@ -29,7 +29,7 @@ export default function SecurityPage() {
         ]}
       />
 
-      <Section title="All transactions are rooted in the Cardano L1">
+      <Section eyebrow="Anchored to Cardano L1" title="The trust path returns to the base layer.">
         <Prose
           items={[
             {
@@ -43,7 +43,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section id="guarantees" title="Four guarantees to inspect.">
+      <Section id="guarantees" eyebrow="Guarantees" title="Four guarantees to inspect.">
         <Layers
           items={[
             {
@@ -70,7 +70,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section title="The network should pay attention to itself.">
+      <Section eyebrow="Watchers" title="The network should pay attention to itself.">
         <Prose
           items={[
             {
@@ -89,7 +89,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section id="security-contact" title="Security reporting belongs in the open path." tight>
+      <Section id="security-contact" eyebrow="Disclosure" title="Security reporting belongs in the open path." tight>
         <Callout
           title="Responsible disclosure route pending."
           body="As Midgard matures, security review, monitoring, and a responsible-disclosure route should become part of the public trust surface. For now, start from official links and preserve evidence."
@@ -102,6 +102,7 @@ export default function SecurityPage() {
       </Section>
 
       <CtaBand
+        eyebrow="Trust path"
         title="Trust is something the page should let you check."
         lead="Read the mechanism, inspect the source, and use the testnet status surface to separate live, simulated, and pending claims."
         actions={[

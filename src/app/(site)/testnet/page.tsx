@@ -6,7 +6,7 @@ import {
   Bullets,
   CardGrid,
   Card,
-  Actions,
+  CtaBand,
 } from "@/components/site/ui";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -42,7 +42,7 @@ export default function TestnetPage() {
         ]}
       />
 
-      <Section id="whats-live" title="Deployed and verifiable surfaces.">
+      <Section id="whats-live" eyebrow="What is live" title="Deployed and verifiable surfaces.">
         <Prose
           items={[
             {
@@ -57,7 +57,7 @@ export default function TestnetPage() {
         <NetworkStatusWidget />
       </Section>
 
-      <Section id="contracts" title="Inspect the contract path.">
+      <Section id="contracts" eyebrow="Contracts" title="Inspect the contract path.">
         <CardGrid>
           <Card
             title="Protocol contracts"
@@ -94,49 +94,7 @@ export default function TestnetPage() {
         </CardGrid>
       </Section>
 
-      <Section title="Inspect, build, report.">
-        <Bullets
-          items={[
-            "Builders read the docs, inspect source and contracts, test supported flows, and bring concrete feedback.",
-            "Partners enter through function: wallet flow, app flow, infrastructure, analytics, monitoring, or security review.",
-            "Users read status labels, start from official links, and watch the network mature.",
-          ]}
-        />
-      </Section>
-
-      <Section
-        title="Builders make the path real."
-        tight
-      >
-        <Prose
-          items={[
-            {
-              text: "Review the docs, inspect source, test supported flows, identify integration blockers, and bring concrete feedback. Midgard needs builders who can turn architecture into usable applications.",
-            },
-          ]}
-        />
-        <Actions
-          items={[{ label: "Get Started", href: "/get-started", variant: "ghost" }]}
-        />
-      </Section>
-
-      <Section
-        title="Partners should enter through function."
-        tight
-      >
-        <Prose
-          items={[
-            {
-              text: "Wallets, dApps, infrastructure providers, analytics teams, security contributors, and community educators should start with a clear role. What do you make easier, safer, faster, or more inspectable?",
-            },
-          ]}
-        />
-        <Actions
-          items={[{ label: "Get Started", href: "/get-started", variant: "ghost" }]}
-        />
-      </Section>
-
-      <Section title="What should become visible next">
+      <Section eyebrow="Proof queue" title="What should become visible next">
         <Bullets
           items={[
             "Clear docs path.",
@@ -151,6 +109,15 @@ export default function TestnetPage() {
         />
       </Section>
 
+      <CtaBand
+        eyebrow="Testnet"
+        title="Start from the official path."
+        lead="Use the status surfaces published on official links, and bring concrete feedback."
+        actions={[
+          { label: "Get Started", href: "/get-started", variant: "primary" },
+          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
+        ]}
+      />
     </main>
   );
 }
