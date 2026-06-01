@@ -165,15 +165,17 @@ a {
 }
 .static-tree-hero__bg {
   --static-tree-bg-position: 50% 50%;
+  --static-tree-zoom: 1.06;
 }
 @media (max-width: 720px) {
   .static-tree-hero__bg {
-    --static-tree-bg-position: 68% 50%;
+    --static-tree-bg-position: 62% 50%;
+    --static-tree-zoom: 1;
   }
 }
 @media (max-width: 420px) {
   .static-tree-hero__bg {
-    --static-tree-bg-position: 70% 50%;
+    --static-tree-bg-position: 62% 50%;
   }
 }
 .content {
