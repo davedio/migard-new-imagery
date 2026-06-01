@@ -11,6 +11,7 @@ import {
   type CSSProperties,
 } from "react";
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
+import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
 
@@ -397,13 +398,7 @@ export default function Gateway() {
     progress.current = v;
   });
 
-  const [motionOn, setMotionOn] = useState(true);
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!mq.matches) return;
-    const frame = requestAnimationFrame(() => setMotionOn(false));
-    return () => cancelAnimationFrame(frame);
-  }, []);
+  const { motionOn, toggle } = useMotionPref();
 
   const params = deriveParams(snap);
 
@@ -423,7 +418,7 @@ export default function Gateway() {
         <ClosingCTA />
       </main>
 
-      <MotionToggle on={motionOn} onToggle={() => setMotionOn((m) => !m)} />
+      <MotionToggle on={motionOn} onToggle={toggle} />
     </>
   );
 }

@@ -8,14 +8,10 @@
 // reusing the world-tree's emissive + bloom language. Self-animating for now; the
 // flow rate is the natural seam to bind to NetworkSnapshot later.
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { RoundedBox } from "@react-three/drei";
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  type RefObject,
-} from "react";
+import { PostFX } from "./PostFX";
+import { useGlowTexture, usePointerParallax } from "./sceneTokens";
+import { useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
 
 export type MonolithParams = {
@@ -45,24 +41,6 @@ const LAYERS: Layer[] = [
   { name: "Settlement", y: -0.85, side: -1, gold: true },
   { name: "Cardano L1", y: -1.45, side: 1 },
 ];
-
-/* ---------- soft radial glow sprite (shared) ---------- */
-function useGlowTexture() {
-  return useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = c.height = 64;
-    const ctx = c.getContext("2d")!;
-    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.4, "rgba(255,255,255,0.45)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 64, 64);
-    const t = new THREE.CanvasTexture(c);
-    t.needsUpdate = true;
-    return t;
-  }, []);
-}
 
 /* ---------- procedural stone tooth: a value-noise bump so the basalt reads
    as carved rock rather than flat plastic (no texture asset needed) ---------- */
@@ -361,18 +339,8 @@ function Rig({
   groupRef: RefObject<THREE.Group | null>;
   motionOn: boolean;
 }) {
-  const ptr = useRef({ x: 0, y: 0 });
+  const ptr = usePointerParallax(motionOn);
   const { camera } = useThree();
-
-  useEffect(() => {
-    if (!motionOn) return;
-    const onMove = (e: PointerEvent) => {
-      ptr.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      ptr.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [motionOn]);
 
   useFrame((state, dt) => {
     const g = groupRef.current;
@@ -425,15 +393,12 @@ function SceneContents({
         <Packets glow={glow} speed={speed} motionOn={motionOn} />
       </group>
 
-      <EffectComposer>
-        <Bloom
-          intensity={0.85}
-          luminanceThreshold={0.5}
-          luminanceSmoothing={0.22}
-          mipmapBlur
-          radius={0.72}
-        />
-      </EffectComposer>
+      <PostFX
+        bloomIntensity={0.85}
+        luminanceThreshold={0.5}
+        luminanceSmoothing={0.22}
+        radius={0.72}
+      />
     </>
   );
 }

@@ -9,8 +9,9 @@
 // natural seam to bind to NetworkSnapshot later.
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useTexture } from "@react-three/drei";
+import { PostFX } from "./PostFX";
+import { mulberry32, useGlowTexture, usePointerParallax } from "./sceneTokens";
 import {
   Suspense,
   useEffect,
@@ -48,17 +49,6 @@ const LAYERS: Layer[] = [
   { name: "Settlement", y: -0.95, gold: true },
   { name: "Cardano L1", y: -1.62, gold: true },
 ];
-
-/* deterministic PRNG so the root tangle is stable across renders */
-function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 type Strand = {
   curve: THREE.CatmullRomCurve3;
@@ -108,24 +98,6 @@ function useStrands(): Strand[] {
       });
     }
     return strands;
-  }, []);
-}
-
-/* ---------- soft radial glow sprite (shared) ---------- */
-function useGlowTexture() {
-  return useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = c.height = 64;
-    const ctx = c.getContext("2d")!;
-    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.4, "rgba(255,255,255,0.45)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 64, 64);
-    const t = new THREE.CanvasTexture(c);
-    t.needsUpdate = true;
-    return t;
   }, []);
 }
 
@@ -424,17 +396,8 @@ function Rig({
   groupRef: RefObject<THREE.Group | null>;
   motionOn: boolean;
 }) {
-  const ptr = useRef({ x: 0, y: 0 });
+  const ptr = usePointerParallax(motionOn);
   const { camera } = useThree();
-  useEffect(() => {
-    if (!motionOn) return;
-    const onMove = (e: PointerEvent) => {
-      ptr.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      ptr.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [motionOn]);
   useFrame((state, dt) => {
     const g = groupRef.current;
     if (!g) return;
@@ -490,15 +453,12 @@ function SceneContents({
         <Bedrock motionOn={motionOn} glow={glow} bump={bump} />
       </group>
 
-      <EffectComposer>
-        <Bloom
-          intensity={0.9}
-          luminanceThreshold={0.5}
-          luminanceSmoothing={0.22}
-          mipmapBlur
-          radius={0.7}
-        />
-      </EffectComposer>
+      <PostFX
+        bloomIntensity={0.9}
+        luminanceThreshold={0.5}
+        luminanceSmoothing={0.22}
+        radius={0.7}
+      />
     </>
   );
 }

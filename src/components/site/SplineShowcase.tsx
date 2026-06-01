@@ -1,14 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
+import { useInView } from "@/lib/useInView";
+import { useMotionPref } from "@/lib/motion";
 
 // Spline 3D embed (spike). The runtime + scene payload only loads once the
 // frame scrolls into view, and not at all under prefers-reduced-motion — keeps
@@ -20,21 +15,6 @@ const Spline = dynamic(() => import("@splinetool/react-spline"), {
 });
 
 const DEMO_SCENE = "https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode";
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-
-function subscribeReducedMotion(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-  const mq = window.matchMedia(REDUCED_MOTION_QUERY);
-  mq.addEventListener("change", onStoreChange);
-  return () => mq.removeEventListener("change", onStoreChange);
-}
-
-function getReducedMotionSnapshot() {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia(REDUCED_MOTION_QUERY).matches
-  );
-}
 
 type Props = {
   scene?: string;
@@ -69,30 +49,10 @@ export default function SplineShowcase({
   caption = "Demo scene — placeholder for a Midgard model.",
   height = "clamp(360px, 56vh, 620px)",
 }: Props) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [inView, setInView] = useState(false);
+  const [ref, inView] = useInView<HTMLDivElement>();
   const [loaded, setLoaded] = useState(false);
-  const reduced = useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    () => false,
-  );
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "300px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const { motionOn } = useMotionPref();
+  const reduced = !motionOn;
 
   const showScene = inView && !reduced;
 

@@ -5,8 +5,9 @@
 // "three" hero fork — procedural R3F world-tree. Selected via HERO_MODE in
 // Gateway.tsx; the image-background fork lives in ./StaticTreeHero.tsx.
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useGLTF } from "@react-three/drei";
+import { PostFX } from "./PostFX";
+import { mulberry32, useGlowTexture, usePointerParallax } from "./sceneTokens";
 import { Suspense, useEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
 import type { Leaf } from "./treeGeometry";
@@ -24,24 +25,6 @@ export type SceneParams = {
 };
 
 const GLB_URL = "/models/worldtree.glb";
-
-/* ---------- shared soft radial glow texture ---------- */
-function useGlowTexture() {
-  return useMemo(() => {
-    const c = document.createElement("canvas");
-    c.width = c.height = 64;
-    const ctx = c.getContext("2d")!;
-    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.4, "rgba(255,255,255,0.45)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, 64, 64);
-    const t = new THREE.CanvasTexture(c);
-    t.needsUpdate = true;
-    return t;
-  }, []);
-}
 
 /* ---------- soft leaf-shaped cutout texture ---------- */
 function useLeafTexture() {
@@ -65,18 +48,6 @@ function useLeafTexture() {
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 const smooth = (t: number) => t * t * (3 - 2 * t);
-
-/* ---------- deterministic RNG so the canopy is stable across reloads ---------- */
-function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 
 /* ---------- canopy leaves + L1 root tips, authored in Blender, loaded
    from the sidecar so the instances sit exactly on the GLB form ---------- */
@@ -134,19 +105,8 @@ function Rig({
   const look = useRef(new THREE.Vector3(1.4, 5.4, 0));
   const tPos = useRef(new THREE.Vector3());
   const tLook = useRef(new THREE.Vector3());
-  const ptr = useRef({ x: 0, y: 0 });
-
-  // track pointer on window so parallax works even though the canvas is
-  // pointer-events:none (so page content stays interactive)
-  useEffect(() => {
-    if (!motionOn) return;
-    const onMove = (e: PointerEvent) => {
-      ptr.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      ptr.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [motionOn]);
+  // window-level pointer tracking (canvas is pointer-events:none)
+  const ptr = usePointerParallax(motionOn);
 
   useFrame((_, dt) => {
     sampleCam(progressRef.current ?? 0, tPos.current, tLook.current);
@@ -508,15 +468,7 @@ function SceneContents({
         </group>
       </group>
 
-      <EffectComposer>
-        <Bloom
-          intensity={0.9}
-          luminanceThreshold={0.55}
-          luminanceSmoothing={0.2}
-          mipmapBlur
-          radius={0.7}
-        />
-      </EffectComposer>
+      <PostFX />
     </>
   );
 }

@@ -1,14 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import {
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { type CSSProperties, type ReactNode } from "react";
+import { useInView } from "@/lib/useInView";
+import { useMotionPref } from "@/lib/motion";
 
 // "Living Roots" trust-architecture set-piece (How It Works). The R3F runtime +
 // scene only mount once the frame scrolls into view; under prefers-reduced-motion
@@ -21,22 +16,6 @@ const RootworkScene = dynamic(
     loading: () => <Centered>Loading 3D…</Centered>,
   },
 );
-
-const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
-
-function subscribeReducedMotion(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-  const mq = window.matchMedia(REDUCED_MOTION_QUERY);
-  mq.addEventListener("change", onStoreChange);
-  return () => mq.removeEventListener("change", onStoreChange);
-}
-
-function getReducedMotionSnapshot() {
-  return (
-    typeof window !== "undefined" &&
-    window.matchMedia(REDUCED_MOTION_QUERY).matches
-  );
-}
 
 type Props = {
   eyebrow?: string;
@@ -72,29 +51,9 @@ export default function RootworkShowcase({
   height = "clamp(420px, 64vh, 720px)",
   activity = 0.5,
 }: Props) {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const [inView, setInView] = useState(false);
-  const reduced = useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    () => false,
-  );
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setInView(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "300px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const [ref, inView] = useInView<HTMLDivElement>();
+  const { motionOn } = useMotionPref();
+  const reduced = !motionOn;
 
   const frame: CSSProperties = {
     position: "relative",
@@ -121,7 +80,7 @@ export default function RootworkShowcase({
 
       <div ref={ref} style={frame}>
         {inView ? (
-          <RootworkScene params={{ activity }} motionOn={!reduced} />
+          <RootworkScene params={{ activity }} motionOn={motionOn} />
         ) : (
           <Centered>3D scene</Centered>
         )}

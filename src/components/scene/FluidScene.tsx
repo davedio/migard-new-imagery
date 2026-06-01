@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useMotionPref } from "@/lib/motion";
 
 /* ============================================================
    FluidScene — calm WebGL "mist" background for Midgard CHILD pages
@@ -50,6 +51,7 @@ void main(){
 
 export default function FluidScene() {
   const ref = useRef<HTMLCanvasElement>(null);
+  const { motionOn } = useMotionPref();
 
   useEffect(() => {
     const cvs = ref.current;
@@ -64,9 +66,11 @@ export default function FluidScene() {
       if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
       return s;
     };
+    const vs = compile(gl.VERTEX_SHADER, VERT);
+    const fs = compile(gl.FRAGMENT_SHADER, FRAG);
     const prog = gl.createProgram()!;
-    gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
-    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
     gl.linkProgram(prog); gl.useProgram(prog);
 
     const buf = gl.createBuffer();
@@ -94,7 +98,6 @@ export default function FluidScene() {
     window.addEventListener("resize", resize);
     resize();
 
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const t0 = performance.now();
     let raf = 0;
     const frame = (now: number) => {
@@ -102,12 +105,20 @@ export default function FluidScene() {
       gl.uniform1f(uTime, (now - t0) / 1000);
       gl.uniform1f(uG, G); gl.uniform1f(uS, S); gl.uniform1f(uW, Wl);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      if (!reduce) raf = requestAnimationFrame(frame);
+      // when motion is off we still paint one frame, then hold still
+      if (motionOn) raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
 
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-  }, []);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      gl.deleteProgram(prog);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(buf);
+    };
+  }, [motionOn]);
 
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
