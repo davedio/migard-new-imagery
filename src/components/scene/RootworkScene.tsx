@@ -19,11 +19,17 @@ import {
   useRef,
   type RefObject,
 } from "react";
+import type { ProofStatus } from "@/lib/network";
 import * as THREE from "three";
 
 export type RootworkParams = {
-  /** 0..1 overall activity — scales sap flow speed. Mock/static for now. */
+  /** 0..1 overall activity — derived from snap.l2.throughput / 40. */
   activity: number;
+  /**
+   * L2 proof lifecycle state from snap.l2.latestProofStatus.
+   * Drives Proof-ring brightness and the one-shot settlement flash.
+   */
+  proofStatus?: ProofStatus;
 };
 
 /* brand palette (globals.css) */
@@ -204,17 +210,45 @@ function ringRadius(y: number) {
   return 0.2 + Math.sin(t * Math.PI) * 1.15;
 }
 
-function LayerRings({ motionOn }: { motionOn: boolean }) {
+// Index of the "Proof" ring in LAYERS (name: "Proof", gold: true, index 2).
+const PROOF_RING_IDX = LAYERS.findIndex((L) => L.name === "Proof");
+
+function LayerRings({
+  motionOn,
+  proofStatus,
+}: {
+  motionOn: boolean;
+  proofStatus: ProofStatus;
+}) {
   const mats = useRef<THREE.MeshStandardMaterial[]>([]);
+
   useFrame((state) => {
     if (!motionOn) return;
     const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 1.5);
+
+    // Target emissive intensity for the Proof ring based on proof lifecycle.
+    // pending → dim (0.6), generated → elevated (3.2), settled → elevated (3.2)
+    const proofTarget =
+      proofStatus === "pending" ? 0.6 : 3.2;
+
     mats.current.forEach((m, i) => {
       if (!m) return;
       const gold = m.userData.gold as boolean;
-      m.emissiveIntensity = (gold ? 1.7 : 0.9) + (i % 2 ? k : 1 - k) * 0.5;
+      const baseIntensity = (gold ? 1.7 : 0.9) + (i % 2 ? k : 1 - k) * 0.5;
+
+      if (i === PROOF_RING_IDX) {
+        // Lerp toward the proof-status target with damping ~0.04/frame
+        m.emissiveIntensity = THREE.MathUtils.lerp(
+          m.emissiveIntensity,
+          proofTarget,
+          0.04,
+        );
+      } else {
+        m.emissiveIntensity = baseIntensity;
+      }
     });
   });
+
   return (
     <group>
       {LAYERS.map((L, i) => (
@@ -237,6 +271,75 @@ function LayerRings({ motionOn }: { motionOn: boolean }) {
         </mesh>
       ))}
     </group>
+  );
+}
+
+/* ---------- one-shot gold settlement flash when proofStatus → "settled" ----------
+   A torus at the Proof layer Y emits a bloom-amplified gold burst that scales
+   outward and fades over ~1.2 s. Fires once per transition; no persistent loop. */
+function SettlementFlash({
+  proofStatus,
+  motionOn,
+}: {
+  proofStatus: ProofStatus;
+  motionOn: boolean;
+}) {
+  // accumulator: 0 = idle, 1 = just triggered, decays to 0 over ~1.2 s
+  const acc = useRef(0);
+  const prevStatus = useRef<ProofStatus>(proofStatus);
+  const mat = useRef<THREE.MeshStandardMaterial>(null);
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  const proofY = LAYERS[PROOF_RING_IDX]?.y ?? 0.5;
+  const proofR = ringRadius(proofY);
+
+  useFrame((_, dt) => {
+    // Detect transition → "settled"
+    if (prevStatus.current !== proofStatus) {
+      if (proofStatus === "settled" && motionOn) {
+        acc.current = 1;
+      }
+      prevStatus.current = proofStatus;
+    }
+
+    if (acc.current <= 0) return;
+
+    // Decay exponentially: roughly 1.2 s to reach near-zero
+    acc.current = Math.max(0, acc.current - dt * 0.85);
+
+    const a = acc.current;
+    // Scale from ~1.0 to 1.8 as flash decays
+    const scale = 1 + (1 - a) * 0.8;
+    if (meshRef.current) {
+      meshRef.current.scale.setScalar(scale);
+    }
+    if (mat.current) {
+      // Peak emissiveIntensity at 4.0, decays to 0
+      mat.current.emissiveIntensity = a * a * 4.0;
+      mat.current.opacity = a * 0.85;
+    }
+  });
+
+  return (
+    <mesh
+      ref={meshRef}
+      position={[0, proofY, 0]}
+      rotation={[Math.PI / 2, 0, 0]}
+    >
+      <torusGeometry args={[proofR * 1.05, 0.014, 8, 80]} />
+      <meshStandardMaterial
+        ref={mat}
+        color="#0a0800"
+        emissive={GOLD_BRIGHT}
+        emissiveIntensity={0}
+        metalness={0.4}
+        roughness={0.3}
+        toneMapped={false}
+        transparent
+        opacity={0}
+        depthWrite={false}
+      />
+    </mesh>
   );
 }
 
@@ -425,6 +528,7 @@ function SceneContents({
   const bump = useEarthBump();
   const group = useRef<THREE.Group>(null);
   const speed = 0.12 + params.activity * 0.3;
+  const proofStatus: ProofStatus = params.proofStatus ?? "pending";
 
   return (
     <>
@@ -448,7 +552,8 @@ function SceneContents({
         <Suspense fallback={null}>
           <Roots strands={strands} />
         </Suspense>
-        <LayerRings motionOn={motionOn} />
+        <LayerRings motionOn={motionOn} proofStatus={proofStatus} />
+        <SettlementFlash proofStatus={proofStatus} motionOn={motionOn} />
         <Sap strands={strands} speed={speed} motionOn={motionOn} glow={glow} />
         <Bedrock motionOn={motionOn} glow={glow} bump={bump} />
       </group>
@@ -471,8 +576,9 @@ export default function RootworkScene({
   motionOn?: boolean;
 }) {
   return (
+    // dpr capped at 1.5 — protects frame budget on mobile data-driven path
     <Canvas
-      dpr={[1, 2]}
+      dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ position: [0.15, 0.55, 9], fov: 40, near: 0.1, far: 60 }}
     >

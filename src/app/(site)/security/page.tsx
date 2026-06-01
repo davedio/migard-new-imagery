@@ -9,6 +9,7 @@ import {
   CtaBand,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import RootworkShowcase from "@/components/site/RootworkShowcase";
 
 export const metadata: Metadata = {
   title: "Midgard Security",
@@ -42,6 +43,15 @@ export default function SecurityPage() {
           ]}
         />
       </Section>
+
+      {/*
+        "Living Roots" 3D showcase — data-driven by the simulated network snapshot.
+        Sap-flow speed = snap.l2.throughput / 40; Proof ring = snap.l2.latestProofStatus.
+        Placed here to bridge the "trust path" prose above with the four-guarantee
+        detail below; the roots metaphor (L2 activity → proof → L1 settlement)
+        makes the protocol flow legible before the written guarantees enumerate it.
+      */}
+      <RootworkShowcase />
 
       <Section id="guarantees" eyebrow="Guarantees" title="Four guarantees to inspect.">
         <Layers

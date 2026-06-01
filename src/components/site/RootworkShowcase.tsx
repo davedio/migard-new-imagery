@@ -4,11 +4,15 @@ import dynamic from "next/dynamic";
 import { type CSSProperties, type ReactNode } from "react";
 import { useInView } from "@/lib/useInView";
 import { useMotionPref } from "@/lib/motion";
+import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
+import type { ProofStatus } from "@/lib/network";
 
-// "Living Roots" trust-architecture set-piece (How It Works). The R3F runtime +
-// scene only mount once the frame scrolls into view; under prefers-reduced-motion
-// the scene still renders but holds STILL. Pure R3F — no Spline runtime, no GLB
-// download (oak-bark textures only).
+// "Living Roots" trust-architecture set-piece (How It Works / Security). The
+// R3F runtime + scene only mount once the frame scrolls into view; under
+// prefers-reduced-motion the scene still renders but holds STILL. Pure R3F —
+// no Spline runtime, no GLB download (oak-bark textures only).
+// NOTE: activity and proofStatus are derived from the SIMULATED network
+// snapshot (source: "demo"). Data is NOT verified live protocol data.
 const RootworkScene = dynamic(
   () => import("@/components/scene/RootworkScene"),
   {
@@ -21,8 +25,6 @@ type Props = {
   eyebrow?: string;
   caption?: string;
   height?: string;
-  /** 0..1 overall activity — scales the sap flow speed. */
-  activity?: number;
 };
 
 function Centered({ children }: { children: ReactNode }) {
@@ -46,14 +48,19 @@ function Centered({ children }: { children: ReactNode }) {
 }
 
 export default function RootworkShowcase({
-  eyebrow = "Living Roots · Interactive",
-  caption = "Verified activity flows down the roots, through the six trust layers, into Cardano L1 settlement.",
+  eyebrow = "SIMULATED · Living Roots · Trust Architecture",
+  caption = "Sap-flow speed and proof-ring intensity reflect simulated L2 activity. Data source: demo feed — not verified live protocol data.",
   height = "clamp(420px, 64vh, 720px)",
-  activity = 0.5,
 }: Props) {
   const [ref, inView] = useInView<HTMLDivElement>();
   const { motionOn } = useMotionPref();
   const reduced = !motionOn;
+
+  // Derive activity and proofStatus from the simulated network snapshot.
+  // throughput is 0..~40 ops/s (mock); clamp to 0..1 for the scene.
+  const { data: snap } = useNetworkSnapshot();
+  const activity = Math.min(1, Math.max(0, snap.l2.throughput / 40));
+  const proofStatus: ProofStatus = snap.l2.latestProofStatus;
 
   const frame: CSSProperties = {
     position: "relative",
@@ -74,13 +81,20 @@ export default function RootworkShowcase({
         padding: "clamp(24px, 4vh, 56px) var(--gut)",
       }}
     >
-      <div className="eyebrow" style={{ marginBottom: 14 }}>
-        {eyebrow}
+      {/* SIMULATED eyebrow — makes the demo nature of the data unambiguous */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+        <div className="eyebrow">{eyebrow}</div>
+        <span className="chip chip--demo" aria-label="Simulated feed — not live data">
+          Simulated feed
+        </span>
       </div>
 
       <div ref={ref} style={frame}>
         {inView ? (
-          <RootworkScene params={{ activity }} motionOn={motionOn} />
+          <RootworkScene
+            params={{ activity, proofStatus }}
+            motionOn={motionOn}
+          />
         ) : (
           <Centered>3D scene</Centered>
         )}

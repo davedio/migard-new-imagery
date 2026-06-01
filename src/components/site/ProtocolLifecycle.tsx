@@ -1,12 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import {
   useEffect,
   useRef,
   useState,
   type ComponentType,
+  type CSSProperties,
   type SVGProps,
 } from "react";
+import { useInView } from "@/lib/useInView";
+import { useMotionPref } from "@/lib/motion";
+
+// Lazy-mounted R3F scene — only loads the Three.js runtime after the section
+// scrolls near the viewport, and only on the client (ssr: false).
+const LifecycleScene = dynamic(
+  () => import("@/components/scene/LifecycleScene"),
+  { ssr: false, loading: () => null },
+);
 
 type IconProps = SVGProps<SVGSVGElement> & { size?: number };
 type Flow = "l2-to-l1" | "l1-to-l2" | "both" | null;
@@ -330,6 +341,37 @@ function StepCard({
   );
 }
 
+/** Inline 3D lifecycle diagram — lazy-mounted, scroll-driven. */
+function LifecycleDiagram({ activeStep }: { activeStep: number }) {
+  const [sceneRef, inView] = useInView<HTMLDivElement>({ rootMargin: "400px 0px", once: true });
+  const { motionOn } = useMotionPref();
+
+  const frameStyle: CSSProperties = {
+    position: "relative",
+    width: "100%",
+    height: "clamp(280px, 44vh, 520px)",
+    marginTop: 16,
+    borderRadius: "var(--r-lg)",
+    overflow: "hidden",
+    border: "1px solid var(--panel-edge-strong)",
+    background:
+      "radial-gradient(110% 80% at 50% 0%, var(--green-ghost), transparent 55%), #060d09",
+  };
+
+  return (
+    <div
+      ref={sceneRef}
+      style={frameStyle}
+      aria-hidden
+      /* decorative — existing text rail is the accessible source of truth */
+    >
+      {inView ? (
+        <LifecycleScene activeStep={activeStep} motionOn={motionOn} />
+      ) : null}
+    </div>
+  );
+}
+
 export default function ProtocolLifecycle() {
   const [activeStep, setActiveStep] = useState(0);
   const activeRef = useRef(0);
@@ -386,6 +428,8 @@ export default function ProtocolLifecycle() {
             ))}
           </div>
           <LifecycleRail activeStep={activeStep} />
+          {/* 3D diagram accompanies the 2D rail — purely visual, decorative */}
+          <LifecycleDiagram activeStep={activeStep} />
         </aside>
         <div className="lifecycle__main">
           <header className="lifecycle__hero">

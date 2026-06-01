@@ -1,0 +1,158 @@
+/* ============================================================
+   NetworkStatusWidget — instrument readout styles
+   Co-located with NetworkStatusWidget.tsx
+   All animation is short-lived and respects the global
+   prefers-reduced-motion rule in globals.css.
+   ============================================================ */
+
+/* ---- overline / SIMULATED badge ---- */
+.overline {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--panel-edge);
+}
+
+.overlineDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+  flex-shrink: 0;
+}
+
+/* ---- chip row ---- */
+.chipRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timestamp {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-faint);
+}
+
+/* ---- batch fill bar ---- */
+.batchBarWrap {
+  margin-top: 2px;
+  height: 2px;
+  width: 100%;
+  background: var(--panel-edge);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.batchBarFill {
+  height: 100%;
+  border-radius: 1px;
+  transform-origin: left;
+}
+
+/* ---- proof pulse ring (overlay on panel) ---- */
+.proofRing {
+  position: absolute;
+  inset: -1px;
+  border-radius: var(--r-lg);
+  pointer-events: none;
+  border: 1px solid transparent;
+}
+
+/* ---- odometer digit wrapper ---- */
+.odoWrap {
+  display: inline-flex;
+  align-items: flex-end;
+  overflow: hidden;
+  line-height: 1;
+  /* clip the rolling digit vertically */
+  max-height: 1.2em;
+}
+
+.odoDigit {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ---- challenge window row ---- */
+.challengeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--panel-edge);
+  padding-top: 8px;
+}
+
+.challengeLabel {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-dim);
+  letter-spacing: 0.04em;
+  flex: 1;
+  white-space: nowrap;
+}
+
+.challengeValue {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--gold-bright);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.challengePulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold-bright);
+  box-shadow: 0 0 6px var(--gold-bright);
+  animation: challengePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes challengePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ---- section divider inside panel ---- */
+.innerDivider {
+  height: 1px;
+  background: var(--panel-edge);
+  margin: 2px 0;
+}
+
+/* ---- L1 / L2 section labels ---- */
+.sectionLabel {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding-top: 6px;
+}
+
+/* ---- panel wrapper with proof-keyed border ---- */
+.panel {
+  /* base panel styles inherited from .panel in globals.css */
+  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+/* ---- settled proof flash ring ---- */
+.settledRing {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-lg);
+  pointer-events: none;
+  border: 1px solid var(--gold-bright);
+}
