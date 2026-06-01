@@ -65,7 +65,7 @@ const PARTICLE_CORE = "#00ff66"; // primary
 const PARTICLE_ALT = "#33ff33"; // variation
 
 // Tunables
-const MAX_PARTICLES = 540;
+const MAX_PARTICLES = 760;
 // A random number of canopy orbs lump together into each trunk blob, so blob
 // sizes vary with how many gathered while avoiding oversized root exits.
 const GATHER_MIN = 8;
@@ -79,6 +79,11 @@ const GROW_FAST = 0.32; // event-burst orbs grow quicker
 const FIRST_GLOW_DELAY = 0.5; // first visible transaction glow after page open
 const STARTUP_RAMP_SECONDS = 4.4;
 const OPENING_BURST_COUNT = 18;
+const BASE_CANOPY_LANES = 150;
+const HIGH_CANOPY_EXTRA_LANES = 200;
+const HIGH_MICRO_OPENING_BURST = 190;
+const HIGH_MICRO_BATCH_BURST = 38;
+const HIGH_MICRO_SETTLE_BURST = 52;
 // Blobs glide at a CONSTANT VISUAL speed (height/sec), arc-length-normalised so
 // the short trunk and the long roots run at the same on-screen pace — no speed
 // change at the crown. Slower than the darting canopy orbs.
@@ -87,7 +92,7 @@ const BLOB_VSPEED_JIT = 0.006; // tiny variance so some blobs catch up + merge
 const MERGE_CAP = 4.2; // max blob size after merging
 
 type Pt = { x: number; y: number };
-type Lane = { poly: Pt[]; width: number; len: number; gi?: number; ang?: number }; // gi = base pocket; ang = birth angle (canopy)
+type Lane = { poly: Pt[]; width: number; len: number; gi?: number; ang?: number; high?: boolean }; // gi = base pocket; ang = birth angle (canopy)
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
 // phase 0 = canopy orb (grows in place, then descends), 1 = trunk blob,
@@ -105,6 +110,7 @@ type Particle = {
   age: number;
   r0?: number; // stable per-orb random (0..1) -> slightly squashed/rotated organic shape
   growDelay?: number; // tiny per-orb wait before it begins growing — desyncs the field
+  micro?: boolean;
 };
 
 type LeafNode = { x: number; y: number; phase: number; flash: number };
@@ -298,22 +304,27 @@ function buildTree(field?: VeinField): Tree {
   // CANOPY: leaf tip on the dome -> sweep in -> fork. Snake-woven branches that
   // all converge at the bottom of the canopy (the fork) where orbs gather.
   const canopy: Lane[] = [];
-  const NC = 150;
+  const NC = BASE_CANOPY_LANES + HIGH_CANOPY_EXTRA_LANES;
   for (let i = 0; i < NC; i++) {
+    const isHighMicro = i >= BASE_CANOPY_LANES;
     // RANDOM scatter across the crown (not a grid): random angle + random DEPTH,
     // capped at 0.8 of the dome so tips never reach the outer edge / sky. Snapped
     // onto the nearest bright vein so orbs RIDE the branches + bunch lower-centre.
     const jAng = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
     const jRad = Math.abs(Math.sin(i * 78.233 + 2.1) * 43758.5453) % 1;
     const jW = Math.abs(Math.sin(i * 39.42 + 0.7) * 43758.5453) % 1;
-    const ang = Math.PI * (-0.04 + 1.08 * jAng); // across the crown arc
-    const rf = 0.3 + 0.5 * jRad; // 0.30 .. 0.80 of the dome radius — never the very edge
+    const ang = isHighMicro
+      ? Math.PI * (0.18 + 0.64 * jAng)
+      : Math.PI * (-0.04 + 1.08 * jAng); // across the crown arc
+    const rf = isHighMicro
+      ? 0.56 + 0.2 * jRad
+      : 0.3 + 0.5 * jRad; // never the very edge
     const leafGuess = {
       x: DOME.cx + Math.cos(ang) * DOME.rx * rf,
       y: DOME.cy - Math.sin(ang) * DOME.ry * rf,
     };
     const leaf = field
-      ? onTree(anchor(leafGuess, 0.055), 0.06)
+      ? onTree(anchor(leafGuess, isHighMicro ? 0.026 : 0.055), isHighMicro ? 0.028 : 0.06)
       : {
           x: clamp(leafGuess.x, DOME.cx - DOME.rx * 0.8, DOME.cx + DOME.rx * 0.8),
           y: leafGuess.y,
@@ -331,12 +342,26 @@ function buildTree(field?: VeinField): Tree {
     const mid = anchor({
       x: lerp(leaf.x, gather.x, 0.6),
       y: lerp(leaf.y, gather.y, 0.62),
-    }, 0.028);
+    }, isHighMicro ? 0.016 : 0.028);
     const base = catmullRom([leaf, mid, forkInlet], 14);
-    const woven = snake(base, 0.005 + jW * 0.004, 1 + (i % 2), (i * 1.3) % (Math.PI * 2));
-    const onT = field ? fitToTree(woven, onTree, 0.022, 2) : smoothPoly(woven, 2);
+    const woven = snake(
+      base,
+      isHighMicro ? 0.0025 + jW * 0.0025 : 0.005 + jW * 0.004,
+      1 + (i % 2),
+      (i * 1.3) % (Math.PI * 2),
+    );
+    const onT = field
+      ? fitToTree(woven, onTree, isHighMicro ? 0.012 : 0.022, 2)
+      : smoothPoly(woven, 2);
     if (field) onT[0] = leaf; // pin the birth point to the snapped vein tip
-    canopy.push({ poly: onT, width: clamp(0.55 + jW * 0.6, 0.45, 1.15), len: polyLen(onT), gi, ang });
+    canopy.push({
+      poly: onT,
+      width: isHighMicro ? clamp(0.32 + jW * 0.32, 0.28, 0.66) : clamp(0.55 + jW * 0.6, 0.45, 1.15),
+      len: polyLen(onT),
+      gi,
+      ang,
+      high: isHighMicro,
+    });
   }
 
   // TRUNK: a few perfectly-vertical parallel strands, fork -> crown. NOT snapped
@@ -608,11 +633,16 @@ export default function StaticTreeHero({
 
     // Spawn weights bias new orbs toward the top while keeping the outer canopy alive.
     let canopyW: number[] = [];
+    let highCanopyIdx: number[] = [];
     let canopyWSum = 0;
     const computeWeights = () => {
       // near-uniform: the random vein-snapped lanes already bunch in the lit
       // lower-centre, so let that lane density set where the orbs concentrate.
-      canopyW = tree.canopy.map((l) => 1.0 + l.width * 0.2);
+      canopyW = tree.canopy.map((l) => 1.0 + l.width * 0.2 + (l.high ? 0.35 : 0));
+      highCanopyIdx = tree.canopy.reduce<number[]>((acc, l, i) => {
+        if (l.high) acc.push(i);
+        return acc;
+      }, []);
       canopyWSum = canopyW.reduce((s, w) => s + w, 0);
     };
 
@@ -704,10 +734,16 @@ export default function StaticTreeHero({
       return (Math.random() * tree.canopy.length) | 0;
     };
 
+    const pickHighCanopySeg = (): number => {
+      if (highCanopyIdx.length === 0) return pickBaseCanopySeg();
+      return highCanopyIdx[(Math.random() * highCanopyIdx.length) | 0];
+    };
+
     const pickCanopySeg = (): number => {
       // Keep a portion of births spread across the whole crown so the top reads
       // like many independent transactions rather than one tight swarm.
-      if (Math.random() < 0.28) return pickBaseCanopySeg();
+      if (Math.random() < 0.42) return pickHighCanopySeg();
+      if (Math.random() < 0.18) return pickBaseCanopySeg();
 
       // base lane density × proximity to the current focus angle, which slowly
       // sweeps so the drip bunches on one side then rotates around the crown (#4)
@@ -740,34 +776,39 @@ export default function StaticTreeHero({
 
     // a small orb born at a (mostly top-of-canopy) leaf; it grows in place,
     // lingers glowing, then weaves down toward the fork.
-    const spawnCanopy = (fast = false) => {
+    const spawnCanopy = (fast = false, micro = false) => {
       if (particles.length >= MAX_PARTICLES) return;
-      const seg = pickCanopySeg();
+      const seg = micro ? pickHighCanopySeg() : pickCanopySeg();
       const w = tree.canopy[seg].width;
       // pick the FINAL size first, then correlate timing to it (#5): small orbs
       // grow fast + break off quickly; large orbs grow slowly + linger longer.
       const sizeRoll = Math.random();
-      const topSize =
-        sizeRoll < 0.7
+      const topSize = micro
+        ? 0.12 + Math.pow(Math.random(), 1.7) * 0.18
+        : sizeRoll < 0.7
           ? 0.22 + Math.pow(Math.random(), 1.35) * 0.34
           : sizeRoll < 0.93
             ? 0.56 + Math.random() * 0.4
             : 1.0 + Math.random() * 0.62;
-      const size = topSize * (0.78 + w * 0.42);
+      const size = topSize * (micro ? 0.72 + w * 0.18 : 0.78 + w * 0.42);
       const sizeN = clamp(size / 1.6, 0, 1); // 0 (tiny) .. 1 (largest)
-      const growTime =
-        (fast
-          ? GROW_FAST * (0.7 + Math.random() * 0.6)
-          : GROW_MIN + Math.random() * (GROW_MAX - GROW_MIN)) *
-        (0.7 + sizeN * 0.9);
-      const hold =
-        (fast ? 0.1 + sizeN * 0.55 : 0.22 + sizeN * 1.05) *
-        (0.55 + Math.random() * 0.65);
+      const growTime = micro
+        ? (fast ? 0.14 : 0.2) + Math.random() * (fast ? 0.18 : 0.26)
+        : (fast
+            ? GROW_FAST * (0.7 + Math.random() * 0.6)
+            : GROW_MIN + Math.random() * (GROW_MAX - GROW_MIN)) *
+          (0.7 + sizeN * 0.9);
+      const hold = micro
+        ? (0.24 + Math.random() * 0.56) * (fast ? 0.82 : 1)
+        : (fast ? 0.1 + sizeN * 0.55 : 0.22 + sizeN * 1.05) *
+          (0.55 + Math.random() * 0.65);
       particles.push({
         phase: 0,
         seg,
         t: 0,
-        speed: (fast ? 1.75 : 1) * (0.18 + Math.random() * 0.12) * (1.15 - sizeN * 0.3),
+        speed: micro
+          ? (fast ? 1.4 : 1) * (0.11 + Math.random() * 0.08)
+          : (fast ? 1.75 : 1) * (0.18 + Math.random() * 0.12) * (1.15 - sizeN * 0.3),
         size,
         grow: 0,
         growRate: 1 / growTime,
@@ -775,9 +816,10 @@ export default function StaticTreeHero({
         alt: Math.random() < 0.5,
         age: 0,
         r0: Math.random(),
-        growDelay: fast ? Math.random() * 0.06 : Math.random() * 0.26,
+        growDelay: micro ? Math.random() * 0.08 : fast ? Math.random() * 0.06 : Math.random() * 0.26,
+        micro,
       });
-      leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
+      leaves[seg].flash = Math.min(1, leaves[seg].flash + (micro ? 0.16 : 0.72));
     };
 
     const releaseBlob = (
@@ -826,12 +868,17 @@ export default function StaticTreeHero({
 
     const collectAtBucket = (p: Particle) => {
       const bucket = bucketForCanopySeg(p.seg);
+      if (p.micro && Math.random() < 0.58) {
+        bucket.glow = Math.min(1, bucket.glow + 0.08 + p.size * 0.04);
+        return;
+      }
       if (Math.random() < 0.06) {
         releaseBlob(bucket, 1, Math.max(0.45, p.size), true);
         return;
       }
-      bucket.count += 1;
-      bucket.value += Math.max(0.22, p.size);
+      const txWeight = p.micro ? 0.35 : 1;
+      bucket.count += txWeight;
+      bucket.value += Math.max(0.22, p.size) * (p.micro ? 0.45 : 1);
       bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
     };
 
@@ -929,6 +976,7 @@ export default function StaticTreeHero({
         if (!openingBurstDone && runTime >= FIRST_GLOW_DELAY) {
           openingBurstDone = true;
           for (let i = 0; i < OPENING_BURST_COUNT; i++) spawnCanopy(true);
+          for (let i = 0; i < HIGH_MICRO_OPENING_BURST; i++) spawnCanopy(true, true);
           for (const bucket of gatherBuckets) bucket.glow = Math.max(bucket.glow, 0.55);
           spawnTimer = 0.06;
         }
@@ -943,12 +991,14 @@ export default function StaticTreeHero({
         if (s.l2.latestBatchId !== lastBatch) {
           lastBatch = s.l2.latestBatchId;
           for (let i = 0; i < 14; i++) spawnCanopy(true);
+          for (let i = 0; i < HIGH_MICRO_BATCH_BURST; i++) spawnCanopy(true, true);
           gatherBuckets[(Math.random() * gatherBuckets.length) | 0].glow = 1;
         }
         // event: settlement confirmed -> brighter swell + force a blob to drop
         if (s.l2.latestProofStatus === "settled" && lastProof !== "settled") {
           surge = 1;
           for (let i = 0; i < 18; i++) spawnCanopy(true);
+          for (let i = 0; i < HIGH_MICRO_SETTLE_BURST; i++) spawnCanopy(true, true);
           for (const bucket of gatherBuckets) bucket.glow = Math.max(bucket.glow, 0.5);
         }
         lastProof = s.l2.latestProofStatus;
@@ -962,6 +1012,8 @@ export default function StaticTreeHero({
           const ramp = Math.min(1, runTime / STARTUP_RAMP_SECONDS);
           const cluster = 2 + Math.floor(ramp * (Math.random() < 0.55 ? 5 : 3));
           for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.16 + ramp * 0.14);
+          const microCluster = 3 + Math.floor(ramp * (Math.random() < 0.65 ? 6 : 4));
+          for (let k = 0; k < microCluster; k++) spawnCanopy(Math.random() < 0.28 + ramp * 0.22, true);
           const meanGap = Math.max(0.08, (0.34 - ramp * 0.22) + (1 - activity) * 0.06);
           spawnTimer = meanGap * (0.42 + Math.random() * 0.9);
         }
