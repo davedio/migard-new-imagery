@@ -1138,7 +1138,7 @@ button.panel:hover {
   font-size: 17px;
   font-weight: 500;
   line-height: 1;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--text-hi);
 }
 .site-nav__links {
@@ -1185,6 +1185,55 @@ button.panel:hover {
 }
 .site-nav__mobile {
   display: none;
+}
+
+@media (min-width: 1600px) {
+  .site-nav {
+    gap: 32px;
+    padding-block: 20px;
+  }
+
+  .site-nav__logo {
+    gap: 12px;
+  }
+
+  .site-nav__logo img {
+    height: 38px;
+  }
+
+  .site-nav__logo .wm {
+    font-size: 23px;
+  }
+
+  .site-nav__links {
+    gap: 32px;
+  }
+
+  .site-nav__link {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 2200px) {
+  .site-nav {
+    padding-block: 24px;
+  }
+
+  .site-nav__logo img {
+    height: 48px;
+  }
+
+  .site-nav__logo .wm {
+    font-size: 30px;
+  }
+
+  .site-nav__links {
+    gap: 42px;
+  }
+
+  .site-nav__link {
+    font-size: 18px;
+  }
 }
 
 @media (max-width: 940px) {
