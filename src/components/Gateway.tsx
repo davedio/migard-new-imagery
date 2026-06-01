@@ -224,7 +224,7 @@ function Hero() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          White Paper
+          Whitepaper
         </a>
       </div>
     </header>
