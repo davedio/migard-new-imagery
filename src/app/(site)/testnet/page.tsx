@@ -9,6 +9,7 @@ import {
   CtaBand,
 } from "@/components/site/ui";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
+import { StateQueueViz } from "@/components/site/StateQueueViz";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -55,6 +56,15 @@ export default function TestnetPage() {
           ]}
         />
         <NetworkStatusWidget />
+      </Section>
+
+      <Section
+        eyebrow="On-chain state queue"
+        title="Blocks commit. Root confirms."
+        lead="Operators append committed blocks to a singly-linked queue. When a block's fraud-proof window closes, it folds into the confirmed state — oldest first, one L1 transaction at a time."
+        glow="green"
+      >
+        <StateQueueViz />
       </Section>
 
       <Section id="contracts" eyebrow="Contracts" title="Inspect the contract path.">
