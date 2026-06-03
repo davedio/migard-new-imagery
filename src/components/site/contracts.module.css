@@ -1,0 +1,484 @@
+/* =========================================================================
+   /contracts explorer — bespoke surfaces (topology diagram, address
+   directory, state anchors, reference scripts, genesis timeline, code).
+   Uses the global design tokens from globals.css; scoped so it stays out of
+   the 2k-line global sheet (and its Turbopack hot-reload quirk).
+   ========================================================================= */
+
+/* ---- status / meta bar ---- */
+.metaBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: 22px;
+  padding: 10px 14px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r);
+  background: rgba(5, 11, 8, 0.4);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+.metaActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--green-bright);
+  font-weight: 600;
+}
+.metaDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 8px var(--green-bright);
+}
+.metaSep {
+  opacity: 0.3;
+}
+.metaLink {
+  margin-left: auto;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+.metaLink:hover {
+  color: var(--green-bright);
+}
+
+/* ---- section number kicker ---- */
+.kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--eyebrow-size);
+  letter-spacing: var(--eyebrow-spacing);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.kicker b {
+  color: var(--gold-bright);
+  font-weight: 600;
+}
+
+/* =========================================================================
+   Topology diagram
+   ========================================================================= */
+.topoWrap {
+  overflow-x: auto;
+  margin: 4px -4px 0;
+  padding: 4px;
+  border-radius: var(--r-lg);
+}
+.topoWrap:focus-visible {
+  outline: 2px solid var(--green-bright);
+  outline-offset: 2px;
+}
+.topo {
+  display: block;
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+/* base = final, visible state (reduced-motion shows the whole graph at once) */
+.diagramNode {
+  opacity: 1;
+}
+.diagramLine {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* draw-in only when JS adds .animate (it never does under reduced motion) */
+.animate .diagramNode {
+  animation: nodeIn 0.5s var(--ease) both;
+}
+.animate .diagramLine {
+  animation: drawIn 0.7s var(--ease) both;
+}
+@keyframes nodeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes drawIn {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* hover-to-focus: dim everything, then re-light the active node + edges.
+   (the .active rules MUST follow the dim rules — equal specificity.) */
+.hovering [data-node],
+.hovering [data-edge] {
+  opacity: 0.12;
+  transition: opacity 0.18s var(--ease);
+}
+.hovering .active {
+  opacity: 1;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 26px;
+  margin-top: 22px;
+}
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+.legendItem i {
+  width: 26px;
+  height: 0;
+  border-top: 1px solid;
+}
+.legendLineGreen {
+  border-color: var(--midgard-green) !important;
+  opacity: 0.7;
+}
+.legendLineNeutral {
+  border-color: var(--text-faint) !important;
+}
+.legendLineGold {
+  border-color: var(--gold) !important;
+  opacity: 0.8;
+}
+
+/* =========================================================================
+   Copy field (address / hash / utxo)
+   ========================================================================= */
+.copyField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+}
+.copyValue {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--text-dim);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+a.copyValue:hover {
+  color: var(--green-bright);
+}
+.copyBtn {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  background: transparent;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-sm);
+  padding: 3px 7px;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.copyBtn:hover {
+  color: var(--green-bright);
+  border-color: var(--green-dim);
+}
+.copyBtn[data-copied="true"] {
+  color: var(--green-bright);
+  border-color: var(--green-dim);
+}
+
+/* =========================================================================
+   Contract directory
+   ========================================================================= */
+.directory {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+.contractRow {
+  position: relative;
+  padding: 18px 20px 18px 22px;
+  border: 1px solid var(--panel-edge);
+  border-left: 2px solid var(--panel-edge-strong);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.02), transparent 40%), var(--panel);
+}
+.contractRow[data-accent="green"] {
+  border-left-color: var(--green-dim);
+}
+.contractRow[data-accent="gold"] {
+  border-left-color: var(--gold-line);
+}
+.contractHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.contractName {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text-hi);
+}
+.contractRow[data-accent="green"] .contractName {
+  color: var(--green-bright);
+}
+.contractRow[data-accent="gold"] .contractName {
+  color: var(--gold-bright);
+}
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  padding: 3px 9px;
+}
+.contractDesc {
+  margin: 9px 0 14px;
+  max-width: 64ch;
+  font-size: var(--body-size);
+  line-height: var(--body-line);
+  color: var(--text);
+}
+.addrLine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--panel-edge);
+}
+.addrLabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  flex: none;
+}
+
+/* =========================================================================
+   State anchors + reference scripts
+   ========================================================================= */
+.anchorsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.anchorCard {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  background: var(--panel);
+}
+.anchorHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.anchorName {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-hi);
+}
+.anchorRole {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--gold-bright);
+  opacity: 0.85;
+}
+
+.refList {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--panel-edge);
+}
+.refRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-width: 0;
+  padding: 13px 18px;
+  background: var(--panel);
+}
+.refName {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-hi);
+  width: 110px;
+  flex: none;
+}
+
+/* =========================================================================
+   Genesis timeline
+   ========================================================================= */
+.timeline {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  margin-left: 6px;
+  padding-left: 28px;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 14px;
+  width: 1px;
+  background: linear-gradient(180deg, var(--panel-edge), var(--green-dim));
+}
+.tItem {
+  position: relative;
+  padding: 12px 0;
+}
+.tItem::before {
+  content: "";
+  position: absolute;
+  left: -25px;
+  top: 17px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--charcoal);
+  border: 1px solid var(--text-faint);
+}
+.tItemGenesis::before {
+  width: 11px;
+  height: 11px;
+  left: -26px;
+  background: var(--midgard-green);
+  border-color: var(--green-bright);
+  box-shadow: 0 0 10px var(--green-glow);
+}
+.tHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.tTime {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-faint);
+  width: 52px;
+  flex: none;
+}
+.tAction {
+  font-size: 14.5px;
+  color: var(--text-hi);
+}
+.tBadge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.tBadgeGenesis {
+  color: var(--green-bright);
+  border: 1px solid var(--green-dim);
+}
+.tNote {
+  color: var(--text-dim);
+  border: 1px solid var(--panel-edge);
+}
+.tTx {
+  margin-top: 7px;
+  margin-left: 64px;
+}
+
+/* =========================================================================
+   Code sample
+   ========================================================================= */
+.codeBlock {
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--obsidian);
+}
+.codeHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--panel-edge);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  background: rgba(5, 11, 8, 0.5);
+}
+.codeDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold-dim);
+}
+.code {
+  margin: 0;
+  padding: 18px 20px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.code .tok {
+  color: var(--green-bright);
+}
+.code .str {
+  color: var(--gold-bright);
+}
+.code .cmt {
+  color: var(--text-faint);
+}
+
+@media (max-width: 560px) {
+  .tTx {
+    margin-left: 0;
+  }
+  .refName {
+    width: 100%;
+  }
+}

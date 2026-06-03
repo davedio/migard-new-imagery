@@ -1,0 +1,284 @@
+import type { Metadata } from "next";
+import { PageHero, Section, CtaBand } from "@/components/site/ui";
+import { Reveal } from "@/components/site/Reveal";
+import { ContractTopology } from "@/components/site/ContractTopology";
+import { CopyField } from "@/components/site/CopyField";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import {
+  CONTRACTS,
+  CONTRACTS_META,
+  STATE_ANCHORS,
+  REFERENCE_SCRIPTS,
+  GENESIS_TIMELINE,
+  explorerAddress,
+  explorerTx,
+} from "@/lib/contracts";
+import styles from "@/components/site/contracts.module.css";
+
+export const metadata: Metadata = {
+  title: "Midgard Contracts",
+  description:
+    "Every Midgard validator, state anchor, reference script, and bootstrap transaction on Cardano preprod — verifiable addresses and the full genesis deployment history.",
+};
+
+export default function ContractsPage() {
+  return (
+    <main className="page-main">
+      <PageHero
+        label="Protocol contracts"
+        title="Inspect the on-chain path."
+        sub="Every Midgard validator, state anchor, and bootstrap transaction on Cardano preprod — addresses you can open on an explorer and verify yourself."
+        chips={
+          <>
+            <span className="chip chip--testnet">
+              <span className="dot" />
+              Pre-alpha testnet
+            </span>
+            <span className="chip chip--demo">
+              <span className="dot" />
+              Static preprod snapshot · live query planned
+            </span>
+          </>
+        }
+        actions={[
+          { label: "View topology", href: "#topology", variant: "primary" },
+          { label: "Genesis timeline", href: "#history", variant: "ghost" },
+        ]}
+      />
+
+      {/* 01 — Topology */}
+      <Section
+        id="topology"
+        eyebrow="01 · Contract topology"
+        title="Thirteen validators. One protocol."
+      >
+        <div className={styles.metaBar}>
+          <span className={styles.metaActive}>
+            <span className={styles.metaDot} />
+            {CONTRACTS_META.network} · Active
+          </span>
+          <span className={styles.metaSep}>·</span>
+          <span>{CONTRACTS_META.era} era</span>
+          <span className={styles.metaSep}>·</span>
+          <span title="Static snapshot; live Blockfrost query planned">
+            Epoch {CONTRACTS_META.epoch} (static)
+          </span>
+          <span className={styles.metaSep}>·</span>
+          <span>Genesis: {CONTRACTS_META.genesisDate}</span>
+          <a
+            className={styles.metaLink}
+            href={CONTRACTS_META.explorer}
+            target="_blank"
+            rel="noreferrer"
+          >
+            cexplorer.io ↗
+          </a>
+        </div>
+
+        <Reveal>
+          <p className="lead" style={{ maxWidth: "68ch", marginTop: 24 }}>
+            Thirteen Aiken validators make up the protocol. Hub Oracle is the
+            registry every other script reads from. The Operator Directory —
+            active, registered, and retired — tracks the operator set referenced
+            by the Scheduler, State Queue, and Settlement. The fraud-proof system
+            (gold) lets anyone challenge a committed block through a verifiable
+            computation thread. Hover any node to trace its connections.
+          </p>
+        </Reveal>
+
+        <Reveal delay={80}>
+          <ContractTopology />
+        </Reveal>
+      </Section>
+
+      {/* 02 — Script addresses */}
+      <Section
+        id="addresses"
+        eyebrow="02 · Script addresses"
+        title="Seven core validators."
+        lead="Live preprod script addresses. Open any address on the explorer to inspect its UTxOs, or copy it for your own tooling."
+        glow="green"
+      >
+        <div className={styles.directory}>
+          {CONTRACTS.map((c, i) => (
+            <Reveal key={c.name} delay={i * 50}>
+              <div className={styles.contractRow} data-accent={c.accent}>
+                <div className={styles.contractHead}>
+                  <span className={styles.contractName}>{c.name}</span>
+                  <span className={styles.tag}>{c.tag}</span>
+                </div>
+                <p className={styles.contractDesc}>{c.desc}</p>
+                <div className={styles.addrLine}>
+                  <span className={styles.addrLabel}>addr</span>
+                  <CopyField
+                    value={c.address}
+                    href={explorerAddress(c.address)}
+                    label={`${c.name} address`}
+                  />
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* 03 — State anchors */}
+      <Section
+        id="anchors"
+        eyebrow="03 · State anchors"
+        title="Live protocol state."
+        lead="Each anchor is an NFT-marked UTxO that holds a piece of live protocol state on L1. It is never destroyed — only consumed and re-created by validators during normal operation."
+      >
+        <div className={styles.anchorsGrid}>
+          {STATE_ANCHORS.map((a, i) => (
+            <Reveal key={a.name} delay={i * 40}>
+              <div className={styles.anchorCard}>
+                <div className={styles.anchorHead}>
+                  <span className={styles.anchorName}>{a.name}</span>
+                  <span className={styles.anchorRole}>{a.role}</span>
+                </div>
+                <CopyField
+                  value={a.utxo}
+                  href={explorerTx(a.utxo)}
+                  label={`${a.name} UTxO`}
+                />
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* 04 — Reference scripts */}
+      <Section
+        id="refs"
+        eyebrow="04 · Reference scripts"
+        title="Deployed once, referenced everywhere."
+        lead="Each validator was deployed once as an on-chain reference script, so transactions can point to it instead of carrying the script every time."
+        glow="gold"
+      >
+        <div className={styles.refList}>
+          {REFERENCE_SCRIPTS.map((r, i) => (
+            <Reveal key={r.name} delay={i * 30} style={{ display: "block" }}>
+              <div className={styles.refRow}>
+                <span className={styles.refName}>{r.name}</span>
+                <CopyField value={r.hash} label={`${r.name} script hash`} />
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* 05 — Genesis timeline */}
+      <Section
+        id="history"
+        eyebrow="05 · Protocol initialization"
+        title="Genesis deployment timeline."
+        lead={`From the genesis transaction to the first confirmed state in about ${CONTRACTS_META.genesisToConfirmed}. Every step below is a real preprod transaction.`}
+      >
+        <div className={styles.timeline}>
+          {GENESIS_TIMELINE.map((e, i) => (
+            <Reveal
+              key={e.tx + e.time}
+              delay={i * 40}
+              style={{ display: "block" }}
+            >
+              <div
+                className={`${styles.tItem}${e.genesis ? ` ${styles.tItemGenesis}` : ""}`}
+              >
+                <div className={styles.tHead}>
+                  <span className={styles.tTime}>{e.time}</span>
+                  <span className={styles.tAction}>{e.action}</span>
+                  {e.genesis ? (
+                    <span className={`${styles.tBadge} ${styles.tBadgeGenesis}`}>
+                      Genesis
+                    </span>
+                  ) : null}
+                  {e.note ? (
+                    <span className={`${styles.tBadge} ${styles.tNote}`}>
+                      {e.note}
+                    </span>
+                  ) : null}
+                </div>
+                <div className={styles.tTx}>
+                  <CopyField
+                    value={e.tx}
+                    href={explorerTx(e.tx)}
+                    label="transaction"
+                  />
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
+      {/* Query it yourself */}
+      <Section
+        eyebrow="Build"
+        title="Query the contracts yourself."
+        lead="Point Lucid Evolution at preprod through Blockfrost and read the State Queue directly — the same address listed above."
+      >
+        <Reveal>
+          <div className={styles.codeBlock}>
+            <div className={styles.codeHead}>
+              <span className={styles.codeDot} />
+              read-state-queue.ts
+            </div>
+            <pre className={styles.code}>
+              <code>
+                <span className={styles.tok}>import</span>
+                {" { Lucid, Blockfrost } "}
+                <span className={styles.tok}>from</span>{" "}
+                <span className={styles.str}>
+                  &quot;@lucid-evolution/lucid&quot;
+                </span>
+                ;{"\n\n"}
+                <span className={styles.cmt}>
+                  {"// Point Lucid at Cardano preprod via Blockfrost"}
+                </span>
+                {"\n"}
+                <span className={styles.tok}>const</span>
+                {" lucid = "}
+                <span className={styles.tok}>await</span>
+                {" Lucid(\n  "}
+                <span className={styles.tok}>new</span>
+                {" Blockfrost(\n    "}
+                <span className={styles.str}>
+                  &quot;https://cardano-preprod.blockfrost.io/api/v0&quot;
+                </span>
+                {",\n    projectId,\n  ),\n  "}
+                <span className={styles.str}>&quot;Preprod&quot;</span>
+                {",\n);\n\n"}
+                <span className={styles.cmt}>
+                  {"// The State Queue holds every committed L2 block header"}
+                </span>
+                {"\n"}
+                <span className={styles.tok}>const</span>
+                {" stateQueue =\n  "}
+                <span className={styles.str}>
+                  &quot;addr_test1wqkh8medgake46f96ztg37etwgfpgz32zcz353f08jvw90ggse5ey&quot;
+                </span>
+                ;{"\n\n"}
+                <span className={styles.tok}>const</span>
+                {" utxos = "}
+                <span className={styles.tok}>await</span>
+                {" lucid.utxosAt(stateQueue);\n"}
+                {"console.log(`${utxos.length} live entries in the queue`);"}
+              </code>
+            </pre>
+          </div>
+        </Reveal>
+      </Section>
+
+      <CtaBand
+        eyebrow="Verify everything"
+        title="Read the source, run the node."
+        lead="Every address on this page resolves on a public preprod explorer. The implementation, SDK surfaces, and node behavior live in the repository."
+        actions={[
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "primary" },
+          { label: "Testnet status", href: "/testnet", variant: "ghost" },
+        ]}
+      />
+    </main>
+  );
+}
