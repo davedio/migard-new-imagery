@@ -253,6 +253,7 @@
   border: 1px solid var(--panel-edge);
   border-radius: var(--r);
   background: var(--panel);
+  text-decoration: none;
   transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
 }
 .stackChip:hover {
@@ -260,9 +261,20 @@
   transform: translateY(-2px);
 }
 .stackName {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-mono);
   font-size: 14px;
   color: var(--text-hi);
+}
+.stackExt {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--text-faint);
+  transition: color 0.2s var(--ease);
+}
+.stackChip:hover .stackExt {
+  color: var(--gold-bright);
 }
 .stackRole {
   font-family: var(--font-mono);
