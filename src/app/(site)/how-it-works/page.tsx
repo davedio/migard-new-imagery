@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Section, Layers, CtaBand } from "@/components/site/ui";
 import { HudDivider } from "@/components/site/Hud";
 import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
+import { StatTiles } from "@/components/site/StatTiles";
+import { EutxoComparison } from "@/components/site/EutxoComparison";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -13,6 +15,14 @@ export default function HowItWorksPage() {
   return (
     <main className="page-main page-main--how-it-works">
       <ProtocolLifecycle />
+
+      <Section
+        eyebrow="Protocol at a glance"
+        title="Fast where it can be, final where it must be."
+        tight
+      >
+        <StatTiles />
+      </Section>
 
       <HudDivider left="// LAYER_EXPLAINER" right="06 LAYERS" />
 
@@ -57,6 +67,15 @@ export default function HowItWorksPage() {
             },
           ]}
         />
+      </Section>
+
+      <Section
+        eyebrow="Why eUTXO"
+        title="Why eUTXO builds a better rollup."
+        lead="Cardano's eUTXO model makes fraud proofs surgical: Midgard re-executes only the inputs of a bad transaction — no global state scan."
+        glow="gold"
+      >
+        <EutxoComparison />
       </Section>
 
       <CtaBand

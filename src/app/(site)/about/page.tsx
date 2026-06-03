@@ -8,6 +8,7 @@ import {
   Actions,
   CtaBand,
 } from "@/components/site/ui";
+import { StackChips } from "@/components/site/StackChips";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -64,6 +65,10 @@ export default function AboutPage() {
             { label: "View GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
           ]}
         />
+      </Section>
+
+      <Section eyebrow="Built with" title="The Cardano stack, end to end.">
+        <StackChips />
       </Section>
 
       <Section eyebrow="Where we are" title="Live on testnet surfaces, not mainnet promises.">
