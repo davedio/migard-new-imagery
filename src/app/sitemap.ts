@@ -10,6 +10,7 @@ const ROUTES = [
   "/get-started",
   "/docs",
   "/testnet",
+  "/contracts",
   "/faq",
   "/about",
   "/official-links",
