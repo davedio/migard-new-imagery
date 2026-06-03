@@ -10,6 +10,7 @@ import {
   Actions,
   CtaBand,
 } from "@/components/site/ui";
+import { DeveloperSwitch } from "@/components/site/DeveloperSwitch";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -70,6 +71,16 @@ export default function GetStartedPage() {
             delay={210}
           />
         </CardGrid>
+      </Section>
+
+      <Section
+        id="developer-switch"
+        eyebrow="Zero migration"
+        title="For developers, almost nothing changes."
+        lead="Same eUTXO model, same scripts, same tooling. Switching to Midgard is one endpoint change — toggle the target and watch what moves."
+        glow="green"
+      >
+        <DeveloperSwitch />
       </Section>
 
       <Section
