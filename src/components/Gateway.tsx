@@ -203,7 +203,7 @@ function Hero() {
   return (
     <header ref={heroRef} className="home-hero">
       <div className="eyebrow home-hero__eyebrow">
-        Scalability | Speed | Security
+        Speed | Scale | Security
       </div>
       <h1>
         Built to scale<br />
