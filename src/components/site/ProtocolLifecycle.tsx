@@ -296,6 +296,7 @@ function StepCard({
       data-step={index}
       className="lifecycle-card"
       data-active={active}
+      data-cardano={step.l1 !== null}
     >
       <div className="lifecycle-card__head">
         <div className="lifecycle-card__title">

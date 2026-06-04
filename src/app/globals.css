@@ -922,6 +922,28 @@ button.panel:hover {
   font: 700 10px/1 var(--font-mono);
 }
 
+/* Cardano-involving steps (commit / watch / settle) carry a blue identity
+   instead of green, since they settle to and are secured on Cardano L1. */
+.lifecycle-card[data-cardano="true"][data-active="true"] {
+  border-color: rgba(92, 184, 255, 0.46);
+  background:
+    linear-gradient(180deg, rgba(92, 184, 255, 0.08), rgba(92, 184, 255, 0.02)),
+    rgba(7, 12, 18, 0.88);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.3), 0 0 34px rgba(92, 184, 255, 0.1);
+}
+.lifecycle-card[data-cardano="true"][data-active="true"] .lifecycle-card__head {
+  background: rgba(92, 184, 255, 0.08);
+}
+.lifecycle-card[data-cardano="true"] .lifecycle-card__icon[data-active="true"] {
+  color: #8fd6ff;
+  border-color: rgba(92, 184, 255, 0.5);
+  background: rgba(92, 184, 255, 0.12);
+  box-shadow: 0 0 20px rgba(92, 184, 255, 0.18);
+}
+.lifecycle-card[data-cardano="true"] .lifecycle-card__icon span {
+  background: #5cb8ff;
+}
+
 .lifecycle-card__title h3 {
   color: var(--text-hi);
   font-size: 15px;
