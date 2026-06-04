@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable react-hooks/immutability -- Three.js uniforms, matrices, and instance buffers are mutable renderer state. */
-
 /* ============================================================
    AmbientDepth — the single persistent ambient background canvas.
 
@@ -9,9 +7,9 @@
    "mist" into an R3F fog plane that also parts away from the cursor.
 
    Budget guardrails (see docs/visual-enhancements):
-   - ONE <Canvas frameloop="demand"> — never free-runs. A throttled 30fps
-     ticker drives invalidation only while motion is on and the tab is
-     visible; otherwise it renders a single frame and holds still.
+   - ONE <Canvas>: frameloop="always" while motion is on (continuous flow),
+     "demand" (a single held frame) under reduced motion. Shader uniforms are
+     driven through the material ref so the values actually reach the GPU.
    - DPR clamped to [1, 1.75] (background layer).
    - Honors the shared motion preference (useMotionPref); under reduced
      motion the fog freezes and the cursor effect is disabled.
@@ -64,6 +62,7 @@ void main(){
 }`;
 
 function FogPlane({ motionOn }: { motionOn: boolean }) {
+  const matRef = useRef<THREE.ShaderMaterial>(null);
   const invalidate = useThree((s) => s.invalidate);
   const uniforms = useMemo(
     () => ({
@@ -74,23 +73,21 @@ function FogPlane({ motionOn }: { motionOn: boolean }) {
     }),
     [],
   );
-  const targetOn = useRef(0);
+  // Cursor target in the shader's `p` space + an on-flag, updated by the
+  // window listener (the canvas is pointer-events:none).
+  const pointer = useRef({ x: 0, y: -999, on: 0 });
 
-  // Track the cursor window-wide (the canvas is pointer-events:none) so the
-  // mist can part away from it. Coords map to the shader's `p` space.
   useEffect(() => {
     const onMove = (e: PointerEvent) => {
       const w = window.innerWidth || 1;
       const h = window.innerHeight || 1;
-      uniforms.u_mouse.value.set(
-        ((e.clientX - 0.5 * w) / h) * 2.2,
-        ((0.5 * h - e.clientY) / h) * 2.2,
-      );
-      targetOn.current = 1;
+      pointer.current.x = ((e.clientX - 0.5 * w) / h) * 2.2;
+      pointer.current.y = ((0.5 * h - e.clientY) / h) * 2.2;
+      pointer.current.on = 1;
       invalidate();
     };
     const off = () => {
-      targetOn.current = 0;
+      pointer.current.on = 0;
       invalidate();
     };
     const onOut = (e: PointerEvent) => {
@@ -104,21 +101,26 @@ function FogPlane({ motionOn }: { motionOn: boolean }) {
       window.removeEventListener("pointerout", onOut);
       window.removeEventListener("blur", off);
     };
-  }, [invalidate, uniforms]);
+  }, [invalidate]);
 
+  // Drive the MATERIAL's own uniforms (via the ref) — mutating the detached
+  // useMemo object never reached the shader, so the fog + cursor effect froze.
   useFrame((state, dt) => {
+    const u = matRef.current?.uniforms;
+    if (!u) return;
     const dpr = state.viewport.dpr;
-    uniforms.u_res.value.set(state.size.width * dpr, state.size.height * dpr);
-    if (motionOn) uniforms.u_time.value += dt;
-    // ease the clearing in/out; disabled entirely under reduced motion
-    const target = motionOn ? targetOn.current : 0;
-    uniforms.u_mouseOn.value +=
-      (target - uniforms.u_mouseOn.value) * Math.min(1, dt * 6);
+    u.u_res.value.set(state.size.width * dpr, state.size.height * dpr);
+    if (motionOn) u.u_time.value += dt;
+    u.u_mouse.value.set(pointer.current.x, pointer.current.y);
+    const target = motionOn ? pointer.current.on : 0;
+    u.u_mouseOn.value += (target - u.u_mouseOn.value) * Math.min(1, dt * 6);
   });
+
   return (
     <mesh renderOrder={-10} frustumCulled={false}>
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
+        ref={matRef}
         uniforms={uniforms}
         vertexShader={FOG_VERT}
         fragmentShader={FOG_FRAG}
@@ -131,43 +133,10 @@ function FogPlane({ motionOn }: { motionOn: boolean }) {
 
 /* Drifting motes ("snow") removed — the ambient layer is the fog mist only. */
 
-/* ---- demand-render driver: a throttled idle tick ---- */
-function Driver({ motionOn }: { motionOn: boolean }) {
-  const invalidate = useThree((s) => s.invalidate);
-
-  // throttled ~30fps tick while motion is on and the tab is visible
-  useEffect(() => {
-    invalidate(); // always paint at least one frame
-    if (!motionOn) return;
-    const interval = 1000 / 30;
-    let raf = 0;
-    let last = 0;
-    let visible = !document.hidden;
-    const loop = (t: number) => {
-      if (!visible) return;
-      if (t - last >= interval) {
-        last = t;
-        invalidate();
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    const onVis = () => {
-      visible = !document.hidden;
-      if (visible) {
-        last = 0;
-        raf = requestAnimationFrame(loop);
-      }
-    };
-    raf = requestAnimationFrame(loop);
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      cancelAnimationFrame(raf);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [motionOn, invalidate]);
-
-  return null;
-}
+/* The canvas runs frameloop="always" while motion is on (continuous mist flow
+   + cursor parting) and freezes to "demand" under reduced motion — see the
+   <Canvas> below. The old demand + manual-tick driver stalled once the motes
+   were removed, freezing the fog. */
 
 /* ---- low-power / no-WebGL detection ---- */
 function canUseWebGL(): boolean {
@@ -211,14 +180,13 @@ export default function AmbientDepth() {
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas
-        frameloop="demand"
+        frameloop={motionOn ? "always" : "demand"}
         dpr={[1, 1.75]}
         gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 8], fov: 50 }}
         style={{ position: "absolute", inset: 0 }}
       >
         <FogPlane motionOn={motionOn} />
-        <Driver motionOn={motionOn} />
       </Canvas>
       {/* darkening veil keeps page text legible over the mist */}
       <div style={{ position: "absolute", inset: 0, background: VEIL }} />
