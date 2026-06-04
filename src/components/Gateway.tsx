@@ -15,7 +15,7 @@ import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
 
-const SECTION_PAD = "clamp(76px,10vh,142px) var(--gut)";
+const SECTION_PAD = "clamp(48px,6.5vh,88px) var(--gut)";
 
 // Two hero forks coexist. Flip this to switch:
 //   "static" — green PNG background + 2D canvas sap particles (StaticTreeHero)
@@ -349,7 +349,7 @@ function ExploreGrid() {
 
 function ClosingCTA() {
   return (
-    <section style={{ padding: "clamp(96px,15vh,188px) var(--gut)" }}>
+    <section style={{ padding: "clamp(60px,9vh,112px) var(--gut)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
           Scale Cardano. Keep the proof.
