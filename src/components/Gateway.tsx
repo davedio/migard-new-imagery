@@ -270,7 +270,7 @@ const AUDIENCE_PATHS: {
     title: "Operators & Watchers",
     line: "For Midgard operators, batchers, and watchers.",
     cta: "See the protocol roles",
-    href: "/get-started#roles",
+    href: "/get-started#network-roles",
   },
 ];
 
