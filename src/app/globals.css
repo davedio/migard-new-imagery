@@ -526,9 +526,24 @@ button.panel:hover {
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
 }
-#explore a.panel:hover {
-  background: linear-gradient(180deg, rgba(215, 226, 216, 0.05), transparent 42%),
-    rgba(5, 11, 8, 0.64);
+/* On hover the card fills with a soft green wash, echoing the Get Started
+   button but kept light so it reads as a highlight, not a solid fill. */
+#explore a.panel:hover,
+#explore a.panel:focus-visible {
+  border-color: rgba(32, 190, 67, 0.7);
+  background:
+    linear-gradient(180deg, rgba(32, 190, 67, 0.3), rgba(32, 190, 67, 0.1)),
+    rgba(5, 11, 8, 0.66);
+  box-shadow:
+    inset 0 0 0 1px rgba(32, 190, 67, 0.16),
+    inset 0 0 22px rgba(32, 190, 67, 0.12),
+    0 10px 32px -16px var(--green-glow);
+  transform: translateY(-2px);
+}
+#explore a.panel:hover::before,
+#explore a.panel:focus-visible::before {
+  background: linear-gradient(90deg, transparent, var(--green-bright), transparent);
+  opacity: 0.65;
 }
 
 .motion-toggle {
@@ -609,35 +624,6 @@ button.panel:hover {
   transform: none;
 }
 
-/* ---- focus light: a prominent green light at eye level that grows in as you
-   scroll, blooming over whatever section is in focus. Screen-blended so it
-   lights the content without hiding it. Driven by ScrollEffects (sets --grow);
-   hidden when motion is off. ---- */
-.focus-light {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: min(900px, 88vw);
-  height: min(640px, 66vh);
-  transform: translate(-50%, -50%) scale(calc(0.7 + 0.4 * var(--grow, 0)));
-  background: radial-gradient(
-    closest-side,
-    rgba(32, 190, 67, 0.42),
-    rgba(32, 190, 67, 0.12) 48%,
-    transparent 74%
-  );
-  opacity: var(--grow, 0);
-  mix-blend-mode: screen;
-  pointer-events: none;
-  z-index: 11;
-  transition: opacity 0.5s var(--ease), transform 0.6s var(--ease);
-}
-@media (prefers-reduced-motion: reduce) {
-  .focus-light {
-    display: none;
-  }
-}
-
 /* ---- accessibility ---- */
 :focus-visible {
   outline: 2px solid var(--green-bright);
@@ -687,7 +673,7 @@ button.panel:hover {
 /* ---- How It Works lifecycle port ---- */
 .lifecycle {
   position: relative;
-  padding: clamp(112px, 14vh, 156px) var(--gut) clamp(68px, 10vh, 118px);
+  padding: clamp(96px, 12vh, 132px) var(--gut) clamp(46px, 6.5vh, 78px);
   border-bottom: 1px solid var(--panel-edge);
   background:
     radial-gradient(62% 52% at 74% 18%, rgba(32, 190, 67, 0.11), transparent 64%),
@@ -1423,7 +1409,7 @@ button.panel:hover {
 .page-hero {
   display: flex;
   justify-content: center;
-  padding: clamp(118px, 16vh, 178px) var(--gut) clamp(46px, 7vh, 84px);
+  padding: clamp(118px, 16vh, 178px) var(--gut) clamp(34px, 5vh, 60px);
 }
 .page-hero__inner {
   width: min(var(--maxw), 100%);
@@ -1472,10 +1458,10 @@ button.panel:hover {
 
 /* ---- section ---- */
 .section {
-  padding: clamp(58px, 8vh, 112px) var(--gut);
+  padding: clamp(40px, 5.5vh, 72px) var(--gut);
 }
 .section--tight {
-  padding-block: clamp(38px, 5.8vh, 68px);
+  padding-block: clamp(28px, 4.2vh, 50px);
 }
 .section__inner {
   max-width: var(--maxw);
@@ -1718,7 +1704,7 @@ button.panel:hover {
 
 /* ---- cta band ---- */
 .cta-band {
-  padding: clamp(80px, 13vh, 158px) var(--gut);
+  padding: clamp(52px, 8vh, 100px) var(--gut);
 }
 .cta-band__inner {
   max-width: 720px;

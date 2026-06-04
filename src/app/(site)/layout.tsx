@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { ScrollEffects } from "@/components/site/ScrollEffects";
 import InteriorFluidBackground from "@/components/InteriorFluidBackground";
 
 /**
@@ -18,7 +17,6 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     <>
       <InteriorFluidBackground />
       <SiteNav />
-      <ScrollEffects />
       {children}
       <SiteFooter />
     </>

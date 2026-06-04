@@ -15,7 +15,7 @@ import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
 
-const SECTION_PAD = "clamp(76px,10vh,142px) var(--gut)";
+const SECTION_PAD = "clamp(48px,6.5vh,88px) var(--gut)";
 
 // Two hero forks coexist. Flip this to switch:
 //   "static" — green PNG background + 2D canvas sap particles (StaticTreeHero)
@@ -254,21 +254,21 @@ const AUDIENCE_PATHS: {
   {
     n: "01",
     title: "Users",
-    line: "Start here if Midgard reaches you through a wallet or app: what changes, what stays Cardano, and what to check before action.",
+    line: "Users through wallets or apps.",
     cta: "Start as a user",
     href: "/get-started#users",
   },
   {
     n: "02",
     title: "Builders",
-    line: "For wallets, dApps, DEXs, and lending protocols: inspect the source, then map the flow that needs L2 capacity.",
+    line: "For wallets and dApps, including DEXs, lending protocols, and any other applications.",
     cta: "Open builder path",
     href: "/get-started#builder-quickstart",
   },
   {
     n: "03",
-    title: "Become a Midgard Operator or Watcher",
-    line: "For operators, batchers, and watchers: sequence activity into blocks, then replay and challenge anything invalid before it settles to Cardano L1.",
+    title: "Operators & Watchers",
+    line: "For operators, batchers, and watchers.",
     cta: "See the protocol roles",
     href: "/get-started#roles",
   },
@@ -349,7 +349,7 @@ function ExploreGrid() {
 
 function ClosingCTA() {
   return (
-    <section style={{ padding: "clamp(96px,15vh,188px) var(--gut)" }}>
+    <section style={{ padding: "clamp(60px,9vh,112px) var(--gut)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
           Scale Cardano. Keep the proof.
