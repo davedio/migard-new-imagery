@@ -27,8 +27,8 @@ const GROW_MIN = 1.6; // seconds a filament keeps growing
 const GROW_MAX = 3.4;
 const FADE_TIME = 2.8; // seconds to fade out after it stops growing
 const STEP_PX = 4; // append a trail point every ~this many px
-const TURN_RATE = 2.0; // max radians/sec the head can steer (gentle, soft curves)
-const ATTRACT = 0.42; // 0..1 — a soft lean toward the cursor, never a chase
+const TURN_RATE = 3.8; // max radians/sec the head can steer (responsive tracking)
+const ATTRACT = 0.8; // 0..1 — the roots follow the cursor closely (strong, smooth lean)
 
 type Pt = { x: number; y: number };
 type Filament = {
@@ -123,8 +123,9 @@ export default function TakeRootHero() {
         hx: sx,
         hy: sy,
         ang: ang ?? -Math.PI / 2 + rand(-0.5, 0.5),
-        // one calm growth profile for every root — no fast "hunting" variant
-        speed: rand(60, 100),
+        // one growth profile for every root — faster + follows the cursor, but
+        // still no separate erratic "hunting" variant
+        speed: rand(90, 135),
         grow: rand(GROW_MIN, GROW_MAX),
         fade: 1,
         width: rand(1.0, 2.4),
@@ -146,9 +147,9 @@ export default function TakeRootHero() {
             const dx = pointer.x - f.hx;
             const dy = pointer.y - f.hy;
             const dist = Math.hypot(dx, dy) || 1;
-            // a soft lean toward the cursor — the roots follow where you point,
-            // they do not race to reach it
-            const pull = ATTRACT * clamp(1 - dist / (H * 1.1), 0.08, 0.7);
+            // follow the cursor closely — the roots lean toward where you point
+            // and track it from across the hero, staying near it (smooth, not a chase)
+            const pull = ATTRACT * clamp(1 - dist / (H * 1.5), 0.12, 0.9);
             const toCursor = Math.atan2(dy, dx);
             // shortest-arc blend up-bias -> cursor
             let d = toCursor - target;
@@ -158,7 +159,7 @@ export default function TakeRootHero() {
           }
           // organic wander — kept full strength even while following, so growth
           // stays calm and natural instead of locking on
-          target += Math.sin(t * 1.1 + f.curl) * 0.5;
+          target += Math.sin(t * 1.3 + f.curl) * 0.35;
           // steer toward target, capped turn rate
           let d = target - f.ang;
           while (d > Math.PI) d -= Math.PI * 2;
@@ -261,7 +262,7 @@ export default function TakeRootHero() {
           // new roots simply favor its column a little, so growth drifts toward
           // where you point — a gentle follow, not a swarm chasing it.
           const x = pointer.active
-            ? clamp(pointer.x + rand(-110, 110), 0, W)
+            ? clamp(pointer.x + rand(-75, 75), 0, W)
             : undefined;
           spawn(x, undefined, undefined, pointer.active && Math.random() < 0.25);
           spawnT = SPAWN_EVERY * rand(0.7, 1.5);
