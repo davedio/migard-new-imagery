@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { PageHero, Section, Faq, CtaBand } from "@/components/site/ui";
-import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { PageHero, Section, Faq } from "@/components/site/ui";
 
 export const metadata: Metadata = {
   title: "Midgard FAQ",
@@ -13,9 +12,10 @@ export default function FaqPage() {
     <main className="page-main">
       <PageHero
         label="FAQ"
-        title="Questions, answered plainly."
+        title="Frequently asked questions."
         sub="Common questions about what Midgard is, how it works, ADA fees, builders, participant roles, security, and testnet status."
         actions={[
+          { label: "Whitepaper", href: "https://anastasia-labs.github.io/midgard/midgard.pdf", variant: "ghost" },
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
           { label: "Open official links", href: "/official-links", variant: "ghost" },
         ]}
@@ -77,10 +77,6 @@ export default function FaqPage() {
                   q: "Can my wallet, dApp, or infrastructure project integrate?",
                   a: "Yes. Midgard needs serious wallets, dApps, infrastructure providers, analytics teams, security contributors, operators, and Watchers.",
                 },
-                {
-                  q: "What makes a good partner?",
-                  a: "A good partner makes Midgard easier to use, easier to inspect, safer to operate, or more useful for real applications.",
-                },
               ],
             },
             {
@@ -117,15 +113,6 @@ export default function FaqPage() {
         />
       </Section>
 
-      <CtaBand
-        eyebrow="Still curious"
-        title="Start from the official path."
-        lead="Use official links, read the docs, and explore the testnet path."
-        actions={[
-          { label: "Open official links", href: "/official-links", variant: "primary" },
-          { label: "Read docs ↗", href: OFFICIAL_LINKS.docs, variant: "ghost" },
-        ]}
-      />
     </main>
   );
 }

@@ -59,7 +59,7 @@ const STEPS: Step[] = [
     title: "Watch for Fraud",
     annotation: "Challenge Window",
     Icon: ShieldIcon,
-    l2: "Block data stays public. Watchers replay each transaction and check the path against the L1 header.",
+    l2: "Watchers replay each transaction with public block data and check the validity against Cardano.",
     l1: "A valid fraud proof can slash the operator bond and revert the disputed block.",
     flow: "both",
   },
@@ -70,7 +70,7 @@ const STEPS: Step[] = [
     annotation: "L1 Confirmed",
     Icon: CheckIcon,
     l2: "No fraud is detected. Soft finality becomes permanent application history.",
-    l1: "The maturity period ends. The block is merged into confirmed state and becomes as final as Cardano L1.",
+    l1: "The maturity period ends. The block is merged into confirmed state and becomes as final on Cardano.",
     flow: "l1-to-l2",
   },
 ];
@@ -393,7 +393,7 @@ export default function ProtocolLifecycle() {
             <h1>One trust path, end to end.</h1>
             <p>
               Midgard runs as a Cardano-native optimistic rollup: submit,
-              sequence, commit, watch, and settle back through Cardano L1.
+              sequence, commit, watch, and settle back to Cardano.
             </p>
           </header>
           <ol className="lifecycle__steps" aria-label="Protocol lifecycle steps">

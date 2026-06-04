@@ -78,20 +78,6 @@ export function SiteFooter() {
             Built by Anastasia Labs. A Cardano-native Layer 2 built for
             throughput and a trust path you can inspect.
           </p>
-          <div className="chips">
-            <span className="chip chip--demo">
-              <span className="dot" />
-              Fees paid in ADA
-            </span>
-            <span className="chip chip--testnet">
-              <span className="dot" />
-              Settles on Cardano L1
-            </span>
-            <span className="chip chip--demo">
-              <span className="dot" />
-              Pre-alpha testnet
-            </span>
-          </div>
 
           <div
             className="site-footer__social"

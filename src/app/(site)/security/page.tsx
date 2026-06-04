@@ -6,7 +6,6 @@ import {
   Layers,
   Callout,
   Actions,
-  CtaBand,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -20,7 +19,6 @@ export default function SecurityPage() {
   return (
     <main className="page-main">
       <PageHero
-        label="Security"
         title="Secured by Cardano. Provable by anyone."
         sub="Midgard's trust rests on Cardano Layer 1 and a set of mechanisms the public surface should make inspectable."
         actions={[
@@ -29,7 +27,7 @@ export default function SecurityPage() {
         ]}
       />
 
-      <Section eyebrow="Anchored to Cardano L1" title="The trust path returns to the base layer.">
+      <Section title="Anchored to Cardano.">
         <Prose
           items={[
             {
@@ -43,7 +41,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section id="guarantees" eyebrow="Guarantees" title="Four guarantees to inspect.">
+      <Section id="guarantees" title="Guarantees">
         <Layers
           items={[
             {
@@ -70,7 +68,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section eyebrow="Watchers" title="The network should pay attention to itself.">
+      <Section title="Watchers">
         <Prose
           items={[
             {
@@ -89,10 +87,9 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section id="security-contact" eyebrow="Disclosure" title="Security reporting belongs in the open path." tight>
+      <Section id="security-contact" eyebrow="Security reporting" title="Responsible disclosure" tight>
         <Callout
-          title="Responsible disclosure route pending."
-          body="As Midgard matures, security review, monitoring, and a responsible-disclosure route should become part of the public trust surface. For now, start from official links and preserve evidence."
+          body="As Midgard matures, security review, monitoring, and a responsible-disclosure route should become part of the public trust surface."
         />
         <Actions
           items={[
@@ -101,15 +98,6 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <CtaBand
-        eyebrow="Trust path"
-        title="Trust is something the page should let you check."
-        lead="Read the mechanism, inspect the source, and use the testnet status surface to separate live, simulated, and pending claims."
-        actions={[
-          { label: "Get Started", href: "/get-started", variant: "primary" },
-          { label: "View status", href: "/testnet", variant: "ghost" },
-        ]}
-      />
     </main>
   );
 }
