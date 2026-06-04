@@ -86,35 +86,6 @@ export default function GetStartedPage() {
         <DeveloperSwitch />
       </Section>
 
-      <Section
-        id="ecosystem"
-        eyebrow="Ecosystem"
-        title="Wallets, apps, and partners."
-      >
-        <CardGrid>
-          <Card
-            num="01"
-            title="Wallets"
-            body="Make Midgard feel native to Cardano users: same signing clarity, same ADA context, and status text that explains what is happening."
-            delay={0}
-          />
-          <Card
-            num="02"
-            title="Apps and infrastructure"
-            body="Keep users and builders moving with dApp flows, endpoints, indexing, monitoring, reliability surfaces, and clear failure states."
-            delay={60}
-          />
-          <Card
-            num="03"
-            title="Partners"
-            body="The strongest partner enters through function: what you make easier, safer, faster, or more inspectable."
-            cta="Join a readiness track"
-            href={OFFICIAL_LINKS.intakeForm}
-            delay={120}
-          />
-        </CardGrid>
-      </Section>
-
       <Section id="users" title="Faster Cardano apps. Same wallet. Same ADA.">
         <Prose
           items={[
