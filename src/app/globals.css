@@ -757,7 +757,7 @@ button.panel:hover {
 }
 
 .lifecycle-rail .is-l1-live {
-  stroke: rgba(207, 154, 46, 0.42);
+  stroke: rgba(125, 205, 255, 0.5);
 }
 
 .lifecycle-rail .is-idle {
@@ -777,11 +777,11 @@ button.panel:hover {
 }
 
 .lifecycle-rail circle.is-l1-active {
-  fill: var(--gold-bright);
+  fill: #7dcdff;
 }
 
 .lifecycle-rail circle.is-l1-complete {
-  fill: rgba(207, 154, 46, 0.42);
+  fill: rgba(125, 205, 255, 0.45);
 }
 
 .lifecycle-rail text.is-active {
@@ -797,7 +797,7 @@ button.panel:hover {
 }
 
 .lifecycle-rail__l1-halo {
-  fill: rgba(207, 154, 46, 0.12);
+  fill: rgba(125, 205, 255, 0.16);
 }
 
 .lifecycle-rail .is-active-flow {
@@ -922,6 +922,28 @@ button.panel:hover {
   font: 700 10px/1 var(--font-mono);
 }
 
+/* Cardano-involving steps (commit / watch / settle) carry a blue identity
+   instead of green, since they settle to and are secured on Cardano L1. */
+.lifecycle-card[data-cardano="true"][data-active="true"] {
+  border-color: rgba(92, 184, 255, 0.46);
+  background:
+    linear-gradient(180deg, rgba(92, 184, 255, 0.08), rgba(92, 184, 255, 0.02)),
+    rgba(7, 12, 18, 0.88);
+  box-shadow: 0 24px 90px rgba(0, 0, 0, 0.3), 0 0 34px rgba(92, 184, 255, 0.1);
+}
+.lifecycle-card[data-cardano="true"][data-active="true"] .lifecycle-card__head {
+  background: rgba(92, 184, 255, 0.08);
+}
+.lifecycle-card[data-cardano="true"] .lifecycle-card__icon[data-active="true"] {
+  color: #8fd6ff;
+  border-color: rgba(92, 184, 255, 0.5);
+  background: rgba(92, 184, 255, 0.12);
+  box-shadow: 0 0 20px rgba(92, 184, 255, 0.18);
+}
+.lifecycle-card[data-cardano="true"] .lifecycle-card__icon span {
+  background: #5cb8ff;
+}
+
 .lifecycle-card__title h3 {
   color: var(--text-hi);
   font-size: 15px;
@@ -973,6 +995,16 @@ button.panel:hover {
 
 .lifecycle-card__network:not([data-active="true"]) {
   color: var(--text-dim);
+}
+
+/* Cardano L1 indicator reads light blue, distinct from the green Midgard L2. */
+.lifecycle-card__network--l1[data-active="true"] {
+  color: rgba(125, 205, 255, 0.9);
+}
+
+/* the little dot glows in its own colour when the card is active */
+.lifecycle-card__network[data-active="true"] span {
+  box-shadow: 0 0 7px currentColor;
 }
 
 .lifecycle-card__side p {

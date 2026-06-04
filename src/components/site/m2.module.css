@@ -73,7 +73,8 @@
   border-top-color: var(--green-dim);
 }
 .compareCol[data-tone="bad"] {
-  background: var(--obsidian);
+  border-top-color: rgba(255, 90, 90, 0.45);
+  background: linear-gradient(180deg, rgba(255, 80, 80, 0.05), transparent 42%), var(--obsidian);
 }
 .compareKicker {
   display: inline-flex;
@@ -87,6 +88,9 @@
 }
 .compareCol[data-tone="good"] .compareKicker {
   color: var(--green-bright);
+}
+.compareCol[data-tone="bad"] .compareKicker {
+  color: #ff6b6b;
 }
 .compareTitle {
   margin: 12px 0 0;
@@ -133,7 +137,7 @@
   color: var(--green-bright);
 }
 .markBad {
-  color: var(--text-faint);
+  color: #ff6b6b;
 }
 
 /* ---------- developer L1 / L2 switch ---------- */
