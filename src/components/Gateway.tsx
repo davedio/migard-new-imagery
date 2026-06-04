@@ -232,7 +232,7 @@ function Hero() {
 }
 
 const h2Style: CSSProperties = {
-  fontSize: "clamp(26px,3.4vw,40px)",
+  fontSize: "clamp(26px,3.2vw,46px)",
   lineHeight: 1.1,
   marginTop: 14,
   maxWidth: 660,
@@ -240,7 +240,7 @@ const h2Style: CSSProperties = {
 const leadStyle: CSSProperties = {
   marginTop: 18,
   maxWidth: 620,
-  fontSize: "clamp(15px,1.6vw,17px)",
+  fontSize: "clamp(15px,1.55vw,19px)",
   color: "var(--text)",
 };
 
