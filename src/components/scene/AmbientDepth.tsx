@@ -30,8 +30,8 @@ const FOG_VERT = `void main(){ gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 
 const FOG_FRAG = `
 precision highp float;
-uniform vec2 u_res; uniform float u_time;
-const float G = 0.6, S = 0.6, Wl = 0.45; // calm/dim params (text legibility)
+uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse; uniform float u_mouseOn;
+const float G = 0.6, S = 1.1, Wl = 0.45; // S = flow speed (livelier mist); dim kept for legibility
 float hash(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p), f=fract(p);
   float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.));
@@ -41,6 +41,9 @@ float fbm(vec2 p){ float v=0.,a=0.5; mat2 m=mat2(1.6,1.2,-1.2,1.6);
 void main(){
   vec2 uv=gl_FragCoord.xy/u_res.xy;
   vec2 p=(gl_FragCoord.xy-0.5*u_res.xy)/u_res.y; p*=2.2;
+  // cursor parts the mist: push the sample coords outward from the pointer
+  vec2 toC=p-u_mouse; float infl=u_mouseOn*smoothstep(0.85,0.0,length(toC));
+  p+=normalize(toC+vec2(1e-4))*infl*0.5;
   float t=u_time*0.10*S;
   vec2 grav=vec2(0.0, t*G*1.5);
   float ang=Wl*0.6*sin(t*0.5+length(p));
@@ -58,18 +61,61 @@ void main(){
   col+=gbri*0.06*smoothstep(0.7,1.0,f);
   float vig=smoothstep(1.25,0.25,length(uv-0.5));
   col*=mix(0.45,1.05,vig);
+  col=mix(col, ink, infl*0.6); // clear a soft pocket right under the cursor
   gl_FragColor=vec4(col,1.0);
 }`;
 
 function FogPlane({ motionOn }: { motionOn: boolean }) {
+  const invalidate = useThree((s) => s.invalidate);
   const uniforms = useMemo(
-    () => ({ u_res: { value: new THREE.Vector2(1, 1) }, u_time: { value: 0 } }),
+    () => ({
+      u_res: { value: new THREE.Vector2(1, 1) },
+      u_time: { value: 0 },
+      u_mouse: { value: new THREE.Vector2(0, -999) },
+      u_mouseOn: { value: 0 },
+    }),
     [],
   );
+  const targetOn = useRef(0);
+
+  // Track the cursor window-wide (the canvas is pointer-events:none) so the
+  // mist can part away from it. Coords map to the shader's `p` space.
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => {
+      const w = window.innerWidth || 1;
+      const h = window.innerHeight || 1;
+      uniforms.u_mouse.value.set(
+        ((e.clientX - 0.5 * w) / h) * 2.2,
+        ((0.5 * h - e.clientY) / h) * 2.2,
+      );
+      targetOn.current = 1;
+      invalidate();
+    };
+    const off = () => {
+      targetOn.current = 0;
+      invalidate();
+    };
+    const onOut = (e: PointerEvent) => {
+      if (!e.relatedTarget) off();
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("pointerout", onOut);
+    window.addEventListener("blur", off);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerout", onOut);
+      window.removeEventListener("blur", off);
+    };
+  }, [invalidate, uniforms]);
+
   useFrame((state, dt) => {
     const dpr = state.viewport.dpr;
     uniforms.u_res.value.set(state.size.width * dpr, state.size.height * dpr);
     if (motionOn) uniforms.u_time.value += dt;
+    // ease the clearing in/out; disabled entirely under reduced motion
+    const target = motionOn ? targetOn.current : 0;
+    uniforms.u_mouseOn.value +=
+      (target - uniforms.u_mouseOn.value) * Math.min(1, dt * 6);
   });
   return (
     <mesh renderOrder={-10} frustumCulled={false}>
@@ -115,7 +161,7 @@ function Motes({
       y: (rand() * 2 - 1) * 4.2,
       z: -rand() * 2,
       s: 0.025 + rand() * 0.07,
-      speed: 0.04 + rand() * 0.11,
+      speed: 0.06 + rand() * 0.15,
       sway: rand() * Math.PI * 2,
       gold: rand() < 0.16,
     }));
