@@ -282,11 +282,15 @@ function StepCard({
   index,
   active,
   register,
+  onHover,
+  onLeave,
 }: {
   step: Step;
   index: number;
   active: boolean;
   register: (index: number, node: HTMLLIElement | null) => void;
+  onHover: () => void;
+  onLeave: () => void;
 }) {
   const Icon = step.Icon;
 
@@ -297,6 +301,8 @@ function StepCard({
       className="lifecycle-card"
       data-active={active}
       data-cardano={step.l1 !== null}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
     >
       <div className="lifecycle-card__head">
         <div className="lifecycle-card__title">
@@ -336,6 +342,9 @@ function StepCard({
 
 export default function ProtocolLifecycle() {
   const [activeStep, setActiveStep] = useState(0);
+  // Cursor-driven highlight: hovering a card lights it up and takes priority
+  // over the scroll position (which stays as a quiet fallback + the rail).
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const activeRef = useRef(0);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
 
@@ -406,7 +415,9 @@ export default function ProtocolLifecycle() {
                 key={step.stage}
                 step={step}
                 index={index}
-                active={index === activeStep}
+                active={index === (hoveredStep ?? activeStep)}
+                onHover={() => setHoveredStep(index)}
+                onLeave={() => setHoveredStep((h) => (h === index ? null : h))}
                 register={register}
               />
             ))}
