@@ -1358,13 +1358,13 @@ export default function StaticTreeHero({
         ctx.translate(x, y);
         ctx.rotate(r0 * Math.PI);
         ctx.scale(sq, 1 / sq);
-        ctx.globalAlpha = Math.min(1, (rootPhase ? 0.46 : 0.55) * life);
+        ctx.globalAlpha = Math.min(1, (rootPhase ? 0.4 : 0.47) * life);
         ctx.drawImage(p.alt ? glowAlt : glowCore, -r, -r, r * 2, r * 2);
         ctx.restore();
         // luminous white-green heart — a soft round core stamp: bright + bulb-like
         // on the larger proof orbs, subtle on the tiny canopy micro-orbs.
         const cr = Math.min(7.5, 1.0 + es * 1.4) * glowBoost;
-        ctx.globalAlpha = Math.min(0.95, (0.5 + es * 0.45) * life);
+        ctx.globalAlpha = Math.min(0.8, (0.42 + es * 0.4) * life);
         ctx.drawImage(glowHeart, x - cr, y - cr, cr * 2, cr * 2);
         ctx.globalAlpha = 1;
       }
