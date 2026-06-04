@@ -598,15 +598,53 @@ button.panel:hover {
   white-space: nowrap;
 }
 
-/* ---- reveal-on-scroll ---- */
+/* ---- reveal-on-scroll (fade + lift + a soft focus-pull from blur) ---- */
 .reveal {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transform: translateY(20px) scale(0.985);
+  filter: blur(6px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease),
+    filter 0.7s var(--ease);
 }
 .reveal.in {
   opacity: 1;
   transform: none;
+  filter: none;
+}
+
+/* ---- scroll spotlight: the block crossing the viewport centre stays lit,
+   the rest ease to a dimmer state so focus follows the scroll. Applied by
+   ScrollEffects only while motion is enabled. ---- */
+[data-spot] {
+  transition: opacity 0.55s var(--ease), filter 0.55s var(--ease);
+}
+[data-spot][data-focus="dim"] {
+  opacity: 0.55;
+  filter: saturate(0.82);
+}
+
+/* ---- scroll progress spine: thin left-edge line, fills green -> gold ---- */
+.scroll-spine {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 2px;
+  z-index: 40;
+  background: var(--panel-edge);
+  pointer-events: none;
+}
+.scroll-spine__fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: top center;
+  transform: scaleY(var(--scroll-progress, 0));
+  background: linear-gradient(180deg, var(--green-bright), var(--gold-bright));
+  box-shadow: 0 0 9px var(--green-glow);
+  transition: transform 0.08s linear;
+}
+@media (max-width: 700px) {
+  .scroll-spine {
+    width: 1px;
+  }
 }
 
 /* ---- accessibility ---- */
@@ -634,6 +672,11 @@ button.panel:hover {
   .reveal {
     opacity: 1;
     transform: none;
+    filter: none;
+  }
+  [data-focus] {
+    opacity: 1 !important;
+    filter: none !important;
   }
 }
 
