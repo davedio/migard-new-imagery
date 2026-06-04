@@ -9,7 +9,6 @@ const ROUTES = [
   "/security",
   "/get-started",
   "/docs",
-  "/testnet",
   "/contracts",
   "/faq",
   "/about",

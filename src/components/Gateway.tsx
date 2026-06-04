@@ -363,7 +363,7 @@ function ClosingCTA() {
           <Link className="btn btn--primary" href="/get-started">
             Start with a use case
           </Link>
-          <Link className="btn btn--ghost" href="/testnet">
+          <Link className="btn btn--ghost" href="/contracts">
             Testnet status
           </Link>
         </div>
