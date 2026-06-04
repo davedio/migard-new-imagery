@@ -11,6 +11,7 @@ import {
 import { DeveloperSwitch } from "@/components/site/DeveloperSwitch";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import TakeRootHero from "@/components/site/TakeRootHero";
 
 export const metadata: Metadata = {
   title: "Get Started With Midgard",
@@ -29,6 +30,7 @@ export default function GetStartedPage() {
           { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
           { label: "Read the docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
         ]}
+        media={<TakeRootHero />}
       />
 
       <Section
