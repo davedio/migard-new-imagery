@@ -20,7 +20,7 @@ export default function SecurityPage() {
     <main className="page-main">
       <PageHero
         title="Secured by Cardano. Provable by anyone."
-        sub="Midgard's trust rests on Cardano Layer 1 and a set of mechanisms the public surface should make inspectable."
+        sub="Midgard's security rests on Cardano Layer 1. Anyone can inspect the commitments, challenge invalid blocks, and verify how settlement works."
         actions={[
           { label: "Get Started", href: "/get-started", variant: "primary" },
           { label: "Read docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
@@ -34,7 +34,7 @@ export default function SecurityPage() {
               text: "Midgard is designed to anchor L2 state transitions to Cardano L1 and use Cardano smart contracts for verification.",
             },
             {
-              text: "That means the security story should be explained as a mechanism: commitments, challenge paths, settlement assumptions, and the base-layer contracts that make invalid state contestable.",
+              text: "Here's the mechanism: operators commit blocks to Cardano, anyone can challenge an invalid block during the challenge window, and Cardano contracts settle the result.",
               variant: "dim",
             },
           ]}
@@ -52,12 +52,12 @@ export default function SecurityPage() {
             {
               n: "02",
               name: "Censorship resistance",
-              desc: "The protocol design uses L1 deadlines and challenge surfaces so ordering and inclusion rules can be enforced instead of merely promised.",
+              desc: "Cardano deadlines and challenge paths enforce ordering and inclusion rules.",
             },
             {
               n: "03",
               name: "Liveness",
-              desc: "Midgard is designed with L1-enforced escape and recovery paths, with public failure modes still needing careful status copy.",
+              desc: "If an operator stalls, Cardano-enforced escape paths let users exit and the network recover.",
             },
             {
               n: "04",

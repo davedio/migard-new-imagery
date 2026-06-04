@@ -24,7 +24,7 @@ export default function TestnetPage() {
       <PageHero
         label="Testnet status"
         title="Midgard on Cardano preprod."
-        sub="Midgard is a pre-alpha testnet. The protocol status surface is where builders can see what is deploying currently and coming soon."
+        sub="Midgard is a pre-alpha testnet. This status page is where builders can see what is deploying now and what is coming soon."
         chips={
           <>
             <span className="chip chip--testnet">
@@ -43,14 +43,14 @@ export default function TestnetPage() {
         ]}
       />
 
-      <Section id="whats-live" eyebrow="What is live" title="Deployed and verifiable surfaces.">
+      <Section id="whats-live" eyebrow="What is live" title="What's live right now.">
         <Prose
           items={[
             {
-              text: "The public status path should show preprod contract deployment information, source references, deployment history, and a clear label for any activity that is simulated in this preview.",
+              text: "Live: the preprod contracts and their addresses (see Contracts), the source on GitHub, and the genesis deployment history.",
             },
             {
-              text: "Activity is simulated and will connect to live data at launch.",
+              text: "Simulated: the moving network activity below — it will connect to live data at launch.",
               variant: "dim",
             },
           ]}
@@ -71,12 +71,12 @@ export default function TestnetPage() {
         <CardGrid>
           <Card
             title="Protocol contracts"
-            body="Use the status surface to inspect the current preprod contract addresses and understand which validators each address represents."
+            body="Inspect the current preprod contract addresses and see which validator each address represents."
             delay={0}
           />
           <Card
             title="State anchors"
-            body="State anchors should show the current public handles for committed blocks, confirmed state, and settlement-relevant surfaces."
+            body="See the current addresses for committed blocks, confirmed state, and settlement."
             delay={60}
           />
           <Card
@@ -89,17 +89,17 @@ export default function TestnetPage() {
           />
           <Card
             title="Deployment history"
-            body="The deployment history should make the path from genesis to first settlement legible and refreshable."
+            body="Follow the path from genesis to first settlement, refreshed as it progresses."
             delay={180}
           />
           <Card
             title="Live node view"
-            body="A node view can show soft confirmations and block sealing, but the page must label simulated versus live data clearly."
+            body="A node view shows soft confirmations and block sealing. Simulated and live data are always labelled clearly."
             delay={240}
           />
           <Card
             title="Contract caveats"
-            body="Counts, addresses, and parameter values should be refreshed before press, investor, or policy use."
+            body="Counts, addresses, and parameter values can change — refresh them before press, investor, or policy use."
             delay={300}
           />
         </CardGrid>
@@ -107,7 +107,7 @@ export default function TestnetPage() {
 
       <CtaBand
         title="Start from the official path."
-        lead="Use the status surfaces published on official links, and bring concrete feedback."
+        lead="Use the status pages published on official links, and bring concrete feedback."
         actions={[
           { label: "Get Started", href: "/get-started", variant: "primary" },
           { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },

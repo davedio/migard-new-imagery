@@ -7,18 +7,19 @@ const EXPLORE = [
   { label: "How It Works", href: "/how-it-works" },
   { label: "Security", href: "/security" },
   { label: "Get Started", href: "/get-started" },
+  { label: "Docs", href: "/docs" },
   { label: "About", href: "/about" },
 ] as const;
 
 const RESOURCES = [
   { label: "Testnet status", href: "/testnet" },
+  { label: "Contracts", href: "/contracts" },
   { label: "FAQ", href: "/faq" },
   { label: "Official links", href: "/official-links" },
   { label: "Security contact", href: "/official-links#security-contact" },
 ] as const;
 
 const CHANNELS = [
-  { label: "Docs", href: OFFICIAL_LINKS.docs },
   { label: "GitHub", href: OFFICIAL_LINKS.github },
   { label: "Discord", href: OFFICIAL_LINKS.discord },
   { label: "X", href: OFFICIAL_LINKS.x },

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Section, Layers } from "@/components/site/ui";
+import { Section, Layers, CtaBand } from "@/components/site/ui";
 import { HudDivider } from "@/components/site/Hud";
 import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
 import { StatTiles } from "@/components/site/StatTiles";
@@ -18,7 +18,7 @@ export default function HowItWorksPage() {
 
       <Section
         eyebrow="Protocol at a glance"
-        title="Fast where it can be, final where it must be."
+        title="Fast confirmations now, final settlement on Cardano."
         tight
       >
         <StatTiles />
@@ -30,7 +30,7 @@ export default function HowItWorksPage() {
         id="layers"
         eyebrow="Layer explainer"
         title="Five lifecycle steps, one trust path."
-        lead="The lifecycle is the moving system. The layer rows below show the underlying architecture Midgard keeps inspectable."
+        lead="The steps above are the live flow. The rows below are the on-chain pieces that make each step verifiable."
         glow="green"
       >
         <Layers
@@ -38,32 +38,32 @@ export default function HowItWorksPage() {
             {
               n: "01",
               name: "Activity",
-              desc: "Users and applications create activity in the L2 environment.",
+              desc: "Wallets and apps submit transactions to the L2.",
             },
             {
               n: "02",
               name: "Batch",
-              desc: "Activity is organized into batches or state transitions.",
+              desc: "The operator orders transactions into a state batch.",
             },
             {
               n: "03",
               name: "Proof",
-              desc: "The system uses commitments and evidence so the path can be checked.",
+              desc: "Each batch commits a hash anyone can recompute and check.",
             },
             {
               n: "04",
               name: "Challenge",
-              desc: "Disputed activity can be contested through the protocol's challenge mechanics.",
+              desc: "Watchers dispute an invalid batch before it settles.",
             },
             {
               n: "05",
               name: "Settlement",
-              desc: "Settlement brings the path back to Cardano L1.",
+              desc: "Verified state is finalized back to Cardano L1.",
             },
             {
               n: "06",
               name: "Cardano L1",
-              desc: "Cardano remains the base layer for the trust story.",
+              desc: "Cardano holds the funds and anchors final settlement.",
             },
           ]}
         />
@@ -78,6 +78,13 @@ export default function HowItWorksPage() {
         <EutxoComparison />
       </Section>
 
+      <CtaBand
+        title="Ready to build on Midgard?"
+        actions={[
+          { label: "Get Started", href: "/get-started", variant: "primary" },
+          { label: "See the contracts", href: "/contracts" },
+        ]}
+      />
     </main>
   );
 }
