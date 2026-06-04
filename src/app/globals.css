@@ -1534,6 +1534,37 @@ button.panel:hover {
   height: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 24px -14px var(--green-glow);
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease-out, box-shadow 0.4s var(--ease);
+}
+/* keep card content above the green glow layer */
+.card > * {
+  position: relative;
+  z-index: 1;
+}
+/* soft green glow in the card background; brightens + follows the cursor
+   (--mx/--my/--card-glow set by CardFx on fine-pointer devices) */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(32, 190, 67, 0.2),
+    transparent 60%
+  );
+  opacity: var(--card-glow, 0.4);
+  transition: opacity 0.4s var(--ease);
+}
+.card:hover {
+  box-shadow: 0 10px 38px -16px var(--green-glow),
+    0 0 22px -6px rgba(32, 190, 67, 0.18);
 }
 .card__num {
   font-family: var(--font-mono);
