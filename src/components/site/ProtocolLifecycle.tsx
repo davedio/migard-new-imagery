@@ -319,7 +319,10 @@ function StepCard({
           <FlowIcon flow={step.flow} active={active} />
         </div>
         <div className="lifecycle-card__side" data-muted={!step.l1}>
-          <div className="lifecycle-card__network">
+          <div
+            className="lifecycle-card__network lifecycle-card__network--l1"
+            data-active={active}
+          >
             <span />
             Cardano L1
           </div>

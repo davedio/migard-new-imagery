@@ -757,7 +757,7 @@ button.panel:hover {
 }
 
 .lifecycle-rail .is-l1-live {
-  stroke: rgba(207, 154, 46, 0.42);
+  stroke: rgba(125, 205, 255, 0.5);
 }
 
 .lifecycle-rail .is-idle {
@@ -777,11 +777,11 @@ button.panel:hover {
 }
 
 .lifecycle-rail circle.is-l1-active {
-  fill: var(--gold-bright);
+  fill: #7dcdff;
 }
 
 .lifecycle-rail circle.is-l1-complete {
-  fill: rgba(207, 154, 46, 0.42);
+  fill: rgba(125, 205, 255, 0.45);
 }
 
 .lifecycle-rail text.is-active {
@@ -797,7 +797,7 @@ button.panel:hover {
 }
 
 .lifecycle-rail__l1-halo {
-  fill: rgba(207, 154, 46, 0.12);
+  fill: rgba(125, 205, 255, 0.16);
 }
 
 .lifecycle-rail .is-active-flow {
@@ -973,6 +973,16 @@ button.panel:hover {
 
 .lifecycle-card__network:not([data-active="true"]) {
   color: var(--text-dim);
+}
+
+/* Cardano L1 indicator reads light blue, distinct from the green Midgard L2. */
+.lifecycle-card__network--l1[data-active="true"] {
+  color: rgba(125, 205, 255, 0.9);
+}
+
+/* the little dot glows in its own colour when the card is active */
+.lifecycle-card__network[data-active="true"] span {
+  box-shadow: 0 0 7px currentColor;
 }
 
 .lifecycle-card__side p {
