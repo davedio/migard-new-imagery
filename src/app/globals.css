@@ -616,11 +616,19 @@ button.panel:hover {
    the rest ease to a dimmer state so focus follows the scroll. Applied by
    ScrollEffects only while motion is enabled. ---- */
 [data-spot] {
-  transition: opacity 0.55s var(--ease), filter 0.55s var(--ease);
+  transition: opacity 0.5s var(--ease), filter 0.5s var(--ease),
+    transform 0.5s var(--ease);
+  transform-origin: center top;
 }
 [data-spot][data-focus="dim"] {
-  opacity: 0.55;
-  filter: saturate(0.82);
+  opacity: 0.38;
+  filter: saturate(0.7) blur(2px);
+  transform: scale(0.95);
+}
+[data-spot][data-focus="active"] {
+  opacity: 1;
+  filter: none;
+  transform: none;
 }
 
 /* ---- scroll progress spine: thin left-edge line, fills green -> gold ---- */
@@ -677,6 +685,7 @@ button.panel:hover {
   [data-focus] {
     opacity: 1 !important;
     filter: none !important;
+    transform: none !important;
   }
 }
 
