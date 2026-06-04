@@ -3,7 +3,6 @@ import {
   PageHero,
   Section,
   Prose,
-  Bullets,
   CardGrid,
   Card,
   CtaBand,
@@ -25,7 +24,7 @@ export default function TestnetPage() {
       <PageHero
         label="Testnet status"
         title="Midgard on Cardano preprod."
-        sub="Midgard is a pre-alpha testnet. The protocol status surface is where builders inspect what is deployed, what is simulated, and what still needs confirmation."
+        sub="Midgard is a pre-alpha testnet. The protocol status surface is where builders can see what is deploying currently and coming soon."
         chips={
           <>
             <span className="chip chip--testnet">
@@ -51,7 +50,7 @@ export default function TestnetPage() {
               text: "The public status path should show preprod contract deployment information, source references, deployment history, and a clear label for any activity that is simulated in this preview.",
             },
             {
-              text: "Some activity shown in the website prototype is simulated and connects to live data at launch; the contract and deployment surfaces should be checked against the latest status source before public amplification.",
+              text: "Activity is simulated and will connect to live data at launch.",
               variant: "dim",
             },
           ]}
@@ -68,7 +67,7 @@ export default function TestnetPage() {
         <StateQueueViz />
       </Section>
 
-      <Section id="contracts" eyebrow="Contracts" title="Inspect the contract path.">
+      <Section id="contracts" title="Contracts">
         <CardGrid>
           <Card
             title="Protocol contracts"
@@ -82,7 +81,7 @@ export default function TestnetPage() {
           />
           <Card
             title="Source"
-            body="The repository is where builders inspect implementation progress, SDK surfaces, node behavior, and proof machinery."
+            body="Review Github for SDKs, node behavior, proof machinery, and implementation progress."
             cta="Explore on GitHub"
             ctaIcon={<GitHubIcon size={13} />}
             href={OFFICIAL_LINKS.github}
@@ -106,23 +105,7 @@ export default function TestnetPage() {
         </CardGrid>
       </Section>
 
-      <Section eyebrow="Proof queue" title="What should become visible next">
-        <Bullets
-          items={[
-            "Clear docs path.",
-            "Contracts and deployment surfaces.",
-            "Builder quickstart.",
-            "Wallet and dApp integration tracks.",
-            "Activity and settlement dashboards.",
-            "Security reporting route.",
-            "Support route.",
-            "Post-testnet proof report.",
-          ]}
-        />
-      </Section>
-
       <CtaBand
-        eyebrow="Testnet"
         title="Start from the official path."
         lead="Use the status surfaces published on official links, and bring concrete feedback."
         actions={[

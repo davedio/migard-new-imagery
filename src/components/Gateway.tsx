@@ -253,31 +253,24 @@ const AUDIENCE_PATHS: {
 }[] = [
   {
     n: "01",
-    title: "Using Midgard",
+    title: "Users",
     line: "Start here if Midgard reaches you through a wallet or app: what changes, what stays Cardano, and what to check before action.",
     cta: "Start as a user",
     href: "/get-started#users",
   },
   {
     n: "02",
-    title: "Building or porting",
-    line: "For dApps, DEXs, lending markets, wallets, and protocols: inspect the source, then map the flow that needs L2 capacity.",
+    title: "Builders",
+    line: "For wallets, dApps, DEXs, and lending protocols: inspect the source, then map the flow that needs L2 capacity.",
     cta: "Open builder path",
     href: "/get-started#builder-quickstart",
   },
   {
     n: "03",
-    title: "Operating Midgard",
+    title: "Become a Midgard Operator or Watcher",
     line: "For operators, batchers, and watchers: sequence activity into blocks, then replay and challenge anything invalid before it settles to Cardano L1.",
     cta: "See the protocol roles",
     href: "/get-started#roles",
-  },
-  {
-    n: "04",
-    title: "Inspecting the mechanism",
-    line: "Follow the full route from activity to batch, proof, challenge, settlement, and Cardano L1.",
-    cta: "See how it works",
-    href: "/how-it-works",
   },
 ];
 
@@ -285,7 +278,7 @@ function ExploreGrid() {
   return (
     <section id="explore" style={{ padding: SECTION_PAD }}>
       <Reveal style={{ maxWidth: 680 }}>
-        <h2 style={h2Style}>Start with your question, not a label.</h2>
+        <h2 style={h2Style}>Choose your path</h2>
         <p style={leadStyle}>
           Users, builders, and partners can overlap. Pick the path that matches
           what you need to understand first.
@@ -358,16 +351,13 @@ function ClosingCTA() {
   return (
     <section style={{ padding: "clamp(96px,15vh,188px) var(--gut)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
-        <div className="eyebrow" style={{ justifyContent: "center", display: "inline-flex" }}>
-          Closing
-        </div>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
           Scale Cardano. Keep the proof.
         </h2>
         <p style={{ ...leadStyle, marginInline: "auto" }}>
           Midgard is live in testnet/status form now. Read the architecture,
-          inspect the source, and bring a concrete flow that needs more
-          Cardano throughput.
+          inspect the source, and bring an application that requires speed,
+          throughput and finality.
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
           <Link className="btn btn--primary" href="/get-started">

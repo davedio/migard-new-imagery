@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import {
   PageHero,
   Section,
-  Prose,
   CardGrid,
   Card,
   CtaBand,
@@ -69,16 +68,6 @@ export default function DocsPage() {
             delay={210}
           />
         </CardGrid>
-      </Section>
-
-      <Section eyebrow="Current boundary" title="Website copy is not the final technical spec." tight>
-        <Prose
-          items={[
-            {
-              text: "This site translates Midgard for users, builders, and partners. Final technical claims should be checked against the official source, current testnet status, and approval-ready claim controls before public amplification.",
-            },
-          ]}
-        />
       </Section>
 
       <CtaBand

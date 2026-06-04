@@ -157,7 +157,7 @@ export function NetworkStatusWidget() {
         <div className={css.chipRow}>
           <span className={`chip chip--${live ? "live" : "demo"}`}>
             <span className="dot" />
-            {live ? "Live L1 · sim L2" : "Simulated feed"}
+            {live ? "Live L1 · sim L2" : "feed"}
           </span>
           {/* Timestamp fades in on each poll tick */}
           <motion.span
@@ -300,10 +300,10 @@ export function NetworkStatusWidget() {
           style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap" }}
         >
           {proofStatus === "settled"
-            ? "Proof settled — simulated L2 batch anchored"
+            ? "Proof settled — L2 batch anchored"
             : proofStatus === "generated"
-              ? "Proof generated — simulated challenge window open"
-              : "Proof pending — simulated batch assembling"}
+              ? "Proof generated — challenge window open"
+              : "Proof pending — batch assembling"}
         </span>
       </div>
     </HudFrame>

@@ -5,10 +5,8 @@ import {
   Prose,
   CardGrid,
   Card,
-  Layers,
   Callout,
   Actions,
-  CtaBand,
 } from "@/components/site/ui";
 import { DeveloperSwitch } from "@/components/site/DeveloperSwitch";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -88,7 +86,7 @@ export default function GetStartedPage() {
       <Section
         id="roles"
         eyebrow="Roles"
-        title="Find the role you can fill."
+        title="Participate in Midgard"
       >
         <CardGrid>
           <Card
@@ -136,34 +134,7 @@ export default function GetStartedPage() {
         </CardGrid>
       </Section>
 
-      <Section eyebrow="Integration" title="Map the flows before users touch them.">
-        <Layers
-          items={[
-            {
-              n: "01",
-              name: "Throughput flow",
-              desc: "Decide which application actions should execute through Midgard and which should remain directly on L1.",
-            },
-            {
-              n: "02",
-              name: "Wallet path",
-              desc: "Define signing, status, fallback, and support states before users touch a live flow.",
-            },
-            {
-              n: "03",
-              name: "Settlement path",
-              desc: "Separate fast soft confirmation from later L1 settlement in the user interface and product logic.",
-            },
-            {
-              n: "04",
-              name: "Error path",
-              desc: "Make failed, challenged, delayed, or unsupported states legible instead of hiding them in vague status text.",
-            },
-          ]}
-        />
-      </Section>
-
-      <Section id="users" eyebrow="For users" title="Faster Cardano apps. Same wallet. Same ADA.">
+      <Section id="users" title="Faster Cardano apps. Same wallet. Same ADA.">
         <Prose
           items={[
             {
@@ -189,15 +160,6 @@ export default function GetStartedPage() {
         />
       </Section>
 
-      <CtaBand
-        eyebrow="Get Started"
-        title="Bring a role, not just attention."
-        lead="Tell us where you plug in: building, operating, watching, integrating, monitoring, educating, or making the user path safer."
-        actions={[
-          { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
-          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
-        ]}
-      />
     </main>
   );
 }

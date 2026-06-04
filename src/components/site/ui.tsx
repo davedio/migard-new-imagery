@@ -70,7 +70,7 @@ export function PageHero({
   actions,
   chips,
 }: {
-  label: string;
+  label?: string;
   title: ReactNode;
   sub?: ReactNode;
   body?: ReactNode;
@@ -80,9 +80,11 @@ export function PageHero({
   return (
     <header className="page-hero">
       <div className="page-hero__inner">
-        <Reveal>
-          <div className="eyebrow">{label}</div>
-        </Reveal>
+        {label ? (
+          <Reveal>
+            <div className="eyebrow">{label}</div>
+          </Reveal>
+        ) : null}
         <Reveal delay={60}>
           <h1>{title}</h1>
         </Reveal>
@@ -342,14 +344,14 @@ export function Callout({
   body,
   items,
 }: {
-  title: string;
+  title?: string;
   body?: ReactNode;
   items?: ReactNode[];
 }) {
   return (
     <Reveal>
       <div className="callout">
-        <h3>{title}</h3>
+        {title ? <h3>{title}</h3> : null}
         {body ? <p>{body}</p> : null}
         {items && items.length > 0 ? (
           <ul>

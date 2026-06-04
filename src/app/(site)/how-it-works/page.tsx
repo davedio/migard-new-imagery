@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Section, Layers, CtaBand } from "@/components/site/ui";
+import { Section, Layers } from "@/components/site/ui";
 import { HudDivider } from "@/components/site/Hud";
 import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
 import { StatTiles } from "@/components/site/StatTiles";
@@ -8,7 +8,7 @@ import { EutxoComparison } from "@/components/site/EutxoComparison";
 export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
-    "How Midgard runs as a Cardano-native optimistic rollup: submit, sequence, commit, watch, and settle back through Cardano L1.",
+    "How Midgard runs as a Cardano-native optimistic rollup: submit, sequence, commit, watch, and settle back to Cardano.",
 };
 
 export default function HowItWorksPage() {
@@ -78,15 +78,6 @@ export default function HowItWorksPage() {
         <EutxoComparison />
       </Section>
 
-      <CtaBand
-        eyebrow="Go deeper"
-        title="Go deeper than the headline."
-        lead="Midgard's architecture is meant to be inspected in source, docs, status surfaces, and the security path."
-        actions={[
-          { label: "Get Started", href: "/get-started", variant: "primary" },
-          { label: "Security", href: "/security", variant: "ghost" },
-        ]}
-      />
     </main>
   );
 }

@@ -4,7 +4,7 @@ import Gateway from "@/components/Gateway";
 export const metadata: Metadata = {
   title: "Midgard",
   description:
-    "Midgard is a Cardano-native optimistic rollup. High-throughput Layer 2 performance with a trust path that settles back to Cardano L1. Fees are paid in ADA.",
+    "Midgard is a Cardano-native optimistic rollup. High-throughput Layer 2 performance with a trust path that settles back to Cardano.",
 };
 
 export default function HomePage() {
