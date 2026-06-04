@@ -6,8 +6,7 @@
    AmbientDepth — the single persistent ambient background canvas.
 
    Supersedes the raw-WebGL FluidScene: it ports the same green/gold fbm
-   "mist" into an R3F fog plane, then layers instanced drifting motes with
-   scroll parallax on top to give below-fold sections real depth.
+   "mist" into an R3F fog plane that also parts away from the cursor.
 
    Budget guardrails (see docs/visual-enhancements):
    - ONE <Canvas frameloop="demand"> — never free-runs. A throttled 30fps
@@ -15,14 +14,13 @@
      visible; otherwise it renders a single frame and holds still.
    - DPR clamped to [1, 1.75] (background layer).
    - Honors the shared motion preference (useMotionPref); under reduced
-     motion the fog, motes, AND parallax freeze.
+     motion the fog freezes and the cursor effect is disabled.
    - CSS-only fallback on low-power devices / no WebGL.
    ============================================================ */
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
-import { mulberry32, useGlowTexture } from "./sceneTokens";
 import { useMotionPref } from "@/lib/motion";
 
 /* ---- fog plane: fullscreen clip-space quad running the ported mist fbm ---- */
@@ -131,107 +129,11 @@ function FogPlane({ motionOn }: { motionOn: boolean }) {
   );
 }
 
-/* ---- instanced drifting motes with scroll parallax ---- */
-type Mote = {
-  x: number;
-  y: number;
-  z: number;
-  s: number;
-  speed: number;
-  sway: number;
-  gold: boolean;
-};
+/* Drifting motes ("snow") removed — the ambient layer is the fog mist only. */
 
-function Motes({
-  motionOn,
-  count,
-  scrollRef,
-}: {
-  motionOn: boolean;
-  count: number;
-  scrollRef: React.RefObject<number>;
-}) {
-  const ref = useRef<THREE.InstancedMesh>(null);
-  const tex = useGlowTexture();
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const motes = useMemo<Mote[]>(() => {
-    const rand = mulberry32(1337);
-    return Array.from({ length: count }, () => ({
-      x: (rand() * 2 - 1) * 6.5,
-      y: (rand() * 2 - 1) * 4.2,
-      z: -rand() * 2,
-      s: 0.025 + rand() * 0.07,
-      speed: 0.06 + rand() * 0.15,
-      sway: rand() * Math.PI * 2,
-      gold: rand() < 0.16,
-    }));
-  }, [count]);
-
-  // one-time per-instance tint (green canopy spores + a few gold proof motes)
-  useEffect(() => {
-    const mesh = ref.current;
-    if (!mesh) return;
-    const green = new THREE.Color("#3be863");
-    const gold = new THREE.Color("#e0a33c");
-    motes.forEach((m, i) => mesh.setColorAt(i, m.gold ? gold : green));
-    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-  }, [motes]);
-
-  useFrame((state, dt) => {
-    const mesh = ref.current;
-    if (!mesh) return;
-    const t = state.clock.elapsedTime;
-    const py = motionOn ? scrollRef.current * 2.6 : 0; // parallax (off when reduced)
-    for (let i = 0; i < motes.length; i++) {
-      const m = motes[i];
-      if (motionOn) {
-        m.y += m.speed * dt;
-        if (m.y > 4.4) m.y = -4.4;
-      }
-      const x = m.x + Math.sin(t * 0.2 + m.sway) * 0.15;
-      dummy.position.set(x, m.y - py, m.z);
-      dummy.scale.setScalar(m.s);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh
-      ref={ref}
-      args={[undefined, undefined, count]}
-      frustumCulled={false}
-    >
-      <planeGeometry args={[1, 1]} />
-      <meshBasicMaterial
-        map={tex}
-        transparent
-        depthTest={false}
-        depthWrite={false}
-        blending={THREE.AdditiveBlending}
-        opacity={0.5}
-        toneMapped={false}
-      />
-    </instancedMesh>
-  );
-}
-
-/* ---- demand-render driver: invalidate on scroll + a throttled idle tick ---- */
-function Driver({ motionOn, scrollRef }: { motionOn: boolean; scrollRef: React.RefObject<number> }) {
+/* ---- demand-render driver: a throttled idle tick ---- */
+function Driver({ motionOn }: { motionOn: boolean }) {
   const invalidate = useThree((s) => s.invalidate);
-
-  // scroll → update parallax + request a frame (works even under reduced motion)
-  useEffect(() => {
-    const onScroll = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      scrollRef.current = h > 0 ? window.scrollY / h : 0;
-      invalidate();
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [invalidate, scrollRef]);
 
   // throttled ~30fps tick while motion is on and the tab is visible
   useEffect(() => {
@@ -287,14 +189,6 @@ const VEIL =
 
 export default function AmbientDepth() {
   const { motionOn } = useMotionPref();
-  const scrollRef = useRef(0);
-
-  // density scales with viewport width (mobile gets fewer motes)
-  const count = useMemo(() => {
-    if (typeof window === "undefined") return 120;
-    return Math.round(Math.max(70, Math.min(170, window.innerWidth / 11)));
-  }, []);
-
   const webgl = useMemo(() => canUseWebGL(), []);
 
   // CSS-only fallback: a static green-tinted mist, no canvas
@@ -324,8 +218,7 @@ export default function AmbientDepth() {
         style={{ position: "absolute", inset: 0 }}
       >
         <FogPlane motionOn={motionOn} />
-        <Motes motionOn={motionOn} count={count} scrollRef={scrollRef} />
-        <Driver motionOn={motionOn} scrollRef={scrollRef} />
+        <Driver motionOn={motionOn} />
       </Canvas>
       {/* darkening veil keeps page text legible over the mist */}
       <div style={{ position: "absolute", inset: 0, background: VEIL }} />
