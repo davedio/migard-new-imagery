@@ -4,8 +4,8 @@ import { Reveal } from "./Reveal";
 type Tile = { label: string; value: string; sub: string; accent?: "green" | "gold" };
 
 const TILES: Tile[] = [
-  { label: "Soft finality", value: "Seconds", sub: "instant, usable confirmation", accent: "green" },
-  { label: "Hard finality", value: "3–7 days", sub: "L1 challenge window", accent: "gold" },
+  { label: "Usable in seconds", value: "Seconds", sub: "instant, usable confirmation", accent: "green" },
+  { label: "Fully settled", value: "3–7 days", sub: "L1 challenge window", accent: "gold" },
   { label: "Throughput", value: "Up to 300×", sub: "faster than L1 alone" },
   { label: "Fraud proofs", value: "eUTXO-targeted", sub: "surgical, not global" },
   { label: "Fees", value: "ADA", sub: "settled on Cardano L1" },

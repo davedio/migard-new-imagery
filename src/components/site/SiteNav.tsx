@@ -64,6 +64,9 @@ export function SiteNav() {
         </div>
 
         <div className="site-nav__right">
+          <Link href="/get-started" className="btn btn--primary site-nav__cta-desktop">
+            Get Started
+          </Link>
           <button
             type="button"
             className="site-nav__burger"
@@ -87,6 +90,9 @@ export function SiteNav() {
             {item.label}
           </Link>
         ))}
+        <Link href="/get-started" className="btn btn--primary" onClick={closeMenu}>
+          Get Started
+        </Link>
       </div>
     </>
   );

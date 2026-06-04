@@ -90,7 +90,7 @@ export default function GetStartedPage() {
         <Prose
           items={[
             {
-              text: "For most people, Midgard should feel like Cardano getting faster: the same wallet, the same ADA, lower-friction application use, and the same L1 trust anchor underneath.",
+              text: "For most people, Midgard feels like Cardano, just faster: the same wallet, the same ADA, lower-friction application use, and the same L1 trust anchor underneath.",
             },
             {
               text: "The user job is simple: start from official links, read the status, and do not sign anything you do not understand.",

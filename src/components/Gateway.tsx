@@ -232,7 +232,7 @@ function Hero() {
 }
 
 const h2Style: CSSProperties = {
-  fontSize: "clamp(26px,3.4vw,40px)",
+  fontSize: "clamp(26px,3.2vw,46px)",
   lineHeight: 1.1,
   marginTop: 14,
   maxWidth: 660,
@@ -240,7 +240,7 @@ const h2Style: CSSProperties = {
 const leadStyle: CSSProperties = {
   marginTop: 18,
   maxWidth: 620,
-  fontSize: "clamp(15px,1.6vw,17px)",
+  fontSize: "clamp(15px,1.55vw,19px)",
   color: "var(--text)",
 };
 
@@ -254,7 +254,7 @@ const AUDIENCE_PATHS: {
   {
     n: "01",
     title: "Users",
-    line: "Users through wallets or apps.",
+    line: "Use Cardano apps that run on Midgard — same wallet, same ADA.",
     cta: "Start as a user",
     href: "/get-started#users",
   },
@@ -280,8 +280,8 @@ function ExploreGrid() {
       <Reveal style={{ maxWidth: 680 }}>
         <h2 style={h2Style}>Choose your path</h2>
         <p style={leadStyle}>
-          Users, builders, and partners can overlap. Pick the path that matches
-          what you need to understand first.
+          These roles overlap. Pick the one that fits what you&apos;re here to
+          do.
         </p>
       </Reveal>
       <div
@@ -352,12 +352,12 @@ function ClosingCTA() {
     <section style={{ padding: "clamp(60px,9vh,112px) var(--gut)" }}>
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
-          Scale Cardano. Keep the proof.
+          Scale Cardano. Settle on Cardano.
         </h2>
         <p style={{ ...leadStyle, marginInline: "auto" }}>
-          Midgard is live in testnet/status form now. Read the architecture,
-          inspect the source, and bring an application that requires speed,
-          throughput and finality.
+          Midgard is running on a pre-alpha testnet. Read the architecture,
+          inspect the source, and bring an app that needs more speed and lower
+          fees.
         </p>
         <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
           <Link className="btn btn--primary" href="/get-started">

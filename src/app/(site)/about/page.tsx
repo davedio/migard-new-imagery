@@ -56,7 +56,7 @@ export default function AboutPage() {
               text: "Midgard comes from Anastasia Labs, a team building Cardano infrastructure and open-source tooling for serious on-chain systems.",
             },
             {
-              text: "The protocol is open, the implementation can be inspected, and the status surface should make what is live, planned, and simulated clear.",
+              text: "The protocol is open, the implementation can be inspected, and the status page makes clear what's live, planned, and simulated.",
               variant: "dim",
             },
           ]}
@@ -76,7 +76,7 @@ export default function AboutPage() {
         <CardGrid cols={2}>
           <Card
             title="Pre-alpha testnet"
-            body="The preview should keep pre-alpha and testnet status visible, especially where simulated data or pending status surfaces are involved."
+            body="This is a pre-alpha preview — what's live and what's simulated is always labelled."
           />
           <Card
             title="Public status path"

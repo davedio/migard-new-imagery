@@ -21,7 +21,7 @@ export default function OfficialLinksPage() {
       <PageHero
         label="Official links"
         title="Start from the official path."
-        sub="Midgard should be easy to inspect and hard to impersonate. Use official links for docs, GitHub, community, status, support, and security routes."
+        sub="Midgard is easy to inspect and hard to impersonate. Use official links for docs, GitHub, community, status, support, and security routes."
         actions={[
           { label: "View official links", href: "#links", variant: "primary" },
           { label: "Open docs ↗", href: OFFICIAL_LINKS.docs, variant: "ghost" },
@@ -38,7 +38,7 @@ export default function OfficialLinksPage() {
           rows={[
             { k: "Website", v: "midgard-gateway.vercel.app", href: OFFICIAL_LINKS.website },
             { k: "Docs", v: "GitHub source/docs", href: OFFICIAL_LINKS.docs },
-            { k: "Contracts", v: "Testnet status", href: "/testnet#contracts" },
+            { k: "Contracts", v: "Deployed contracts", href: "/contracts" },
             { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github, icon: <GitHubIcon size={16} /> },
             { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x, icon: <XIcon size={14} /> },
             { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord, icon: <DiscordIcon size={16} /> },
