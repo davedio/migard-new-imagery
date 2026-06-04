@@ -11,6 +11,7 @@ import {
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 
 export const metadata: Metadata = {
   title: "Midgard Testnet Status",
@@ -83,6 +84,7 @@ export default function TestnetPage() {
             title="Source"
             body="The repository is where builders inspect implementation progress, SDK surfaces, node behavior, and proof machinery."
             cta="Explore on GitHub"
+            ctaIcon={<GitHubIcon size={13} />}
             href={OFFICIAL_LINKS.github}
             delay={120}
           />

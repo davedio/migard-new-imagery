@@ -8,6 +8,7 @@ import {
   CtaBand,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 
 export const metadata: Metadata = {
   title: "Midgard Docs",
@@ -47,6 +48,7 @@ export default function DocsPage() {
             title="Source"
             body="Inspect the official code before trusting any website copy as technical truth."
             cta="View GitHub"
+            ctaIcon={<GitHubIcon size={13} />}
             href={OFFICIAL_LINKS.github}
             delay={70}
           />

@@ -4,6 +4,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { CopyField } from "@/components/site/CopyField";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 import {
   CONTRACTS,
   CONTRACTS_META,
@@ -275,7 +276,7 @@ export default function ContractsPage() {
         title="Read the source, run the node."
         lead="Every address on this page resolves on a public preprod explorer. The implementation, SDK surfaces, and node behavior live in the repository."
         actions={[
-          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "primary" },
+          { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "primary", icon: <GitHubIcon size={15} /> },
           { label: "Testnet status", href: "/testnet", variant: "ghost" },
         ]}
       />

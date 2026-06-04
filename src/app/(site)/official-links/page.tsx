@@ -7,6 +7,7 @@ import {
   Callout,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon, XIcon, DiscordIcon } from "@/components/site/BrandIcons";
 
 export const metadata: Metadata = {
   title: "Midgard Official Links",
@@ -38,9 +39,9 @@ export default function OfficialLinksPage() {
             { k: "Website", v: "midgard-gateway.vercel.app", href: OFFICIAL_LINKS.website },
             { k: "Docs", v: "GitHub source/docs", href: OFFICIAL_LINKS.docs },
             { k: "Contracts", v: "Testnet status", href: "/testnet#contracts" },
-            { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github },
-            { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x },
-            { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord },
+            { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github, icon: <GitHubIcon size={16} /> },
+            { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x, icon: <XIcon size={14} /> },
+            { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord, icon: <DiscordIcon size={16} /> },
             { k: "Builder/Testnet intake", v: "Google form", href: OFFICIAL_LINKS.intakeForm },
             { k: "Newsletter", v: "Publishing soon", pending: true },
             { k: "Support", v: "Publishing soon", pending: true },

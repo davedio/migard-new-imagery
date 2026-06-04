@@ -218,7 +218,7 @@ a.copyValue:hover {
 .directory {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 12px;
+  gap: 8px;
 }
 .contractRow {
   position: relative;
@@ -264,7 +264,6 @@ a.copyValue:hover {
 }
 .contractDesc {
   margin: 9px 0 14px;
-  max-width: 64ch;
   font-size: var(--body-size);
   line-height: var(--body-line);
   color: var(--text);

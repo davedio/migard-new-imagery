@@ -10,6 +10,7 @@ import {
 } from "@/components/site/ui";
 import { StackChips } from "@/components/site/StackChips";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 
 export const metadata: Metadata = {
   title: "About Midgard",
@@ -62,7 +63,7 @@ export default function AboutPage() {
         />
         <Actions
           items={[
-            { label: "View GitHub", href: OFFICIAL_LINKS.github, variant: "ghost" },
+            { label: "View GitHub", href: OFFICIAL_LINKS.github, variant: "ghost", icon: <GitHubIcon size={15} /> },
           ]}
         />
       </Section>
