@@ -267,8 +267,8 @@ const AUDIENCE_PATHS: {
   },
   {
     n: "03",
-    title: "Become a Midgard Operator or Watcher",
-    line: "For operators, batchers, and watchers: sequence activity into blocks, then replay and challenge anything invalid before it settles to Cardano L1.",
+    title: "Operators & Watchers",
+    line: "For operators, batchers, and watchers.",
     cta: "See the protocol roles",
     href: "/get-started#roles",
   },
