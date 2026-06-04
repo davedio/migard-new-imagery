@@ -1,25 +1,23 @@
 "use client";
 
-/* eslint-disable react-hooks/immutability -- Three.js uniforms, matrices, and instance buffers are mutable renderer state. */
-
 /* ============================================================
    AmbientDepth — the single persistent ambient background canvas.
 
    Supersedes the raw-WebGL FluidScene: it ports the same green/gold fbm
-   "mist" into an R3F fog plane that also parts away from the cursor.
+   "mist" into an R3F fog plane.
 
    Budget guardrails (see docs/visual-enhancements):
-   - ONE <Canvas frameloop="demand"> — never free-runs. A throttled 30fps
-     ticker drives invalidation only while motion is on and the tab is
-     visible; otherwise it renders a single frame and holds still.
+   - ONE <Canvas>: frameloop="always" while motion is on (continuous flow),
+     "demand" (a single held frame) under reduced motion. Shader uniforms are
+     driven through the material ref so the values actually reach the GPU.
    - DPR clamped to [1, 1.75] (background layer).
    - Honors the shared motion preference (useMotionPref); under reduced
-     motion the fog freezes and the cursor effect is disabled.
+     motion the fog freezes to a single still frame.
    - CSS-only fallback on low-power devices / no WebGL.
    ============================================================ */
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { useMotionPref } from "@/lib/motion";
 
@@ -28,8 +26,8 @@ const FOG_VERT = `void main(){ gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 
 const FOG_FRAG = `
 precision highp float;
-uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse; uniform float u_mouseOn;
-const float G = 0.7, S = 1.7, Wl = 0.5; // S = flow speed (prominent mist); dim kept for legibility
+uniform vec2 u_res; uniform float u_time;
+const float G = 0.55, S = 1.0, Wl = 0.5; // S = flow speed (gentle, smoke-like)
 float hash(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p), f=fract(p);
   float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.));
@@ -39,9 +37,6 @@ float fbm(vec2 p){ float v=0.,a=0.5; mat2 m=mat2(1.6,1.2,-1.2,1.6);
 void main(){
   vec2 uv=gl_FragCoord.xy/u_res.xy;
   vec2 p=(gl_FragCoord.xy-0.5*u_res.xy)/u_res.y; p*=2.2;
-  // cursor parts the mist: push the sample coords outward from the pointer
-  vec2 toC=p-u_mouse; float infl=u_mouseOn*smoothstep(1.2,0.0,length(toC));
-  p+=normalize(toC+vec2(1e-4))*infl*1.05;
   float t=u_time*0.10*S;
   vec2 grav=vec2(0.0, t*G*1.5);
   float ang=Wl*0.6*sin(t*0.5+length(p));
@@ -59,66 +54,34 @@ void main(){
   col+=gbri*0.06*smoothstep(0.7,1.0,f);
   float vig=smoothstep(1.25,0.25,length(uv-0.5));
   col*=mix(0.58,1.12,vig);
-  col=mix(col, ink, infl*0.88); // clear a soft pocket right under the cursor
   gl_FragColor=vec4(col,1.0);
 }`;
 
 function FogPlane({ motionOn }: { motionOn: boolean }) {
-  const invalidate = useThree((s) => s.invalidate);
+  const matRef = useRef<THREE.ShaderMaterial>(null);
   const uniforms = useMemo(
     () => ({
       u_res: { value: new THREE.Vector2(1, 1) },
       u_time: { value: 0 },
-      u_mouse: { value: new THREE.Vector2(0, -999) },
-      u_mouseOn: { value: 0 },
     }),
     [],
   );
-  const targetOn = useRef(0);
 
-  // Track the cursor window-wide (the canvas is pointer-events:none) so the
-  // mist can part away from it. Coords map to the shader's `p` space.
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      const w = window.innerWidth || 1;
-      const h = window.innerHeight || 1;
-      uniforms.u_mouse.value.set(
-        ((e.clientX - 0.5 * w) / h) * 2.2,
-        ((0.5 * h - e.clientY) / h) * 2.2,
-      );
-      targetOn.current = 1;
-      invalidate();
-    };
-    const off = () => {
-      targetOn.current = 0;
-      invalidate();
-    };
-    const onOut = (e: PointerEvent) => {
-      if (!e.relatedTarget) off();
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("pointerout", onOut);
-    window.addEventListener("blur", off);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerout", onOut);
-      window.removeEventListener("blur", off);
-    };
-  }, [invalidate, uniforms]);
-
+  // Drive the MATERIAL's own uniforms via the ref — mutating the detached
+  // useMemo object never reaches the shader.
   useFrame((state, dt) => {
+    const u = matRef.current?.uniforms;
+    if (!u) return;
     const dpr = state.viewport.dpr;
-    uniforms.u_res.value.set(state.size.width * dpr, state.size.height * dpr);
-    if (motionOn) uniforms.u_time.value += dt;
-    // ease the clearing in/out; disabled entirely under reduced motion
-    const target = motionOn ? targetOn.current : 0;
-    uniforms.u_mouseOn.value +=
-      (target - uniforms.u_mouseOn.value) * Math.min(1, dt * 6);
+    u.u_res.value.set(state.size.width * dpr, state.size.height * dpr);
+    if (motionOn) u.u_time.value += dt;
   });
+
   return (
     <mesh renderOrder={-10} frustumCulled={false}>
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
+        ref={matRef}
         uniforms={uniforms}
         vertexShader={FOG_VERT}
         fragmentShader={FOG_FRAG}
@@ -131,43 +94,10 @@ function FogPlane({ motionOn }: { motionOn: boolean }) {
 
 /* Drifting motes ("snow") removed — the ambient layer is the fog mist only. */
 
-/* ---- demand-render driver: a throttled idle tick ---- */
-function Driver({ motionOn }: { motionOn: boolean }) {
-  const invalidate = useThree((s) => s.invalidate);
-
-  // throttled ~30fps tick while motion is on and the tab is visible
-  useEffect(() => {
-    invalidate(); // always paint at least one frame
-    if (!motionOn) return;
-    const interval = 1000 / 30;
-    let raf = 0;
-    let last = 0;
-    let visible = !document.hidden;
-    const loop = (t: number) => {
-      if (!visible) return;
-      if (t - last >= interval) {
-        last = t;
-        invalidate();
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    const onVis = () => {
-      visible = !document.hidden;
-      if (visible) {
-        last = 0;
-        raf = requestAnimationFrame(loop);
-      }
-    };
-    raf = requestAnimationFrame(loop);
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      cancelAnimationFrame(raf);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [motionOn, invalidate]);
-
-  return null;
-}
+/* The canvas runs frameloop="always" while motion is on (continuous mist
+   flow) and freezes to "demand" under reduced motion — see the <Canvas>
+   below. The old demand + manual-tick driver stalled once the motes were
+   removed, freezing the fog. */
 
 /* ---- low-power / no-WebGL detection ---- */
 function canUseWebGL(): boolean {
@@ -211,14 +141,13 @@ export default function AmbientDepth() {
   return (
     <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas
-        frameloop="demand"
+        frameloop={motionOn ? "always" : "demand"}
         dpr={[1, 1.75]}
         gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 8], fov: 50 }}
         style={{ position: "absolute", inset: 0 }}
       >
         <FogPlane motionOn={motionOn} />
-        <Driver motionOn={motionOn} />
       </Canvas>
       {/* darkening veil keeps page text legible over the mist */}
       <div style={{ position: "absolute", inset: 0, background: VEIL }} />
