@@ -69,6 +69,7 @@ export function PageHero({
   body,
   actions,
   chips,
+  media,
 }: {
   label?: string;
   title: ReactNode;
@@ -76,9 +77,16 @@ export function PageHero({
   body?: ReactNode;
   actions?: ActionLink[];
   chips?: ReactNode;
+  /** Optional decorative background graphic layered behind the hero text (e.g. an interactive canvas). */
+  media?: ReactNode;
 }) {
   return (
     <header className="page-hero">
+      {media ? (
+        <div className="page-hero__media" aria-hidden="true">
+          {media}
+        </div>
+      ) : null}
       <div className="page-hero__inner">
         {label ? (
           <Reveal>
