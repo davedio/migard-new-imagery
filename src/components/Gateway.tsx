@@ -254,14 +254,14 @@ const AUDIENCE_PATHS: {
   {
     n: "01",
     title: "Users",
-    line: "Start here if Midgard reaches you through a wallet or app: what changes, what stays Cardano, and what to check before action.",
+    line: "Users through wallets or apps.",
     cta: "Start as a user",
     href: "/get-started#users",
   },
   {
     n: "02",
     title: "Builders",
-    line: "For wallets, dApps, DEXs, and lending protocols: inspect the source, then map the flow that needs L2 capacity.",
+    line: "For wallets and dApps, including DEXs, lending protocols, and any other applications.",
     cta: "Open builder path",
     href: "/get-started#builder-quickstart",
   },
