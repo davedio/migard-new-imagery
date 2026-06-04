@@ -14,21 +14,31 @@ export type ActionLink = {
   label: string;
   href: string;
   variant?: "primary" | "ghost";
+  /** Optional leading icon (e.g. a brand glyph) rendered before the label. */
+  icon?: ReactNode;
 };
 
-export function LinkButton({ label, href, variant = "ghost" }: ActionLink) {
+export function LinkButton({ label, href, variant = "ghost", icon }: ActionLink) {
   const cls = `btn btn--${variant}`;
   const external = /^https?:\/\//.test(href);
+  const inner = icon ? (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      {icon}
+      {label}
+    </span>
+  ) : (
+    label
+  );
   if (external) {
     return (
       <a className={cls} href={href} target="_blank" rel="noreferrer">
-        {label}
+        {inner}
       </a>
     );
   }
   return (
     <Link className={cls} href={href}>
-      {label}
+      {inner}
     </Link>
   );
 }
@@ -203,6 +213,7 @@ export function Card({
   title,
   body,
   cta,
+  ctaIcon,
   href,
   delay = 0,
 }: {
@@ -210,6 +221,8 @@ export function Card({
   title: ReactNode;
   body: ReactNode;
   cta?: string;
+  /** Optional leading icon (e.g. a brand glyph) rendered before the cta text. */
+  ctaIcon?: ReactNode;
   href?: string;
   delay?: number;
 }) {
@@ -219,7 +232,18 @@ export function Card({
       {num ? <div className="card__num">{num}</div> : null}
       <h3>{title}</h3>
       <p>{body}</p>
-      {cta ? <div className="card__cta">{cta} →</div> : null}
+      {cta ? (
+        <div className="card__cta">
+          {ctaIcon ? (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 7 }}>
+              {ctaIcon}
+              {cta} →
+            </span>
+          ) : (
+            <>{cta} →</>
+          )}
+        </div>
+      ) : null}
     </>
   );
 
@@ -373,6 +397,8 @@ export type LinkRow = {
   v: string;
   href?: string;
   pending?: boolean;
+  /** Optional leading icon (e.g. a brand glyph) rendered before the key. */
+  icon?: ReactNode;
 };
 
 export function LinksTable({ rows }: { rows: LinkRow[] }) {
@@ -380,7 +406,16 @@ export function LinksTable({ rows }: { rows: LinkRow[] }) {
     <div className="links-table">
       {rows.map((r) => (
         <div className="links-row" key={r.k}>
-          <span className="k">{r.k}</span>
+          <span className="k">
+            {r.icon ? (
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
+                {r.icon}
+                {r.k}
+              </span>
+            ) : (
+              r.k
+            )}
+          </span>
           {r.pending || !r.href ? (
             <span className="v pending">{r.v}</span>
           ) : /^https?:\/\//.test(r.href) ? (

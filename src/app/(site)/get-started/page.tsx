@@ -12,6 +12,7 @@ import {
 } from "@/components/site/ui";
 import { DeveloperSwitch } from "@/components/site/DeveloperSwitch";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 
 export const metadata: Metadata = {
   title: "Get Started With Midgard",
@@ -51,6 +52,7 @@ export default function GetStartedPage() {
             title="Inspect the implementation"
             body="Use the repository to inspect contracts, SDK surfaces, node code, and testnet-facing materials."
             cta="View GitHub"
+            ctaIcon={<GitHubIcon size={13} />}
             href={OFFICIAL_LINKS.github}
             delay={70}
           />
