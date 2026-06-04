@@ -309,7 +309,7 @@ a {
 
   .home-hero__eyebrow {
     /* Shrink via the eyebrow CSS vars (consumed by .eyebrow) + nowrap so
-       "Scalability | Speed | Security" stays on a single iPhone line. */
+       "Speed | Scale | Security" stays on a single iPhone line. */
     --eyebrow-size: clamp(8.5px, 2.5vw, 10px);
     --eyebrow-spacing: 0.2em;
     white-space: nowrap;

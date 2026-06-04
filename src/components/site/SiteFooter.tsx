@@ -76,7 +76,7 @@ export function SiteFooter() {
           </div>
           <p>
             Built by Anastasia Labs. A Cardano-native Layer 2 built for
-            throughput and a trust path you can inspect.
+            speed, scale, and security.
           </p>
 
           <div
