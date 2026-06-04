@@ -11,6 +11,7 @@ import {
 import { DeveloperSwitch } from "@/components/site/DeveloperSwitch";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import { NetworkRoles } from "@/components/site/NetworkRoles";
 
 export const metadata: Metadata = {
   title: "Get Started With Midgard",
@@ -30,6 +31,8 @@ export default function GetStartedPage() {
           { label: "Read the docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
         ]}
       />
+
+      <NetworkRoles />
 
       <Section
         id="builder-quickstart"
@@ -81,57 +84,6 @@ export default function GetStartedPage() {
         glow="green"
       >
         <DeveloperSwitch />
-      </Section>
-
-      <Section
-        id="roles"
-        eyebrow="Roles"
-        title="Participate in Midgard"
-      >
-        <CardGrid>
-          <Card
-            num="01"
-            title="Builders"
-            body="Bring real application flows that need more throughput and help prove where L2 execution makes Cardano more usable."
-            delay={0}
-          />
-          <Card
-            num="02"
-            title="Operators"
-            body="Sequence and commit blocks in rotating shifts. Operators are part of the throughput path and final parameters should be confirmed from the status surface."
-            cta="Register interest"
-            href={OFFICIAL_LINKS.intakeForm}
-            delay={60}
-          />
-          <Card
-            num="03"
-            title="Watchers"
-            body="Replay committed blocks, inspect state transitions, and use the challenge path when something invalid is found."
-            cta="Become a Watcher"
-            href={OFFICIAL_LINKS.intakeForm}
-            delay={120}
-          />
-          <Card
-            num="04"
-            title="Wallets"
-            body="Make Midgard feel native to Cardano users: same signing clarity, same ADA context, and status text that explains what is happening."
-            delay={180}
-          />
-          <Card
-            num="05"
-            title="Apps and infrastructure"
-            body="Keep users and builders moving with dApp flows, endpoints, indexing, monitoring, reliability surfaces, and clear failure states."
-            delay={240}
-          />
-          <Card
-            num="06"
-            title="Partners"
-            body="The strongest partner enters through function: what you make easier, safer, faster, or more inspectable."
-            cta="Join a readiness track"
-            href={OFFICIAL_LINKS.intakeForm}
-            delay={300}
-          />
-        </CardGrid>
       </Section>
 
       <Section id="users" title="Faster Cardano apps. Same wallet. Same ADA.">
