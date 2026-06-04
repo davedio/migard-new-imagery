@@ -31,7 +31,7 @@ const FOG_VERT = `void main(){ gl_Position = vec4(position.xy, 0.0, 1.0); }`;
 const FOG_FRAG = `
 precision highp float;
 uniform vec2 u_res; uniform float u_time; uniform vec2 u_mouse; uniform float u_mouseOn;
-const float G = 0.6, S = 1.1, Wl = 0.45; // S = flow speed (livelier mist); dim kept for legibility
+const float G = 0.7, S = 1.7, Wl = 0.5; // S = flow speed (prominent mist); dim kept for legibility
 float hash(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p), f=fract(p);
   float a=hash(i), b=hash(i+vec2(1.,0.)), c=hash(i+vec2(0.,1.)), d=hash(i+vec2(1.,1.));
@@ -42,8 +42,8 @@ void main(){
   vec2 uv=gl_FragCoord.xy/u_res.xy;
   vec2 p=(gl_FragCoord.xy-0.5*u_res.xy)/u_res.y; p*=2.2;
   // cursor parts the mist: push the sample coords outward from the pointer
-  vec2 toC=p-u_mouse; float infl=u_mouseOn*smoothstep(0.85,0.0,length(toC));
-  p+=normalize(toC+vec2(1e-4))*infl*0.5;
+  vec2 toC=p-u_mouse; float infl=u_mouseOn*smoothstep(1.2,0.0,length(toC));
+  p+=normalize(toC+vec2(1e-4))*infl*1.05;
   float t=u_time*0.10*S;
   vec2 grav=vec2(0.0, t*G*1.5);
   float ang=Wl*0.6*sin(t*0.5+length(p));
@@ -60,8 +60,8 @@ void main(){
   col=mix(col, gold, smoothstep(0.55,0.95,veins)*0.8);
   col+=gbri*0.06*smoothstep(0.7,1.0,f);
   float vig=smoothstep(1.25,0.25,length(uv-0.5));
-  col*=mix(0.45,1.05,vig);
-  col=mix(col, ink, infl*0.6); // clear a soft pocket right under the cursor
+  col*=mix(0.58,1.12,vig);
+  col=mix(col, ink, infl*0.88); // clear a soft pocket right under the cursor
   gl_FragColor=vec4(col,1.0);
 }`;
 
@@ -283,7 +283,7 @@ function canUseWebGL(): boolean {
 }
 
 const VEIL =
-  "linear-gradient(180deg, rgba(6,13,9,0.5), rgba(5,12,8,0.62))";
+  "linear-gradient(180deg, rgba(6,13,9,0.4), rgba(5,12,8,0.52))";
 
 export default function AmbientDepth() {
   const { motionOn } = useMotionPref();
