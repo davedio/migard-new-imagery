@@ -8,7 +8,6 @@ const EXPLORE = [
   { label: "Security", href: "/security" },
   { label: "Get Started", href: "/get-started" },
   { label: "Docs", href: "/docs" },
-  { label: "About", href: "/about" },
 ] as const;
 
 const RESOURCES = [
