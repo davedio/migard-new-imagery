@@ -60,9 +60,9 @@ export default function GetStartedPage() {
           <Card
             num="03"
             title="Check the status"
-            body="Use the testnet status page for what is live now, what is simulated in the preview, and what still needs final confirmation."
+            body="Use the contracts &amp; testnet status page for what is live now, what is simulated in the preview, and what still needs final confirmation."
             cta="View status"
-            href="/testnet"
+            href="/contracts"
             delay={140}
           />
           <Card

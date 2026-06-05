@@ -82,7 +82,7 @@ export default function AboutPage() {
             title="Public status path"
             body="The status page is the right place for contracts, deployment history, supported flows, and current caveats."
             cta="View status"
-            href="/testnet"
+            href="/contracts"
           />
         </CardGrid>
       </Section>

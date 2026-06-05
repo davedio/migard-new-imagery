@@ -55,8 +55,8 @@ export default function DocsPage() {
             num="03"
             title="Status"
             body="What is deployed, what is pending, and what still needs a refresh."
-            cta="View testnet"
-            href="/testnet"
+            cta="View status"
+            href="/contracts"
             delay={140}
           />
           <Card

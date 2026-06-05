@@ -46,7 +46,7 @@ export default function OfficialLinksPage() {
             { k: "Newsletter", v: "Publishing soon", pending: true },
             { k: "Support", v: "Publishing soon", pending: true },
             { k: "Security contact", v: "Publishing soon", pending: true },
-            { k: "Status", v: "Testnet status", href: "/testnet" },
+            { k: "Status", v: "Testnet status", href: "/contracts" },
           ]}
         />
       </Section>

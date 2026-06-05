@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import { PageHero, Section, CtaBand } from "@/components/site/ui";
+import { PageHero, Section, Prose, CtaBand } from "@/components/site/ui";
 import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
+import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
+import { StateQueueViz } from "@/components/site/StateQueueViz";
 import { CopyField } from "@/components/site/CopyField";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
@@ -17,9 +19,9 @@ import {
 import styles from "@/components/site/contracts.module.css";
 
 export const metadata: Metadata = {
-  title: "Midgard Contracts",
+  title: "Midgard Contracts & Testnet Status",
   description:
-    "Every Midgard validator, state anchor, reference script, and bootstrap transaction on Cardano preprod — verifiable addresses and the full genesis deployment history.",
+    "Midgard testnet status plus every validator, state anchor, reference script, and bootstrap transaction on Cardano preprod — live network status, verifiable addresses, and the full genesis deployment history.",
 };
 
 export default function ContractsPage() {
@@ -42,10 +44,36 @@ export default function ContractsPage() {
           </>
         }
         actions={[
-          { label: "View topology", href: "#topology", variant: "primary" },
-          { label: "Genesis timeline", href: "#history", variant: "ghost" },
+          { label: "Network status", href: "#status", variant: "primary" },
+          { label: "View topology", href: "#topology", variant: "ghost" },
         ]}
       />
+
+      {/* Live network status (moved from the testnet page) */}
+      <Section id="status" eyebrow="Network status" title="What's live right now.">
+        <Prose
+          items={[
+            {
+              text: "Live: the preprod contracts and their addresses (below), the source on GitHub, and the genesis deployment history.",
+            },
+            {
+              text: "Simulated: the moving network activity below — it will connect to live data at launch.",
+              variant: "dim",
+            },
+          ]}
+        />
+        <NetworkStatusWidget />
+      </Section>
+
+      {/* On-chain state queue animation (moved from the testnet page) */}
+      <Section
+        eyebrow="On-chain state queue"
+        title="Blocks commit. Root confirms."
+        lead="Operators append committed blocks to a singly-linked queue. When a block's fraud-proof window closes, it folds into the confirmed state — oldest first, one L1 transaction at a time."
+        glow="green"
+      >
+        <StateQueueViz />
+      </Section>
 
       {/* 01 — Topology */}
       <Section
@@ -277,7 +305,7 @@ export default function ContractsPage() {
         lead="Every address on this page resolves on a public preprod explorer. The implementation, SDK surfaces, and node behavior live in the repository."
         actions={[
           { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "primary", icon: <GitHubIcon size={15} /> },
-          { label: "Testnet status", href: "/testnet", variant: "ghost" },
+          { label: "Get Started", href: "/get-started", variant: "ghost" },
         ]}
       />
     </main>
