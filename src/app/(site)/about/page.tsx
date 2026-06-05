@@ -23,7 +23,7 @@ export default function AboutPage() {
     <main className="page-main">
       <PageHero
         label="About"
-        title="Scale Cardano without making it less Cardano."
+        title="Scale Cardano without leaving its guarantees behind."
         sub="Midgard is a Cardano-native optimistic rollup from Anastasia Labs, built so Cardano can scale while keeping the model, tooling, and rigor that made it Cardano."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
