@@ -506,16 +506,38 @@ function sampleLane(lane: Lane, t: number): { pt: Pt; tan: Pt } {
   };
 }
 
+// Higher-res, multi-stop radial sprite: a bright luminous core that falls off
+// through the body into a soft, wide halo — so an orb reads as a real glowing
+// droplet rather than a flat fuzzy blob. Used for orb halos + the pocket glows.
 function makeGlow(rgbStr: string): HTMLCanvasElement {
+  const S = 128;
   const c = document.createElement("canvas");
-  c.width = c.height = 64;
+  c.width = c.height = S;
   const g = c.getContext("2d")!;
-  const grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grd.addColorStop(0, `rgba(${rgbStr},0.92)`);
-  grd.addColorStop(0.4, `rgba(${rgbStr},0.26)`);
+  const grd = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  grd.addColorStop(0, `rgba(${rgbStr},0.95)`);
+  grd.addColorStop(0.12, `rgba(${rgbStr},0.7)`);
+  grd.addColorStop(0.3, `rgba(${rgbStr},0.32)`);
+  grd.addColorStop(0.6, `rgba(${rgbStr},0.09)`);
   grd.addColorStop(1, `rgba(${rgbStr},0)`);
   g.fillStyle = grd;
-  g.fillRect(0, 0, 64, 64);
+  g.fillRect(0, 0, S, S);
+  return c;
+}
+
+// A soft white-green "heart" stamped at each orb's centre for a luminous,
+// dimensional core — replaces the old flat hard-edged disc.
+function makeCore(): HTMLCanvasElement {
+  const S = 64;
+  const c = document.createElement("canvas");
+  c.width = c.height = S;
+  const g = c.getContext("2d")!;
+  const grd = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  grd.addColorStop(0, "rgba(238,255,245,0.96)");
+  grd.addColorStop(0.35, "rgba(178,255,208,0.5)");
+  grd.addColorStop(1, "rgba(120,255,170,0)");
+  g.fillStyle = grd;
+  g.fillRect(0, 0, S, S);
   return c;
 }
 
@@ -709,6 +731,7 @@ export default function StaticTreeHero({
     const glowCore = makeGlow(CORE_RGB);
     const glowAlt = makeGlow(ALT_RGB);
     const glowGold = makeGlow(FLASH_RGB); // brown-gold root lock-in flash (#8)
+    const glowHeart = makeCore(); // luminous white-green orb centre
     const pointer = {
       x: 0,
       y: 0,
@@ -1335,15 +1358,15 @@ export default function StaticTreeHero({
         ctx.translate(x, y);
         ctx.rotate(r0 * Math.PI);
         ctx.scale(sq, 1 / sq);
-        ctx.globalAlpha = Math.min(1, (rootPhase ? 0.46 : 0.55) * life);
+        ctx.globalAlpha = Math.min(1, (rootPhase ? 0.4 : 0.47) * life);
         ctx.drawImage(p.alt ? glowAlt : glowCore, -r, -r, r * 2, r * 2);
-        ctx.globalAlpha = 1;
-        // soft head — green-white core
-        ctx.fillStyle = `rgba(206,255,224,${0.7 * life})`;
-        ctx.beginPath();
-        ctx.arc(0, 0, 0.8 + es * 0.8, 0, Math.PI * 2);
-        ctx.fill();
         ctx.restore();
+        // luminous white-green heart — a soft round core stamp: bright + bulb-like
+        // on the larger proof orbs, subtle on the tiny canopy micro-orbs.
+        const cr = Math.min(7.5, 1.0 + es * 1.4) * glowBoost;
+        ctx.globalAlpha = Math.min(0.8, (0.42 + es * 0.4) * life);
+        ctx.drawImage(glowHeart, x - cr, y - cr, cr * 2, cr * 2);
+        ctx.globalAlpha = 1;
       }
 
       raf = requestAnimationFrame(frame);
