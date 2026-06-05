@@ -14,6 +14,7 @@ import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
+import { AboutFold } from "./site/AboutFold";
 
 const SECTION_PAD = "clamp(48px,6.5vh,88px) var(--gut)";
 
@@ -397,6 +398,7 @@ export default function Gateway() {
       <main className="content">
         <Hero />
         <ExploreGrid />
+        <AboutFold />
         <ClosingCTA />
       </main>
 

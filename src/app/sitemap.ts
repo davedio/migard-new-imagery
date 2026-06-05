@@ -11,7 +11,6 @@ const ROUTES = [
   "/docs",
   "/contracts",
   "/faq",
-  "/about",
   "/official-links",
 ];
 
