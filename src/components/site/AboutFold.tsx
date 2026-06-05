@@ -12,19 +12,15 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export function AboutFold() {
   return (
     <>
-      <Section eyebrow="The thesis" title="Throughput, with correctness intact.">
+      <Section eyebrow="The thesis" title="Scale that stays on Cardano.">
         <Prose
           items={[
             {
-              text: "The usual way to scale a chain is to leave it: move to a faster network, accept a weaker or less familiar security model, learn a foreign stack, and fragment liquidity on the way out.",
+              text: "The usual way to scale a blockchain is to leave it — move to a faster network, accept a weaker security model, learn a new stack, and split your liquidity on the way out.",
             },
             {
-              text: "Midgard takes the harder route. Applications run at Layer 2 speed in a Cardano-native environment, and the trust path settles back to Cardano L1.",
+              text: "Midgard keeps you on Cardano. Your apps run at Layer 2 speed, and every result settles back to Cardano L1.",
               variant: "emph",
-            },
-            {
-              text: "Scale is the goal. Correctness is the constraint that does not move.",
-              variant: "dim",
             },
           ]}
         />
@@ -34,10 +30,10 @@ export function AboutFold() {
         <Prose
           items={[
             {
-              text: "Midgard comes from Anastasia Labs, a team building Cardano infrastructure and open-source tooling for serious on-chain systems.",
+              text: "Midgard is built by Anastasia Labs, a team that builds Cardano infrastructure and open-source developer tooling.",
             },
             {
-              text: "The protocol is open, the implementation can be inspected, and the status page makes clear what's live, planned, and simulated.",
+              text: "The protocol is open and the code can be inspected. The status page shows what's live, what's planned, and what's still simulated.",
               variant: "dim",
             },
           ]}
