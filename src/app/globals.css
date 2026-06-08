@@ -2433,3 +2433,312 @@ button.panel:hover {
     top: 4px;
   }
 }
+
+/* ============================================================
+   FLAGSHIP — RESN-class interaction layer (home only).
+
+   Additive: custom cursor overlay, magnetic + tilt card motion,
+   masked scroll reveals, and the transaction-lifecycle HUD. Every
+   advanced behaviour here is desktop + motion-on only and the JS that
+   drives it bails under coarse pointers / reduced motion, so these
+   rules simply lie dormant otherwise.
+   ============================================================ */
+
+/* ---- custom cursor overlay ---------------------------------- */
+/* hide the native cursor only while our overlay is mounted+active */
+body.cursor-none,
+body.cursor-none * {
+  cursor: none !important;
+}
+.cursor-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+}
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 10px rgba(59, 232, 99, 0.7);
+  will-change: transform;
+  transition: opacity 0.25s var(--ease), background 0.25s var(--ease);
+}
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  margin: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(215, 226, 216, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  transition: border-color 0.25s var(--ease), opacity 0.25s var(--ease),
+    background 0.25s var(--ease);
+}
+.cursor-ring[data-hover="true"] {
+  border-color: var(--green-bright);
+  background: rgba(32, 190, 67, 0.07);
+}
+.cursor-ring[data-down="true"] {
+  border-color: var(--gold-bright);
+}
+.cursor-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  font: 9.5px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  opacity: 0;
+  /* the ring scales to ~1.9 on hover (when a label shows); counter that so the
+     label stays a readable, fixed size and sits just below the ring */
+  transform: translate(-50%, 6px) scale(0.53);
+  transform-origin: top center;
+  transition: opacity 0.2s var(--ease);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.cursor-ring[data-labelled="true"] .cursor-label {
+  opacity: 0.95;
+}
+
+/* ---- magnetic targets (translate via cursor-driven vars) ----- */
+/* applied to home interactive elements; overrides any hover translate
+   while active so the magnet owns the motion. */
+.home [data-magnetic],
+.motion-toggle[data-magnetic] {
+  transition: transform 0.28s var(--ease), border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease), color 0.25s var(--ease);
+}
+.home [data-magnetic].is-magnetic-active,
+.motion-toggle[data-magnetic].is-magnetic-active {
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0);
+  transition: transform 0.08s linear, border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease), color 0.25s var(--ease);
+}
+
+/* ---- card 3D tilt + sheen (data-tilt) ----------------------- */
+.home .home-explore__grid {
+  perspective: 1100px;
+}
+.home .grow-card[data-tilt] {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform-style: preserve-3d;
+}
+/* tilt composes with the magnetic translate when active */
+.home .grow-card[data-tilt].is-magnetic-active {
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0)
+    rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+}
+.home .grow-card[data-tilt]:not(.is-magnetic-active) {
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+}
+/* a soft specular sheen that tracks the pointer across the card */
+.home .grow-card__sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    220px circle at var(--sheen-x, 50%) var(--sheen-y, 0%),
+    rgba(59, 232, 99, 0.16),
+    transparent 60%
+  );
+  transition: opacity 0.34s var(--ease);
+}
+.home .grow-card:hover .grow-card__sheen,
+.home .grow-card:focus-visible .grow-card__sheen {
+  opacity: 1;
+}
+/* lift the card's content above the sheen */
+.home .grow-card > *:not(.grow-card__sheen) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- masked reveal-on-scroll variants ----------------------- */
+.home .reveal--mask {
+  clip-path: inset(0 0 14% 0);
+  opacity: 0;
+  transform: translateY(26px);
+  transition: clip-path 0.85s var(--ease), opacity 0.7s var(--ease),
+    transform 0.85s var(--ease);
+}
+.home .reveal--mask.in {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- transaction-lifecycle HUD ------------------------------ */
+.tx-hud {
+  position: fixed;
+  z-index: 46;
+  right: clamp(16px, 3vw, 40px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+.tx-hud__rail {
+  position: relative;
+  width: 2px;
+  border-radius: 2px;
+  background: rgba(215, 226, 216, 0.1);
+  overflow: hidden;
+}
+.tx-hud__rail-fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100%;
+  transform-origin: top;
+  transform: scaleY(0.02);
+  background: linear-gradient(
+    to bottom,
+    var(--green-bright) 0%,
+    var(--gold-bright) 58%,
+    #6fe0ff 100%
+  );
+  box-shadow: 0 0 10px rgba(59, 232, 99, 0.4);
+}
+.tx-hud__panel {
+  position: relative;
+  width: 188px;
+  padding: 16px 16px 14px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.03), transparent 50%),
+    rgba(5, 11, 8, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px -34px rgba(0, 0, 0, 0.8);
+  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.tx-hud__panel[data-layer="l1"] {
+  border-color: rgba(47, 156, 255, 0.45);
+  box-shadow: 0 0 26px -8px rgba(47, 156, 255, 0.4),
+    0 20px 60px -34px rgba(0, 0, 0, 0.8);
+}
+.tx-hud__panel[data-layer="bridge"] {
+  border-color: rgba(207, 154, 46, 0.4);
+}
+.tx-hud__panel[data-layer="l2"] {
+  border-color: rgba(32, 190, 67, 0.4);
+}
+.tx-hud__step {
+  font: 10px/1 var(--font-mono);
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+}
+.tx-hud__label {
+  margin-top: 9px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-hi);
+}
+.tx-hud__panel[data-layer="l1"] .tx-hud__label {
+  color: #9fd2ff;
+}
+.tx-hud__sub {
+  margin-top: 4px;
+  font: 10.5px/1.3 var(--font-mono);
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+.tx-hud__ticks {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--panel-edge);
+}
+.tx-hud__ticks li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font: 9.5px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  transition: color 0.4s var(--ease);
+}
+.tx-hud__tick-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--text-faint);
+  flex: none;
+  transition: all 0.4s var(--ease);
+}
+.tx-hud__ticks li[data-state="done"] {
+  color: var(--text-dim);
+}
+.tx-hud__ticks li[data-state="done"] .tx-hud__tick-dot {
+  background: var(--green-dim);
+  border-color: var(--green-dim);
+}
+.tx-hud__ticks li[data-state="active"] {
+  color: var(--text-hi);
+}
+.tx-hud__ticks li[data-state="active"] .tx-hud__tick-dot {
+  background: var(--green-bright);
+  border-color: var(--green-bright);
+  box-shadow: 0 0 10px rgba(59, 232, 99, 0.6);
+}
+.tx-hud__ticks li[data-state="active"][data-layer="l1"] .tx-hud__tick-dot {
+  background: #6fe0ff;
+  border-color: #6fe0ff;
+  box-shadow: 0 0 10px rgba(47, 156, 255, 0.7);
+}
+.tx-hud__ticks li[data-state="active"][data-layer="bridge"] .tx-hud__tick-dot {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 10px rgba(224, 163, 60, 0.6);
+}
+
+/* hide the HUD where it would crowd the layout / on touch */
+@media (max-width: 1100px) {
+  .tx-hud {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .tx-hud,
+  .cursor-layer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tx-hud,
+  .cursor-layer {
+    display: none !important;
+  }
+  .home .reveal--mask {
+    clip-path: none;
+    opacity: 1;
+    transform: none;
+  }
+  body.cursor-none,
+  body.cursor-none * {
+    cursor: auto !important;
+  }
+}

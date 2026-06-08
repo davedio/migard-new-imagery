@@ -2,7 +2,8 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useScroll, useMotionValueEvent } from "motion/react";
+import { createPortal } from "react-dom";
+import { useSpring } from "motion/react";
 import {
   useEffect,
   useRef,
@@ -12,21 +13,32 @@ import {
 } from "react";
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { useMotionPref } from "@/lib/motion";
+import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import type { NetworkSnapshot } from "@/lib/network";
-import type { GrowthParams } from "./scene/GrowthTreeScene";
+import type { JourneyParams } from "./scene/JourneyScene";
 import { AboutFold } from "./site/AboutFold";
 
-// Hero forks. Flip HERO_MODE to switch:
-//   "growth" — procedural R3F world-tree that GROWS with scroll (GrowthTreeScene)
-//   "static" — green PNG background + 2D canvas sap particles (StaticTreeHero)
-// Any non-"growth" value falls back to StaticTreeHero.
-const HERO_MODE: "growth" | "static" = "growth";
+/* ============================================================
+   Gateway — the FLAGSHIP home composition.
 
-const GrowthTreeScene = dynamic(() => import("./scene/GrowthTreeScene"), {
+   Scroll = riding a transaction through Midgard's lifecycle, TOP->DOWN
+   (canopy -> roots). A fixed 3D stage holds the world-tree + the
+   transaction journey (JourneyScene); the scrolling .content sits over
+   it. We add three RESN-class interaction systems, all desktop +
+   motion-on only and fully bypassed under reduced motion:
+
+     1. inertial smooth scroll (useSmoothScroll) — native scrollbar
+        kept, content layer rAF-lerped for weight.
+     2. a custom cursor (CustomCursor) with magnetic targets + labels.
+     3. a spring-smoothed scroll progress feeding BOTH the 3D scene
+        (buttery beats) and the HUD chapter labels.
+   ============================================================ */
+
+const JourneyScene = dynamic(() => import("./scene/JourneyScene"), {
   ssr: false,
 });
-
-const StaticTreeHero = dynamic(() => import("./scene/StaticTreeHero"), {
+const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
+const ChapterLabels = dynamic(() => import("./scene/ChapterLabels"), {
   ssr: false,
 });
 
@@ -136,7 +148,7 @@ function useHeroAutoFit() {
   return ref;
 }
 
-function deriveParams(s: NetworkSnapshot): GrowthParams {
+function deriveParams(s: NetworkSnapshot): JourneyParams {
   const activity = clamp(s.l1.txCountWindow / 110);
   const speed = 0.06 + clamp((s.l2.throughput - 6) / 18) * 0.1;
   return {
@@ -152,11 +164,13 @@ function Reveal({
   style,
   delay = 0,
   className,
+  variant = "up",
 }: {
   children: ReactNode;
   style?: CSSProperties;
   delay?: number;
   className?: string;
+  variant?: "up" | "mask";
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
@@ -173,7 +187,9 @@ function Reveal({
   return (
     <div
       ref={ref}
-      className={`reveal ${seen ? "in" : ""}${className ? ` ${className}` : ""}`}
+      className={`reveal reveal--${variant} ${seen ? "in" : ""}${
+        className ? ` ${className}` : ""
+      }`}
       style={{ transitionDelay: `${delay}ms`, ...style }}
     >
       {children}
@@ -192,6 +208,8 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       aria-pressed={on}
       aria-label={`Motion ${on ? "on" : "off"}`}
       title={`Motion ${on ? "on" : "off"}`}
+      data-cursor={on ? "motion off" : "motion on"}
+      data-magnetic
     >
       <span className="motion-toggle__glyph" data-on={on} aria-hidden />
     </button>
@@ -216,7 +234,12 @@ function Hero() {
         faster execution layer while keeping Cardano as the root of trust.
       </p>
       <div className="home-hero__actions">
-        <Link className="btn btn--primary" href="/get-started">
+        <Link
+          className="btn btn--primary"
+          href="/get-started"
+          data-cursor="enter"
+          data-magnetic
+        >
           Get Started
         </Link>
         <a
@@ -224,13 +247,15 @@ function Hero() {
           href="https://anastasia-labs.github.io/midgard/midgard.pdf"
           target="_blank"
           rel="noopener noreferrer"
+          data-cursor="open"
+          data-magnetic
         >
           Whitepaper
         </a>
       </div>
       <div className="home-hero__cue" aria-hidden>
         <span className="home-hero__rail" />
-        Scroll to take root
+        Scroll to follow a transaction
       </div>
     </header>
   );
@@ -278,14 +303,21 @@ function ExploreGrid() {
       </Reveal>
       <div className="home-explore__grid">
         {AUDIENCE_PATHS.map((a, i) => (
-          <Reveal key={a.title} delay={i * 70} style={{ display: "flex" }}>
-            <Link href={a.href} className="grow-card">
+          <Reveal key={a.title} delay={i * 90} variant="mask" style={{ display: "flex" }}>
+            <Link
+              href={a.href}
+              className="grow-card"
+              data-cursor={a.title.toLowerCase()}
+              data-magnetic
+              data-tilt
+            >
               <div className="grow-card__num">{a.n}</div>
               <h3 className="grow-card__title">{a.title}</h3>
               <p className="grow-card__line">{a.line}</p>
               <span className="grow-card__cta">
                 {a.cta} <span className="arr" aria-hidden>→</span>
               </span>
+              <span className="grow-card__sheen" aria-hidden />
             </Link>
           </Reveal>
         ))}
@@ -305,10 +337,20 @@ function ClosingCTA() {
           fees.
         </p>
         <div className="home-closing__actions">
-          <Link className="btn btn--primary" href="/get-started">
+          <Link
+            className="btn btn--primary"
+            href="/get-started"
+            data-cursor="enter"
+            data-magnetic
+          >
             Start with a use case
           </Link>
-          <Link className="btn btn--ghost" href="/contracts">
+          <Link
+            className="btn btn--ghost"
+            href="/contracts"
+            data-cursor="view"
+            data-magnetic
+          >
             Testnet status
           </Link>
         </div>
@@ -317,36 +359,135 @@ function ClosingCTA() {
   );
 }
 
+/* ----------------------------------------------------------------
+   Lightweight 3D-tilt for cards (data-tilt). Pointer-position drives
+   a small rotateX/rotateY via CSS vars; resets on leave. Desktop +
+   motion-on only (gated by the parent). Composes with the magnetic
+   translate (different vars) and the card's own hover styles.
+   ---------------------------------------------------------------- */
+function useCardTilt(active: boolean) {
+  useEffect(() => {
+    if (!active || typeof window === "undefined") return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    const cards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-tilt]"),
+    );
+    const handlers: Array<() => void> = [];
+    cards.forEach((card) => {
+      const onMove = (e: PointerEvent) => {
+        const r = card.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.setProperty("--tilt-x", `${(-py * 7).toFixed(2)}deg`);
+        card.style.setProperty("--tilt-y", `${(px * 9).toFixed(2)}deg`);
+        card.style.setProperty("--sheen-x", `${((px + 0.5) * 100).toFixed(1)}%`);
+        card.style.setProperty("--sheen-y", `${((py + 0.5) * 100).toFixed(1)}%`);
+      };
+      const onLeave = () => {
+        card.style.setProperty("--tilt-x", "0deg");
+        card.style.setProperty("--tilt-y", "0deg");
+      };
+      card.addEventListener("pointermove", onMove);
+      card.addEventListener("pointerleave", onLeave);
+      handlers.push(() => {
+        card.removeEventListener("pointermove", onMove);
+        card.removeEventListener("pointerleave", onLeave);
+      });
+    });
+    return () => handlers.forEach((h) => h());
+  }, [active]);
+}
+
+/* Render fixed overlay layers into <body>, OUTSIDE the smooth-scroll
+   transform wrapper. A `position: fixed` element inside a transformed
+   ancestor is positioned relative to that ancestor and would be dragged
+   by the scroll translate; portaling to body keeps the 3D stage, HUD,
+   cursor and toggle truly viewport-fixed. SSR-safe (renders nothing
+   until mounted). */
+function BodyPortal({ children }: { children: ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
 export default function Gateway() {
   const { data: snap } = useNetworkSnapshot();
-  const progress = useRef(0);
-  const { scrollYProgress } = useScroll();
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
-    progress.current = v;
-  });
-
   const { motionOn, toggle } = useMotionPref();
+
+  // desktop + motion-on gate for the heavy interaction systems
+  const [finePointer, setFinePointer] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(pointer: fine)");
+    const apply = () => setFinePointer(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+  const advanced = motionOn && finePointer;
+
+  // --- smoothed scroll progress that BOTH the scene and HUD read ---
+  // The smooth-scroll hook writes a rAF-lerped 0..1 into smoothProgressRef.
+  // We mirror it into a spring MotionValue for the HUD (buttery, no jumps).
+  // The hook targets the (site) layout's [data-scroll-content] wrapper.
+  const smoothProgressRef = useRef(0);
+  useSmoothScroll(smoothProgressRef, motionOn);
+
+  // A spring MotionValue the HUD subscribes to; fed each frame from the ref.
+  const springProgress = useSpring(0, { stiffness: 90, damping: 26, mass: 0.6 });
+  useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      springProgress.set(smoothProgressRef.current);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [springProgress]);
+
+  // shared pointer ref the scene reads so canopy sparks follow the cursor.
+  const pointerRef = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    if (!advanced || typeof window === "undefined") return;
+    const onMove = (e: PointerEvent) => {
+      pointerRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      pointerRef.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [advanced]);
+
+  useCardTilt(advanced);
 
   const params = deriveParams(snap);
 
   return (
     <>
-      <div className="scene-stage">
-        {HERO_MODE === "growth" ? (
-          <GrowthTreeScene params={params} progressRef={progress} motionOn={motionOn} />
-        ) : (
-          <StaticTreeHero snap={snap} motionOn={motionOn} />
-        )}
-      </div>
+      {/* Fixed/viewport layers live in <body>, escaping the smooth-scroll
+          transform wrapper so they stay truly fixed (see BodyPortal). */}
+      <BodyPortal>
+        <div className="scene-stage">
+          <JourneyScene
+            params={params}
+            progressRef={smoothProgressRef}
+            pointerRef={pointerRef}
+            motionOn={motionOn}
+          />
+        </div>
+        <ChapterLabels progress={springProgress} enabled={motionOn} />
+        <CustomCursor enabled={advanced} />
+        <MotionToggle on={motionOn} onToggle={toggle} />
+      </BodyPortal>
 
+      {/* The scrolling content. The (site) layout wraps this + the footer in
+          [data-scroll-content], which the inertial-scroll hook translates. */}
       <main className="content home">
         <Hero />
         <ExploreGrid />
         <AboutFold />
         <ClosingCTA />
       </main>
-
-      <MotionToggle on={motionOn} onToggle={toggle} />
     </>
   );
 }

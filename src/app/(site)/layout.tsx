@@ -17,8 +17,14 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     <>
       <InteriorFluidBackground />
       <SiteNav />
-      {children}
-      <SiteFooter />
+      {/* `data-scroll-content` is the smooth-scroll transform root. The fixed
+          nav stays outside it; everything that scrolls (page content + footer)
+          lives inside so the inertial-scroll hook can translate them as one.
+          Inert on every route except home, where Gateway activates the hook. */}
+      <div data-scroll-content>
+        {children}
+        <SiteFooter />
+      </div>
     </>
   );
 }
