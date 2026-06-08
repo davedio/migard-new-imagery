@@ -13,17 +13,16 @@ import {
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
-import type { SceneParams } from "./scene/WorldTreeScene";
+import type { GrowthParams } from "./scene/GrowthTreeScene";
 import { AboutFold } from "./site/AboutFold";
 
-const SECTION_PAD = "clamp(48px,6.5vh,88px) var(--gut)";
-
-// Two hero forks coexist. Flip this to switch:
+// Hero forks. Flip HERO_MODE to switch:
+//   "growth" — procedural R3F world-tree that GROWS with scroll (GrowthTreeScene)
 //   "static" — green PNG background + 2D canvas sap particles (StaticTreeHero)
-//   "three"  — procedural Three.js / R3F world-tree (WorldTreeScene)
-const HERO_MODE: "static" | "three" = "static";
+// Any non-"growth" value falls back to StaticTreeHero.
+const HERO_MODE: "growth" | "static" = "growth";
 
-const WorldTreeScene = dynamic(() => import("./scene/WorldTreeScene"), {
+const GrowthTreeScene = dynamic(() => import("./scene/GrowthTreeScene"), {
   ssr: false,
 });
 
@@ -137,13 +136,12 @@ function useHeroAutoFit() {
   return ref;
 }
 
-function deriveParams(s: NetworkSnapshot): SceneParams {
+function deriveParams(s: NetworkSnapshot): GrowthParams {
   const activity = clamp(s.l1.txCountWindow / 110);
-  const speed = 0.05 + clamp((s.l2.throughput - 6) / 18) * 0.09;
+  const speed = 0.06 + clamp((s.l2.throughput - 6) / 18) * 0.1;
   return {
     speed,
     proofStatus: s.l2.latestProofStatus,
-    challengeOpen: s.l2.challengeWindowOpen,
     settled: s.l2.latestProofStatus === "settled",
     activity,
   };
@@ -153,10 +151,12 @@ function Reveal({
   children,
   style,
   delay = 0,
+  className,
 }: {
   children: ReactNode;
   style?: CSSProperties;
   delay?: number;
+  className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [seen, setSeen] = useState(false);
@@ -173,7 +173,7 @@ function Reveal({
   return (
     <div
       ref={ref}
-      className={`reveal ${seen ? "in" : ""}`}
+      className={`reveal ${seen ? "in" : ""}${className ? ` ${className}` : ""}`}
       style={{ transitionDelay: `${delay}ms`, ...style }}
     >
       {children}
@@ -228,22 +228,13 @@ function Hero() {
           Whitepaper
         </a>
       </div>
+      <div className="home-hero__cue" aria-hidden>
+        <span className="home-hero__rail" />
+        Scroll to take root
+      </div>
     </header>
   );
 }
-
-const h2Style: CSSProperties = {
-  fontSize: "clamp(26px,3.2vw,46px)",
-  lineHeight: 1.1,
-  marginTop: 14,
-  maxWidth: 660,
-};
-const leadStyle: CSSProperties = {
-  marginTop: 18,
-  maxWidth: 620,
-  fontSize: "clamp(15px,1.55vw,19px)",
-  color: "var(--text)",
-};
 
 const AUDIENCE_PATHS: {
   n: string;
@@ -277,68 +268,23 @@ const AUDIENCE_PATHS: {
 
 function ExploreGrid() {
   return (
-    <section id="explore" style={{ padding: SECTION_PAD }}>
-      <Reveal style={{ maxWidth: 680 }}>
-        <h2 style={h2Style}>Choose your path</h2>
-        <p style={leadStyle}>
+    <section id="explore" className="home-explore">
+      <Reveal className="home-explore__head">
+        <h2 className="home-explore__title">Choose your path</h2>
+        <p className="home-explore__lead">
           These roles overlap. Pick the one that fits what you&apos;re here to
           do.
         </p>
       </Reveal>
-      <div
-        style={{
-          marginTop: 34,
-          display: "grid",
-          gap: 14,
-          gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-          maxWidth: 1040,
-        }}
-      >
+      <div className="home-explore__grid">
         {AUDIENCE_PATHS.map((a, i) => (
-          <Reveal key={a.title} delay={i * 70}>
-            <Link
-              href={a.href}
-              className="panel"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                padding: "20px 20px 18px",
-                textDecoration: "none",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 11,
-                  letterSpacing: "0.2em",
-                  color: "var(--gold-bright)",
-                }}
-              >
-                {a.n}
-              </div>
-              <h3 style={{ fontSize: 19, marginTop: 8, color: "var(--text-hi)" }}>
-                {a.title}
-              </h3>
-              <p
-                style={{
-                  marginTop: 8,
-                  fontSize: 14,
-                  color: "var(--text-dim)",
-                  flex: 1,
-                }}
-              >
-                {a.line}
-              </p>
-              <span
-                style={{
-                  marginTop: 14,
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 12,
-                  color: "var(--green-bright)",
-                }}
-              >
-                {a.cta} →
+          <Reveal key={a.title} delay={i * 70} style={{ display: "flex" }}>
+            <Link href={a.href} className="grow-card">
+              <div className="grow-card__num">{a.n}</div>
+              <h3 className="grow-card__title">{a.title}</h3>
+              <p className="grow-card__line">{a.line}</p>
+              <span className="grow-card__cta">
+                {a.cta} <span className="arr" aria-hidden>→</span>
               </span>
             </Link>
           </Reveal>
@@ -350,17 +296,15 @@ function ExploreGrid() {
 
 function ClosingCTA() {
   return (
-    <section style={{ padding: "clamp(60px,9vh,112px) var(--gut)" }}>
-      <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
-        <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
-          Scale Cardano. Settle on Cardano.
-        </h2>
-        <p style={{ ...leadStyle, marginInline: "auto" }}>
+    <section className="home-closing">
+      <Reveal className="home-closing__panel">
+        <h2 className="home-closing__title">Scale Cardano. Settle on Cardano.</h2>
+        <p className="home-closing__lead">
           Midgard is running on a pre-alpha testnet. Read the architecture,
           inspect the source, and bring an app that needs more speed and lower
           fees.
         </p>
-        <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
+        <div className="home-closing__actions">
           <Link className="btn btn--primary" href="/get-started">
             Start with a use case
           </Link>
@@ -388,14 +332,14 @@ export default function Gateway() {
   return (
     <>
       <div className="scene-stage">
-        {HERO_MODE === "three" ? (
-          <WorldTreeScene params={params} progressRef={progress} motionOn={motionOn} />
+        {HERO_MODE === "growth" ? (
+          <GrowthTreeScene params={params} progressRef={progress} motionOn={motionOn} />
         ) : (
           <StaticTreeHero snap={snap} motionOn={motionOn} />
         )}
       </div>
 
-      <main className="content">
+      <main className="content home">
         <Hero />
         <ExploreGrid />
         <AboutFold />
