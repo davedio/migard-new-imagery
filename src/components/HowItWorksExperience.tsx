@@ -9,20 +9,19 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
-import type { NetworkSnapshot } from "@/lib/network";
-import type { JourneyParams } from "./scene/JourneyScene";
 
 /* ============================================================
    HowItWorksExperience — the FLAGSHIP "ride a transaction" act,
    relocated from the old home page and re-homed as the immersive
    centerpiece of /how-it-works.
 
-   The page opens with a full-viewport JOURNEY ACT where the 3D scene
-   plays the scroll-driven canopy -> Cardano-L1 descent (the visual
-   lifecycle), with a HUD chapter rail whose labels are aligned to the
+   The page opens with a full-viewport JOURNEY ACT where a PHOTOREAL
+   tree PLATE plays the scroll-driven canopy -> Cardano-L1 descent (the
+   visual lifecycle) via a parallax pan, with LIVE green overlays
+   (beams, network pulses, leaves, ADA diamonds) layered over it, and a
+   HUD chapter rail whose labels are aligned to the
    page's protocol-lifecycle language (Submit · L2 -> Sequence ->
    Commit -> Watch -> Settle · L1). The detailed textual sections —
    ProtocolLifecycle, the Layers reference, the eUTXO comparison —
@@ -46,7 +45,10 @@ import type { JourneyParams } from "./scene/JourneyScene";
    (native) and every other route are untouched.
    ============================================================ */
 
-const JourneyScene = dynamic(() => import("./scene/JourneyScene"), {
+// The PHOTOREAL variant: instead of a WebGL JourneyScene, the backdrop is an
+// AI-generated photoreal tree PLATE that parallax-pans canopy -> roots with
+// LIVE green overlays (beams / network pulses / leaves / diamonds) on a canvas.
+const PhotorealBackdrop = dynamic(() => import("./scene/PhotorealBackdrop"), {
   ssr: false,
 });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
@@ -55,17 +57,6 @@ const ChapterLabels = dynamic(() => import("./scene/ChapterLabels"), {
 });
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
-
-function deriveParams(s: NetworkSnapshot): JourneyParams {
-  const activity = clamp(s.l1.txCountWindow / 110);
-  const speed = 0.06 + clamp((s.l2.throughput - 6) / 18) * 0.1;
-  return {
-    speed,
-    proofStatus: s.l2.latestProofStatus,
-    settled: s.l2.latestProofStatus === "settled",
-    activity,
-  };
-}
 
 // Floating motion toggle (bottom-right). Shared nav/footer chrome comes from
 // the (site) layout; the experience keeps only this control. Tagged for the
@@ -201,7 +192,6 @@ export default function HowItWorksExperience({
   /** the detailed lifecycle sections, rendered beneath the journey act */
   children: ReactNode;
 }) {
-  const { data: snap } = useNetworkSnapshot();
   const { motionOn, toggle } = useMotionPref();
 
   // desktop + motion-on gate for the heavy interaction systems
@@ -215,6 +205,18 @@ export default function HowItWorksExperience({
     return () => mq.removeEventListener("change", apply);
   }, []);
   const advanced = motionOn && finePointer;
+
+  // Very wide / short viewports read better with the WIDE plate (tree right,
+  // negative space left) + a gentler pan; the tall plate is the default.
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(min-aspect-ratio: 16/10) and (min-width: 900px)");
+    const apply = () => setWide(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   // --- inertial smooth scroll (whole-page transform) ---
   // The hook keeps the native scrollbar but rAF-lerps the (site) layout's
@@ -253,21 +255,7 @@ export default function HowItWorksExperience({
     return () => cancelAnimationFrame(raf);
   }, [springProgress]);
 
-  // shared pointer ref the scene reads so canopy sparks follow the cursor.
-  const pointerRef = useRef({ x: 0, y: 0 });
-  useEffect(() => {
-    if (!advanced || typeof window === "undefined") return;
-    const onMove = (e: PointerEvent) => {
-      pointerRef.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      pointerRef.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [advanced]);
-
   useCardTilt(advanced);
-
-  const params = deriveParams(snap);
 
   return (
     <>
@@ -275,11 +263,10 @@ export default function HowItWorksExperience({
           transform wrapper so they stay truly fixed (see BodyPortal). */}
       <BodyPortal>
         <div className="scene-stage">
-          <JourneyScene
-            params={params}
+          <PhotorealBackdrop
             progressRef={journeyProgressRef}
-            pointerRef={pointerRef}
             motionOn={motionOn}
+            wide={wide}
           />
         </div>
         <ChapterLabels progress={springProgress} enabled={motionOn} />
@@ -289,7 +276,7 @@ export default function HowItWorksExperience({
 
       {/* The scrolling content. The (site) layout wraps this + the footer in
           [data-scroll-content], which the inertial-scroll hook translates.
-          The journey act is transparent over the fixed scene; the detailed
+          The journey act is transparent over the fixed plate; the detailed
           sections below stay opaque. */}
       <main className="page-main page-main--how-it-works page-main--hiw-experience">
         <JourneyAct actRef={actRef} />

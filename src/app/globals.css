@@ -163,6 +163,66 @@ a {
   z-index: 1;
   pointer-events: none;
 }
+
+/* ============================================================
+   PHOTOREAL PLATE BACKDROP (How It Works variant)
+   A fixed, full-viewport photoreal world-tree PLATE that parallax-pans
+   canopy -> roots as you scroll (the --plate-y / --plate-scale vars are
+   rAF-driven by PhotorealBackdrop), with a legibility scrim and a live
+   overlay <canvas> on top. Lives inside .scene-stage (z-index:1, behind
+   page content). Background-image so it's just a cheap decoded bitmap.
+   ============================================================ */
+.plate-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #030704; /* matte base behind the plate while it decodes */
+}
+.plate-stage__img {
+  position: absolute;
+  inset: 0;
+  /* default static framing; overridden each frame by the JS pan */
+  --plate-y: 42%;
+  --plate-scale: 1.06;
+  background-image: url("/plates/worldtree-tall.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% var(--plate-y);
+  transform: scale(var(--plate-scale));
+  transform-origin: 50% 50%;
+  will-change: background-position, transform;
+}
+.plate-stage__img--wide {
+  background-image: url("/plates/worldtree-wide.jpg");
+  /* tree sits to the right; bias the framing there */
+  background-position: 68% var(--plate-y);
+}
+/* legibility scrim — darkens the left (where the intro copy sits) and the
+   top/bottom edges so HUD + headings stay crisp, leaving the tree readable. */
+.plate-stage__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(118% 92% at 0% 44%, rgba(3, 7, 4, 0.78), rgba(3, 7, 4, 0.38) 40%, transparent 68%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.55), transparent 22%),
+    linear-gradient(0deg, rgba(3, 7, 4, 0.62), transparent 26%);
+}
+.plate-stage__fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* the canvas already composites its glow; screen-blend it into the plate
+     so the green beams/network read as light, not paint. */
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: reduce) {
+  .plate-stage__img {
+    will-change: auto;
+  }
+}
 .static-tree-hero__bg {
   --static-tree-bg-position: 50% 50%;
   --static-tree-zoom: 1.06;
