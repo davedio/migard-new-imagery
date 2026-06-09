@@ -3397,3 +3397,20 @@ body.cursor-none * {
     opacity: 0.8;
   }
 }
+
+/* ---- act -> content seam fade (client: kill the hard "clean break") ----
+   The fixed photoreal plate shows through the transparent journey act, but the
+   content sections below are opaque #030704 — without this they meet the plate
+   with a hard horizontal divider. Fade the plate down into the content colour
+   over the act's tail so the dark blends with no visible edge. */
+.hiw-act::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60vh;
+  background: linear-gradient(to bottom, rgba(3, 7, 4, 0) 0%, #030704 86%);
+  pointer-events: none;
+  z-index: 2;
+}
