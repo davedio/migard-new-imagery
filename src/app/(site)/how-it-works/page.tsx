@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Section, Layers, CtaBand } from "@/components/site/ui";
-import { HudDivider } from "@/components/site/Hud";
-import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
+import { Section, CtaBand } from "@/components/site/ui";
 import { StatTiles } from "@/components/site/StatTiles";
 import { EutxoComparison } from "@/components/site/EutxoComparison";
+import HowItWorksExperience from "@/components/HowItWorksExperience";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -12,63 +11,27 @@ export const metadata: Metadata = {
 };
 
 export default function HowItWorksPage() {
+  // The flagship 3D transaction journey is the immersive centerpiece: the page
+  // opens with a full-viewport act where scroll RIDES a transaction canopy ->
+  // Cardano L1 — and, with the per-stage zoom + mini-icons + on-scene caption,
+  // that scroll story now explains the full lifecycle on its own. The content
+  // below is therefore trimmed to what's genuinely ADDITIVE (the at-a-glance
+  // stats and the eUTXO comparison), not a re-listing of the same five steps.
+  // The experience component owns the fixed 3D stage, the chapter-label HUD,
+  // the custom cursor, and the smooth-scroll (all desktop + motion-on only).
   return (
-    <main className="page-main page-main--how-it-works">
-      <ProtocolLifecycle />
-
+    <HowItWorksExperience>
+      {/* At-a-glance numbers — additive context, not a re-list of the steps. */}
       <Section
         eyebrow="Protocol at a glance"
         title="Fast confirmations now, final settlement on Cardano."
+        lead="You just rode one transaction from the canopy to Cardano's bedrock. Here's what that means in practice."
         tight
       >
         <StatTiles />
       </Section>
 
-      <HudDivider left="// LAYER_EXPLAINER" right="06 LAYERS" />
-
-      <Section
-        id="layers"
-        eyebrow="Layer explainer"
-        title="Five lifecycle steps, one trust path."
-        lead="The steps above are the live flow. The rows below are the on-chain pieces that make each step verifiable."
-        glow="green"
-      >
-        <Layers
-          items={[
-            {
-              n: "01",
-              name: "Activity",
-              desc: "Wallets and apps submit transactions to the L2.",
-            },
-            {
-              n: "02",
-              name: "Batch",
-              desc: "The operator orders transactions into a state batch.",
-            },
-            {
-              n: "03",
-              name: "Proof",
-              desc: "Each batch commits a hash anyone can recompute and check.",
-            },
-            {
-              n: "04",
-              name: "Challenge",
-              desc: "Watchers dispute an invalid batch before it settles.",
-            },
-            {
-              n: "05",
-              name: "Settlement",
-              desc: "Verified state is finalized back to Cardano L1.",
-            },
-            {
-              n: "06",
-              name: "Cardano L1",
-              desc: "Cardano holds the funds and anchors final settlement.",
-            },
-          ]}
-        />
-      </Section>
-
+      {/* Why eUTXO — the genuinely additive deep-dive the scroll can't show. */}
       <Section
         eyebrow="Why eUTXO"
         title="Why eUTXO builds a better rollup."
@@ -85,6 +48,6 @@ export default function HowItWorksPage() {
           { label: "See the contracts", href: "/contracts" },
         ]}
       />
-    </main>
+    </HowItWorksExperience>
   );
 }

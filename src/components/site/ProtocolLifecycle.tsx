@@ -402,11 +402,12 @@ export default function ProtocolLifecycle() {
         </aside>
         <div className="lifecycle__main">
           <header className="lifecycle__hero">
-            <div className="eyebrow">How it works</div>
-            <h1>One trust path, end to end.</h1>
+            <div className="eyebrow">Step by step</div>
+            <h2>One trust path, end to end.</h2>
             <p>
-              Midgard runs as a Cardano-native optimistic rollup: submit,
-              sequence, commit, watch, and settle back to Cardano.
+              The same five beats the journey just walked through — now in
+              detail. Each step shows what happens on Midgard&apos;s L2 and what
+              it commits to Cardano&apos;s L1.
             </p>
           </header>
           <ol className="lifecycle__steps" aria-label="Protocol lifecycle steps">

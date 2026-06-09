@@ -32,7 +32,12 @@ export type Leaf = {
 };
 
 export type Tree = {
+  /** every limb merged together (canopy + roots) — legacy single-mesh form */
   bark: THREE.BufferGeometry;
+  /** canopy limbs only, merged — revealed on its own growth channel */
+  canopyBark: THREE.BufferGeometry;
+  /** root limbs only, merged — revealed on its own growth channel */
+  rootBark: THREE.BufferGeometry;
   trunk: THREE.BufferGeometry;
   leaves: Leaf[];
   canopy: { center: THREE.Vector3; radius: number };
@@ -167,7 +172,8 @@ function taperedTube(
 }
 
 type Ctx = {
-  tubes: THREE.BufferGeometry[];
+  canopyTubes: THREE.BufferGeometry[];
+  rootTubes: THREE.BufferGeometry[];
   leafAnchors: THREE.Vector3[];
   l1Anchors: THREE.Vector3[];
   canopySpines: THREE.CatmullRomCurve3[];
@@ -187,7 +193,7 @@ function growBranch(
   const steps = 6;
   const { curve, end, endDir } = spine(start, dir, length, steps, 0.34, rand);
   const r1 = Math.max(radius * 0.62, 0.02);
-  ctx.tubes.push(taperedTube(curve, radius, r1, steps * 4, depth > 2 ? 14 : 8));
+  ctx.canopyTubes.push(taperedTube(curve, radius, r1, steps * 4, depth > 2 ? 14 : 8));
   if (depth >= 2) ctx.canopySpines.push(curve);
 
   if (depth === 0) {
@@ -223,7 +229,7 @@ function growRoot(
   const steps = 7;
   const { curve, end, endDir } = spine(start, dir, length, steps, 0.62, rand); // gnarlier
   const r1 = Math.max(radius * 0.6, 0.04);
-  ctx.tubes.push(taperedTube(curve, radius, r1, steps * 4, depth > 1 ? 16 : 10));
+  ctx.rootTubes.push(taperedTube(curve, radius, r1, steps * 4, depth > 1 ? 16 : 10));
   ctx.rootSpines.push(curve);
 
   if (depth === 0) {
@@ -245,7 +251,8 @@ function growRoot(
 export function buildTree(seed = 7): Tree {
   const rand = rng(seed);
   const ctx: Ctx = {
-    tubes: [],
+    canopyTubes: [],
+    rootTubes: [],
     leafAnchors: [],
     l1Anchors: [],
     canopySpines: [],
@@ -312,11 +319,25 @@ export function buildTree(seed = 7): Tree {
   let cRadius = 0;
   for (const lf of leaves) cRadius = Math.max(cRadius, lf.pos.distanceTo(cCenter));
 
-  const bark = mergeGeometries(ctx.tubes, false);
+  // merge each region on its own so the growth shader can reveal canopy and
+  // roots independently; also expose a combined `bark` for legacy single-mesh use.
+  const canopyBark = mergeGeometries(ctx.canopyTubes, false);
+  canopyBark.computeBoundingSphere();
+  if (!canopyBark.getAttribute("uv1") && canopyBark.getAttribute("uv")) {
+    canopyBark.setAttribute("uv1", canopyBark.getAttribute("uv").clone());
+  }
+  const rootBark = mergeGeometries(ctx.rootTubes, false);
+  rootBark.computeBoundingSphere();
+  if (!rootBark.getAttribute("uv1") && rootBark.getAttribute("uv")) {
+    rootBark.setAttribute("uv1", rootBark.getAttribute("uv").clone());
+  }
+  const bark = mergeGeometries([...ctx.canopyTubes, ...ctx.rootTubes], false);
   bark.computeBoundingSphere();
 
   return {
     bark,
+    canopyBark,
+    rootBark,
     trunk: trunkGeo,
     leaves,
     canopy: { center: cCenter, radius: cRadius },

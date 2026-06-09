@@ -163,6 +163,372 @@ a {
   z-index: 1;
   pointer-events: none;
 }
+
+/* ---- light-painting orb overlay -----------------------------
+   A self-contained, fixed full-viewport canvas for the "draw with light"
+   cursor toy (LightOrbLayer). Sits ABOVE the scene-stage plate (z:1) but
+   BELOW the HUD chapter rail (z:46) and the custom cursor (z:80).
+   pointer-events:none so it NEVER blocks clicks, links, scroll, or the
+   cursor — it's purely decorative. */
+.light-orb-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ============================================================
+   PHOTOREAL PLATE BACKDROP (How It Works variant)
+   A fixed, full-viewport photoreal world-tree PLATE that parallax-pans
+   canopy -> roots as you scroll (the --plate-y / --plate-scale vars are
+   rAF-driven by PhotorealBackdrop), with a legibility scrim and a live
+   overlay <canvas> on top. Lives inside .scene-stage (z-index:1, behind
+   page content). Background-image so it's just a cheap decoded bitmap.
+   ============================================================ */
+.plate-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #030704; /* matte base behind the plate while it decodes */
+  /* settle 0..1 (canopy .. L1 roots) set by JS on this parent so the
+     sibling grade layer can inherit it for the cobalt L1 wash */
+  --plate-settle: 0;
+  /* own stacking context: keeps the DOF backdrop-filter + screen-blended fx
+     canvas contained to the plate stack (never samples/affects page content
+     above .scene-stage), and gives the post layers a stable compositing
+     root for the filmic grade. */
+  isolation: isolate;
+}
+.plate-stage__img {
+  position: absolute;
+  inset: 0;
+  /* default static framing; overridden each frame by the JS pan + per-stage
+     zoom (--plate-y / --plate-scale). The cobalt L1 settle wash is driven by
+     --plate-settle on the .plate-stage parent (see above). */
+  --plate-y: 42%;
+  --plate-scale: 1.06;
+  background-image: url("/plates/worldtree-tall.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% var(--plate-y);
+  transform: scale(var(--plate-scale)) translateZ(0);
+  transform-origin: 50% 50%;
+  will-change: background-position, transform;
+  /* Filmic tone baked onto the plate itself: a gentle contrast S + a touch
+     of saturation/brightness so the photoreal frame reads graded, not flat.
+     Kept to compositor-cheap CSS filters (no per-frame SVG) so the pan stays
+     buttery. The colour wash (warm highlights / cool shadows) is the
+     .plate-stage__grade layer below. */
+  filter: contrast(1.07) saturate(1.08) brightness(1.015);
+}
+.plate-stage__img--wide {
+  background-image: url("/plates/worldtree-wide.jpg");
+  /* tree sits to the right; bias the framing there */
+  background-position: 68% var(--plate-y);
+}
+/* ACES-ish COLOUR WASH — a static film grade over the plate: warm, lifted
+   highlights up top (canopy sun), gently cooled/teal shadows, and a faint
+   cool cast toward the cobalt roots. Layered blend modes so it reads as a
+   tone-map, not a flat tint. Sits under the live fx + post. */
+.plate-stage__grade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* --plate-settle is inherited from .plate-stage (set by JS) so the cobalt
+     L1 wash rises as the packet reaches the roots */
+  background:
+    /* warm highlight bloom in the canopy */
+    radial-gradient(120% 60% at 50% 8%, rgba(255, 232, 168, 0.1), transparent 60%),
+    /* a cobalt L1 wash that rises from the base as we settle (0 -> 1) */
+    radial-gradient(
+      120% 56% at 50% 100%,
+      rgba(47, 156, 255, calc(0.2 * var(--plate-settle))),
+      transparent 62%
+    ),
+    /* subtle cool/teal cast in the shadow mids */
+    linear-gradient(180deg, rgba(120, 200, 170, 0.05) 0%, transparent 30%, transparent 70%, rgba(70, 150, 200, 0.08) 100%);
+  mix-blend-mode: screen;
+}
+/* legibility scrim — darkens the left (where the intro copy sits) and the
+   top/bottom edges so HUD + headings stay crisp, leaving the tree readable. */
+.plate-stage__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(118% 92% at 0% 44%, rgba(3, 7, 4, 0.78), rgba(3, 7, 4, 0.38) 40%, transparent 68%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.55), transparent 22%),
+    linear-gradient(0deg, rgba(3, 7, 4, 0.62), transparent 26%);
+}
+.plate-stage__fx {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* the canvas already composites its glow; screen-blend it into the plate
+     so the green beams/network read as light, not paint. */
+  mix-blend-mode: screen;
+}
+
+/* ============================================================
+   CINEMATIC POST STACK (this take: MAXIMUM CINEMATIC POLISH)
+   A few cheap, viewport-fixed overlay layers that sit above the plate +
+   fx canvas and turn the frame into a graded film still. Order matters:
+   DOF falloff -> vignette -> chromatic-aberration edge fringe -> grain.
+   All are pure CSS (gradients + blend modes); the rAF-driven --focus-y /
+   --dof vars (set by PhotorealBackdrop) move the depth-of-field sweet
+   spot so the packet's band stays crisp while the rest falls off. No
+   per-frame React, no plate duplication (the ghosting the client hated).
+   ============================================================ */
+
+/* DEPTH OF FIELD — a soft radial that keeps a crisp window around the
+   packet and gently darkens + de-emphasises the periphery. The blur is a
+   backdrop-filter limited to the OUT-of-focus ring via a mask, so the
+   focused band stays razor sharp (true tilt-shift feel, GPU-cheap). */
+.plate-stage__dof {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --focus-y: 46%;
+  --dof: 1;
+  /* the blur strength scales with --dof (eases up near settlement) */
+  backdrop-filter: blur(calc(2.4px * var(--dof)));
+  -webkit-backdrop-filter: blur(calc(2.4px * var(--dof)));
+  /* keep the centre band (around the packet) in focus: mask OUT the
+     middle so the blur only applies to the periphery */
+  -webkit-mask-image: radial-gradient(
+    150% 62% at 50% var(--focus-y),
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.55) 52%,
+    #000 86%
+  );
+  mask-image: radial-gradient(
+    150% 62% at 50% var(--focus-y),
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.55) 52%,
+    #000 86%
+  );
+}
+/* a faint darkening of the out-of-focus region for depth separation */
+.plate-stage__dof::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    150% 70% at 50% var(--focus-y),
+    transparent 30%,
+    rgba(2, 6, 4, 0.16) 64%,
+    rgba(2, 6, 4, 0.42) 100%
+  );
+}
+
+/* CINEMATIC VIGNETTE — soft, oval, never crushing the trunk centre */
+.plate-stage__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    122% 100% at 50% 42%,
+    transparent 52%,
+    rgba(2, 5, 3, 0.26) 80%,
+    rgba(1, 3, 2, 0.62) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+/* CHROMATIC ABERRATION — a whisper of RGB split at the frame edges only
+   (centre stays clean). Two thin colour-fringe layers offset opposite
+   ways, masked to the periphery, screened in. Tasteful, not glitchy. */
+.plate-stage__ca {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  background:
+    radial-gradient(140% 100% at 49.4% 50%, transparent 60%, rgba(255, 60, 80, 0.05) 100%),
+    radial-gradient(140% 100% at 50.6% 50%, transparent 60%, rgba(40, 120, 255, 0.05) 100%);
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 58%, #000 100%);
+  mask-image: radial-gradient(120% 100% at 50% 50%, transparent 58%, #000 100%);
+}
+
+/* FILM GRAIN — fine animated luminance noise (SVG fractal turbulence),
+   very low opacity, soft-light blended so it lives in the midtones like
+   real film stock. Animated via a tiny translate so it shimmers. The
+   canvas also lays a whisper of grain; together they read as film. */
+.plate-stage__grain {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
+  background-image: var(--grain-svg);
+  background-size: 220px 220px;
+  animation: plate-grain 0.9s steps(4) infinite;
+  will-change: transform;
+}
+@keyframes plate-grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-2%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* When motion is off (reduced-motion / mobile) the post stack stays but
+   goes calm: no DOF blur, no grain animation, gentler vignette. */
+.plate-stage--still .plate-stage__dof {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.plate-stage--still .plate-stage__grain {
+  animation: none;
+}
+
+/* ============================================================
+   ON-SCENE STAGE CAPTION — a small lifecycle card (mini-icon + step +
+   title + sub) that TRACKS beside the ridden packet and cross-fades on
+   each chapter change, so the step explains itself from the scene alone.
+   Positioned + faded imperatively from the rAF loop (inline transform);
+   the entrance is a CSS keyframe retriggered by toggling .is-in. Sits
+   ABOVE the post stack (z-index) so it stays crisp over DOF/grain.
+   ============================================================ */
+.plate-stage__caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  width: max-content;
+  max-width: 256px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 15px 12px 12px;
+  border-left: 2px solid var(--green-bright);
+  border-radius: 5px 10px 10px 5px;
+  background: linear-gradient(
+    90deg,
+    rgba(5, 11, 8, 0.72),
+    rgba(5, 11, 8, 0.2) 92%,
+    transparent
+  );
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 16px 44px -28px rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s var(--ease), transform 0.1s linear;
+  will-change: transform, opacity;
+}
+.plate-stage__caption[data-layer="bridge"] {
+  border-left-color: var(--gold-bright);
+}
+.plate-stage__caption[data-layer="l1"] {
+  border-left-color: #6fe0ff;
+}
+/* MARKER variant: icon-only locator that tracks the packet (no text — the
+   detailed step copy lives in the HUD now). Strip the panel chrome to a
+   clean floating disc so it tags the focal action without repeating the HUD. */
+.plate-stage__caption--marker {
+  width: auto;
+  max-width: none;
+  gap: 0;
+  padding: 0;
+  border-left: 0;
+  border-radius: 0;
+  background: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+.plate-stage__caption--marker .plate-stage__caption-icon {
+  width: 34px;
+  height: 34px;
+  background-size: 19px 19px;
+  background-color: rgba(5, 11, 8, 0.62);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.85),
+    0 0 16px -6px rgba(59, 232, 99, 0.5);
+}
+.plate-stage__caption--marker[data-layer="bridge"] .plate-stage__caption-icon {
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.85),
+    0 0 16px -6px rgba(224, 163, 60, 0.5);
+}
+.plate-stage__caption--marker[data-layer="l1"] .plate-stage__caption-icon {
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.85),
+    0 0 16px -6px rgba(111, 224, 255, 0.55);
+}
+/* mini-icon disc — the per-stage glyph (SVG data URI) set via --icon */
+.plate-stage__caption-icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(59, 232, 99, 0.32);
+  background-color: rgba(59, 232, 99, 0.08);
+  background-image: var(--icon);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+}
+.plate-stage__caption[data-layer="bridge"] .plate-stage__caption-icon {
+  border-color: rgba(224, 163, 60, 0.4);
+  background-color: rgba(224, 163, 60, 0.1);
+}
+.plate-stage__caption[data-layer="l1"] .plate-stage__caption-icon {
+  border-color: rgba(111, 224, 255, 0.42);
+  background-color: rgba(111, 224, 255, 0.1);
+}
+/* entrance: pop the mini-icon on each chapter change (the marker is
+   icon-only now — the full step copy lives in the HUD) */
+.plate-stage__caption.is-in .plate-stage__caption-icon {
+  animation: hiw-caption-pop 0.5s var(--ease) both;
+}
+@keyframes hiw-caption-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+/* the on-scene caption is a desktop/motion flourish; hide where the HUD
+   hides too (small screens, touch, reduced motion) */
+@media (max-width: 1100px) {
+  .plate-stage__caption {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .plate-stage__caption {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plate-stage__img {
+    will-change: auto;
+  }
+  .plate-stage__grain {
+    animation: none;
+  }
+  .plate-stage__dof {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .plate-stage__caption {
+    display: none !important;
+  }
+}
 .static-tree-hero__bg {
   --static-tree-bg-position: 50% 50%;
   --static-tree-zoom: 1.06;
@@ -825,12 +1191,12 @@ button.panel:hover {
   margin-bottom: clamp(32px, 5vh, 58px);
 }
 
-.lifecycle__hero h1 {
+.lifecycle__hero h2 {
   margin-top: 16px;
   color: var(--text-hi);
-  font-size: clamp(42px, 4.8vw, 76px);
-  line-height: 1.02;
-  letter-spacing: 0;
+  font-size: clamp(34px, 3.6vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
 }
 
 .lifecycle__hero p {
@@ -1049,8 +1415,8 @@ button.panel:hover {
     display: none;
   }
 
-  .lifecycle__hero h1 {
-    font-size: clamp(36px, 8vw, 48px);
+  .lifecycle__hero h2 {
+    font-size: clamp(32px, 7vw, 44px);
   }
 
   .lifecycle__hero p {
@@ -1069,8 +1435,8 @@ button.panel:hover {
     gap: 12px;
   }
 
-  .lifecycle__hero h1 {
-    font-size: 34px;
+  .lifecycle__hero h2 {
+    font-size: 30px;
   }
 
   .lifecycle__hero p {
@@ -2116,4 +2482,948 @@ button.panel:hover {
     left: 100%;
     opacity: 0;
   }
+}
+
+/* ============================================================
+   HOME — "roots that grow on scroll" direction
+   Scoped to `.content.home` so child pages (which reuse .section /
+   .panel / .eyebrow etc.) are untouched. Everything here is additive:
+   no shared token or class is renamed or removed. The look: glassy
+   depth panels with gold survey accents that read over the live 3D
+   world-tree, restrained motion, strong type hierarchy.
+   ============================================================ */
+
+/* ---- hero: scroll-to-grow cue ---- */
+.home .home-hero__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: clamp(34px, 5vh, 58px);
+  color: var(--text-dim);
+  font: 11px/1 var(--font-mono);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+/* a slim vertical rail with a light node that descends — mirrors the roots
+   reaching DOWN as you scroll. Pure CSS; neutralised under reduced motion. */
+.home .home-hero__rail {
+  position: relative;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(
+    to bottom,
+    var(--gold-line),
+    rgba(207, 154, 46, 0.05)
+  );
+  overflow: hidden;
+}
+.home .home-hero__rail::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -8px;
+  width: 5px;
+  height: 8px;
+  border-radius: 3px;
+  background: radial-gradient(closest-side, var(--green-bright), transparent);
+  animation: home-descend 2.6s var(--ease) infinite;
+}
+@keyframes home-descend {
+  0% {
+    top: -8px;
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    top: 40px;
+    opacity: 0;
+  }
+}
+
+/* ---- section rhythm + heads over the 3D ---- */
+.home .section {
+  padding-block: clamp(64px, 9vh, 124px);
+}
+/* gold survey tick to the left of every home section head — ties the page to
+   the world-tree's L1/proof gold language */
+.home .section__head {
+  position: relative;
+  padding-left: 22px;
+}
+.home .section__head::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--gold-bright),
+    rgba(207, 154, 46, 0.08)
+  );
+}
+.home .section h2 {
+  letter-spacing: -0.015em;
+}
+/* glassy reading slab behind body prose so copy stays crisp over the canopy */
+.home .prose {
+  position: relative;
+  padding: clamp(20px, 2.4vw, 30px) clamp(22px, 2.6vw, 34px);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  background: linear-gradient(
+      180deg,
+      rgba(215, 226, 216, 0.03),
+      transparent 46%
+    ),
+    rgba(6, 13, 9, 0.42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.home .prose::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+  opacity: 0.5;
+}
+
+/* ---- explore: growth-path depth cards ---- */
+.home .home-explore {
+  padding: clamp(56px, 8vh, 104px) var(--gut);
+}
+.home .home-explore__head {
+  position: relative;
+  max-width: 680px;
+  padding-left: 22px;
+}
+.home .home-explore__head::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, var(--gold-bright), rgba(207, 154, 46, 0.08));
+}
+.home .home-explore__title {
+  font-size: clamp(28px, 3.3vw, 48px);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin-top: 14px;
+}
+.home .home-explore__lead {
+  margin-top: 18px;
+  max-width: 600px;
+  font-size: var(--lead-size);
+  color: var(--text);
+}
+.home .home-explore__grid {
+  margin-top: clamp(30px, 4vw, 46px);
+  display: grid;
+  gap: clamp(14px, 1.3vw, 20px);
+  grid-template-columns: repeat(auto-fit, minmax(236px, 1fr));
+  max-width: 1080px;
+}
+
+.home .grow-card {
+  --rail: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 24px 22px 30px;
+  overflow: hidden;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.035), transparent 44%),
+    rgba(5, 11, 8, 0.5);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  text-decoration: none;
+  transition: border-color 0.34s var(--ease), transform 0.34s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease);
+}
+/* a vertical "root" that grows from the top of the card on hover/focus */
+.home .grow-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  transform: scaleY(var(--rail));
+  transform-origin: top;
+  background: linear-gradient(
+    to bottom,
+    var(--green-bright),
+    var(--midgard-green) 40%,
+    rgba(32, 190, 67, 0.06)
+  );
+  box-shadow: 0 0 12px rgba(32, 190, 67, 0.45);
+  transition: transform 0.5s var(--ease);
+}
+.home .grow-card:hover,
+.home .grow-card:focus-visible {
+  --rail: 1;
+  border-color: var(--green-bright);
+  transform: translateY(-3px);
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.05), transparent 44%),
+    rgba(6, 13, 9, 0.62);
+  box-shadow:
+    inset 0 0 0 1px rgba(32, 190, 67, 0.28),
+    0 0 18px rgba(32, 190, 67, 0.26),
+    0 22px 60px -28px rgba(0, 0, 0, 0.7);
+}
+.home .grow-card__num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+}
+.home .grow-card__title {
+  margin-top: 12px;
+  color: var(--text-hi);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.home .grow-card__line {
+  margin-top: 10px;
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+.home .grow-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--green-bright);
+}
+.home .grow-card__cta .arr {
+  transition: transform 0.34s var(--ease);
+}
+.home .grow-card:hover .grow-card__cta .arr,
+.home .grow-card:focus-visible .grow-card__cta .arr {
+  transform: translateX(4px);
+}
+
+/* ---- closing CTA: framed "settlement" panel ---- */
+.home .home-closing {
+  padding: clamp(76px, 11vh, 132px) var(--gut);
+}
+.home .home-closing__panel {
+  position: relative;
+  max-width: 760px;
+  margin-inline: auto;
+  padding: clamp(36px, 5vw, 60px) clamp(26px, 4vw, 56px);
+  text-align: center;
+  border: 1px solid var(--panel-edge-strong);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.04), transparent 38%),
+    rgba(5, 11, 8, 0.58);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 30px 90px -40px rgba(0, 0, 0, 0.8);
+}
+.home .home-closing__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-line), transparent);
+  opacity: 0.6;
+}
+/* soft green settlement pool rising from the panel's foot */
+.home .home-closing__panel::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -40%;
+  width: 80%;
+  height: 80%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(50% 60% at 50% 100%, var(--green-ghost), transparent 70%);
+}
+.home .home-closing__panel > * {
+  position: relative;
+  z-index: 1;
+}
+.home .home-closing__title {
+  font-size: clamp(28px, 3.4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.home .home-closing__lead {
+  margin: 18px auto 0;
+  max-width: 560px;
+  font-size: var(--lead-size);
+  color: var(--text);
+}
+.home .home-closing__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .home .home-closing__actions .btn {
+    flex: 1 1 180px;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home .home-hero__rail::after {
+    animation: none;
+    opacity: 0.8;
+    top: 4px;
+  }
+}
+
+/* ============================================================
+   FLAGSHIP — RESN-class interaction layer (home only).
+
+   Additive: custom cursor overlay, magnetic + tilt card motion,
+   masked scroll reveals, and the transaction-lifecycle HUD. Every
+   advanced behaviour here is desktop + motion-on only and the JS that
+   drives it bails under coarse pointers / reduced motion, so these
+   rules simply lie dormant otherwise.
+   ============================================================ */
+
+/* ---- custom cursor overlay ---------------------------------- */
+/* hide the native cursor only while our overlay is mounted+active */
+body.cursor-none,
+body.cursor-none * {
+  cursor: none !important;
+}
+.cursor-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+}
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 10px rgba(59, 232, 99, 0.7);
+  will-change: transform;
+  transition: opacity 0.25s var(--ease), background 0.25s var(--ease);
+}
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 38px;
+  height: 38px;
+  margin: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(215, 226, 216, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  transition: border-color 0.25s var(--ease), opacity 0.25s var(--ease),
+    background 0.25s var(--ease);
+}
+.cursor-ring[data-hover="true"] {
+  border-color: var(--green-bright);
+  background: rgba(32, 190, 67, 0.07);
+}
+.cursor-ring[data-down="true"] {
+  border-color: var(--gold-bright);
+}
+.cursor-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  font: 9.5px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  opacity: 0;
+  /* the ring scales to ~1.9 on hover (when a label shows); counter that so the
+     label stays a readable, fixed size and sits just below the ring */
+  transform: translate(-50%, 6px) scale(0.53);
+  transform-origin: top center;
+  transition: opacity 0.2s var(--ease);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.cursor-ring[data-labelled="true"] .cursor-label {
+  opacity: 0.95;
+}
+
+/* ---- magnetic targets (translate via cursor-driven vars) ----- */
+/* applied to home interactive elements; overrides any hover translate
+   while active so the magnet owns the motion. */
+.home [data-magnetic],
+.motion-toggle[data-magnetic] {
+  transition: transform 0.28s var(--ease), border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease), color 0.25s var(--ease);
+}
+.home [data-magnetic].is-magnetic-active,
+.motion-toggle[data-magnetic].is-magnetic-active {
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0);
+  transition: transform 0.08s linear, border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease), color 0.25s var(--ease);
+}
+
+/* ---- card 3D tilt + sheen (data-tilt) ----------------------- */
+.home .home-explore__grid {
+  perspective: 1100px;
+}
+.home .grow-card[data-tilt] {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform-style: preserve-3d;
+}
+/* tilt composes with the magnetic translate when active */
+.home .grow-card[data-tilt].is-magnetic-active {
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0)
+    rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+}
+.home .grow-card[data-tilt]:not(.is-magnetic-active) {
+  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+}
+/* a soft specular sheen that tracks the pointer across the card */
+.home .grow-card__sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    220px circle at var(--sheen-x, 50%) var(--sheen-y, 0%),
+    rgba(59, 232, 99, 0.16),
+    transparent 60%
+  );
+  transition: opacity 0.34s var(--ease);
+}
+.home .grow-card:hover .grow-card__sheen,
+.home .grow-card:focus-visible .grow-card__sheen {
+  opacity: 1;
+}
+/* lift the card's content above the sheen */
+.home .grow-card > *:not(.grow-card__sheen) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- masked reveal-on-scroll variants ----------------------- */
+.home .reveal--mask {
+  clip-path: inset(0 0 14% 0);
+  opacity: 0;
+  transform: translateY(26px);
+  transition: clip-path 0.85s var(--ease), opacity 0.7s var(--ease),
+    transform 0.85s var(--ease);
+}
+.home .reveal--mask.in {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- transaction-lifecycle HUD ------------------------------ */
+.tx-hud {
+  position: fixed;
+  z-index: 46;
+  /* client note: sit out near the RIGHT edge */
+  right: clamp(12px, 1.6vw, 24px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+.tx-hud__rail {
+  position: relative;
+  width: 2px;
+  border-radius: 2px;
+  background: rgba(215, 226, 216, 0.1);
+  overflow: hidden;
+}
+.tx-hud__rail-fill {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100%;
+  transform-origin: top;
+  transform: scaleY(0.02);
+  background: linear-gradient(
+    to bottom,
+    var(--green-bright) 0%,
+    var(--gold-bright) 58%,
+    #6fe0ff 100%
+  );
+  box-shadow: 0 0 10px rgba(59, 232, 99, 0.4);
+}
+.tx-hud__panel {
+  position: relative;
+  /* client note: LARGER panel showing the ACTIVE step in full (title + tag +
+     description). Fixed/clamped width so the body copy sets to a comfortable
+     measure; it grows VERTICALLY for the description. Kept to the right
+     margin so it never covers the tree's focal action in the centre. */
+  width: clamp(286px, 24vw, 332px);
+  padding: 22px 22px 20px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.035), transparent 46%),
+    rgba(5, 11, 8, 0.66);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 24px 70px -34px rgba(0, 0, 0, 0.84);
+  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+.tx-hud__panel[data-layer="l1"] {
+  border-color: rgba(47, 156, 255, 0.45);
+  box-shadow: 0 0 26px -8px rgba(47, 156, 255, 0.4),
+    0 20px 60px -34px rgba(0, 0, 0, 0.8);
+}
+.tx-hud__panel[data-layer="bridge"] {
+  border-color: rgba(207, 154, 46, 0.4);
+}
+.tx-hud__panel[data-layer="l2"] {
+  border-color: rgba(32, 190, 67, 0.4);
+}
+/* HUD header row: the active-stage mini-icon + the step counter, so the
+   enlarged panel surfaces the current step's glyph prominently. */
+.tx-hud__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tx-hud__icon {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(59, 232, 99, 0.34);
+  background-color: rgba(59, 232, 99, 0.08);
+  background-image: var(--icon);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 18px 18px;
+  transition: border-color 0.4s var(--ease), background-color 0.4s var(--ease);
+}
+.tx-hud__panel[data-layer="bridge"] .tx-hud__icon {
+  border-color: rgba(224, 163, 60, 0.42);
+  background-color: rgba(224, 163, 60, 0.1);
+}
+.tx-hud__panel[data-layer="l1"] .tx-hud__icon {
+  border-color: rgba(111, 224, 255, 0.44);
+  background-color: rgba(111, 224, 255, 0.1);
+}
+.tx-hud__step {
+  font: 11px/1 var(--font-mono);
+  letter-spacing: 0.22em;
+  color: var(--gold-bright);
+}
+.tx-hud__panel[data-layer="l1"] .tx-hud__step {
+  color: #6fe0ff;
+}
+/* the L2 / L1 stage tag — a small pill above the title, brand-coloured per
+   layer so the viewer instantly places the step on the L2 -> L1 spectrum */
+.tx-hud__tag {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 4px 9px;
+  border: 1px solid rgba(32, 190, 67, 0.4);
+  border-radius: 999px;
+  background: rgba(32, 190, 67, 0.08);
+  font: 9.5px/1 var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+}
+.tx-hud__tag[data-layer="bridge"] {
+  border-color: rgba(224, 163, 60, 0.44);
+  background: rgba(224, 163, 60, 0.1);
+  color: var(--gold-bright);
+}
+.tx-hud__tag[data-layer="l1"] {
+  border-color: rgba(111, 224, 255, 0.46);
+  background: rgba(111, 224, 255, 0.1);
+  color: #6fe0ff;
+}
+.tx-hud__label {
+  margin-top: 11px;
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.08;
+  color: var(--text-hi);
+}
+.tx-hud__panel[data-layer="l1"] .tx-hud__label {
+  color: #9fd2ff;
+}
+/* the FULL active-step description — grows the panel vertically; measure is
+   set by the clamped panel width so it stays comfortably legible */
+.tx-hud__desc {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.52;
+  letter-spacing: 0.005em;
+  color: var(--text);
+}
+.tx-hud__ticks {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 15px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  border-top: 1px solid var(--panel-edge);
+}
+.tx-hud__ticks li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 9.5px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  transition: color 0.4s var(--ease);
+}
+.tx-hud__tick-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 1px solid var(--text-faint);
+  flex: none;
+  transition: all 0.4s var(--ease);
+}
+.tx-hud__ticks li[data-state="done"] {
+  color: var(--text-dim);
+}
+.tx-hud__ticks li[data-state="done"] .tx-hud__tick-dot {
+  background: var(--green-dim);
+  border-color: var(--green-dim);
+}
+.tx-hud__ticks li[data-state="active"] {
+  color: var(--text-hi);
+}
+.tx-hud__ticks li[data-state="active"] .tx-hud__tick-dot {
+  background: var(--green-bright);
+  border-color: var(--green-bright);
+  box-shadow: 0 0 10px rgba(59, 232, 99, 0.6);
+}
+.tx-hud__ticks li[data-state="active"][data-layer="l1"] .tx-hud__tick-dot {
+  background: #6fe0ff;
+  border-color: #6fe0ff;
+  box-shadow: 0 0 10px rgba(47, 156, 255, 0.7);
+}
+.tx-hud__ticks li[data-state="active"][data-layer="bridge"] .tx-hud__tick-dot {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  box-shadow: 0 0 10px rgba(224, 163, 60, 0.6);
+}
+
+/* hide the HUD where it would crowd the layout / on touch */
+@media (max-width: 1100px) {
+  .tx-hud {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .tx-hud,
+  .cursor-layer {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tx-hud,
+  .cursor-layer {
+    display: none !important;
+  }
+  .home .reveal--mask {
+    clip-path: none;
+    opacity: 1;
+    transform: none;
+  }
+  body.cursor-none,
+  body.cursor-none * {
+    cursor: auto !important;
+  }
+}
+
+/* ============================================================
+   HOW IT WORKS — flagship 3D transaction-journey experience.
+
+   The page (HowItWorksExperience) opens with a TALL journey ACT rendered
+   transparent OVER the fixed .scene-stage (JourneyScene, portaled to
+   <body>). Scrolling the act's span drives the full canopy -> Cardano-L1
+   descent, so the transaction is actually WATCHED settling within the
+   act; an intro + beat legend sit pinned in a sticky viewport-tall panel
+   while it plays. The detailed lifecycle sections then flow in beneath
+   over a solid backdrop (no scene bleed) and reinforce it in words.
+
+   Scoped to `.page-main--hiw-experience` so the plain
+   `.page-main--how-it-works` background (kept intact) and every other
+   route are untouched.
+   ============================================================ */
+
+/* Stacking: the smooth-scroll hook sets `position: fixed` on the
+   [data-scroll-content] wrapper, which makes it a stacking context. The
+   fixed .scene-stage (portaled to body) sits at z-index:1, so the wrapper
+   needs to win to keep page content above the 3D. Lift it only when it
+   holds the experience — scoped via :has() so /home and every other route
+   keep the original static layering untouched. */
+[data-scroll-content]:has(.page-main--hiw-experience) {
+  position: relative;
+  z-index: 2;
+}
+
+/* The page itself is transparent so the act reveals the fixed scene; every
+   block AFTER the act gets a solid backdrop so content rides over darkness
+   with no 3D bleed. Background-COLOR only — blocks that bring their own
+   gradient image (e.g. .lifecycle) keep it layered over this solid base. */
+.page-main--hiw-experience {
+  background: transparent;
+}
+.page-main--hiw-experience > *:not(.hiw-act) {
+  position: relative;
+  z-index: 1;
+  background-color: #030704;
+}
+
+/* ---- the journey act: tall scroll driver, transparent over the 3D ---- */
+.hiw-act {
+  position: relative;
+  z-index: 1;
+  /* SLOWER descent (client note): much more scroll room so each of the five
+     stages gets ample length to DWELL + zoom in and play out its beat before
+     handing to the next; the descent completes as the act ends, then content
+     takes over. ~160vh per stage (5 stages -> 800vh) for a calm, unhurried
+     ride. */
+  min-height: 800vh;
+}
+
+/* the pinned panel that holds the intro/legend while the descent plays */
+.hiw-act__viewport {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(96px, 14vh, 168px) var(--gut) clamp(40px, 8vh, 88px);
+  isolation: isolate;
+}
+
+/* legibility scrim behind the (left-anchored) intro text — keeps the copy
+   readable while leaving the tree on the right of the scene visible. */
+.hiw-act__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 92% at 0% 42%,
+      rgba(3, 7, 4, 0.86),
+      rgba(3, 7, 4, 0.5) 38%,
+      transparent 66%
+    ),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.62), transparent 26%),
+    linear-gradient(0deg, rgba(3, 7, 4, 0.7), transparent 24%);
+}
+
+.hiw-act__intro {
+  max-width: min(620px, 100%);
+}
+.hiw-act__title {
+  margin-top: 16px;
+  color: var(--text-hi);
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.4vw, 82px);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  font-weight: 500;
+}
+.hiw-act__lead {
+  margin-top: 22px;
+  max-width: 50ch;
+  color: var(--text);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.55;
+}
+
+/* the five beats the descent walks through — a quiet legend that mirrors
+   the HUD rail + the lifecycle sections below. */
+.hiw-act__beats {
+  list-style: none;
+  margin: clamp(26px, 4vh, 40px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+.hiw-act__beats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 10px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  background: rgba(5, 11, 8, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font: 10.5px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.hiw-act__beats li[data-layer="bridge"] {
+  border-color: rgba(207, 154, 46, 0.34);
+}
+.hiw-act__beats li[data-layer="l1"] {
+  border-color: rgba(47, 156, 255, 0.4);
+}
+.hiw-act__beat-n {
+  color: var(--gold-bright);
+}
+.hiw-act__beats li[data-layer="l1"] .hiw-act__beat-n {
+  color: #6fe0ff;
+}
+.hiw-act__beat-name {
+  color: var(--text-hi);
+}
+
+/* scroll cue — mirrors the home hero's descending-node rail */
+.hiw-act__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: clamp(34px, 6vh, 64px);
+  color: var(--text-dim);
+  font: 11px/1 var(--font-mono);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.hiw-act__rail {
+  position: relative;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(
+    to bottom,
+    var(--gold-line),
+    rgba(207, 154, 46, 0.05)
+  );
+  overflow: hidden;
+}
+.hiw-act__rail::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -8px;
+  width: 5px;
+  height: 8px;
+  border-radius: 3px;
+  background: radial-gradient(closest-side, var(--green-bright), transparent);
+  animation: home-descend 2.6s var(--ease) infinite;
+}
+
+/* ---- content beneath the act: keep opaque, sit above the scene ---- */
+/* the lifecycle block leads the post-act content; give it a touch more top
+   air so it reads as a fresh chapter after the immersive act. */
+.page-main--hiw-experience .lifecycle {
+  position: relative;
+  z-index: 1;
+}
+/* footer carries a translucent base globally; on the experience the scene is
+   still fixed behind everything, so back it with solid darkness. */
+.page-main--hiw-experience ~ .site-footer,
+[data-scroll-content]:has(.page-main--hiw-experience) .site-footer {
+  background: linear-gradient(180deg, rgba(3, 7, 4, 0.9), #030704);
+}
+
+/* ---- re-scope the magnetic interaction to the experience ----------
+   (cursor + HUD CSS is already global; the magnetic TRANSLATE rules were
+   home-scoped. Mirror them here so opted-in elements on this page move,
+   without renaming the shared `.home` selectors.) */
+.page-main--hiw-experience [data-magnetic] {
+  transition: transform 0.28s var(--ease), border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease),
+    color 0.25s var(--ease);
+}
+.page-main--hiw-experience [data-magnetic].is-magnetic-active {
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0);
+  transition: transform 0.08s linear, border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease),
+    color 0.25s var(--ease);
+}
+
+/* ---- responsive: phone / small tablet ---- */
+@media (max-width: 720px) {
+  .hiw-act {
+    padding-inline: var(--gut);
+    text-align: left;
+  }
+  .hiw-act__scrim {
+    /* on narrow screens the tree sits centred behind the copy, so darken
+       more broadly to keep text legible */
+    background:
+      radial-gradient(140% 80% at 50% 50%, rgba(3, 7, 4, 0.82), transparent 72%),
+      linear-gradient(180deg, rgba(3, 7, 4, 0.66), rgba(3, 7, 4, 0.4) 40%, rgba(3, 7, 4, 0.74));
+  }
+  .hiw-act__lead {
+    font-size: 16px;
+  }
+}
+
+/* ---- reduced motion: no hijack, no HUD/cursor; act reads as a normal
+   intro over the single composed static frame, content stacks below.
+   (The HUD/cursor are already force-hidden by the global reduced-motion
+   rule above; here we just calm the cue animation.) */
+@media (prefers-reduced-motion: reduce) {
+  .hiw-act__rail::after {
+    animation: none;
+    top: 16px;
+    opacity: 0.8;
+  }
+}
+
+/* ---- act -> content seam fade (client: kill the hard "clean break") ----
+   The fixed photoreal plate shows through the transparent journey act, but the
+   content sections below are opaque #030704 — without this they meet the plate
+   with a hard horizontal divider. Fade the plate down into the content colour
+   over the act's tail so the dark blends with no visible edge. */
+.hiw-act::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60vh;
+  background: linear-gradient(to bottom, rgba(3, 7, 4, 0) 0%, #030704 86%);
+  pointer-events: none;
+  z-index: 2;
 }
