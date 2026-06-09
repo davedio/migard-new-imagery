@@ -16,8 +16,38 @@ import { NetworkRoles } from "@/components/site/NetworkRoles";
 export const metadata: Metadata = {
   title: "Get Started With Midgard",
   description:
-    "Get started with Midgard as a builder, operator, watcher, wallet, app, infrastructure provider, partner, or early user.",
+    "Get started with Midgard in one of three roles: users, builders, and operators & watchers.",
 };
+
+const AUDIENCE_PATHS: {
+  num: string;
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+}[] = [
+  {
+    num: "01",
+    title: "Users",
+    body: "Use Cardano apps that run on Midgard — same wallet, same ADA. Start from official links and read the status before you sign anything.",
+    cta: "Jump to users",
+    href: "#users",
+  },
+  {
+    num: "02",
+    title: "Builders",
+    body: "For wallets and dApps — DEXs, lending protocols, and any other application. Same eUTXO model and tooling; switching is one endpoint change.",
+    cta: "Open builder path",
+    href: "#builder-quickstart",
+  },
+  {
+    num: "03",
+    title: "Operators & Watchers",
+    body: "Run the protocol: operators sequence and commit blocks in rotating shifts, watchers catch bad blocks and prove it on L1.",
+    cta: "See the protocol roles",
+    href: "#network-roles",
+  },
+];
 
 export default function GetStartedPage() {
   return (
@@ -25,12 +55,32 @@ export default function GetStartedPage() {
       <PageHero
         label="Get Started"
         title="Get Started"
-        sub="Build, operate, watch, integrate, support, or test the Cardano-native L2 path. Start with source, status, and a clear role."
+        sub="Three ways to take part in the Cardano-native L2 path: as a user, a builder, or an operator & watcher. Start with source, status, and a clear role."
         actions={[
           { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
           { label: "Read the docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
         ]}
       />
+
+      <Section
+        eyebrow="Choose your path"
+        title="Three roles. One protocol."
+        lead="Midgard meets you in one of three roles. These roles overlap — pick the one that fits what you're here to do."
+      >
+        <CardGrid>
+          {AUDIENCE_PATHS.map((a) => (
+            <Card
+              key={a.title}
+              num={a.num}
+              title={a.title}
+              body={a.body}
+              cta={a.cta}
+              href={a.href}
+              delay={Number(a.num) * 70}
+            />
+          ))}
+        </CardGrid>
+      </Section>
 
       <NetworkRoles />
 
