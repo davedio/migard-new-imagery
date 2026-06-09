@@ -105,13 +105,14 @@ function mixRGB(c0: string, c1: string, t: number): string {
    handoff AND the camera dwell+zoom on that stage's focal region.
    ================================================================ */
 const STAGE_BOUNDS = [0, 0.14, 0.4, 0.58, 0.84, 1.0001];
-type StageCue = { key: string; title: string; sub: string };
-const STAGE_CUES: StageCue[] = [
-  { key: "submit", title: "Submit", sub: "a transaction is born on L2" },
-  { key: "sequence", title: "Sequence", sub: "the operator orders the queue" },
-  { key: "commit", title: "Commit", sub: "batched + proven to L1" },
-  { key: "watch", title: "Watch", sub: "the challenge window opens" },
-  { key: "settle", title: "Settle", sub: "final on Cardano L1" },
+/* The five stage KEYS, used to pick the on-scene marker's mini-icon. The full
+   step copy (title / tag / description) lives in the HUD (ChapterLabels). */
+const STAGE_CUES: { key: string }[] = [
+  { key: "submit" },
+  { key: "sequence" },
+  { key: "commit" },
+  { key: "watch" },
+  { key: "settle" },
 ];
 function stageOf(p: number): { idx: number; local: number } {
   for (let i = STAGE_CUES.length - 1; i >= 0; i--) {
@@ -151,14 +152,17 @@ const FOCALS_WIDE: Focal[] = [
 ];
 
 /* Eased camera path: hold near the active stage's focal point for the
-   first ~55% of the stage (the DWELL where the beat plays), then ease to
-   the next stage's focal point over the last ~45% (the TRAVEL). Returns
-   the interpolated {focY, scale}. */
+   first ~70% of the stage (the DWELL where the beat plays and breathes),
+   then ease GENTLY to the next stage's focal point over the last ~30% (the
+   TRAVEL). The longer dwell + later, shorter transition make each stage
+   linger noticeably before the calm move to the next (client note: slower,
+   more deliberate). Returns the interpolated {focY, scale}. */
 function cameraAt(idx: number, local: number, focals: Focal[]): Focal {
   const here = focals[idx];
   const next = focals[Math.min(focals.length - 1, idx + 1)];
-  // dwell then travel — eased so it's smooth, never jerky
-  const travel = smooth(clamp((local - 0.55) / 0.45));
+  // dwell then travel — eased so it's smooth, never jerky. The dwell now
+  // holds through ~70% of the stage so the beat sits still longer.
+  const travel = smooth(clamp((local - 0.7) / 0.3));
   return {
     focY: lerp(here.focY, next.focY, travel),
     scale: lerp(here.scale, next.scale, travel),
@@ -383,12 +387,12 @@ export default function PhotorealBackdrop({
   const plateRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dofRef = useRef<HTMLDivElement>(null);
-  // caption DOM refs (written imperatively from the rAF loop — no React state)
+  // on-scene marker DOM refs (written imperatively from the rAF loop — no
+  // React state). The detailed step copy now lives in the HUD; this marker is
+  // just a per-stage mini-icon that tracks the packet so the focal action is
+  // tagged on the tree without duplicating the HUD's text.
   const captionRef = useRef<HTMLDivElement>(null);
   const capIconRef = useRef<HTMLSpanElement>(null);
-  const capTitleRef = useRef<HTMLSpanElement>(null);
-  const capSubRef = useRef<HTMLSpanElement>(null);
-  const capStepRef = useRef<HTMLSpanElement>(null);
   // shared, rAF-smoothed pan progress so the canvas packet rides the EXACT
   // same eased descent as the plate (perfect coupling = no jitter, tracking
   // shot feel). Written by the plate-pan loop, read by the overlay loop.
@@ -436,8 +440,10 @@ export default function PhotorealBackdrop({
       const target = clamp(progressRef.current ?? 0);
       // critically-damped spring toward target: buttery, overshoot-free.
       // This is the SAME smoothed value the overlay packet reads, so the
-      // plate descent and the packet are perfectly coupled.
-      const stiffness = 120;
+      // plate descent and the packet are perfectly coupled. Softer stiffness
+      // (client note: slower / calmer) so the pan trails the scroll with more
+      // weight and settles unhurriedly instead of tracking it tightly.
+      const stiffness = 64;
       const damping = 2 * Math.sqrt(stiffness); // critical
       const a = stiffness * (target - cur) - damping * vel;
       vel += a * dt;
@@ -450,7 +456,10 @@ export default function PhotorealBackdrop({
       // jerks at a stage boundary.
       const st = stageOf(cur);
       const cam = cameraAt(st.idx, st.local, focals);
-      const follow = 1 - Math.pow(0.001, dt); // ~frame-rate-independent ease
+      // gentler frame-rate-independent ease (client note: slower / more
+      // deliberate). A larger base = the focal trails its eased target with
+      // more weight, so even the in-stage settle feels calm, never snappy.
+      const follow = 1 - Math.pow(0.06, dt);
       camY += (cam.focY - camY) * follow;
       camS += (cam.scale - camS) * follow;
 
@@ -1130,20 +1139,17 @@ export default function PhotorealBackdrop({
       }
       ctx.globalAlpha = 1;
 
-      /* ---- ON-SCENE STAGE CAPTION: mini-icon + title + sub, tracking
-         beside the packet head, updated imperatively (no React re-render).
-         Cross-fades + swaps its icon on each chapter change via a class
-         toggle. The goal: a first-time viewer reads each step from the
-         scene alone. ---- */
+      /* ---- ON-SCENE STAGE MARKER: a per-stage mini-icon that TRACKS the
+         packet head, updated imperatively (no React re-render). The full step
+         detail (title / tag / description) now lives in the enlarged HUD, so
+         this marker deliberately carries NO text — it just tags the focal
+         action on the tree and swaps its glyph + colour on each chapter
+         change, with a small pop so the step change registers. ---- */
       const capEl = captionRef.current;
       if (capEl) {
         if (sIdx !== lastStageIdx) {
           lastStageIdx = sIdx;
           const cue = STAGE_CUES[sIdx];
-          if (capTitleRef.current) capTitleRef.current.textContent = cue.title;
-          if (capSubRef.current) capSubRef.current.textContent = cue.sub;
-          if (capStepRef.current)
-            capStepRef.current.textContent = `${String(sIdx + 1).padStart(2, "0")} / 05`;
           if (capIconRef.current)
             capIconRef.current.style.setProperty(
               "--icon",
@@ -1156,13 +1162,11 @@ export default function PhotorealBackdrop({
           void capEl.offsetWidth;
           capEl.classList.add("is-in");
         }
-        // position beside the packet head, clamped into the viewport, and
-        // fade out at the very top (let the hero breathe). The right clamp
-        // also keeps the caption clear of the enlarged HUD panel (which sits
-        // out near the right edge, ~260px wide) so they never overlap.
-        const hudReserve = W > 1100 ? 300 : 24;
-        const left = clamp(px + 30, 24, W - 268 - hudReserve);
-        const top = clamp(py - 26, 70, H - 132);
+        // sit just beside the packet head, clamped into the viewport, and fade
+        // out at the very top (let the hero breathe). It's a small disc so it
+        // never crowds the centre or reaches the right-edge HUD.
+        const left = clamp(px + 26, 20, W - 64);
+        const top = clamp(py - 22, 64, H - 64);
         capEl.style.transform = `translate(${left.toFixed(1)}px, ${top.toFixed(1)}px)`;
         capEl.style.opacity = p < 0.015 ? "0" : "1";
       }
@@ -1204,27 +1208,22 @@ export default function PhotorealBackdrop({
       <div className="plate-stage__ca" />
       <div className="plate-stage__vignette" />
       <div className="plate-stage__grain" />
-      {/* ---- ON-SCENE STAGE CAPTION (mini-icon + title + sub) — desktop /
-          motion only; hidden via CSS in the static/reduced fallback. ---- */}
+      {/* ---- ON-SCENE STAGE MARKER (mini-icon only) — tags the focal action
+          on the tree and tracks the packet; the full step detail lives in the
+          HUD so this carries no text. Desktop / motion only; hidden via CSS in
+          the static/reduced fallback. ---- */}
       {motionOn && (
-        <div className="plate-stage__caption" ref={captionRef} data-layer="l2">
+        <div
+          className="plate-stage__caption plate-stage__caption--marker"
+          ref={captionRef}
+          data-layer="l2"
+        >
           <span
             className="plate-stage__caption-icon"
             ref={capIconRef}
             style={{ ["--icon" as string]: `url("${ICON.submit}")` }}
             aria-hidden
           />
-          <span className="plate-stage__caption-body">
-            <span className="plate-stage__caption-step" ref={capStepRef}>
-              01 / 05
-            </span>
-            <span className="plate-stage__caption-title" ref={capTitleRef}>
-              Submit
-            </span>
-            <span className="plate-stage__caption-sub" ref={capSubRef}>
-              a transaction is born on L2
-            </span>
-          </span>
         </div>
       )}
     </div>

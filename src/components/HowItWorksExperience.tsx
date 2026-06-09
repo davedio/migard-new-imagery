@@ -230,8 +230,10 @@ export default function HowItWorksExperience({
   const journeyProgressRef = useRef(0);
 
   // A spring MotionValue the HUD subscribes to; fed each frame from the
-  // act-progress (buttery, no jumps).
-  const springProgress = useSpring(0, { stiffness: 90, damping: 26, mass: 0.6 });
+  // act-progress (buttery, no jumps). Softer + heavier (client note: slower /
+  // calmer descent) so the HUD's stage changes ease in sympathy with the
+  // gentler plate pan rather than snapping at thresholds.
+  const springProgress = useSpring(0, { stiffness: 52, damping: 24, mass: 0.9 });
   useEffect(() => {
     let raf = 0;
     const tick = () => {
