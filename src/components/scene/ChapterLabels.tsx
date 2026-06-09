@@ -29,17 +29,52 @@ type Chapter = {
   label: string;
   sub: string;
   layer: "l2" | "bridge" | "l1";
+  /** per-stage mini-icon (stroked SVG data URI), set as a CSS bg --icon */
+  icon: string;
 };
 
-// Aligned with the lifecycle steps rendered below the 3D act
-// (ProtocolLifecycle + the Layers list): Submit · L2 → Sequence →
-// Commit (batch + proof) → Watch (challenge) → Settle · L1.
+/* Per-stage mini-icon glyphs (data URIs), matching the on-scene caption
+   language so the HUD and the scene annotation tell the SAME story: Submit
+   = a tx spark, Sequence = ordered lines, Commit = a block/cube, Watch =
+   an eye/shield, Settle = an anchor. Hard brand colours so they read on the
+   panel's dark glass. */
+const ICONS = {
+  submit:
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2v5M12 17v5M2 12h5M17 12h5M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3'/><circle cx='12' cy='12' r='2.4' fill='%233be863' stroke='none'/></svg>`,
+    ),
+  sequence:
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h12M8 12h12M8 18h12'/><circle cx='4' cy='6' r='1.4' fill='%233be863' stroke='none'/><circle cx='4' cy='12' r='1.4' fill='%233be863' stroke='none'/><circle cx='4' cy='18' r='1.4' fill='%233be863' stroke='none'/></svg>`,
+    ),
+  commit:
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233be863' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2.6l8 4.6v9.6l-8 4.6-8-4.6V7.2z'/><path d='M12 2.6v9.6M12 12.2l8-4.6M12 12.2l-8-4.6'/></svg>`,
+    ),
+  watch:
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0a33c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z'/><circle cx='12' cy='12' r='2.7'/></svg>`,
+    ),
+  settle:
+    "data:image/svg+xml;utf8," +
+    encodeURIComponent(
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236fe0ff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='4.5' r='2'/><path d='M12 6.5V21M5 12H3.5a8.5 8.5 0 0 0 17 0H19M8.5 9.5h7'/></svg>`,
+    ),
+} as const;
+
+// Aligned with the lifecycle steps + the on-scene caption + the canvas
+// beats: Submit · L2 → Sequence → Commit (batch + proof) → Watch
+// (challenge) → Settle · L1.
 const CHAPTERS: Chapter[] = [
-  { id: "submit", label: "Submit", sub: "tx on Midgard L2", layer: "l2" },
-  { id: "sequence", label: "Sequence", sub: "operator orders the queue", layer: "l2" },
-  { id: "commit", label: "Commit", sub: "batch + proof to L1 queue", layer: "l2" },
-  { id: "watch", label: "Watch", sub: "challenge window open", layer: "bridge" },
-  { id: "settle", label: "Settle", sub: "final on Cardano L1", layer: "l1" },
+  { id: "submit", label: "Submit", sub: "tx on Midgard L2", layer: "l2", icon: ICONS.submit },
+  { id: "sequence", label: "Sequence", sub: "operator orders the queue", layer: "l2", icon: ICONS.sequence },
+  { id: "commit", label: "Commit", sub: "batch + proof to L1 queue", layer: "l2", icon: ICONS.commit },
+  { id: "watch", label: "Watch", sub: "challenge window open", layer: "bridge", icon: ICONS.watch },
+  { id: "settle", label: "Settle", sub: "final on Cardano L1", layer: "l1", icon: ICONS.settle },
 ];
 
 function chapterIndex(p: number): number {
@@ -95,8 +130,15 @@ export default function ChapterLabels({
         <span className="hud-bracket hud-bracket--tr" />
         <span className="hud-bracket hud-bracket--bl" />
         <span className="hud-bracket hud-bracket--br" />
-        <div className="tx-hud__step">
-          {String(active + 1).padStart(2, "0")} / {String(CHAPTERS.length).padStart(2, "0")}
+        <div className="tx-hud__head">
+          <span
+            className="tx-hud__icon"
+            style={{ ["--icon" as string]: `url("${current.icon}")` }}
+            aria-hidden
+          />
+          <div className="tx-hud__step">
+            {String(active + 1).padStart(2, "0")} / {String(CHAPTERS.length).padStart(2, "0")}
+          </div>
         </div>
         <div className="tx-hud__label">{current.label}</div>
         <div className="tx-hud__sub hud-cursor">{current.sub}</div>
