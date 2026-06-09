@@ -164,6 +164,19 @@ a {
   pointer-events: none;
 }
 
+/* ---- light-painting orb overlay -----------------------------
+   A self-contained, fixed full-viewport canvas for the "draw with light"
+   cursor toy (LightOrbLayer). Sits ABOVE the scene-stage plate (z:1) but
+   BELOW the HUD chapter rail (z:46) and the custom cursor (z:80).
+   pointer-events:none so it NEVER blocks clicks, links, scroll, or the
+   cursor — it's purely decorative. */
+.light-orb-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
 /* ============================================================
    PHOTOREAL PLATE BACKDROP (How It Works variant)
    A fixed, full-viewport photoreal world-tree PLATE that parallax-pans

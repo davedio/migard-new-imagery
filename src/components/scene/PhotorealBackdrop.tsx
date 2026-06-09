@@ -44,8 +44,8 @@
      2. LIVE OVERLAYS — a single <canvas> sized to the viewport, drawn
         each rAF: the per-stage beats above, the RIDDEN PACKET (molten
         comet + long tapering wake), the REACTIVE NETWORK it ignites, the
-        SETTLEMENT bloom, faint organic motes, soft trunk light-shafts, a
-        whisper of grain. Geometric ADA-diamond overlays are GONE.
+        SETTLEMENT bloom, faint organic motes, a whisper of grain.
+        Geometric ADA-diamond overlays are GONE.
 
    Driven by the SAME smoothed scroll `progressRef` the host feeds the
    scene, plus time. No per-scroll React state — pan, overlays, and the
@@ -82,7 +82,6 @@ const smooth = (t: number) => {
 
 /* brand palette (mirrored from globals.css) */
 const GREEN = "59, 232, 99"; // --green-bright
-const GREEN_MID = "32, 190, 67"; // --midgard-green
 const GOLD = "224, 163, 60"; // --gold-bright (the challenge bridge)
 const COBALT = "111, 224, 255"; // brighter L1 cyan (Cardano L1 at the roots)
 
@@ -137,18 +136,18 @@ function stageOf(p: number): { idx: number; local: number } {
    ================================================================ */
 type Focal = { focY: number; scale: number };
 const FOCALS_TALL: Focal[] = [
-  { focY: 8, scale: 1.14 }, // SUBMIT   · canopy
-  { focY: 32, scale: 1.18 }, // SEQUENCE · upper trunk
-  { focY: 55, scale: 1.2 }, // COMMIT   · mid trunk
-  { focY: 76, scale: 1.18 }, // WATCH    · lower trunk / bridge
-  { focY: 97, scale: 1.13 }, // SETTLE   · roots / L1
+  { focY: 8, scale: 1.07 }, // SUBMIT   · canopy
+  { focY: 32, scale: 1.11 }, // SEQUENCE · upper trunk
+  { focY: 55, scale: 1.13 }, // COMMIT   · mid trunk
+  { focY: 76, scale: 1.11 }, // WATCH    · lower trunk / bridge
+  { focY: 97, scale: 1.06 }, // SETTLE   · roots / L1
 ];
 const FOCALS_WIDE: Focal[] = [
-  { focY: 26, scale: 1.08 },
-  { focY: 40, scale: 1.1 },
-  { focY: 56, scale: 1.12 },
-  { focY: 70, scale: 1.1 },
-  { focY: 82, scale: 1.07 },
+  { focY: 26, scale: 1.04 },
+  { focY: 40, scale: 1.06 },
+  { focY: 56, scale: 1.08 },
+  { focY: 70, scale: 1.06 },
+  { focY: 82, scale: 1.03 },
 ];
 
 /* Eased camera path: hold near the active stage's focal point for the
@@ -199,7 +198,7 @@ function packetPos(p: number, t: number, cx: number, spread: number) {
 /* ================================================================
    Overlay model — built once, deterministically, in plate-relative
    normalized coords (0..1 across the viewport). The trunk of the tall
-   plate sits roughly centre; the network + shafts hug that band. Coords
+   plate sits roughly centre; the network hugs that band. Coords
    convert to px each frame against the live canvas size. We also pre-bake
    the SUBMIT glints (canopy sparks) and tag watcher "eyes" so those beats
    are stable across mounts.
@@ -217,7 +216,6 @@ type Node = {
   blink: number;
 };
 type Edge = { a: number; b: number; fire: number };
-type Shaft = { x: number; w: number; phase: number; speed: number; h0: number; h1: number };
 type Mote = { x: number; y: number; vx: number; vy: number; s: number; sway: number; twk: number };
 /** a tiny canopy spark that flies inward to form the packet at SUBMIT */
 type Glint = { x: number; y: number; r: number; tw: number; ph: number };
@@ -225,7 +223,6 @@ type Glint = { x: number; y: number; r: number; tw: number; ph: number };
 type Model = {
   nodes: Node[];
   edges: Edge[];
-  shafts: Shaft[];
   motes: Mote[];
   glints: Glint[];
   cx: number;
@@ -288,22 +285,6 @@ function buildModel(wide: boolean): Model {
     }
   }
 
-  // --- SHAFTS: a couple of soft vertical light-shafts on the trunk for
-  // ambient depth (much quieter than the old beam field). ---
-  const shafts: Shaft[] = [];
-  const shaftCount = wide ? 2 : 3;
-  for (let i = 0; i < shaftCount; i++) {
-    const t = shaftCount > 1 ? i / (shaftCount - 1) : 0.5;
-    shafts.push({
-      x: cx + (t - 0.5) * 2 * spread * 0.6 + (rand() - 0.5) * 0.02,
-      w: 22 + rand() * 30,
-      phase: rand() * Math.PI * 2,
-      speed: 0.32 + rand() * 0.4,
-      h0: 0.08 + rand() * 0.08,
-      h1: 0.82 + rand() * 0.12,
-    });
-  }
-
   // --- MOTES: minimal organic spores/pollen drifting through the trunk
   // band. Ambient only — the packet is the star. ---
   const motes: Mote[] = [];
@@ -334,7 +315,7 @@ function buildModel(wide: boolean): Model {
     });
   }
 
-  return { nodes, edges, shafts, motes, glints, cx, spread };
+  return { nodes, edges, motes, glints, cx, spread };
 }
 
 /* Inline SVG glyphs (data URIs) for the on-scene stage mini-icon, one per
@@ -511,7 +492,7 @@ export default function PhotorealBackdrop({
     resize();
     window.addEventListener("resize", resize);
 
-    const { nodes, edges, shafts, motes, glints, cx, spread } = model;
+    const { nodes, edges, motes, glints, cx, spread } = model;
     const nx = (n: { x: number }) => n.x * W;
     const ny = (n: { y: number }) => n.y * H;
 
@@ -711,23 +692,6 @@ export default function PhotorealBackdrop({
 
       ctx.clearRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
-
-      /* --- soft trunk light-shafts (ambient depth, quiet) --- */
-      for (const sh of shafts) {
-        const x = sh.x * W;
-        const y0 = sh.h0 * H;
-        const y1 = sh.h1 * H;
-        const breathe = 0.5 + 0.5 * Math.sin(t * sh.speed + sh.phase);
-        const w = sh.w * (0.8 + 0.3 * breathe);
-        const a = (0.03 + 0.035 * breathe) * (1 - settle * 0.5);
-        const g = ctx.createLinearGradient(0, y0, 0, y1);
-        g.addColorStop(0, `rgba(${GREEN}, 0)`);
-        g.addColorStop(0.4, `rgba(${GREEN}, ${a})`);
-        g.addColorStop(0.75, `rgba(${GREEN_MID}, ${a * 0.7})`);
-        g.addColorStop(1, `rgba(${GREEN}, 0)`);
-        ctx.fillStyle = g;
-        ctx.fillRect(x - w / 2, y0, w, y1 - y0);
-      }
 
       /* ============================================================
          STAGE 1 · SUBMIT — the spark is born. Canopy glints twinkle, then

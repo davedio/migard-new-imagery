@@ -55,6 +55,9 @@ const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 const ChapterLabels = dynamic(() => import("./scene/ChapterLabels"), {
   ssr: false,
 });
+// playful "draw with light" cursor toy: a held pointer paints a soft green
+// glowing orb + fading trail. Pointer-events:none overlay, desktop/motion only.
+const LightOrbLayer = dynamic(() => import("./LightOrbLayer"), { ssr: false });
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
@@ -264,6 +267,9 @@ export default function HowItWorksExperience({
             wide={wide}
           />
         </div>
+        {/* light-painting orb: above the scene, below the HUD/cursor. Gated to
+            desktop + fine pointer + motion-on (advanced). */}
+        <LightOrbLayer enabled={advanced} />
         <ChapterLabels progress={springProgress} enabled={motionOn} />
         <CustomCursor enabled={advanced} />
         <MotionToggle on={motionOn} onToggle={toggle} />
