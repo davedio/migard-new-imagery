@@ -41,6 +41,17 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: turbopackRoot(),
   },
+  // The /docs page was removed; "Docs" now points at the source repo. Keep the
+  // old route working by sending it straight to the GitHub repository.
+  async redirects() {
+    return [
+      {
+        source: "/docs",
+        destination: "https://github.com/Anastasia-Labs/midgard",
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

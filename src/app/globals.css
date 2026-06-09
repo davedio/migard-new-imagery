@@ -1573,6 +1573,12 @@ button.panel:hover {
 .site-nav__link[data-active="true"] {
   color: var(--green-bright);
 }
+/* "Docs" links out to the GitHub repo — keep the glyph snug to the label. */
+.site-nav__link--external {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .site-nav__right {
   display: flex;
   align-items: center;
@@ -1688,6 +1694,11 @@ button.panel:hover {
   .site-nav__mobile a[data-active="true"] {
     color: var(--green-bright);
   }
+  .site-nav__mobile-link--external {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
   .site-nav__mobile .btn {
     margin-top: 14px;
     justify-content: center;
@@ -1761,6 +1772,12 @@ button.panel:hover {
 }
 .site-footer__col a:hover {
   color: var(--green-bright);
+}
+/* "Docs" links out to GitHub — keep the glyph snug to the label. */
+.site-footer__link--external {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .site-footer__bottom {
   max-width: var(--maxw);
