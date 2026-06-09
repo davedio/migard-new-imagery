@@ -4,7 +4,7 @@ import { PageHero, Section, Faq } from "@/components/site/ui";
 export const metadata: Metadata = {
   title: "Midgard FAQ",
   description:
-    "Answers to common Midgard questions about what it is, how it works, ADA fees, users, builders, wallets, partners, security, and testnet.",
+    "Answers to common Midgard questions about what it is, how it works, ADA fees, the three roles (users, builders, operators & watchers), security, and testnet.",
 };
 
 export default function FaqPage() {
@@ -75,7 +75,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Can my wallet, dApp, or infrastructure project integrate?",
-                  a: "Yes. Midgard needs serious wallets, dApps, infrastructure providers, analytics teams, security contributors, operators, and Watchers.",
+                  a: "Yes. Midgard is built around three roles — users, builders (wallets and dApps), and operators & watchers — and welcomes serious participants across all three.",
                 },
               ],
             },

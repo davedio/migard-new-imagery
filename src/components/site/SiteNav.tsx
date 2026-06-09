@@ -18,7 +18,7 @@ const NAV: readonly NavLeaf[] = [
   { label: "Home", href: "/home" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Security", href: "/security" },
-  { label: "Testnet", href: "/contracts" },
+  { label: "Contracts", href: "/contracts" },
   { label: "FAQ", href: "/faq" },
   { label: "Docs", href: OFFICIAL_LINKS.github, external: true },
 ] as const;

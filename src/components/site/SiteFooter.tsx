@@ -12,7 +12,7 @@ const EXPLORE = [
 ] as const;
 
 const RESOURCES = [
-  { label: "Testnet & contracts", href: "/contracts" },
+  { label: "Contracts", href: "/contracts" },
   { label: "FAQ", href: "/faq" },
   { label: "Official links", href: "/official-links" },
   { label: "Security contact", href: "/official-links#security-contact" },

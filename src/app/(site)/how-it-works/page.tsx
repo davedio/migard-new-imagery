@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Section, CtaBand } from "@/components/site/ui";
 import { StatTiles } from "@/components/site/StatTiles";
 import { EutxoComparison } from "@/components/site/EutxoComparison";
+import { Roadmap } from "@/components/site/Roadmap";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
 
 export const metadata: Metadata = {
@@ -40,6 +41,9 @@ export default function HowItWorksPage() {
       >
         <EutxoComparison />
       </Section>
+
+      {/* Path to mainnet — honest, date-free phasing; current phase flagged. */}
+      <Roadmap />
 
       <CtaBand
         title="Ready to build on Midgard?"
