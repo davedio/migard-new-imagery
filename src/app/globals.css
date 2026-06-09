@@ -3310,3 +3310,171 @@ body.cursor-none * {
   pointer-events: none;
   z-index: 2;
 }
+/* ============================================================
+   PHOTOREAL HOME HERO PLATE (/home)
+   A fixed, full-bleed photoreal world-tree PLATE (hero-tree.jpg — tree offset
+   RIGHT, misty negative space LEFT, green sap veins + a cobalt root glow) with
+   a calm ambient sap-orb overlay (PhotorealHomeHero) so the home hero matches
+   the photoreal How-It-Works tree. Lives inside .scene-stage (z-index:1,
+   behind the .content copy). The plate is a cheap decoded bitmap; the overlay
+   is a screen-blended <canvas>. The LEFT scrim keeps the copy crisp.
+   ============================================================ */
+.home-hero-plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #050b08; /* matte base behind the plate while it decodes */
+  isolation: isolate;
+  /* settle 0..1 (canopy .. L1 roots) set by JS as the page scrolls, so the
+     cobalt root wash + scrim can lift toward the bottom of the page. */
+  --home-plate-settle: 0;
+}
+/* The photoreal plate is now DRAWN INSIDE this canvas (cover + scroll-driven
+   pan/zoom computed in JS), in the SAME coordinate space as the vein-riding sap
+   orbs — so the orbs are glued to the painted tree and can never drift onto a
+   generic band. The canvas therefore holds the (opaque) plate AND the additive
+   orb glow, so it is a plain full-bleed layer, NOT screen-blended. A gentle
+   filmic grade matches the HTW plate; the in-canvas bloom is added in JS. */
+.home-hero-plate__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  filter: contrast(1.06) saturate(1.07) brightness(1.01);
+}
+/* cobalt L1 wash that lifts at the roots as the page scrolls to the bottom —
+   keeps "cobalt only at the roots" while the tree scans down. */
+.home-hero-plate__l1 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* a Cardano-blue L1 bedrock glow at the root tips — a tighter, hotter inner
+     core (where the orbs settle + blink blue) over a soft cobalt wash. */
+  background:
+    radial-gradient(
+      34% 26% at 76% 96%,
+      rgba(58, 160, 255, 0.2),
+      rgba(0, 51, 173, 0.08) 52%,
+      transparent 78%
+    ),
+    radial-gradient(
+      72% 52% at 78% 92%,
+      rgba(111, 224, 255, 0.16),
+      rgba(111, 224, 255, 0.05) 46%,
+      transparent 72%
+    );
+  mix-blend-mode: screen;
+  opacity: var(--home-plate-settle);
+  will-change: opacity;
+}
+/* a low, slow drift of mist over the roots — adds ambient life behind the
+   overlay. Motion-gated below. */
+.home-hero-plate__mist {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 38% at 72% 84%, rgba(200, 222, 214, 0.06), transparent 70%),
+    radial-gradient(80% 30% at 50% 96%, rgba(150, 190, 175, 0.05), transparent 72%);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  animation: home-hero-mist 20s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+@keyframes home-hero-mist {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.7; }
+  100% { transform: translate3d(-2.2%, -1.4%, 0); opacity: 1; }
+}
+/* LEFT legibility scrim — darkens the left (where the hero copy + CTAs sit)
+   and the top/bottom edges so the copy stays crisp, leaving the tree readable
+   on the right. */
+.home-hero-plate__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(125% 100% at 0% 46%, rgba(5, 11, 8, 0.86), rgba(5, 11, 8, 0.42) 42%, transparent 70%),
+    linear-gradient(180deg, rgba(5, 11, 8, 0.5), transparent 24%),
+    linear-gradient(0deg, rgba(5, 11, 8, 0.66), transparent 30%);
+}
+/* mobile/coarse: the cover framing + right-bias are computed in JS in-canvas
+   (the scroll-pan is disabled there → a calm static framing). Only the copy
+   scrim needs a narrow-viewport tweak. */
+@media (max-width: 720px) {
+  .home-hero-plate__scrim {
+    /* on a narrow viewport the copy spans the width — darken more globally. */
+    background:
+      radial-gradient(150% 100% at 0% 42%, rgba(5, 11, 8, 0.9), rgba(5, 11, 8, 0.55) 46%, transparent 78%),
+      linear-gradient(180deg, rgba(5, 11, 8, 0.6), transparent 30%),
+      linear-gradient(0deg, rgba(5, 11, 8, 0.72), transparent 34%);
+  }
+}
+/* motion-off / reduced motion: still plate, no mist drift (the overlay canvas
+   self-handles its static fallback in JS). */
+.home-hero-plate--still .home-hero-plate__mist {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-plate__mist {
+    animation: none;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Home body sections (below the hero) now sit OVER the still-visible, panning
+   plate instead of cutting it off with a solid fill — so the tree scans down to
+   the roots behind the cards as you scroll (CHANGE 3). The body is transparent;
+   a soft dark gradient SCRIM (::before, fixed to the viewport) rides behind the
+   content for legibility while letting the tree read through, deepening toward
+   the page bottom where it lands on the roots. The cards + section text carry
+   their own local scrims (below) so copy stays crisp. */
+.home-body {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+}
+.home-body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  /* a gentle, mostly-transparent veil over the BODY box (scrolls up over the
+     fixed, panning plate): a soft fade-in at the top so it blends out of the
+     hero, deepening toward the bottom (behind the lower cards + where the tree
+     lands on the roots), with a touch on the left. Calm, never an opaque
+     cutoff — the tree stays visible behind it. */
+  background:
+    linear-gradient(180deg, rgba(5, 11, 8, 0) 0%, rgba(5, 11, 8, 0.34) 30%, rgba(5, 11, 8, 0.44) 70%, rgba(5, 11, 8, 0.66) 100%),
+    linear-gradient(90deg, rgba(5, 11, 8, 0.4) 0%, rgba(5, 11, 8, 0.12) 38%, transparent 64%);
+}
+/* Section text on the home body (AboutFold thesis / who-builds-it / stack +
+   the explore + closing heads) gets a soft local scrim behind the copy so it
+   stays legible over the tree without an opaque card. `isolation: isolate`
+   keeps the pseudo's z-index:-1 local (behind the text, above the body veil). */
+.home-body .section__head,
+.home-body .prose {
+  position: relative;
+  isolation: isolate;
+}
+/* a soft wash hugging the text columns (left-anchored, matching the copy) */
+.home-body .section__head::before,
+.home-body .prose::before {
+  content: "";
+  position: absolute;
+  inset: -16px -26px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    118% 140% at 0% 50%,
+    rgba(4, 9, 6, 0.72),
+    rgba(4, 9, 6, 0.4) 48%,
+    transparent 80%
+  );
+  border-radius: 22px;
+}
