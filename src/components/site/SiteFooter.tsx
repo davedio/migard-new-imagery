@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 
 const EXPLORE = [
   { label: "Home", href: "/home" },
   { label: "How It Works", href: "/how-it-works" },
   { label: "Security", href: "/security" },
   { label: "Get Started", href: "/get-started" },
-  { label: "Docs", href: "/docs" },
+  { label: "Docs", href: OFFICIAL_LINKS.github, external: true },
 ] as const;
 
 const RESOURCES = [
@@ -104,7 +105,19 @@ export function SiteFooter() {
           <ul>
             {EXPLORE.map((l) => (
               <li key={l.href}>
-                <Link href={l.href}>{l.label}</Link>
+                {"external" in l && l.external ? (
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="site-footer__link--external"
+                  >
+                    {l.label}
+                    <GitHubIcon size={14} aria-hidden />
+                  </a>
+                ) : (
+                  <Link href={l.href}>{l.label}</Link>
+                )}
               </li>
             ))}
           </ul>

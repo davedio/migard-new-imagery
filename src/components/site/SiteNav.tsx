@@ -4,10 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { GitHubIcon } from "@/components/site/BrandIcons";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 type NavLeaf = {
   label: string;
   href: string;
+  /** Render as an external anchor (new tab) with a GitHub glyph. */
+  external?: boolean;
 };
 
 const NAV: readonly NavLeaf[] = [
@@ -16,7 +20,7 @@ const NAV: readonly NavLeaf[] = [
   { label: "Security", href: "/security" },
   { label: "Testnet", href: "/contracts" },
   { label: "FAQ", href: "/faq" },
-  { label: "Docs", href: "/docs" },
+  { label: "Docs", href: OFFICIAL_LINKS.github, external: true },
 ] as const;
 
 /**
@@ -54,11 +58,24 @@ export function SiteNav() {
         </Link>
 
         <div className="site-nav__links">
-          {NAV.map((item) => (
-            <Link key={item.href} href={item.href} {...linkClass(item.href)}>
-              {item.label}
-            </Link>
-          ))}
+          {NAV.map((item) =>
+            item.external ? (
+              <a
+                key={item.href}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="site-nav__link site-nav__link--external"
+              >
+                {item.label}
+                <GitHubIcon size={15} aria-hidden />
+              </a>
+            ) : (
+              <Link key={item.href} href={item.href} {...linkClass(item.href)}>
+                {item.label}
+              </Link>
+            ),
+          )}
         </div>
 
         <div className="site-nav__right">
@@ -78,16 +95,30 @@ export function SiteNav() {
       </nav>
 
       <div className="site-nav__mobile" data-open={open}>
-        {NAV.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            data-active={isActive(item.href)}
-            onClick={closeMenu}
-          >
-            {item.label}
-          </Link>
-        ))}
+        {NAV.map((item) =>
+          item.external ? (
+            <a
+              key={item.href}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-nav__mobile-link--external"
+              onClick={closeMenu}
+            >
+              {item.label}
+              <GitHubIcon size={16} aria-hidden />
+            </a>
+          ) : (
+            <Link
+              key={item.href}
+              href={item.href}
+              data-active={isActive(item.href)}
+              onClick={closeMenu}
+            >
+              {item.label}
+            </Link>
+          ),
+        )}
         <Link href="/get-started" className="btn btn--primary" onClick={closeMenu}>
           Get Started
         </Link>
