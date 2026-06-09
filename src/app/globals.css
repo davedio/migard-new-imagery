@@ -389,127 +389,198 @@ a {
 }
 
 /* ============================================================
-   ON-SCENE STAGE CAPTION — a small lifecycle card (mini-icon + step +
-   title + sub) that TRACKS beside the ridden packet and cross-fades on
-   each chapter change, so the step explains itself from the scene alone.
-   Positioned + faded imperatively from the rAF loop (inline transform);
-   the entrance is a CSS keyframe retriggered by toggling .is-in. Sits
-   ABOVE the post stack (z-index) so it stays crisp over DOF/grain.
+   FLOATING ON-TREE STAGE GRAPHIC (StageGraphic)
+   One elegant, luminous glass BADGE that lives ON the tree and rides the
+   transaction journey: it floats beside the descending packet at the
+   active stage's band (canopy -> roots) and surfaces the current
+   lifecycle stage — a custom glyph medallion, the L2/L1 tag, the stage
+   NAME, and a compact line of copy. Replaces BOTH the old fixed
+   right-edge HUD panel AND the little emoji-glyph marker.
+
+   Position is written imperatively each frame (translate3d, from the
+   packet's live screen position); the content subtree is keyed by stage
+   so it cross-fades + drifts on each stage change. A soft local glow/scrim
+   sits behind the text for legibility over the photoreal scene without a
+   hard panel. Sits ABOVE the post stack (z-index) so it stays crisp over
+   DOF / grain. Green = L2, gold = the challenge bridge, cobalt = L1.
    ============================================================ */
-.plate-stage__caption {
+.stage-graphic {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 3;
+  z-index: 4;
   width: max-content;
-  max-width: 256px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  padding: 11px 15px 12px 12px;
-  border-left: 2px solid var(--green-bright);
-  border-radius: 5px 10px 10px 5px;
-  background: linear-gradient(
-    90deg,
-    rgba(5, 11, 8, 0.72),
-    rgba(5, 11, 8, 0.2) 92%,
-    transparent
-  );
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 16px 44px -28px rgba(0, 0, 0, 0.85);
+  max-width: 280px;
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.45s var(--ease), transform 0.1s linear;
+  opacity: var(--sg-fade, 1);
+  transition: opacity 0.5s var(--ease);
   will-change: transform, opacity;
 }
-.plate-stage__caption[data-layer="bridge"] {
-  border-left-color: var(--gold-bright);
+/* soft local glow/scrim — a diffuse radial wash behind the card so the
+   copy reads over the scene, with no hard rectangular panel edge. Tinted
+   per layer (green / gold / cobalt). */
+.stage-graphic__glow {
+  position: absolute;
+  inset: -28px -34px -30px -30px;
+  z-index: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    62% 62% at 30% 50%,
+    rgba(4, 9, 7, 0.74),
+    rgba(4, 9, 7, 0.42) 48%,
+    rgba(4, 9, 7, 0) 78%
+  );
+  filter: blur(2px);
 }
-.plate-stage__caption[data-layer="l1"] {
-  border-left-color: #6fe0ff;
+.stage-graphic[data-layer="bridge"] .stage-graphic__glow {
+  background: radial-gradient(
+    62% 62% at 30% 50%,
+    rgba(8, 7, 3, 0.74),
+    rgba(8, 7, 3, 0.42) 48%,
+    rgba(8, 7, 3, 0) 78%
+  );
 }
-/* MARKER variant: icon-only locator that tracks the packet (no text — the
-   detailed step copy lives in the HUD now). Strip the panel chrome to a
-   clean floating disc so it tags the focal action without repeating the HUD. */
-.plate-stage__caption--marker {
-  width: auto;
-  max-width: none;
-  gap: 0;
-  padding: 0;
-  border-left: 0;
-  border-radius: 0;
-  background: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  box-shadow: none;
+.stage-graphic[data-layer="l1"] .stage-graphic__glow {
+  background: radial-gradient(
+    62% 62% at 30% 50%,
+    rgba(3, 8, 12, 0.76),
+    rgba(3, 8, 12, 0.44) 48%,
+    rgba(3, 8, 12, 0) 78%
+  );
 }
-.plate-stage__caption--marker .plate-stage__caption-icon {
-  width: 34px;
-  height: 34px;
-  background-size: 19px 19px;
-  background-color: rgba(5, 11, 8, 0.62);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.85),
-    0 0 16px -6px rgba(59, 232, 99, 0.5);
+/* the badge itself — a slim glass capsule: medallion + text. The accent
+   colour is carried in --sg per layer and used for the rule, glyph, and
+   glows. */
+.stage-graphic__card {
+  --sg: 59, 232, 99; /* L2 green by default */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 17px 13px 13px;
+  border: 1px solid rgba(var(--sg), 0.34);
+  border-left-width: 2px;
+  border-radius: 7px 13px 13px 7px;
+  background: linear-gradient(
+    100deg,
+    rgba(8, 14, 11, 0.62),
+    rgba(8, 14, 11, 0.28) 88%,
+    rgba(8, 14, 11, 0.14)
+  );
+  backdrop-filter: blur(7px) saturate(1.06);
+  -webkit-backdrop-filter: blur(7px) saturate(1.06);
+  box-shadow: 0 18px 50px -30px rgba(0, 0, 0, 0.92),
+    0 0 24px -14px rgba(var(--sg), 0.55),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  /* cross-fade + gentle drift on each stage change (the subtree is keyed) */
+  animation: stage-graphic-in 0.55s var(--ease) both;
 }
-.plate-stage__caption--marker[data-layer="bridge"] .plate-stage__caption-icon {
-  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.85),
-    0 0 16px -6px rgba(224, 163, 60, 0.5);
+.stage-graphic__card[data-layer="bridge"] {
+  --sg: 224, 163, 60;
 }
-.plate-stage__caption--marker[data-layer="l1"] .plate-stage__caption-icon {
-  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.85),
-    0 0 16px -6px rgba(111, 224, 255, 0.55);
+.stage-graphic__card[data-layer="l1"] {
+  --sg: 111, 224, 255;
 }
-/* mini-icon disc — the per-stage glyph (SVG data URI) set via --icon */
-.plate-stage__caption-icon {
+/* glyph medallion — a luminous glass disc holding the per-stage SVG */
+.stage-graphic__medallion {
   flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(59, 232, 99, 0.32);
-  background-color: rgba(59, 232, 99, 0.08);
-  background-image: var(--icon);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 18px 18px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  border: 1px solid rgba(var(--sg), 0.4);
+  background: radial-gradient(
+    120% 120% at 30% 22%,
+    rgba(var(--sg), 0.22),
+    rgba(var(--sg), 0.06) 70%
+  );
+  box-shadow: 0 0 18px -6px rgba(var(--sg), 0.6),
+    inset 0 0 10px -4px rgba(var(--sg), 0.5);
+  color: rgb(var(--sg));
 }
-.plate-stage__caption[data-layer="bridge"] .plate-stage__caption-icon {
-  border-color: rgba(224, 163, 60, 0.4);
-  background-color: rgba(224, 163, 60, 0.1);
+.stage-graphic__medallion svg {
+  width: 21px;
+  height: 21px;
+  filter: drop-shadow(0 0 5px rgba(var(--sg), 0.55));
 }
-.plate-stage__caption[data-layer="l1"] .plate-stage__caption-icon {
-  border-color: rgba(111, 224, 255, 0.42);
-  background-color: rgba(111, 224, 255, 0.1);
+.stage-graphic__body {
+  min-width: 0;
 }
-/* entrance: pop the mini-icon on each chapter change (the marker is
-   icon-only now — the full step copy lives in the HUD) */
-.plate-stage__caption.is-in .plate-stage__caption-icon {
-  animation: hiw-caption-pop 0.5s var(--ease) both;
+.stage-graphic__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-@keyframes hiw-caption-pop {
+.stage-graphic__tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid rgba(var(--sg), 0.42);
+  border-radius: 999px;
+  background: rgba(var(--sg), 0.1);
+  font: 9px/1 var(--font-mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgb(var(--sg));
+}
+.stage-graphic__count {
+  font: 10px/1 var(--font-mono);
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+}
+.stage-graphic__count-sep {
+  margin: 0 2px;
+  opacity: 0.6;
+}
+.stage-graphic__name {
+  margin-top: 8px;
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: var(--text-hi);
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+}
+.stage-graphic__line {
+  margin: 6px 0 0;
+  max-width: 210px;
+  font-size: 11.5px;
+  line-height: 1.46;
+  color: var(--text);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
+}
+@keyframes stage-graphic-in {
   from {
     opacity: 0;
-    transform: scale(0.6);
-  }
-  60% {
-    transform: scale(1.08);
+    transform: translateY(7px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
   }
 }
-/* the on-scene caption is a desktop/motion flourish; hide where the HUD
-   hides too (small screens, touch, reduced motion) */
+/* STATIC fallback (motion-off / coarse pointer when motion is on): not
+   tracking the packet, so pin it to a calm, readable spot instead of an
+   un-set transform. Centre-left, vertically centred. */
+.stage-graphic--static {
+  top: 50%;
+  left: clamp(18px, 5vw, 64px);
+  transform: translateY(-50%);
+}
+.stage-graphic--static .stage-graphic__card {
+  animation: none;
+}
+/* the floating badge is a desktop/motion flourish; hide where the old HUD
+   hid too (small screens, touch). */
 @media (max-width: 1100px) {
-  .plate-stage__caption {
+  .stage-graphic {
     display: none;
   }
 }
 @media (pointer: coarse) {
-  .plate-stage__caption {
+  .stage-graphic {
     display: none;
   }
 }
@@ -525,8 +596,14 @@ a {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  .plate-stage__caption {
-    display: none !important;
+  /* keep the floating stage badge as a calm STATIC label under reduced
+     motion (it still names the active stage as you scroll), but drop the
+     entrance animation + will-change churn. */
+  .stage-graphic {
+    will-change: auto;
+  }
+  .stage-graphic__card {
+    animation: none !important;
   }
 }
 .static-tree-hero__bg {
@@ -2948,218 +3025,7 @@ body.cursor-none * {
   transform: none;
 }
 
-/* ---- transaction-lifecycle HUD ------------------------------ */
-.tx-hud {
-  position: fixed;
-  z-index: 46;
-  /* client note: sit out near the RIGHT edge */
-  right: clamp(12px, 1.6vw, 24px);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: stretch;
-  gap: 16px;
-  pointer-events: none;
-  transition: opacity 0.5s var(--ease);
-}
-.tx-hud__rail {
-  position: relative;
-  width: 2px;
-  border-radius: 2px;
-  background: rgba(215, 226, 216, 0.1);
-  overflow: hidden;
-}
-.tx-hud__rail-fill {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 100%;
-  transform-origin: top;
-  transform: scaleY(0.02);
-  background: linear-gradient(
-    to bottom,
-    var(--green-bright) 0%,
-    var(--gold-bright) 58%,
-    #6fe0ff 100%
-  );
-  box-shadow: 0 0 10px rgba(59, 232, 99, 0.4);
-}
-.tx-hud__panel {
-  position: relative;
-  /* client note: LARGER panel showing the ACTIVE step in full (title + tag +
-     description). Fixed/clamped width so the body copy sets to a comfortable
-     measure; it grows VERTICALLY for the description. Kept to the right
-     margin so it never covers the tree's focal action in the centre. */
-  width: clamp(286px, 24vw, 332px);
-  padding: 22px 22px 20px;
-  border: 1px solid var(--panel-edge);
-  border-radius: var(--r-lg);
-  background: linear-gradient(180deg, rgba(215, 226, 216, 0.035), transparent 46%),
-    rgba(5, 11, 8, 0.66);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 24px 70px -34px rgba(0, 0, 0, 0.84);
-  transition: border-color 0.5s var(--ease), box-shadow 0.5s var(--ease);
-}
-.tx-hud__panel[data-layer="l1"] {
-  border-color: rgba(47, 156, 255, 0.45);
-  box-shadow: 0 0 26px -8px rgba(47, 156, 255, 0.4),
-    0 20px 60px -34px rgba(0, 0, 0, 0.8);
-}
-.tx-hud__panel[data-layer="bridge"] {
-  border-color: rgba(207, 154, 46, 0.4);
-}
-.tx-hud__panel[data-layer="l2"] {
-  border-color: rgba(32, 190, 67, 0.4);
-}
-/* HUD header row: the active-stage mini-icon + the step counter, so the
-   enlarged panel surfaces the current step's glyph prominently. */
-.tx-hud__head {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.tx-hud__icon {
-  flex: none;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(59, 232, 99, 0.34);
-  background-color: rgba(59, 232, 99, 0.08);
-  background-image: var(--icon);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 18px 18px;
-  transition: border-color 0.4s var(--ease), background-color 0.4s var(--ease);
-}
-.tx-hud__panel[data-layer="bridge"] .tx-hud__icon {
-  border-color: rgba(224, 163, 60, 0.42);
-  background-color: rgba(224, 163, 60, 0.1);
-}
-.tx-hud__panel[data-layer="l1"] .tx-hud__icon {
-  border-color: rgba(111, 224, 255, 0.44);
-  background-color: rgba(111, 224, 255, 0.1);
-}
-.tx-hud__step {
-  font: 11px/1 var(--font-mono);
-  letter-spacing: 0.22em;
-  color: var(--gold-bright);
-}
-.tx-hud__panel[data-layer="l1"] .tx-hud__step {
-  color: #6fe0ff;
-}
-/* the L2 / L1 stage tag — a small pill above the title, brand-coloured per
-   layer so the viewer instantly places the step on the L2 -> L1 spectrum */
-.tx-hud__tag {
-  display: inline-block;
-  margin-top: 16px;
-  padding: 4px 9px;
-  border: 1px solid rgba(32, 190, 67, 0.4);
-  border-radius: 999px;
-  background: rgba(32, 190, 67, 0.08);
-  font: 9.5px/1 var(--font-mono);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--green-bright);
-}
-.tx-hud__tag[data-layer="bridge"] {
-  border-color: rgba(224, 163, 60, 0.44);
-  background: rgba(224, 163, 60, 0.1);
-  color: var(--gold-bright);
-}
-.tx-hud__tag[data-layer="l1"] {
-  border-color: rgba(111, 224, 255, 0.46);
-  background: rgba(111, 224, 255, 0.1);
-  color: #6fe0ff;
-}
-.tx-hud__label {
-  margin-top: 11px;
-  font-family: var(--font-display);
-  font-size: 25px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.08;
-  color: var(--text-hi);
-}
-.tx-hud__panel[data-layer="l1"] .tx-hud__label {
-  color: #9fd2ff;
-}
-/* the FULL active-step description — grows the panel vertically; measure is
-   set by the clamped panel width so it stays comfortably legible */
-.tx-hud__desc {
-  margin: 10px 0 0;
-  font-size: 13px;
-  line-height: 1.52;
-  letter-spacing: 0.005em;
-  color: var(--text);
-}
-.tx-hud__ticks {
-  list-style: none;
-  margin: 18px 0 0;
-  padding: 15px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 14px;
-  border-top: 1px solid var(--panel-edge);
-}
-.tx-hud__ticks li {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font: 9.5px/1 var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  transition: color 0.4s var(--ease);
-}
-.tx-hud__tick-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  border: 1px solid var(--text-faint);
-  flex: none;
-  transition: all 0.4s var(--ease);
-}
-.tx-hud__ticks li[data-state="done"] {
-  color: var(--text-dim);
-}
-.tx-hud__ticks li[data-state="done"] .tx-hud__tick-dot {
-  background: var(--green-dim);
-  border-color: var(--green-dim);
-}
-.tx-hud__ticks li[data-state="active"] {
-  color: var(--text-hi);
-}
-.tx-hud__ticks li[data-state="active"] .tx-hud__tick-dot {
-  background: var(--green-bright);
-  border-color: var(--green-bright);
-  box-shadow: 0 0 10px rgba(59, 232, 99, 0.6);
-}
-.tx-hud__ticks li[data-state="active"][data-layer="l1"] .tx-hud__tick-dot {
-  background: #6fe0ff;
-  border-color: #6fe0ff;
-  box-shadow: 0 0 10px rgba(47, 156, 255, 0.7);
-}
-.tx-hud__ticks li[data-state="active"][data-layer="bridge"] .tx-hud__tick-dot {
-  background: var(--gold-bright);
-  border-color: var(--gold-bright);
-  box-shadow: 0 0 10px rgba(224, 163, 60, 0.6);
-}
-
-/* hide the HUD where it would crowd the layout / on touch */
-@media (max-width: 1100px) {
-  .tx-hud {
-    display: none;
-  }
-}
-@media (pointer: coarse) {
-  .tx-hud,
-  .cursor-layer {
-    display: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .tx-hud,
   .cursor-layer {
     display: none !important;
   }

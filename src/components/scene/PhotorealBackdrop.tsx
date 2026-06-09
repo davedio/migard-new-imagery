@@ -9,8 +9,8 @@
    ── SIGNATURE: RIDE THE TRANSACTION · CINEMATIC + STAGED STORY ──
    The scroll FOLLOWS one luminous transaction packet down the tree AND
    tells its life story. The descent is tied 1:1 to the five lifecycle
-   chapters (the SAME thresholds the HUD ChapterLabels uses) and the
-   camera DWELLS + ZOOMS on each stage's focal region as it becomes
+   chapters (the SAME thresholds the floating StageGraphic badge uses) and
+   the camera DWELLS + ZOOMS on each stage's focal region as it becomes
    active, so each beat lands as its own distinct, up-close MOMENT:
 
      SUBMIT   (canopy)      tiny tx glints twinkle then fly INWARD to
@@ -25,9 +25,10 @@
      SETTLE   (roots / L1)  the block LANDS in the cobalt L1 bedrock with
                             a slow confirmation BLOOM + expanding rings.
 
-   A small stage CAPTION (mini-icon + title + sub) tracks beside the
-   packet and cross-fades on each chapter change — the step explains
-   itself from the visuals alone.
+   This component publishes the packet's live screen position (packetRef)
+   so the host's floating StageGraphic badge can anchor ON the tree beside
+   the packet and ride the descent — the per-stage indicator is rendered
+   there, not drawn here.
 
    Two stacked, fixed, full-viewport layers (both portaled to <body>
    inside .scene-stage by the host, so they stay viewport-fixed under
@@ -55,8 +56,9 @@
    Reduced motion / motion-off / mobile (motionOn === false): the plate
    is shown STATIC (a calm mid-trunk framing, no pan) and the canvas
    draws the network ONCE as a static constellation with the packet
-   resting mid-trunk (no animation, wake, bloom, motes, or grain). The
-   stage caption is hidden. Cheap, legible, no scroll hijack.
+   resting mid-trunk (no animation, wake, bloom, motes, or grain); the
+   resting packet position is still published so the StageGraphic badge
+   shows as a calm static label. Cheap, legible, no scroll hijack.
    ============================================================ */
 
 import { useEffect, useMemo, useRef, type RefObject } from "react";
@@ -97,24 +99,16 @@ function mixRGB(c0: string, c1: string, t: number): string {
 
 /* ================================================================
    LIFECYCLE STAGES — the spine of the story. Thresholds are kept in
-   lockstep with ChapterLabels.chapterIndex so the canvas beats, the
-   HUD, and the per-stage zoom all light up on the exact same scroll
-   positions. `stageOf` returns the active index plus a 0..1 LOCAL
+   lockstep with StageGraphic.stageIndex so the canvas beats, the floating
+   on-tree badge, and the per-stage zoom all light up on the exact same
+   scroll positions. `stageOf` returns the active index plus a 0..1 LOCAL
    progress within that stage, used to drive each beat's birth / peak /
    handoff AND the camera dwell+zoom on that stage's focal region.
    ================================================================ */
 const STAGE_BOUNDS = [0, 0.14, 0.4, 0.58, 0.84, 1.0001];
-/* The five stage KEYS, used to pick the on-scene marker's mini-icon. The full
-   step copy (title / tag / description) lives in the HUD (ChapterLabels). */
-const STAGE_CUES: { key: string }[] = [
-  { key: "submit" },
-  { key: "sequence" },
-  { key: "commit" },
-  { key: "watch" },
-  { key: "settle" },
-];
+const STAGE_COUNT = STAGE_BOUNDS.length - 1;
 function stageOf(p: number): { idx: number; local: number } {
-  for (let i = STAGE_CUES.length - 1; i >= 0; i--) {
+  for (let i = STAGE_COUNT - 1; i >= 0; i--) {
     if (p >= STAGE_BOUNDS[i]) {
       const span = Math.max(1e-4, STAGE_BOUNDS[i + 1] - STAGE_BOUNDS[i]);
       return { idx: i, local: clamp((p - STAGE_BOUNDS[i]) / span) };
@@ -318,49 +312,17 @@ function buildModel(wide: boolean): Model {
   return { nodes, edges, motes, glints, cx, spread };
 }
 
-/* Inline SVG glyphs (data URIs) for the on-scene stage mini-icon, one per
-   lifecycle stage. Stroked, currentColor-free (hard green so they read on
-   the dark scrim); swapped imperatively on chapter change. Kept tiny. */
-const ICON: Record<string, string> = {
-  // Submit — a spark / tx burst
-  submit:
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#3be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2v5M12 17v5M2 12h5M17 12h5M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3'/><circle cx='12' cy='12' r='2.4' fill='#3be863' stroke='none'/></svg>`,
-    ),
-  // Sequence — stacked / ordered lines
-  sequence:
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#3be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h12M8 12h12M8 18h12'/><circle cx='4' cy='6' r='1.4' fill='#3be863' stroke='none'/><circle cx='4' cy='12' r='1.4' fill='#3be863' stroke='none'/><circle cx='4' cy='18' r='1.4' fill='#3be863' stroke='none'/></svg>`,
-    ),
-  // Commit — a block / cube
-  commit:
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#3be863' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2.6l8 4.6v9.6l-8 4.6-8-4.6V7.2z'/><path d='M12 2.6v9.6M12 12.2l8-4.6M12 12.2l-8-4.6'/></svg>`,
-    ),
-  // Watch — an eye / shield
-  watch:
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#e0a33c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z'/><circle cx='12' cy='12' r='2.7'/></svg>`,
-    ),
-  // Settle — an anchor (final settlement on Cardano L1)
-  settle:
-    "data:image/svg+xml;utf8," +
-    encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#6fe0ff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='4.5' r='2'/><path d='M12 6.5V21M5 12H3.5a8.5 8.5 0 0 0 17 0H19M8.5 9.5h7'/></svg>`,
-    ),
-};
-
 export default function PhotorealBackdrop({
   progressRef,
+  packetRef,
   motionOn,
   wide,
 }: {
   /** smoothed 0..1 journey progress (same ref the scene used) */
   progressRef: RefObject<number>;
+  /** OUT: live packet screen position in px, written each frame so the
+      floating StageGraphic badge can anchor to the packet on the tree */
+  packetRef?: RefObject<{ x: number; y: number }>;
   motionOn: boolean;
   /** true when the wide plate / gentler pan should be used */
   wide: boolean;
@@ -368,12 +330,6 @@ export default function PhotorealBackdrop({
   const plateRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dofRef = useRef<HTMLDivElement>(null);
-  // on-scene marker DOM refs (written imperatively from the rAF loop — no
-  // React state). The detailed step copy now lives in the HUD; this marker is
-  // just a per-stage mini-icon that tracks the packet so the focal action is
-  // tagged on the tree without duplicating the HUD's text.
-  const captionRef = useRef<HTMLDivElement>(null);
-  const capIconRef = useRef<HTMLSpanElement>(null);
   // shared, rAF-smoothed pan progress so the canvas packet rides the EXACT
   // same eased descent as the plate (perfect coupling = no jitter, tracking
   // shot feel). Written by the plate-pan loop, read by the overlay loop.
@@ -582,6 +538,12 @@ export default function PhotorealBackdrop({
       const renderStatic = () => {
         const pStat = 0.42;
         const pk = packetPos(pStat, 0, cx, spread);
+        // publish the resting packet screen position so a static badge can
+        // anchor to it (the StageGraphic static fallback reads this).
+        if (packetRef?.current) {
+          packetRef.current.x = pk.x * W;
+          packetRef.current.y = pk.y * H;
+        }
         // a calm, partially-lit constellation with the packet resting
         // mid-trunk (no animation).
         for (const n of nodes) {
@@ -632,9 +594,6 @@ export default function PhotorealBackdrop({
     let lastRingAt = -1;
     let settledOnce = false;
 
-    // caption cross-fade state (DOM, written imperatively — no React state)
-    let lastStageIdx = -1;
-
     // tiny static grain tile, drawn faintly each frame at an offset
     const grain = document.createElement("canvas");
     grain.width = grain.height = 96;
@@ -678,6 +637,13 @@ export default function PhotorealBackdrop({
       const pk = packetPos(p, t, cx, spread);
       const px = pk.x * W;
       const py = pk.y * H;
+      // publish the live packet screen position so the floating StageGraphic
+      // badge can anchor to it on the tree (single source of truth — the
+      // badge never drifts from the comet / plate pan).
+      if (packetRef?.current) {
+        packetRef.current.x = px;
+        packetRef.current.y = py;
+      }
       // packet hue shifts green -> cobalt as it nears the roots
       const pkCol = mixRGB(GREEN, COBALT, settle);
 
@@ -1103,38 +1069,6 @@ export default function PhotorealBackdrop({
       }
       ctx.globalAlpha = 1;
 
-      /* ---- ON-SCENE STAGE MARKER: a per-stage mini-icon that TRACKS the
-         packet head, updated imperatively (no React re-render). The full step
-         detail (title / tag / description) now lives in the enlarged HUD, so
-         this marker deliberately carries NO text — it just tags the focal
-         action on the tree and swaps its glyph + colour on each chapter
-         change, with a small pop so the step change registers. ---- */
-      const capEl = captionRef.current;
-      if (capEl) {
-        if (sIdx !== lastStageIdx) {
-          lastStageIdx = sIdx;
-          const cue = STAGE_CUES[sIdx];
-          if (capIconRef.current)
-            capIconRef.current.style.setProperty(
-              "--icon",
-              `url("${ICON[cue.key]}")`,
-            );
-          capEl.dataset.layer = sIdx === 4 ? "l1" : sIdx === 3 ? "bridge" : "l2";
-          // retrigger the entrance animation
-          capEl.classList.remove("is-in");
-          // force reflow so the animation restarts
-          void capEl.offsetWidth;
-          capEl.classList.add("is-in");
-        }
-        // sit just beside the packet head, clamped into the viewport, and fade
-        // out at the very top (let the hero breathe). It's a small disc so it
-        // never crowds the centre or reaches the right-edge HUD.
-        const left = clamp(px + 26, 20, W - 64);
-        const top = clamp(py - 22, 64, H - 64);
-        capEl.style.transform = `translate(${left.toFixed(1)}px, ${top.toFixed(1)}px)`;
-        capEl.style.opacity = p < 0.015 ? "0" : "1";
-      }
-
       raf = requestAnimationFrame(render);
     };
 
@@ -1172,24 +1106,9 @@ export default function PhotorealBackdrop({
       <div className="plate-stage__ca" />
       <div className="plate-stage__vignette" />
       <div className="plate-stage__grain" />
-      {/* ---- ON-SCENE STAGE MARKER (mini-icon only) — tags the focal action
-          on the tree and tracks the packet; the full step detail lives in the
-          HUD so this carries no text. Desktop / motion only; hidden via CSS in
-          the static/reduced fallback. ---- */}
-      {motionOn && (
-        <div
-          className="plate-stage__caption plate-stage__caption--marker"
-          ref={captionRef}
-          data-layer="l2"
-        >
-          <span
-            className="plate-stage__caption-icon"
-            ref={capIconRef}
-            style={{ ["--icon" as string]: `url("${ICON.submit}")` }}
-            aria-hidden
-          />
-        </div>
-      )}
+      {/* The per-stage stage indicator is no longer drawn here: it's the
+          floating on-tree StageGraphic badge, rendered by the host into
+          .scene-stage and anchored to the live packet via packetRef. */}
     </div>
   );
 }

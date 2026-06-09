@@ -52,7 +52,9 @@ const PhotorealBackdrop = dynamic(() => import("./scene/PhotorealBackdrop"), {
   ssr: false,
 });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
-const ChapterLabels = dynamic(() => import("./scene/ChapterLabels"), {
+// The floating on-tree stage badge — rides the descending packet and surfaces
+// the active lifecycle stage (replaces the old fixed HUD panel + emoji marker).
+const StageGraphic = dynamic(() => import("./scene/StageGraphic"), {
   ssr: false,
 });
 // playful "draw with light" cursor toy: a held pointer paints a soft green
@@ -232,6 +234,11 @@ export default function HowItWorksExperience({
   const actRef = useRef<HTMLElement | null>(null);
   const journeyProgressRef = useRef(0);
 
+  // Live packet screen position (px), written each frame by PhotorealBackdrop
+  // and read by the floating StageGraphic badge so it stays anchored to the
+  // transaction on the tree — one source of truth, no drift from the comet.
+  const packetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
   // A spring MotionValue the HUD subscribes to; fed each frame from the
   // act-progress (buttery, no jumps). Softer + heavier (client note: slower /
   // calmer descent) so the HUD's stage changes ease in sympathy with the
@@ -263,14 +270,23 @@ export default function HowItWorksExperience({
         <div className="scene-stage">
           <PhotorealBackdrop
             progressRef={journeyProgressRef}
+            packetRef={packetRef}
             motionOn={motionOn}
             wide={wide}
           />
+          {/* the floating on-tree stage badge lives INSIDE .scene-stage so it
+              sits over the plate + post stack; it anchors to the live packet
+              (packetRef) and rides the journey. Tracking is gated to advanced
+              (desktop + fine pointer + motion-on); otherwise a static label. */}
+          <StageGraphic
+            progress={springProgress}
+            packetRef={packetRef}
+            enabled={advanced}
+          />
         </div>
-        {/* light-painting orb: above the scene, below the HUD/cursor. Gated to
+        {/* light-painting orb: above the scene, below the cursor. Gated to
             desktop + fine pointer + motion-on (advanced). */}
         <LightOrbLayer enabled={advanced} />
-        <ChapterLabels progress={springProgress} enabled={motionOn} />
         <CustomCursor enabled={advanced} />
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>
