@@ -326,31 +326,31 @@ const ICON: Record<string, string> = {
   submit:
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2v5M12 17v5M2 12h5M17 12h5M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3'/><circle cx='12' cy='12' r='2.4' fill='%233be863' stroke='none'/></svg>`,
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#3be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2v5M12 17v5M2 12h5M17 12h5M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3'/><circle cx='12' cy='12' r='2.4' fill='#3be863' stroke='none'/></svg>`,
     ),
   // Sequence — stacked / ordered lines
   sequence:
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h12M8 12h12M8 18h12'/><circle cx='4' cy='6' r='1.4' fill='%233be863' stroke='none'/><circle cx='4' cy='12' r='1.4' fill='%233be863' stroke='none'/><circle cx='4' cy='18' r='1.4' fill='%233be863' stroke='none'/></svg>`,
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#3be863' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M8 6h12M8 12h12M8 18h12'/><circle cx='4' cy='6' r='1.4' fill='#3be863' stroke='none'/><circle cx='4' cy='12' r='1.4' fill='#3be863' stroke='none'/><circle cx='4' cy='18' r='1.4' fill='#3be863' stroke='none'/></svg>`,
     ),
   // Commit — a block / cube
   commit:
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233be863' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2.6l8 4.6v9.6l-8 4.6-8-4.6V7.2z'/><path d='M12 2.6v9.6M12 12.2l8-4.6M12 12.2l-8-4.6'/></svg>`,
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#3be863' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2.6l8 4.6v9.6l-8 4.6-8-4.6V7.2z'/><path d='M12 2.6v9.6M12 12.2l8-4.6M12 12.2l-8-4.6'/></svg>`,
     ),
   // Watch — an eye / shield
   watch:
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e0a33c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z'/><circle cx='12' cy='12' r='2.7'/></svg>`,
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#e0a33c' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z'/><circle cx='12' cy='12' r='2.7'/></svg>`,
     ),
   // Settle — an anchor (final settlement on Cardano L1)
   settle:
     "data:image/svg+xml;utf8," +
     encodeURIComponent(
-      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236fe0ff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='4.5' r='2'/><path d='M12 6.5V21M5 12H3.5a8.5 8.5 0 0 0 17 0H19M8.5 9.5h7'/></svg>`,
+      `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='#6fe0ff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='4.5' r='2'/><path d='M12 6.5V21M5 12H3.5a8.5 8.5 0 0 0 17 0H19M8.5 9.5h7'/></svg>`,
     ),
 };
 
