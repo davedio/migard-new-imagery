@@ -206,17 +206,10 @@ export default function HowItWorksExperience({
   }, []);
   const advanced = motionOn && finePointer;
 
-  // Very wide / short viewports read better with the WIDE plate (tree right,
-  // negative space left) + a gentler pan; the tall plate is the default.
-  const [wide, setWide] = useState(false);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(min-aspect-ratio: 16/10) and (min-width: 900px)");
-    const apply = () => setWide(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
+  // Always use the TALL plate so EVERY viewport (incl. desktop) genuinely
+  // descends the tree canopy -> L1 on scroll. The old wide-plate path on
+  // wide/short viewports defeated the "travel down the tree" descent.
+  const wide = false;
 
   // --- inertial smooth scroll (whole-page transform) ---
   // The hook keeps the native scrollbar but rAF-lerps the (site) layout's
