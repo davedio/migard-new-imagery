@@ -825,12 +825,12 @@ button.panel:hover {
   margin-bottom: clamp(32px, 5vh, 58px);
 }
 
-.lifecycle__hero h1 {
+.lifecycle__hero h2 {
   margin-top: 16px;
   color: var(--text-hi);
-  font-size: clamp(42px, 4.8vw, 76px);
-  line-height: 1.02;
-  letter-spacing: 0;
+  font-size: clamp(34px, 3.6vw, 54px);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
 }
 
 .lifecycle__hero p {
@@ -1049,8 +1049,8 @@ button.panel:hover {
     display: none;
   }
 
-  .lifecycle__hero h1 {
-    font-size: clamp(36px, 8vw, 48px);
+  .lifecycle__hero h2 {
+    font-size: clamp(32px, 7vw, 44px);
   }
 
   .lifecycle__hero p {
@@ -1069,8 +1069,8 @@ button.panel:hover {
     gap: 12px;
   }
 
-  .lifecycle__hero h1 {
-    font-size: 34px;
+  .lifecycle__hero h2 {
+    font-size: 30px;
   }
 
   .lifecycle__hero p {
@@ -2740,5 +2740,239 @@ body.cursor-none * {
   body.cursor-none,
   body.cursor-none * {
     cursor: auto !important;
+  }
+}
+
+/* ============================================================
+   HOW IT WORKS — flagship 3D transaction-journey experience.
+
+   The page (HowItWorksExperience) opens with a TALL journey ACT rendered
+   transparent OVER the fixed .scene-stage (JourneyScene, portaled to
+   <body>). Scrolling the act's span drives the full canopy -> Cardano-L1
+   descent, so the transaction is actually WATCHED settling within the
+   act; an intro + beat legend sit pinned in a sticky viewport-tall panel
+   while it plays. The detailed lifecycle sections then flow in beneath
+   over a solid backdrop (no scene bleed) and reinforce it in words.
+
+   Scoped to `.page-main--hiw-experience` so the plain
+   `.page-main--how-it-works` background (kept intact) and every other
+   route are untouched.
+   ============================================================ */
+
+/* Stacking: the smooth-scroll hook sets `position: fixed` on the
+   [data-scroll-content] wrapper, which makes it a stacking context. The
+   fixed .scene-stage (portaled to body) sits at z-index:1, so the wrapper
+   needs to win to keep page content above the 3D. Lift it only when it
+   holds the experience — scoped via :has() so /home and every other route
+   keep the original static layering untouched. */
+[data-scroll-content]:has(.page-main--hiw-experience) {
+  position: relative;
+  z-index: 2;
+}
+
+/* The page itself is transparent so the act reveals the fixed scene; every
+   block AFTER the act gets a solid backdrop so content rides over darkness
+   with no 3D bleed. Background-COLOR only — blocks that bring their own
+   gradient image (e.g. .lifecycle) keep it layered over this solid base. */
+.page-main--hiw-experience {
+  background: transparent;
+}
+.page-main--hiw-experience > *:not(.hiw-act) {
+  position: relative;
+  z-index: 1;
+  background-color: #030704;
+}
+
+/* ---- the journey act: tall scroll driver, transparent over the 3D ---- */
+.hiw-act {
+  position: relative;
+  z-index: 1;
+  /* scroll room for the five beats to breathe; the descent completes as the
+     act ends, then content takes over. */
+  min-height: 340vh;
+}
+
+/* the pinned panel that holds the intro/legend while the descent plays */
+.hiw-act__viewport {
+  position: sticky;
+  top: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(96px, 14vh, 168px) var(--gut) clamp(40px, 8vh, 88px);
+  isolation: isolate;
+}
+
+/* legibility scrim behind the (left-anchored) intro text — keeps the copy
+   readable while leaving the tree on the right of the scene visible. */
+.hiw-act__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120% 92% at 0% 42%,
+      rgba(3, 7, 4, 0.86),
+      rgba(3, 7, 4, 0.5) 38%,
+      transparent 66%
+    ),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.62), transparent 26%),
+    linear-gradient(0deg, rgba(3, 7, 4, 0.7), transparent 24%);
+}
+
+.hiw-act__intro {
+  max-width: min(620px, 100%);
+}
+.hiw-act__title {
+  margin-top: 16px;
+  color: var(--text-hi);
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5.4vw, 82px);
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  font-weight: 500;
+}
+.hiw-act__lead {
+  margin-top: 22px;
+  max-width: 50ch;
+  color: var(--text);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.55;
+}
+
+/* the five beats the descent walks through — a quiet legend that mirrors
+   the HUD rail + the lifecycle sections below. */
+.hiw-act__beats {
+  list-style: none;
+  margin: clamp(26px, 4vh, 40px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+.hiw-act__beats li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 10px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  background: rgba(5, 11, 8, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font: 10.5px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.hiw-act__beats li[data-layer="bridge"] {
+  border-color: rgba(207, 154, 46, 0.34);
+}
+.hiw-act__beats li[data-layer="l1"] {
+  border-color: rgba(47, 156, 255, 0.4);
+}
+.hiw-act__beat-n {
+  color: var(--gold-bright);
+}
+.hiw-act__beats li[data-layer="l1"] .hiw-act__beat-n {
+  color: #6fe0ff;
+}
+.hiw-act__beat-name {
+  color: var(--text-hi);
+}
+
+/* scroll cue — mirrors the home hero's descending-node rail */
+.hiw-act__cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: clamp(34px, 6vh, 64px);
+  color: var(--text-dim);
+  font: 11px/1 var(--font-mono);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.hiw-act__rail {
+  position: relative;
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(
+    to bottom,
+    var(--gold-line),
+    rgba(207, 154, 46, 0.05)
+  );
+  overflow: hidden;
+}
+.hiw-act__rail::after {
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: -8px;
+  width: 5px;
+  height: 8px;
+  border-radius: 3px;
+  background: radial-gradient(closest-side, var(--green-bright), transparent);
+  animation: home-descend 2.6s var(--ease) infinite;
+}
+
+/* ---- content beneath the act: keep opaque, sit above the scene ---- */
+/* the lifecycle block leads the post-act content; give it a touch more top
+   air so it reads as a fresh chapter after the immersive act. */
+.page-main--hiw-experience .lifecycle {
+  position: relative;
+  z-index: 1;
+}
+/* footer carries a translucent base globally; on the experience the scene is
+   still fixed behind everything, so back it with solid darkness. */
+.page-main--hiw-experience ~ .site-footer,
+[data-scroll-content]:has(.page-main--hiw-experience) .site-footer {
+  background: linear-gradient(180deg, rgba(3, 7, 4, 0.9), #030704);
+}
+
+/* ---- re-scope the magnetic interaction to the experience ----------
+   (cursor + HUD CSS is already global; the magnetic TRANSLATE rules were
+   home-scoped. Mirror them here so opted-in elements on this page move,
+   without renaming the shared `.home` selectors.) */
+.page-main--hiw-experience [data-magnetic] {
+  transition: transform 0.28s var(--ease), border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease),
+    color 0.25s var(--ease);
+}
+.page-main--hiw-experience [data-magnetic].is-magnetic-active {
+  transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0);
+  transition: transform 0.08s linear, border-color 0.25s var(--ease),
+    box-shadow 0.34s var(--ease), background 0.34s var(--ease),
+    color 0.25s var(--ease);
+}
+
+/* ---- responsive: phone / small tablet ---- */
+@media (max-width: 720px) {
+  .hiw-act {
+    padding-inline: var(--gut);
+    text-align: left;
+  }
+  .hiw-act__scrim {
+    /* on narrow screens the tree sits centred behind the copy, so darken
+       more broadly to keep text legible */
+    background:
+      radial-gradient(140% 80% at 50% 50%, rgba(3, 7, 4, 0.82), transparent 72%),
+      linear-gradient(180deg, rgba(3, 7, 4, 0.66), rgba(3, 7, 4, 0.4) 40%, rgba(3, 7, 4, 0.74));
+  }
+  .hiw-act__lead {
+    font-size: 16px;
+  }
+}
+
+/* ---- reduced motion: no hijack, no HUD/cursor; act reads as a normal
+   intro over the single composed static frame, content stacks below.
+   (The HUD/cursor are already force-hidden by the global reduced-motion
+   rule above; here we just calm the cue animation.) */
+@media (prefers-reduced-motion: reduce) {
+  .hiw-act__rail::after {
+    animation: none;
+    top: 16px;
+    opacity: 0.8;
   }
 }

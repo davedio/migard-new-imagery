@@ -4,6 +4,7 @@ import { HudDivider } from "@/components/site/Hud";
 import ProtocolLifecycle from "@/components/site/ProtocolLifecycle";
 import { StatTiles } from "@/components/site/StatTiles";
 import { EutxoComparison } from "@/components/site/EutxoComparison";
+import HowItWorksExperience from "@/components/HowItWorksExperience";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -12,8 +13,16 @@ export const metadata: Metadata = {
 };
 
 export default function HowItWorksPage() {
+  // The flagship 3D transaction journey is the immersive centerpiece: the page
+  // opens with a full-viewport act where scroll rides a transaction canopy ->
+  // Cardano L1, then flows into the detailed lifecycle content below, which
+  // reinforces — in words — what the 3D just showed. The experience component
+  // owns the fixed 3D stage, the chapter-label HUD, the custom cursor, and the
+  // smooth-scroll (all desktop + motion-on only; see component header).
   return (
-    <main className="page-main page-main--how-it-works">
+    <HowItWorksExperience>
+      {/* Textual reference for the visual lifecycle above: the step-by-step
+          breakdown with the L2/L1 trust path and the sticky stage rail. */}
       <ProtocolLifecycle />
 
       <Section
@@ -30,7 +39,7 @@ export default function HowItWorksPage() {
         id="layers"
         eyebrow="Layer explainer"
         title="Five lifecycle steps, one trust path."
-        lead="The steps above are the live flow. The rows below are the on-chain pieces that make each step verifiable."
+        lead="The journey above is the live flow. The rows below are the on-chain pieces that make each step verifiable."
         glow="green"
       >
         <Layers
@@ -85,6 +94,6 @@ export default function HowItWorksPage() {
           { label: "See the contracts", href: "/contracts" },
         ]}
       />
-    </main>
+    </HowItWorksExperience>
   );
 }

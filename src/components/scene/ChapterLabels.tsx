@@ -5,11 +5,17 @@
 
    Reads the same smoothed scroll progress the 3D scene uses (a
    MotionValue) and surfaces the current lifecycle chapter as a fixed
-   instrument panel: SUBMITTED · L2 -> SEQUENCED -> BATCHED ->
-   DESCENDING -> SETTLED · L1, with a progress rail and a mono
-   sub-line. Green/gold = Midgard L2, cobalt = Cardano L1.
+   instrument panel. The label set is aligned 1:1 with the How It Works
+   protocol lifecycle so the 3D act and the textual sections beneath it
+   reinforce each other:
 
-   Pure DOM (uses the .hud-* kit + a few home-scoped classes). Updates
+     SUBMIT · L2 -> SEQUENCE -> COMMIT (Batch + Proof) ->
+     WATCH (Challenge window) -> SETTLE · L1
+
+   with a progress rail and a mono sub-line. Green/gold = Midgard L2,
+   gold = the on-chain challenge bridge, cobalt = Cardano L1.
+
+   Pure DOM (uses the .hud-* kit + a few scoped classes). Updates
    imperatively from the MotionValue so it never re-renders per scroll.
    Hidden under reduced motion (the page reads as stacked sections and
    the label set wouldn't track a descent).
@@ -25,12 +31,15 @@ type Chapter = {
   layer: "l2" | "bridge" | "l1";
 };
 
+// Aligned with the lifecycle steps rendered below the 3D act
+// (ProtocolLifecycle + the Layers list): Submit · L2 → Sequence →
+// Commit (batch + proof) → Watch (challenge) → Settle · L1.
 const CHAPTERS: Chapter[] = [
-  { id: "submit", label: "Submitted", sub: "tx on Midgard L2", layer: "l2" },
-  { id: "sequence", label: "Sequenced", sub: "operator orders the queue", layer: "l2" },
-  { id: "batch", label: "Batched", sub: "packed into a block", layer: "l2" },
-  { id: "descend", label: "Descending", sub: "settling toward L1", layer: "bridge" },
-  { id: "settle", label: "Settled", sub: "confirmed on Cardano L1", layer: "l1" },
+  { id: "submit", label: "Submit", sub: "tx on Midgard L2", layer: "l2" },
+  { id: "sequence", label: "Sequence", sub: "operator orders the queue", layer: "l2" },
+  { id: "commit", label: "Commit", sub: "batch + proof to L1 queue", layer: "l2" },
+  { id: "watch", label: "Watch", sub: "challenge window open", layer: "bridge" },
+  { id: "settle", label: "Settle", sub: "final on Cardano L1", layer: "l1" },
 ];
 
 function chapterIndex(p: number): number {
