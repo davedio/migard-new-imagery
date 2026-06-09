@@ -177,6 +177,11 @@ a {
   inset: 0;
   overflow: hidden;
   background: #030704; /* matte base behind the plate while it decodes */
+  /* own stacking context: keeps the DOF backdrop-filter + screen-blended fx
+     canvas contained to the plate stack (never samples/affects page content
+     above .scene-stage), and gives the post layers a stable compositing
+     root for the filmic grade. */
+  isolation: isolate;
 }
 .plate-stage__img {
   position: absolute;
@@ -188,14 +193,35 @@ a {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% var(--plate-y);
-  transform: scale(var(--plate-scale));
+  transform: scale(var(--plate-scale)) translateZ(0);
   transform-origin: 50% 50%;
   will-change: background-position, transform;
+  /* Filmic tone baked onto the plate itself: a gentle contrast S + a touch
+     of saturation/brightness so the photoreal frame reads graded, not flat.
+     Kept to compositor-cheap CSS filters (no per-frame SVG) so the pan stays
+     buttery. The colour wash (warm highlights / cool shadows) is the
+     .plate-stage__grade layer below. */
+  filter: contrast(1.07) saturate(1.08) brightness(1.015);
 }
 .plate-stage__img--wide {
   background-image: url("/plates/worldtree-wide.jpg");
   /* tree sits to the right; bias the framing there */
   background-position: 68% var(--plate-y);
+}
+/* ACES-ish COLOUR WASH — a static film grade over the plate: warm, lifted
+   highlights up top (canopy sun), gently cooled/teal shadows, and a faint
+   cool cast toward the cobalt roots. Layered blend modes so it reads as a
+   tone-map, not a flat tint. Sits under the live fx + post. */
+.plate-stage__grade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* warm highlight bloom in the canopy */
+    radial-gradient(120% 60% at 50% 8%, rgba(255, 232, 168, 0.1), transparent 60%),
+    /* subtle cool/teal cast in the shadow mids */
+    linear-gradient(180deg, rgba(120, 200, 170, 0.05) 0%, transparent 30%, transparent 70%, rgba(70, 150, 200, 0.08) 100%);
+  mix-blend-mode: screen;
 }
 /* legibility scrim — darkens the left (where the intro copy sits) and the
    top/bottom edges so HUD + headings stay crisp, leaving the tree readable. */
@@ -218,9 +244,134 @@ a {
      so the green beams/network read as light, not paint. */
   mix-blend-mode: screen;
 }
+
+/* ============================================================
+   CINEMATIC POST STACK (this take: MAXIMUM CINEMATIC POLISH)
+   A few cheap, viewport-fixed overlay layers that sit above the plate +
+   fx canvas and turn the frame into a graded film still. Order matters:
+   DOF falloff -> vignette -> chromatic-aberration edge fringe -> grain.
+   All are pure CSS (gradients + blend modes); the rAF-driven --focus-y /
+   --dof vars (set by PhotorealBackdrop) move the depth-of-field sweet
+   spot so the packet's band stays crisp while the rest falls off. No
+   per-frame React, no plate duplication (the ghosting the client hated).
+   ============================================================ */
+
+/* DEPTH OF FIELD — a soft radial that keeps a crisp window around the
+   packet and gently darkens + de-emphasises the periphery. The blur is a
+   backdrop-filter limited to the OUT-of-focus ring via a mask, so the
+   focused band stays razor sharp (true tilt-shift feel, GPU-cheap). */
+.plate-stage__dof {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --focus-y: 46%;
+  --dof: 1;
+  /* the blur strength scales with --dof (eases up near settlement) */
+  backdrop-filter: blur(calc(2.4px * var(--dof)));
+  -webkit-backdrop-filter: blur(calc(2.4px * var(--dof)));
+  /* keep the centre band (around the packet) in focus: mask OUT the
+     middle so the blur only applies to the periphery */
+  -webkit-mask-image: radial-gradient(
+    150% 62% at 50% var(--focus-y),
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.55) 52%,
+    #000 86%
+  );
+  mask-image: radial-gradient(
+    150% 62% at 50% var(--focus-y),
+    transparent 0%,
+    transparent 26%,
+    rgba(0, 0, 0, 0.55) 52%,
+    #000 86%
+  );
+}
+/* a faint darkening of the out-of-focus region for depth separation */
+.plate-stage__dof::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    150% 70% at 50% var(--focus-y),
+    transparent 30%,
+    rgba(2, 6, 4, 0.16) 64%,
+    rgba(2, 6, 4, 0.42) 100%
+  );
+}
+
+/* CINEMATIC VIGNETTE — soft, oval, never crushing the trunk centre */
+.plate-stage__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    122% 100% at 50% 42%,
+    transparent 52%,
+    rgba(2, 5, 3, 0.26) 80%,
+    rgba(1, 3, 2, 0.62) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+/* CHROMATIC ABERRATION — a whisper of RGB split at the frame edges only
+   (centre stays clean). Two thin colour-fringe layers offset opposite
+   ways, masked to the periphery, screened in. Tasteful, not glitchy. */
+.plate-stage__ca {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  background:
+    radial-gradient(140% 100% at 49.4% 50%, transparent 60%, rgba(255, 60, 80, 0.05) 100%),
+    radial-gradient(140% 100% at 50.6% 50%, transparent 60%, rgba(40, 120, 255, 0.05) 100%);
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, transparent 58%, #000 100%);
+  mask-image: radial-gradient(120% 100% at 50% 50%, transparent 58%, #000 100%);
+}
+
+/* FILM GRAIN — fine animated luminance noise (SVG fractal turbulence),
+   very low opacity, soft-light blended so it lives in the midtones like
+   real film stock. Animated via a tiny translate so it shimmers. The
+   canvas also lays a whisper of grain; together they read as film. */
+.plate-stage__grain {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
+  background-image: var(--grain-svg);
+  background-size: 220px 220px;
+  animation: plate-grain 0.9s steps(4) infinite;
+  will-change: transform;
+}
+@keyframes plate-grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-2%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* When motion is off (reduced-motion / mobile) the post stack stays but
+   goes calm: no DOF blur, no grain animation, gentler vignette. */
+.plate-stage--still .plate-stage__dof {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.plate-stage--still .plate-stage__grain {
+  animation: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .plate-stage__img {
     will-change: auto;
+  }
+  .plate-stage__grain {
+    animation: none;
+  }
+  .plate-stage__dof {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 }
 .static-tree-hero__bg {

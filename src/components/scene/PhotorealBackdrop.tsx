@@ -247,11 +247,17 @@ export default function PhotorealBackdrop({
 }) {
   const plateRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dofRef = useRef<HTMLDivElement>(null);
+  // shared, rAF-smoothed pan progress so the canvas packet rides the EXACT
+  // same eased descent as the plate (perfect coupling = no jitter, tracking
+  // shot feel). Written by the plate-pan loop, read by the overlay loop.
+  const panProgRef = useRef(clamp(progressRef.current ?? 0));
   const model = useMemo(() => buildModel(wide), [wide]);
 
   // ---- plate parallax pan (rAF, ref-driven, no React state) ----
   useEffect(() => {
     const el = plateRef.current;
+    const dof = dofRef.current;
     if (!el) return;
 
     const top = wide ? PAN_TOP_WIDE : PAN_TOP;
@@ -259,24 +265,55 @@ export default function PhotorealBackdrop({
 
     // motion-off / reduced motion / mobile: calm static framing, no pan.
     if (!motionOn) {
-      el.style.setProperty("--plate-y", `${lerp(top, bottom, 0.42)}%`);
+      const e = 0.42;
+      panProgRef.current = e;
+      el.style.setProperty("--plate-y", `${lerp(top, bottom, e)}%`);
       el.style.setProperty("--plate-scale", "1.02");
+      if (dof) {
+        dof.style.setProperty("--focus-y", "46%");
+        dof.style.setProperty("--dof", "0");
+      }
       return;
     }
 
     let raf = 0;
-    let cur = clamp(progressRef.current ?? 0);
-    const tick = () => {
+    let cur = panProgRef.current;
+    let vel = 0; // velocity term for a critically-damped follow (no jitter)
+    let lastT = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min((now - lastT) / 1000, 0.05);
+      lastT = now;
       const target = clamp(progressRef.current ?? 0);
-      // light smoothing on top of the already-smoothed progress for a
-      // buttery pan that the packet rides.
-      cur += (target - cur) * 0.12;
+      // critically-damped spring toward target: buttery, overshoot-free.
+      // This is the SAME smoothed value the overlay packet reads, so the
+      // plate descent and the packet are perfectly coupled.
+      const stiffness = 120;
+      const damping = 2 * Math.sqrt(stiffness); // critical
+      const a = stiffness * (target - cur) - damping * vel;
+      vel += a * dt;
+      cur += vel * dt;
+      cur = clamp(cur);
+      panProgRef.current = cur;
+
       const e = smooth(cur);
       const y = lerp(top, bottom, e);
       // a touch of "push in" toward the roots for depth as we arrive at L1
-      const scale = lerp(1.06, 1.12, e);
-      el.style.setProperty("--plate-y", `${y.toFixed(2)}%`);
-      el.style.setProperty("--plate-scale", scale.toFixed(3));
+      const scale = lerp(1.06, 1.13, e);
+      el.style.setProperty("--plate-y", `${y.toFixed(3)}%`);
+      el.style.setProperty("--plate-scale", scale.toFixed(4));
+
+      // DEPTH OF FIELD: keep the focus sweet-spot locked to the packet. The
+      // packet's screen-y is lerp(0.16, 0.74, e) (see packetPos), so we put
+      // focus-y exactly there. DOF strength eases UP mid-descent and relaxes
+      // a touch at the calm canopy + the settled L1 bloom.
+      if (dof) {
+        const focusY = lerp(16, 74, e); // dead-on the packet core
+        const dofAmt =
+          lerp(0.45, 1, smooth(clamp(cur / 0.5))) *
+          lerp(1, 0.7, smooth(clamp((cur - 0.85) / 0.15)));
+        dof.style.setProperty("--focus-y", `${focusY.toFixed(2)}%`);
+        dof.style.setProperty("--dof", dofAmt.toFixed(3));
+      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -421,8 +458,10 @@ export default function PhotorealBackdrop({
     let raf = 0;
     let last = performance.now();
 
-    // trailing wake samples (recent packet positions, in normalized coords)
-    const WAKE = 26;
+    // trailing wake samples (recent packet positions, in normalized coords).
+    // A long, dense buffer so the comet tail is a smooth tapering ribbon
+    // rather than a few visible segments — the hallmark of the polished look.
+    const WAKE = 64;
     const wake: { x: number; y: number }[] = [];
     for (let i = 0; i < WAKE; i++) wake.push({ x: cx, y: 0.16 });
 
@@ -448,7 +487,9 @@ export default function PhotorealBackdrop({
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       const t = now / 1000;
-      const p = clamp(progressRef.current ?? 0);
+      // ride the SAME eased pan value the plate uses (coupled descent, no
+      // jitter); fall back to the raw progress before the pan loop ticks.
+      const p = clamp(panProgRef.current ?? progressRef.current ?? 0);
       const settle = smooth(clamp((p - 0.66) / 0.34));
       const arrival = smooth(clamp((p - 0.9) / 0.1)); // final landing 0..1
 
@@ -459,7 +500,8 @@ export default function PhotorealBackdrop({
       // packet hue shifts green -> cobalt as it nears the roots
       const pkCol = mixRGB(GREEN, COBALT, settle);
 
-      // advance wake buffer (shift, push current head)
+      // advance wake buffer (shift, push current head). The head is eased
+      // toward the packet a hair so the very tip of the comet never snaps.
       for (let i = wake.length - 1; i > 0; i--) {
         wake[i].x = wake[i - 1].x;
         wake[i].y = wake[i - 1].y;
@@ -512,70 +554,161 @@ export default function PhotorealBackdrop({
       const netGlow = 0.8 + 0.12 * Math.sin(t * 0.8);
       drawNetwork(p, netGlow, px, py);
 
-      /* --- the WAKE: a glowing trailing comet-tail behind the packet ---
-         drawn as a tapering gradient stroke through the recent samples. */
+      /* --- the WAKE: a long, softly-glowing COMET TAIL behind the packet.
+         Each segment is a quadratic from the previous midpoint, THROUGH the
+         actual sample (as control point), to the next midpoint — the
+         canonical smooth-polyline trick, so the ribbon is genuinely
+         kink-free even at speed. Drawn in TWO additive passes for depth:
+           (1) a wide, diffuse outer haze that tapers to nothing,
+           (2) a tight, bright inner filament with a hot near-white root. */
+      ctx.lineJoin = "round";
       ctx.lineCap = "round";
-      for (let i = wake.length - 1; i > 0; i--) {
-        const a0 = wake[i];
-        const a1 = wake[i - 1];
-        const f = 1 - i / wake.length; // 1 near head .. 0 at tail
-        const w = lerp(0.6, 7.5, f * f);
-        const alpha = 0.5 * f * f * (1 - arrival * 0.5);
-        ctx.strokeStyle = `rgba(${pkCol}, ${alpha})`;
-        ctx.lineWidth = w;
-        ctx.beginPath();
-        ctx.moveTo(a0.x * W, a0.y * H);
-        ctx.lineTo(a1.x * W, a1.y * H);
-        ctx.stroke();
-      }
-      ctx.lineCap = "butt";
+      const wakeFade = 1 - arrival * 0.45;
+      // px helpers for a wake sample
+      const wpx = (i: number) => wake[i].x * W;
+      const wpy = (i: number) => wake[i].y * H;
 
-      /* --- the PACKET HEAD: bright comet/seed core + glow halo --- */
-      const headPulse = 0.85 + 0.15 * Math.sin(t * 6);
-      const coreR = lerp(3.2, 5.0, headPulse) * (1 + arrival * 0.4);
-      // outer glow
-      const halo = ctx.createRadialGradient(px, py, 0, px, py, coreR * 7);
-      halo.addColorStop(0, `rgba(${pkCol}, 0.9)`);
-      halo.addColorStop(0.3, `rgba(${pkCol}, 0.45)`);
+      const drawWakePass = (
+        widthHead: number,
+        widthTail: number,
+        widthPow: number,
+        alphaHead: number,
+        hotMix: number,
+      ) => {
+        // walk tail -> head; i is the "current" sample, i-1 is newer
+        for (let i = wake.length - 2; i > 0; i--) {
+          const f = 1 - i / wake.length; // 0 tail .. 1 head
+          // segment endpoints = midpoints either side of sample i
+          const mPrevX = (wpx(i + 1) + wpx(i)) / 2;
+          const mPrevY = (wpy(i + 1) + wpy(i)) / 2;
+          const mNextX = (wpx(i) + wpx(i - 1)) / 2;
+          const mNextY = (wpy(i) + wpy(i - 1)) / 2;
+          const w = lerp(widthTail, widthHead, Math.pow(f, widthPow)) * (1 + arrival * 0.25);
+          const alpha = alphaHead * f * f * wakeFade;
+          if (alpha < 0.002) continue;
+          let style: string;
+          if (hotMix > 0) {
+            const hot = clamp((f - 0.6) / 0.4, 0, 1);
+            const col = mixRGB(pkCol, "255, 255, 255", hot * hotMix);
+            style = `rgba(${col}, ${alpha})`;
+          } else {
+            style = `rgba(${pkCol}, ${alpha})`;
+          }
+          ctx.strokeStyle = style;
+          ctx.lineWidth = w;
+          ctx.beginPath();
+          ctx.moveTo(mPrevX, mPrevY);
+          ctx.quadraticCurveTo(wpx(i), wpy(i), mNextX, mNextY);
+          ctx.stroke();
+        }
+      };
+
+      // pass (1): wide diffuse haze; pass (2): bright hot filament
+      drawWakePass(26, 1, 3, 0.16, 0);
+      drawWakePass(6.5, 0.4, 2, 0.55, 0.85);
+      ctx.lineCap = "butt";
+      ctx.lineJoin = "miter";
+
+      /* --- the PACKET HEAD: a molten WHITE-HOT core wrapped in a layered
+         additive bloom, with a faint forward flare along the travel
+         direction so it reads as a tracked comet, not a static dot. --- */
+      // travel direction (from the wake) to orient the flare
+      const back = wake[Math.min(6, wake.length - 1)];
+      let dirx = pk.x - back.x;
+      let diry = pk.y - back.y;
+      const dl = Math.hypot(dirx, diry) || 1;
+      dirx /= dl;
+      diry /= dl;
+
+      const headPulse = 0.86 + 0.14 * Math.sin(t * 5.5);
+      const coreR = lerp(3.4, 5.2, headPulse) * (1 + arrival * 0.5);
+
+      // (a) broad soft bloom — the lush, restrained glow
+      const bloomHalo = ctx.createRadialGradient(px, py, 0, px, py, coreR * 11);
+      bloomHalo.addColorStop(0, `rgba(${pkCol}, 0.55)`);
+      bloomHalo.addColorStop(0.22, `rgba(${pkCol}, 0.3)`);
+      bloomHalo.addColorStop(0.55, `rgba(${pkCol}, 0.1)`);
+      bloomHalo.addColorStop(1, `rgba(${pkCol}, 0)`);
+      ctx.fillStyle = bloomHalo;
+      ctx.beginPath();
+      ctx.arc(px, py, coreR * 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      // (b) tight inner glow — saturated colour halo
+      const halo = ctx.createRadialGradient(px, py, 0, px, py, coreR * 4.2);
+      halo.addColorStop(0, `rgba(255, 255, 255, 0.9)`);
+      halo.addColorStop(0.25, `rgba(${pkCol}, 0.7)`);
       halo.addColorStop(1, `rgba(${pkCol}, 0)`);
       ctx.fillStyle = halo;
       ctx.beginPath();
-      ctx.arc(px, py, coreR * 7, 0, Math.PI * 2);
+      ctx.arc(px, py, coreR * 4.2, 0, Math.PI * 2);
       ctx.fill();
-      // bright core
-      ctx.fillStyle = `rgba(255, 255, 255, ${0.92 * headPulse})`;
+
+      // (c) forward flare — a soft lens streak ahead of the core
+      const flareLen = coreR * lerp(5, 9, headPulse);
+      const fx = px + dirx * flareLen;
+      const fy = py + diry * flareLen;
+      const flare = ctx.createLinearGradient(px, py, fx, fy);
+      flare.addColorStop(0, `rgba(255, 255, 255, ${0.5 * headPulse})`);
+      flare.addColorStop(1, `rgba(${pkCol}, 0)`);
+      ctx.strokeStyle = flare;
+      ctx.lineCap = "round";
+      ctx.lineWidth = coreR * 1.1;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(fx, fy);
+      ctx.stroke();
+      ctx.lineCap = "butt";
+
+      // (d) molten white-hot core
+      ctx.fillStyle = `rgba(255, 255, 255, ${0.95 * headPulse})`;
       ctx.shadowColor = `rgba(${pkCol}, 1)`;
-      ctx.shadowBlur = 18;
+      ctx.shadowBlur = 22;
       ctx.beginPath();
       ctx.arc(px, py, coreR, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
 
-      /* --- SETTLEMENT: confirmation BLOOM + ripple rings at the roots ---
-         When the packet arrives at L1, bloom the cobalt root glow and
-         emit expanding rings. We anchor the bloom to the packet's landing
-         point near the bottom trunk. */
+      /* --- SETTLEMENT: a SLOW, satisfying confirmation BLOOM + eased ripple
+         rings at the cobalt roots. When the packet arrives at L1, a warm
+         white core flashes then settles into a wide, layered cobalt bloom
+         that keeps glowing while held; rings expand slowly with eased
+         easing for a luxurious settle. Anchored to the packet's landing. */
       if (arrival > 0.001) {
         const bx = px;
         const by = py;
-        // expanding ground bloom
-        const bloomR = lerp(0, Math.max(W, H) * 0.34, smooth(arrival));
-        const bloom = ctx.createRadialGradient(bx, by, 0, bx, by, Math.max(8, bloomR));
-        bloom.addColorStop(0, `rgba(${COBALT}, ${0.5 * arrival})`);
-        bloom.addColorStop(0.4, `rgba(${COBALT}, ${0.22 * arrival})`);
+        const ea = smooth(arrival);
+        // (1) wide, soft outer bloom — the satisfying cobalt wash
+        const bloomR = lerp(0, Math.max(W, H) * 0.46, ea);
+        const bloom = ctx.createRadialGradient(bx, by, 0, bx, by, Math.max(10, bloomR));
+        bloom.addColorStop(0, `rgba(${COBALT}, ${0.45 * arrival})`);
+        bloom.addColorStop(0.35, `rgba(${COBALT}, ${0.2 * arrival})`);
+        bloom.addColorStop(0.7, `rgba(${COBALT}, ${0.07 * arrival})`);
         bloom.addColorStop(1, `rgba(${COBALT}, 0)`);
         ctx.fillStyle = bloom;
         ctx.beginPath();
-        ctx.arc(bx, by, Math.max(8, bloomR), 0, Math.PI * 2);
+        ctx.arc(bx, by, Math.max(10, bloomR), 0, Math.PI * 2);
+        ctx.fill();
+        // (2) bright tight cobalt heart with a warm-white flash on impact
+        const flashR = Math.max(8, coreR * lerp(6, 14, ea));
+        const heart = ctx.createRadialGradient(bx, by, 0, bx, by, flashR);
+        // the white flash is strongest right at first contact then cools
+        const whiteFlash = clamp(1 - Math.abs(arrival - 0.5) * 2.4, 0, 1);
+        heart.addColorStop(0, `rgba(255, 255, 255, ${(0.5 + 0.4 * whiteFlash) * arrival})`);
+        heart.addColorStop(0.3, `rgba(${COBALT}, ${0.55 * arrival})`);
+        heart.addColorStop(1, `rgba(${COBALT}, 0)`);
+        ctx.fillStyle = heart;
+        ctx.beginPath();
+        ctx.arc(bx, by, flashR, 0, Math.PI * 2);
         ctx.fill();
 
         // emit a ring on first full arrival, then periodically while held
-        if (arrival > 0.55) {
+        if (arrival > 0.5) {
           if (!settledOnce) {
             settledOnce = true;
             rings.push({ t: 0, born: t });
             lastRingAt = t;
-          } else if (t - lastRingAt > 1.6) {
+          } else if (t - lastRingAt > 2.0) {
             rings.push({ t: 0, born: t });
             lastRingAt = t;
           }
@@ -585,21 +718,28 @@ export default function PhotorealBackdrop({
         settledOnce = false;
       }
 
-      // advance + draw ripple rings
+      // advance + draw ripple rings — slow expansion, eased, soft double edge
       for (let i = rings.length - 1; i >= 0; i--) {
         const ring = rings[i];
         ring.t += dt;
-        const life = ring.t / 2.2;
+        const life = ring.t / 3.2; // slower, more satisfying
         if (life >= 1) {
           rings.splice(i, 1);
           continue;
         }
-        const rr = lerp(10, Math.min(W, H) * 0.42, smooth(life));
-        const a = (1 - life) * 0.5 * arrival;
+        const el = smooth(life); // ease the expansion
+        const rr = lerp(10, Math.min(W, H) * 0.5, el);
+        const a = (1 - life) * (1 - life) * 0.5 * arrival; // ease the fade
         ctx.strokeStyle = `rgba(${COBALT}, ${a})`;
-        ctx.lineWidth = lerp(2.4, 0.4, life);
+        ctx.lineWidth = lerp(3, 0.4, life);
         ctx.beginPath();
         ctx.arc(px, py, rr, 0, Math.PI * 2);
+        ctx.stroke();
+        // a faint trailing inner echo for richness
+        ctx.strokeStyle = `rgba(255, 255, 255, ${a * 0.3})`;
+        ctx.lineWidth = lerp(1.4, 0.3, life);
+        ctx.beginPath();
+        ctx.arc(px, py, rr * 0.92, 0, Math.PI * 2);
         ctx.stroke();
       }
 
@@ -631,8 +771,10 @@ export default function PhotorealBackdrop({
 
       ctx.globalCompositeOperation = "source-over";
 
-      /* --- whisper of grain --- */
-      ctx.globalAlpha = 0.03;
+      /* --- whisper of grain (the primary, filmic soft-light grain is the
+         CSS .plate-stage__grain layer; this canvas pass just adds a faint
+         sparkle in the lit/additive regions so highlights feel alive). --- */
+      ctx.globalAlpha = 0.018;
       const ox = (t * 40) % 96;
       const oy = (t * 30) % 96;
       for (let gx = -96; gx < W + 96; gx += 96) {
@@ -653,13 +795,42 @@ export default function PhotorealBackdrop({
   }, [model, motionOn, progressRef]);
 
   return (
-    <div className="plate-stage" aria-hidden>
+    <div
+      className={`plate-stage${motionOn ? "" : " plate-stage--still"}`}
+      aria-hidden
+      style={{ ["--grain-svg" as string]: `url("${GRAIN_URI}")` }}
+    >
       <div
         ref={plateRef}
         className={`plate-stage__img${wide ? " plate-stage__img--wide" : ""}`}
       />
+      {/* ACES-ish filmic GRADE: a static, screen/overlay colour wash that
+          sits over the plate but UNDER the live fx — gives the highlight
+          warmth + cool shadows of a film tone-map without an expensive
+          per-frame SVG filter on the panning plate (the contrast S-curve
+          itself is the cheap CSS filter baked on .plate-stage__img). */}
+      <div className="plate-stage__grade" />
+      {/* legibility scrim (under the live fx + post so copy stays crisp) */}
       <div className="plate-stage__scrim" />
+      {/* live overlays: packet, comet wake, reactive network, settlement */}
       <canvas ref={canvasRef} className="plate-stage__fx" />
+      {/* ---- CINEMATIC POST STACK (this take) ---- */}
+      <div ref={dofRef} className="plate-stage__dof" />
+      <div className="plate-stage__ca" />
+      <div className="plate-stage__vignette" />
+      <div className="plate-stage__grain" />
     </div>
   );
 }
+
+/* A tiny fractal-noise SVG used as the animated film-grain tile (data URI
+   so there's no extra asset / network hit). High base frequency = fine
+   grain; the CSS layer animates a sub-pixel translate so it shimmers. */
+const GRAIN_URI =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'>` +
+      `<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/>` +
+      `<feColorMatrix type='saturate' values='0'/></filter>` +
+      `<rect width='100%' height='100%' filter='url(#n)' opacity='0.9'/></svg>`,
+  );
