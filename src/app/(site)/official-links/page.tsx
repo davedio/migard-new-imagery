@@ -7,6 +7,7 @@ import {
   Callout,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { NextSteps } from "@/components/site/NextSteps";
 import { GitHubIcon, XIcon, DiscordIcon } from "@/components/site/BrandIcons";
 
 export const metadata: Metadata = {
@@ -19,8 +20,10 @@ export default function OfficialLinksPage() {
   return (
     <main className="page-main">
       <PageHero
+        compact
+        tone="ink"
         label="Official links"
-        title="Start from the official path."
+        title="Start from the official path"
         sub="Midgard is easy to inspect and hard to impersonate. Use official links for docs, GitHub, community, status, support, and security routes."
         actions={[
           { label: "View official links", href: "#links", variant: "primary" },
@@ -36,16 +39,16 @@ export default function OfficialLinksPage() {
       >
         <LinksTable
           rows={[
-            { k: "Website", v: "midgard-gateway.vercel.app", href: OFFICIAL_LINKS.website },
-            { k: "Docs", v: "GitHub source/docs", href: OFFICIAL_LINKS.docs },
+            { k: "Website", v: "midgard-gateway.vercel.app", href: OFFICIAL_LINKS.website, copy: true },
+            { k: "Docs", v: "GitHub source/docs", href: OFFICIAL_LINKS.docs, copy: true },
             { k: "Contracts", v: "Deployed contracts", href: "/contracts" },
-            { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github, icon: <GitHubIcon size={16} /> },
-            { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x, icon: <XIcon size={14} /> },
-            { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord, icon: <DiscordIcon size={16} /> },
+            { k: "GitHub", v: "Anastasia-Labs/midgard", href: OFFICIAL_LINKS.github, icon: <GitHubIcon size={16} />, copy: true },
+            { k: "X", v: "@midgardprotocol", href: OFFICIAL_LINKS.x, icon: <XIcon size={14} />, copy: true },
+            { k: "Discord", v: "Midgard Discord", href: OFFICIAL_LINKS.discord, icon: <DiscordIcon size={16} />, copy: true },
             { k: "Builder/Testnet intake", v: "Google form", href: OFFICIAL_LINKS.intakeForm },
             { k: "Newsletter", v: "Publishing soon", pending: true },
             { k: "Support", v: "Publishing soon", pending: true },
-            { k: "Security contact", v: "Publishing soon", pending: true },
+            { k: "Security contact", v: "Security policy (GitHub)", href: OFFICIAL_LINKS.securityPolicy, copy: true },
             { k: "Status", v: "Testnet status", href: "/contracts" },
           ]}
         />
@@ -66,7 +69,7 @@ export default function OfficialLinksPage() {
         />
       </Section>
 
-      <Section id="security-contact" eyebrow="Security contact" title="Preserve evidence. Use official routes." tight>
+      <Section id="security-contact" eyebrow="Security contact" title="Preserve evidence. Use official routes" tight>
         <Prose
           items={[
             {
@@ -75,6 +78,26 @@ export default function OfficialLinksPage() {
           ]}
         />
       </Section>
+
+      <NextSteps
+        items={[
+          {
+            label: "Choose your path",
+            sub: "Start as a user, start building, or run the protocol",
+            href: "/get-started",
+          },
+          {
+            label: "Read the FAQ",
+            sub: "Grouped answers plus the protocol glossary",
+            href: "/faq",
+          },
+          {
+            label: "Verify the contracts",
+            sub: "Every address on Cardano preprod",
+            href: "/contracts",
+          },
+        ]}
+      />
     </main>
   );
 }

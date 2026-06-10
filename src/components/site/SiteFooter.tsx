@@ -29,7 +29,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Start as a user", href: "/get-started#users" },
       { label: "Start building", href: "/get-started#builder-quickstart" },
-      { label: "Run the protocol", href: "/get-started#operators" },
+      { label: "Run the protocol", href: "/get-started#network-roles" },
       { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },

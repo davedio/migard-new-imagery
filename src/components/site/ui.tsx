@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Reveal } from "./Reveal";
+import { CopyField } from "./CopyField";
 
 /* =========================================================================
    Page primitives — server components that compose the design-system CSS
@@ -340,12 +341,17 @@ export function Layers({ items }: { items: LayerItem[] }) {
 export type FaqQA = { q: ReactNode; a: ReactNode };
 export type FaqGroup = { title: string; items: FaqQA[] };
 
+/** Stable anchor slug for a FAQ group title, e.g. "Wallets and partners" -> faq-wallets-and-partners */
+export function faqGroupId(title: string): string {
+  return `faq-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}`;
+}
+
 export function Faq({ groups }: { groups: FaqGroup[] }) {
   return (
     <div className="faq">
       {groups.map((g) => (
         <Reveal key={g.title}>
-          <div className="faq-group">
+          <div className="faq-group" id={faqGroupId(g.title)} style={{ scrollMarginTop: 110 }}>
             <h3>{g.title}</h3>
             <div className="faq-list">
               {g.items.map((qa, i) => (
@@ -426,13 +432,15 @@ export type LinkRow = {
   pending?: boolean;
   /** Optional leading icon (e.g. a brand glyph) rendered before the key. */
   icon?: ReactNode;
+  /** Show the full URL with a copy button (anti-phishing pattern). */
+  copy?: boolean;
 };
 
 export function LinksTable({ rows }: { rows: LinkRow[] }) {
   return (
     <div className="links-table">
       {rows.map((r) => (
-        <div className="links-row" key={r.k}>
+        <div className="links-row" key={r.k} data-has-copy={Boolean(r.copy && r.href)}>
           <span className="k">
             {r.icon ? (
               <span style={{ display: "inline-flex", alignItems: "center", gap: 9 }}>
@@ -454,6 +462,12 @@ export function LinksTable({ rows }: { rows: LinkRow[] }) {
               {r.v}
             </Link>
           )}
+          {r.copy && r.href && /^https?:\/\//.test(r.href) ? (
+            /* anti-phishing: the FULL canonical URL, visible and copyable */
+            <span className="links-row__url">
+              <CopyField value={r.href} label={r.k} />
+            </span>
+          ) : null}
         </div>
       ))}
     </div>

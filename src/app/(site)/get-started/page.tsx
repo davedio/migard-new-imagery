@@ -5,13 +5,13 @@ import {
   Prose,
   CardGrid,
   Card,
-  Callout,
   Actions,
 } from "@/components/site/ui";
 import { DeveloperSwitch } from "@/components/site/DeveloperSwitch";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { NetworkRoles } from "@/components/site/NetworkRoles";
+import { NextSteps } from "@/components/site/NextSteps";
 
 export const metadata: Metadata = {
   title: "Get Started With Midgard",
@@ -30,21 +30,21 @@ const AUDIENCE_PATHS: {
     num: "01",
     title: "Users",
     body: "Use Cardano apps that run on Midgard — same wallet, same ADA. Start from official links and read the status before you sign anything.",
-    cta: "Jump to users",
+    cta: "Start as a user",
     href: "#users",
   },
   {
     num: "02",
     title: "Builders",
     body: "For wallets and dApps — DEXs, lending protocols, and any other application. Same eUTXO model and tooling; switching is one endpoint change.",
-    cta: "Open builder path",
+    cta: "Start building",
     href: "#builder-quickstart",
   },
   {
     num: "03",
     title: "Operators & Watchers",
     body: "Run the protocol: operators sequence and commit blocks in rotating shifts, watchers catch bad blocks and prove it on L1.",
-    cta: "See the protocol roles",
+    cta: "Run the protocol",
     href: "#network-roles",
   },
 ];
@@ -54,8 +54,8 @@ export default function GetStartedPage() {
     <main className="page-main">
       <PageHero
         label="Get Started"
-        title="Get Started"
-        sub="Three ways to take part in the Cardano-native L2 path: as a user, a builder, or an operator & watcher. Start with source, status, and a clear role."
+        title="Choose your path into Midgard"
+        sub="Three ways to take part in the Cardano-native Layer 2: as a user, a builder, or an operator & watcher. Start with source, status, and a clear role."
         actions={[
           { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
           { label: "Read the docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
@@ -64,7 +64,7 @@ export default function GetStartedPage() {
 
       <Section
         eyebrow="Choose your path"
-        title="Three roles. One protocol."
+        title="Three roles. One protocol"
         lead="Midgard meets you in one of three roles. These roles overlap — pick the one that fits what you're here to do."
       >
         <CardGrid>
@@ -88,7 +88,7 @@ export default function GetStartedPage() {
       <Section
         id="builder-quickstart"
         eyebrow="Where to start"
-        title="One concrete builder sequence."
+        title="One concrete builder sequence"
       >
         <CardGrid cols={2}>
           <Card
@@ -132,14 +132,14 @@ export default function GetStartedPage() {
       <Section
         id="developer-switch"
         eyebrow="Zero migration"
-        title="For developers, almost nothing changes."
+        title="For developers, almost nothing changes"
         lead="Same eUTXO model, same scripts, same tooling. Switching to Midgard is one endpoint change — toggle the target and watch what moves."
         glow="green"
       >
         <DeveloperSwitch />
       </Section>
 
-      <Section id="users" title="Faster Cardano apps. Same wallet. Same ADA.">
+      <Section id="users" title="Faster Cardano apps. Same wallet. Same ADA">
         <Prose
           items={[
             {
@@ -153,10 +153,13 @@ export default function GetStartedPage() {
         />
       </Section>
 
-      <Section eyebrow="Stay safe" title="Use official links." tight>
-        <Callout
-          title="Midgard will never ask for private wallet secrets."
-          body="Do not share your seed phrase, private key, recovery phrase, password, or wallet-draining approval. Ignore unsolicited support messages and start from official links."
+      <Section eyebrow="Stay safe" title="Use official links" tight>
+        <Prose
+          items={[
+            {
+              text: "Midgard will never ask for your seed phrase, private key, or password. The full safety checklist lives on the official links page — start every session from there.",
+            },
+          ]}
         />
         <Actions
           items={[
@@ -164,6 +167,26 @@ export default function GetStartedPage() {
           ]}
         />
       </Section>
+
+      <NextSteps
+        items={[
+          {
+            label: "Watch a transaction travel",
+            sub: "Ride one transaction from Layer 2 down to Cardano",
+            href: "/how-it-works",
+          },
+          {
+            label: "Read the security model",
+            sub: "Challenges, watchers, and the proof path",
+            href: "/security",
+          },
+          {
+            label: "Verify the contracts",
+            sub: "Every address on Cardano preprod, open on an explorer",
+            href: "/contracts",
+          },
+        ]}
+      />
 
     </main>
   );

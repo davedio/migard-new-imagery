@@ -106,7 +106,7 @@ export function Roadmap() {
     <Section
       id="roadmap"
       eyebrow="Roadmap"
-      title="The path to mainnet."
+      title="The path to mainnet"
       lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases — paced by the work, not by dates."
       glow="green"
     >

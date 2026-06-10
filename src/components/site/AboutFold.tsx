@@ -11,7 +11,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export function ThesisSection() {
   return (
-    <Section eyebrow="The thesis" title="Scale that stays on Cardano.">
+    <Section eyebrow="The thesis" title="Scale that stays on Cardano">
       <Prose
         items={[
           {
@@ -32,7 +32,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
     <>
       {showThesis && <ThesisSection />}
 
-      <Section eyebrow="Who builds it" title="Built by Anastasia Labs.">
+      <Section eyebrow="Who builds it" title="Built by Anastasia Labs">
         <Prose
           items={[
             {
@@ -47,6 +47,11 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
         <Actions
           items={[
             {
+              label: "Read the full story",
+              href: "/about",
+              variant: "ghost",
+            },
+            {
               label: "View GitHub",
               href: OFFICIAL_LINKS.github,
               variant: "ghost",
@@ -56,7 +61,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
         />
       </Section>
 
-      <Section eyebrow="Built with" title="The Cardano stack, end to end.">
+      <Section eyebrow="Built with" title="The Cardano stack, end to end">
         <StackChips />
       </Section>
     </>

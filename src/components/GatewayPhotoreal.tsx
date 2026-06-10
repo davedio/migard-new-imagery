@@ -280,14 +280,14 @@ const AUDIENCE_PATHS: {
     n: "02",
     title: "Builders",
     line: "For wallets and dApps, including DEXs, lending protocols, and any other applications.",
-    cta: "Open builder path",
+    cta: "Start building",
     href: "/get-started#builder-quickstart",
   },
   {
     n: "03",
     title: "Operators & Watchers",
     line: "For Midgard operators, batchers, and watchers.",
-    cta: "See the protocol roles",
+    cta: "Run the protocol",
     href: "/get-started#network-roles",
   },
 ];
