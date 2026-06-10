@@ -315,7 +315,7 @@ function ExploreGrid() {
           <Reveal key={a.title} delay={i * 70}>
             <Link
               href={a.href}
-              className="panel"
+              className="panel panel--select-glow"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -347,14 +347,7 @@ function ExploreGrid() {
               >
                 {a.line}
               </p>
-              <span
-                style={{
-                  marginTop: 14,
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 12,
-                  color: "var(--green-bright)",
-                }}
-              >
+              <span className="panel-cta-glow">
                 {a.cta} →
               </span>
             </Link>
