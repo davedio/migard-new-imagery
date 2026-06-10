@@ -256,9 +256,9 @@ a {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(118% 92% at 0% 44%, rgba(3, 7, 4, 0.78), rgba(3, 7, 4, 0.38) 40%, transparent 68%),
-    linear-gradient(180deg, rgba(3, 7, 4, 0.55), transparent 22%),
-    linear-gradient(0deg, rgba(3, 7, 4, 0.62), transparent 26%);
+    radial-gradient(118% 92% at 0% 44%, rgba(3, 7, 4, 0.52), rgba(3, 7, 4, 0.2) 42%, transparent 66%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.32), transparent 20%),
+    linear-gradient(0deg, rgba(3, 7, 4, 0.44), transparent 26%);
 }
 .plate-stage__fx {
   position: absolute;
@@ -1606,8 +1606,8 @@ button.panel:hover {
   justify-content: space-between;
   gap: 20px;
   padding: 14px var(--gut);
-  background: linear-gradient(180deg, rgba(7, 18, 11, 0.86), rgba(7, 18, 11, 0.2) 75%, transparent);
-  backdrop-filter: blur(9px);
+  background: linear-gradient(180deg, rgba(7, 18, 11, 0.55), rgba(7, 18, 11, 0.1) 72%, transparent);
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(9px);
 }
 .site-nav__logo {
@@ -3131,12 +3131,12 @@ body.cursor-none * {
   background:
     radial-gradient(
       120% 92% at 0% 42%,
-      rgba(3, 7, 4, 0.86),
-      rgba(3, 7, 4, 0.5) 38%,
-      transparent 66%
+      rgba(3, 7, 4, 0.56),
+      rgba(3, 7, 4, 0.24) 40%,
+      transparent 64%
     ),
-    linear-gradient(180deg, rgba(3, 7, 4, 0.62), transparent 26%),
-    linear-gradient(0deg, rgba(3, 7, 4, 0.7), transparent 24%);
+    linear-gradient(180deg, rgba(3, 7, 4, 0.34), transparent 22%),
+    linear-gradient(0deg, rgba(3, 7, 4, 0.46), transparent 22%);
 }
 
 .hiw-act__intro {
