@@ -14,7 +14,7 @@ import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
-import { AboutFold } from "./site/AboutFold";
+import { AboutFold, ThesisSection } from "./site/AboutFold";
 import { Section } from "@/components/site/ui";
 import { StatTiles } from "@/components/site/StatTiles";
 import { EutxoComparison } from "@/components/site/EutxoComparison";
@@ -436,6 +436,8 @@ export default function GatewayPhotoreal() {
             soft legibility scrims (see .home-body in globals.css) instead of a
             solid cutoff, so the tree stays visible behind the cards. */}
         <div className="home-body">
+          {/* The thesis leads, above "choose your path". */}
+          <ThesisSection />
           <ExploreGrid />
           {/* Protocol at-a-glance stats (moved here from How It Works). */}
           <Section
@@ -446,7 +448,7 @@ export default function GatewayPhotoreal() {
           >
             <StatTiles />
           </Section>
-          <AboutFold />
+          <AboutFold showThesis={false} />
           {/* Why eUTXO — moved here from How It Works. */}
           <Section
             eyebrow="Why eUTXO"

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Gateway from "@/components/Gateway";
+import GatewayPhotoreal from "@/components/GatewayPhotoreal";
 
 export const metadata: Metadata = {
   title: "Midgard",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <Gateway />;
+  return <GatewayPhotoreal />;
 }
