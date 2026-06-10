@@ -812,11 +812,11 @@ function Provenance() {
           lines={[<>Built by</>, <>Anastasia Labs.</>]}
           style={{
             margin: "22px 0 0",
-            fontSize: "clamp(30px, 3.6vw, 56px)",
-            lineHeight: 1.03,
-            letterSpacing: "-0.02em",
+            fontSize: "clamp(27px, 3.2vw, 50px)",
+            lineHeight: 1.08,
+            letterSpacing: "-0.01em",
             color: "var(--bone)",
-            fontWeight: 420,
+            fontWeight: 500,
           }}
         />
       </div>

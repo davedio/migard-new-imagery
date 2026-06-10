@@ -39,10 +39,10 @@
   --text-dim: #8fa39a;
   --text-faint: #6d7f76;
 
-  /* type — wired to next/font css variables (V2: Fraunces / Schibsted / Spline Mono) */
-  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
-  --font-body: var(--font-schibsted), system-ui, sans-serif;
-  --font-mono: var(--font-splinemono), ui-monospace, monospace;
+  /* type — wired to next/font css variables */
+  --font-display: var(--font-syne), var(--font-poppins), system-ui, sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, monospace;
 
   /* geometry */
   --r-sm: 4px;

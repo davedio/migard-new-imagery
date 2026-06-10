@@ -1,28 +1,32 @@
 import type { Metadata } from "next";
-import { Fraunces, Schibsted_Grotesk, Spline_Sans_Mono } from "next/font/google";
+import { Poppins, Inter, JetBrains_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import "./v2.css";
 import { Providers } from "./providers";
 
-/* V2 type system — "Dark Ancient Tech": a carved old-style serif for display
-   (Fraunces, variable weight + optical size + italic), a crisp grotesk for
-   UI/body (Schibsted), and a HUD mono for data (Spline Sans Mono). */
-const display = Fraunces({
+/* Original Midgard type system: Syne/Poppins display, Inter body,
+   JetBrains Mono data — the V2 layout keeps its scale and choreography
+   but speaks in the brand's own voice. */
+const display = Poppins({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  axes: ["opsz"],
-  variable: "--font-fraunces",
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
   display: "swap",
 });
-const body = Schibsted_Grotesk({
+const body = Inter({
   subsets: ["latin"],
-  variable: "--font-schibsted",
+  variable: "--font-inter",
   display: "swap",
 });
-const mono = Spline_Sans_Mono({
+const mono = JetBrains_Mono({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-splinemono",
+  variable: "--font-jbmono",
+  display: "swap",
+});
+const syne = Syne({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-syne",
   display: "swap",
 });
 
@@ -95,7 +99,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
+      className={`${display.variable} ${body.variable} ${mono.variable} ${syne.variable}`}
     >
       <body>
         <script
