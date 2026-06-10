@@ -710,137 +710,92 @@ h2 em,
   opacity: clamp(0.13, calc((var(--prog, 0) - var(--i, 0)) * 6 + 0.13), 1);
 }
 
-/* ---- paths (trunk chapter) — editorial split: sticky head left, rows right */
-.v2-paths {
+/* ---- paths (trunk chapter) — the original glass card grid, original scale.
+   The #explore id re-activates the approved globals.css treatment:
+   translucent panels (plate reads through) + green edge-glow hover. */
+.v2-explore {
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 var(--gut) clamp(80px, 13vh, 170px);
+}
+.v2-explore__grid {
   display: grid;
-  grid-template-columns: minmax(280px, 5fr) 7fr;
-  gap: clamp(28px, 5vw, 90px);
-  align-items: start;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  max-width: 1040px;
 }
-.v2-paths__head {
-  position: sticky;
-  top: 110px;
-}
-.v2-paths__rows {
+.v2-explore__card {
   display: flex;
   flex-direction: column;
-}
-.v2-path {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: baseline;
-  gap: clamp(14px, 2vw, 28px);
-  padding: clamp(26px, 3.6vh, 42px) 6px;
-  border-top: 1px solid var(--hairline);
+  height: 100%;
+  width: 100%;
+  padding: 20px 20px 18px;
   text-decoration: none;
-  transition: background 0.4s var(--ease), padding-left 0.4s var(--ease-expo);
 }
-.v2-path:last-child {
-  border-bottom: 1px solid var(--hairline);
-}
-.v2-path .num {
+.v2-explore__num {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.26em;
+  letter-spacing: 0.2em;
   color: var(--gold-bright);
 }
-.v2-path .body {
-  min-width: 0;
-}
-.v2-path .title {
-  font-family: var(--font-display);
-  font-size: clamp(24px, 2.7vw, 40px);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.08;
+.v2-explore__card h3 {
+  font-size: 19px;
+  margin: 8px 0 0;
   color: var(--text-hi);
-  transition: color 0.3s var(--ease);
 }
-.v2-path .line {
-  margin-top: 10px;
-  font-size: 14.5px;
+.v2-explore__card p {
+  margin: 8px 0 0;
+  font-size: 14px;
   line-height: 1.55;
   color: var(--text-dim);
-  max-width: 46ch;
-}
-.v2-path .cta {
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: color 0.3s var(--ease), gap 0.3s var(--ease-expo);
-}
-.v2-path:hover {
-  background: linear-gradient(90deg, rgba(78, 243, 131, 0.05), transparent 70%);
-  padding-left: 14px;
-}
-.v2-path:hover .title {
-  color: var(--green-bright);
-}
-.v2-path:hover .cta {
-  color: var(--bone);
-  gap: 14px;
+  flex: 1;
 }
 
-/* ---- ledger (roots chapter) — count-up numerals over the bedrock plate */
+/* ---- ledger (roots chapter) — compact stat tiles at the original scale */
 .v2-ledger {
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 var(--gut) clamp(90px, 15vh, 190px);
 }
-.v2-ledger__grid {
+.v2-tiles {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  border: 1px solid var(--hairline);
-  background: rgba(4, 8, 5, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  max-width: 1080px;
 }
-.v2-ledger__cell {
-  padding: clamp(22px, 3.2vh, 40px) clamp(18px, 2.4vw, 34px) clamp(20px, 3vh, 36px);
-  border-right: 1px solid var(--hairline);
-  border-bottom: 1px solid var(--hairline);
+.v2-tile {
+  height: 100%;
+  padding: 18px 18px 16px;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  background: linear-gradient(180deg, rgba(244, 241, 230, 0.025), transparent 42%),
+    rgba(5, 11, 8, 0.55);
 }
-.v2-ledger__cell:nth-child(3n) {
-  border-right: 0;
-}
-.v2-ledger__cell:nth-last-child(-n + 3) {
-  border-bottom: 0;
-}
-.v2-ledger__cell .k {
+.v2-tile .k {
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--text-faint);
 }
-.v2-ledger__cell .v {
-  margin-top: 14px;
+.v2-tile .v {
+  margin-top: 10px;
   font-family: var(--font-display);
-  font-size: clamp(25px, 2.7vw, 46px);
+  font-size: clamp(20px, 1.9vw, 27px);
   font-weight: 500;
   letter-spacing: -0.01em;
-  line-height: 1.04;
-  color: var(--bone);
+  line-height: 1.1;
+  color: var(--text-hi);
   font-variant-numeric: tabular-nums;
 }
-.v2-ledger__cell .v[data-accent="green"] {
+.v2-tile .v[data-accent="green"] {
   color: var(--green-bright);
 }
-.v2-ledger__cell .v[data-accent="gold"] {
+.v2-tile .v[data-accent="gold"] {
   color: var(--gold-bright);
 }
-.v2-ledger__cell .s {
-  margin-top: 10px;
+.v2-tile .s {
+  margin-top: 7px;
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--text-dim);
@@ -947,66 +902,79 @@ h2 em,
   margin-top: 34px;
 }
 
-/* ---- roadmap (bedrock chapter) ---- */
+/* ---- roadmap (bedrock chapter) — the original 4-up phase panel cards ---- */
 .v2-road {
   max-width: var(--maxw);
   margin: 0 auto;
   padding: 0 var(--gut) clamp(90px, 14vh, 180px);
 }
-.v2-road__list {
-  counter-reset: phase;
-  border-top: 1px solid var(--hairline);
-}
-.v2-road__row {
+.v2-road__grid {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: baseline;
-  gap: clamp(16px, 2.6vw, 40px);
-  padding: clamp(20px, 3vh, 34px) 6px;
-  border-bottom: 1px solid var(--hairline);
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  max-width: 1180px;
 }
-.v2-road__row .n {
+.v2-phase {
+  --accent: var(--green-bright);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 22px 22px 20px;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  background: linear-gradient(180deg, rgba(244, 241, 230, 0.025), transparent 42%),
+    rgba(5, 11, 8, 0.55);
+}
+.v2-phase[data-state="later"] {
+  --accent: var(--gold-bright);
+}
+.v2-phase[data-state="mainnet"] {
+  --accent: #5b8cff;
+}
+.v2-phase[data-state="current"] {
+  border-color: var(--green-bright);
+  box-shadow: inset 0 0 0 1px rgba(78, 243, 131, 0.25);
+}
+.v2-phase__badge {
+  align-self: flex-start;
+  margin-bottom: 14px;
   font-family: var(--font-mono);
   font-size: 10.5px;
-  letter-spacing: 0.26em;
-  color: var(--text-faint);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--green-bright);
+  color: var(--green-bright);
+  background: rgba(78, 243, 131, 0.1);
 }
-.v2-road__row .name {
-  font-family: var(--font-display);
-  font-size: clamp(20px, 2.2vw, 34px);
-  font-weight: 500;
-  letter-spacing: -0.01em;
+.v2-phase__num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+.v2-phase h3 {
+  margin: 12px 0 0;
+  font-size: 20px;
   color: var(--text-hi);
 }
-.v2-road__row .desc {
-  grid-column: 2;
-  margin-top: 6px;
+.v2-phase p {
+  margin: 10px 0 0;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
   color: var(--text-dim);
-  max-width: 60ch;
+  flex: 1;
 }
-.v2-road__row .stat {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  white-space: nowrap;
+.v2-phase__bar {
+  margin-top: 18px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.55;
 }
-.v2-road__row[data-state="current"] .stat {
-  color: var(--green-bright);
-}
-.v2-road__row[data-state="next"] .stat {
-  color: var(--gold-bright);
-}
-.v2-road__row[data-state="later"] .stat {
-  color: var(--text-faint);
-}
-.v2-road__row[data-state="mainnet"] .stat {
-  color: var(--cobalt);
-}
-.v2-road__row[data-state="mainnet"] .name {
-  color: var(--bone);
+.v2-phase[data-state="current"] .v2-phase__bar {
+  opacity: 0.9;
 }
 
 /* ---- closing ---- */
@@ -1134,10 +1102,24 @@ h2 em,
 .v2-mask {
   display: block;
   overflow: hidden;
+  /* breathing room so cursor-lifted letters don't clip against the mask */
+  padding-top: 0.18em;
+  margin-top: -0.18em;
 }
 .v2-mask > span {
   display: block;
   will-change: transform;
+}
+
+/* ---- cursor-wave characters (CursorWave.tsx) ---- */
+.cw-w {
+  display: inline-block;
+  white-space: pre;
+}
+.cw-ch {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: 50% 100%;
 }
 
 /* ===========================================================================
@@ -1147,13 +1129,9 @@ h2 em,
   .v2-rail {
     display: none;
   }
-  .v2-paths,
   .v2-prov {
     grid-template-columns: 1fr;
     gap: 34px;
-  }
-  .v2-paths__head {
-    position: static;
   }
 }
 
@@ -1174,32 +1152,8 @@ h2 em,
   .v2-hero__scrollcue {
     display: none;
   }
-  .v2-ledger__grid {
-    grid-template-columns: 1fr;
-  }
-  .v2-ledger__cell {
-    border-right: 0 !important;
-    border-bottom: 1px solid var(--hairline) !important;
-  }
-  .v2-ledger__cell:last-child {
-    border-bottom: 0 !important;
-  }
   .v2-duel {
     grid-template-columns: 1fr;
-  }
-  .v2-path {
-    grid-template-columns: auto 1fr;
-  }
-  .v2-path .cta {
-    grid-column: 2;
-    margin-top: 12px;
-  }
-  .v2-road__row {
-    grid-template-columns: auto 1fr;
-  }
-  .v2-road__row .stat {
-    grid-column: 2;
-    margin-top: 8px;
   }
   .v2-footer-statement {
     font-size: clamp(27px, 8.5vw, 48px);

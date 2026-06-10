@@ -1,0 +1,313 @@
+"use client";
+
+/* ============================================================================
+   HeroSapOrbs — the luminous sap, back on the hero.
+
+   A 2D canvas that draws ONLY orbs, mounted INSIDE the plate's transform
+   tree (same box as the background-image div), so every scroll/mouse
+   parallax transform applies to plate and orbs identically — alignment for
+   free. The engine samples the plate's green veins (the proven approach:
+   orbs must ride continuous samplable veins, never a generic band):
+
+     · the plate image is downsampled offscreen → a green-dominance grid
+     · orbs spawn in the canopy band, then each step pick the greenest of
+       five downward directions — so they visibly track the painted veins
+       from leaves → trunk → roots (the canonical downward sap flow)
+     · comet rendering: white-hot head + green trailing tail (#00ff66 family)
+     · small = fast, big = slow; orbs near the cursor speed up
+     · rare gentle surges (event-based), never a constant arcade pulse
+
+   Runs only while visible, the tab is foreground, and motion is on.
+   ========================================================================== */
+
+import { useEffect, useRef } from "react";
+import { useMotionPref } from "@/lib/motion";
+
+const PLATE_SRC = "/v2/hero-wide.avif";
+/* must mirror the plate div's background-position (desktop / ≤760px) */
+const POS_DESKTOP = { x: 0.72, y: 0.38 };
+const POS_MOBILE = { x: 0.78, y: 0.32 };
+
+const GRID_W = 384; // downsample width for the vein field
+const SPAWN_BAND: [number, number] = [0.03, 0.4]; // canopy band (image-y fraction)
+const GREEN_MIN = 34; // vein threshold in the 0-255 dominance score
+const TAIL = 9; // comet tail samples
+const CURSOR_R = 110; // px (canvas space) — orbs near the pointer hurry
+const CURSOR_BOOST = 2.1;
+
+type Orb = {
+  x: number; // image-space px
+  y: number;
+  size: number;
+  speed: number; // image px / s
+  alpha: number;
+  tail: { x: number; y: number }[];
+  dying: boolean;
+};
+
+export default function HeroSapOrbs() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { motionOn } = useMotionPref();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const host = canvas?.parentElement;
+    if (!canvas || !host || !motionOn) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let raf = 0;
+    let running = false;
+    let disposed = false;
+
+    /* ---- vein field ---- */
+    let field: Uint8Array | null = null;
+    let gw = 0;
+    let gh = 0;
+    let imgW = 0;
+    let imgH = 0;
+    const spawnSites: { x: number; y: number }[] = [];
+
+    const img = new Image();
+    img.src = PLATE_SRC;
+    img.onload = () => {
+      if (disposed) return;
+      imgW = img.naturalWidth;
+      imgH = img.naturalHeight;
+      gw = GRID_W;
+      gh = Math.round((imgH / imgW) * gw);
+      const off = document.createElement("canvas");
+      off.width = gw;
+      off.height = gh;
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      if (!octx) return;
+      octx.drawImage(img, 0, 0, gw, gh);
+      const data = octx.getImageData(0, 0, gw, gh).data;
+      field = new Uint8Array(gw * gh);
+      for (let i = 0; i < gw * gh; i++) {
+        const r = data[i * 4];
+        const g = data[i * 4 + 1];
+        const b = data[i * 4 + 2];
+        /* green dominance: lit veins are green over dark bark */
+        const score = Math.max(0, Math.min(255, g - Math.max(r, b) + (g > 120 ? 40 : 0)));
+        field[i] = score;
+      }
+      /* spawn sites: green cells inside the canopy band */
+      const y0 = Math.floor(SPAWN_BAND[0] * gh);
+      const y1 = Math.floor(SPAWN_BAND[1] * gh);
+      for (let gy = y0; gy < y1; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+          if (field[gy * gw + gx] > GREEN_MIN + 18) {
+            spawnSites.push({ x: (gx / gw) * imgW, y: (gy / gh) * imgH });
+          }
+        }
+      }
+      start();
+    };
+
+    const green = (ix: number, iy: number): number => {
+      if (!field) return 0;
+      const gx = Math.round((ix / imgW) * gw);
+      const gy = Math.round((iy / imgH) * gh);
+      if (gx < 0 || gy < 0 || gx >= gw || gy >= gh) return 0;
+      return field[gy * gw + gx];
+    };
+
+    /* ---- cover mapping: image px -> canvas px (mirrors background cover) */
+    let W = 0;
+    let H = 0;
+    let scale = 1;
+    let offX = 0;
+    let offY = 0;
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    const fit = () => {
+      W = host.clientWidth;
+      H = host.clientHeight;
+      canvas.width = W * DPR;
+      canvas.height = H * DPR;
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      if (!imgW) return;
+      const pos = window.innerWidth <= 760 ? POS_MOBILE : POS_DESKTOP;
+      scale = Math.max(W / imgW, H / imgH);
+      offX = (W - imgW * scale) * pos.x;
+      offY = (H - imgH * scale) * pos.y;
+    };
+
+    /* ---- cursor (canvas space) ---- */
+    const cursor = { x: -9999, y: -9999 };
+    const onMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      /* getBoundingClientRect includes ancestor transforms — map into the
+         canvas' untransformed coordinate space */
+      cursor.x = ((e.clientX - r.left) / r.width) * W;
+      cursor.y = ((e.clientY - r.top) / r.height) * H;
+    };
+
+    /* ---- orbs ---- */
+    const orbCount = () => (window.innerWidth <= 760 ? 46 : 96);
+    const orbs: Orb[] = [];
+
+    const spawn = (o?: Orb): Orb | null => {
+      if (spawnSites.length === 0) return null;
+      const site = spawnSites[(Math.random() * spawnSites.length) | 0];
+      const size = 0.7 + Math.random() * 1.5;
+      const orb: Orb = o ?? {
+        x: 0, y: 0, size, speed: 0, alpha: 0, tail: [], dying: false,
+      };
+      orb.x = site.x + (Math.random() - 0.5) * 6;
+      orb.y = site.y;
+      orb.size = size;
+      /* small = fast, big = slow + linger */
+      orb.speed = (38 - size * 11) * (0.85 + Math.random() * 0.3);
+      orb.alpha = 0;
+      orb.tail = [];
+      orb.dying = false;
+      return orb;
+    };
+
+    /* surge state — a rare, soft event pulse */
+    let surge = 0;
+    let nextSurge = 5 + Math.random() * 6;
+
+    let last = performance.now();
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      if (!field || W === 0) return;
+
+      /* population control */
+      const want = orbCount();
+      while (orbs.length < want) {
+        const o = spawn();
+        if (!o) break;
+        /* stagger initial fill down the tree so it doesn't pop in as a band */
+        o.y += Math.random() * imgH * 0.45;
+        orbs.push(o);
+      }
+
+      nextSurge -= dt;
+      if (nextSurge <= 0) {
+        surge = 1;
+        nextSurge = 6 + Math.random() * 7;
+      }
+      surge = Math.max(0, surge - dt * 0.55);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+
+      const step = imgW * 0.006; // sampling stride (image px)
+
+      for (const o of orbs) {
+        /* fade in/out */
+        if (o.dying) {
+          o.alpha -= dt * 1.6;
+          if (o.alpha <= 0) { spawn(o); continue; }
+        } else {
+          o.alpha = Math.min(1, o.alpha + dt * 1.2);
+        }
+
+        /* cursor proximity boost (canvas space) */
+        const cx = o.x * scale + offX;
+        const cy = o.y * scale + offY;
+        const cd = Math.hypot(cx - cursor.x, cy - cursor.y);
+        const boost = cd < CURSOR_R ? CURSOR_BOOST - (cd / CURSOR_R) * (CURSOR_BOOST - 1) : 1;
+
+        /* pick the greenest of five downward directions */
+        let bestA = 0;
+        let bestV = -1;
+        for (const a of [-0.9, -0.45, 0, 0.45, 0.9]) {
+          const v =
+            green(o.x + Math.sin(a) * step, o.y + Math.cos(a) * step) +
+            (a === 0 ? 6 : 0) + /* slight straight-down bias */
+            Math.random() * 10;
+          if (v > bestV) { bestV = v; bestA = a; }
+        }
+
+        if (bestV < GREEN_MIN) {
+          /* vein ran out (root tip / off-tree) — let the light sink out */
+          o.dying = true;
+        }
+
+        const sp = o.speed * boost * (1 + surge * 0.9);
+        o.x += Math.sin(bestA) * sp * dt;
+        o.y += Math.cos(bestA) * sp * dt;
+        if (o.y > imgH * 0.985) o.dying = true;
+
+        o.tail.unshift({ x: cx, y: cy });
+        if (o.tail.length > TAIL) o.tail.pop();
+
+        /* comet: green tail … white-hot head */
+        const r = o.size * (1 + surge * 0.25);
+        for (let i = o.tail.length - 1; i >= 1; i--) {
+          const t = i / o.tail.length;
+          const p = o.tail[i];
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r * (1 - t * 0.72), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * 0.16 * (1 - t)).toFixed(3)})`;
+          ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 1.9, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * 0.12).toFixed(3)})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * 0.85).toFixed(3)})`;
+        ctx.shadowColor = "rgba(0, 255, 102, 0.9)";
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      ctx.globalCompositeOperation = "source-over";
+    };
+
+    const start = () => {
+      if (running || disposed) return;
+      running = true;
+      fit();
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting && field ? start() : stop()),
+      { threshold: 0.02 },
+    );
+    io.observe(host);
+    const onVis = () => (document.hidden ? stop() : field && start());
+    const ro = new ResizeObserver(fit);
+    ro.observe(host);
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("pointermove", onMove, { passive: true });
+
+    return () => {
+      disposed = true;
+      stop();
+      io.disconnect();
+      ro.disconnect();
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, [motionOn]);
+
+  if (!motionOn) return null;
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "none",
+      }}
+    />
+  );
+}

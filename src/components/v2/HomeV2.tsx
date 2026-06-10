@@ -42,8 +42,10 @@ import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { StackChips } from "@/components/site/StackChips";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { WaveText } from "./CursorWave";
 
 const LightOrbLayer = dynamic(() => import("../LightOrbLayer"), { ssr: false });
+const HeroSapOrbs = dynamic(() => import("./HeroSapOrbs"), { ssr: false });
 
 /* ---------------------------------------------------------------------- */
 /*  plates                                                                 */
@@ -73,12 +75,15 @@ function Lines({
   as: Tag = "div",
   className,
   delay = 0,
+  wave = false,
   ...rest
 }: {
   lines: ReactNode[];
   as?: "h1" | "h2" | "div" | "p";
   className?: string;
   delay?: number;
+  /** Corn-Revolution cursor wave: letters near the pointer lift + magnify. */
+  wave?: boolean;
 } & Record<string, unknown>) {
   const { motionOn } = useMotionPref();
   return (
@@ -104,7 +109,7 @@ function Lines({
               },
             }}
           >
-            {line}
+            {wave ? <WaveText>{line}</WaveText> : line}
           </motion.span>
         </motion.span>
       ))}
@@ -206,7 +211,7 @@ function Chapter({
           <span className="stratum">{stratum}</span>
         </div>
       </Rise>
-      <Lines as="h2" lines={title} delay={0.08} />
+      <Lines as="h2" lines={title} delay={0.08} wave />
       {lead ? (
         <Rise delay={0.18}>
           <p className="v2-ch__lead">{lead}</p>
@@ -426,7 +431,11 @@ function Hero() {
                 y: motionOn ? plateY : 0,
                 scale: motionOn ? plateScale : 1,
               }}
-            />
+            >
+              {/* sap orbs share the plate's box + transforms, so they stay
+                  glued to the painted veins through every parallax move */}
+              <HeroSapOrbs />
+            </motion.div>
           </motion.div>
         </div>
         <Motes heroRef={heroRef} />
@@ -448,6 +457,7 @@ function Hero() {
           <Lines
             as="h1"
             delay={0.12}
+            wave
             lines={[
               <>Built to scale.</>,
               <>
@@ -622,38 +632,19 @@ const PATHS = [
 ] as const;
 
 function Paths() {
+  /* The approved card treatment from the original home: translucent glass
+     panels (the plate reads through them) with the green edge-glow hover —
+     the #explore id lights up the original globals.css rules. */
   return (
-    <div className="v2-paths">
-      <div className="v2-paths__head">
-        <Rise>
-          <div className="v2-ch__index">
-            <span className="n">02</span>
-            <span className="rule" />
-            <span className="stratum">Trunk — three ways in</span>
-          </div>
-        </Rise>
-        <Lines as="h2" delay={0.08} lines={[<>Choose</>, <>your path.</>]} />
-        <Rise delay={0.16}>
-          <p className="v2-ch__lead">
-            These roles overlap. Pick the one that fits what you&apos;re here
-            to do.
-          </p>
-        </Rise>
-      </div>
-      <div className="v2-paths__rows">
+    <div className="v2-explore" id="explore">
+      <div className="v2-explore__grid">
         {PATHS.map((p, i) => (
-          <Rise key={p.n} delay={i * 0.08}>
-            <Link href={p.href} className="v2-path">
-              <span className="num">{p.n}</span>
-              <span className="body">
-                <span className="title">{p.title}</span>
-                <span className="line" style={{ display: "block" }}>
-                  {p.line}
-                </span>
-              </span>
-              <span className="cta">
-                {p.cta} <span aria-hidden>→</span>
-              </span>
+          <Rise key={p.n} delay={i * 0.07} style={{ display: "flex" }}>
+            <Link href={p.href} className="panel panel--select-glow v2-explore__card">
+              <div className="v2-explore__num">{p.n}</div>
+              <h3>{p.title}</h3>
+              <p>{p.line}</p>
+              <span className="panel-cta-glow">{p.cta} →</span>
             </Link>
           </Rise>
         ))}
@@ -712,21 +703,22 @@ const LEDGER: {
 ];
 
 function Ledger() {
+  /* Compact stat tiles at the original StatTiles scale. */
   return (
     <div className="v2-ledger">
-      <Rise>
-        <div className="v2-ledger__grid">
-          {LEDGER.map((c) => (
-            <div className="v2-ledger__cell" key={c.k}>
+      <div className="v2-tiles">
+        {LEDGER.map((c, i) => (
+          <Rise key={c.k} delay={i * 0.05} style={{ display: "block" }}>
+            <div className="panel v2-tile">
               <div className="k">{c.k}</div>
               <div className="v" data-accent={c.accent}>
                 {c.v}
               </div>
               <div className="s">{c.s}</div>
             </div>
-          ))}
-        </div>
-      </Rise>
+          </Rise>
+        ))}
+      </div>
     </div>
   );
 }
@@ -808,6 +800,7 @@ function Provenance() {
         <Lines
           as="h2"
           delay={0.06}
+          wave
           className="v2-prov__title"
           lines={[<>Built by</>, <>Anastasia Labs.</>]}
           style={{
@@ -893,16 +886,21 @@ const PHASES = [
 ] as const;
 
 function Road() {
+  /* The original 4-up roadmap panel cards: accent number, body, accent bar,
+     "Current phase" badge — at the original card scale. */
   return (
     <div className="v2-road">
-      <div className="v2-road__list">
+      <div className="v2-road__grid">
         {PHASES.map((p, i) => (
-          <Rise key={p.n} delay={i * 0.07}>
-            <div className="v2-road__row" data-state={p.state}>
-              <span className="n">{p.n}</span>
-              <span className="name">{p.name}</span>
-              <span className="stat">{p.stat}</span>
-              <p className="desc">{p.desc}</p>
+          <Rise key={p.n} delay={i * 0.07} style={{ display: "flex" }}>
+            <div className="panel v2-phase" data-state={p.state}>
+              {p.state === "current" ? (
+                <span className="v2-phase__badge">Current phase</span>
+              ) : null}
+              <div className="v2-phase__num">{p.n}</div>
+              <h3>{p.name}</h3>
+              <p>{p.desc}</p>
+              <div className="v2-phase__bar" aria-hidden />
             </div>
           </Rise>
         ))}
@@ -928,6 +926,7 @@ function Closing() {
         <Lines
           as="h2"
           delay={0.08}
+          wave
           lines={[
             <>Scale Cardano.</>,
             <>
@@ -1069,7 +1068,12 @@ export default function HomeV2() {
         position="50% 32%"
         mobilePosition="58% 32%"
       >
-        <div style={{ paddingTop: "clamp(72px, 13vh, 160px)" }} />
+        <Chapter
+          n="02"
+          stratum="Trunk — three ways in"
+          title={[<>Choose your path.</>]}
+          lead="These roles overlap. Pick the one that fits what you're here to do."
+        />
         <Paths />
       </Scene>
 
