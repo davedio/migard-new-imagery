@@ -255,10 +255,10 @@ a {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* localized radial behind the copy ONLY — dropped the full-width top/bottom
+     linear bands that read as a horizontal "dark line" across the frame. */
   background:
-    radial-gradient(118% 92% at 0% 44%, rgba(3, 7, 4, 0.52), rgba(3, 7, 4, 0.2) 42%, transparent 66%),
-    linear-gradient(180deg, rgba(3, 7, 4, 0.32), transparent 20%),
-    linear-gradient(0deg, rgba(3, 7, 4, 0.44), transparent 26%);
+    radial-gradient(130% 106% at 2% 44%, rgba(3, 7, 4, 0.54), rgba(3, 7, 4, 0.22) 44%, transparent 72%);
 }
 .plate-stage__fx {
   position: absolute;
@@ -3128,15 +3128,16 @@ body.cursor-none * {
   inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* localized radial behind the left-anchored intro copy ONLY — no full-width
+     top/bottom linear bands (those created a visible horizontal "dark line"
+     edge across the frame on scroll). */
   background:
     radial-gradient(
-      120% 92% at 0% 42%,
-      rgba(3, 7, 4, 0.56),
-      rgba(3, 7, 4, 0.24) 40%,
-      transparent 64%
-    ),
-    linear-gradient(180deg, rgba(3, 7, 4, 0.34), transparent 22%),
-    linear-gradient(0deg, rgba(3, 7, 4, 0.46), transparent 22%);
+      135% 110% at 2% 44%,
+      rgba(3, 7, 4, 0.6),
+      rgba(3, 7, 4, 0.26) 44%,
+      transparent 72%
+    );
 }
 
 .hiw-act__intro {
@@ -3272,10 +3273,9 @@ body.cursor-none * {
   }
   .hiw-act__scrim {
     /* on narrow screens the tree sits centred behind the copy, so darken
-       more broadly to keep text legible */
+       more broadly to keep text legible without full-width linear bands */
     background:
-      radial-gradient(140% 80% at 50% 50%, rgba(3, 7, 4, 0.82), transparent 72%),
-      linear-gradient(180deg, rgba(3, 7, 4, 0.66), rgba(3, 7, 4, 0.4) 40%, rgba(3, 7, 4, 0.74));
+      radial-gradient(172% 122% at 50% 48%, rgba(3, 7, 4, 0.84), rgba(3, 7, 4, 0.56) 52%, transparent 86%);
   }
   .hiw-act__lead {
     font-size: 16px;
@@ -3386,28 +3386,24 @@ body.cursor-none * {
   0% { transform: translate3d(0, 0, 0); opacity: 0.7; }
   100% { transform: translate3d(-2.2%, -1.4%, 0); opacity: 1; }
 }
-/* LEFT legibility scrim — darkens the left (where the hero copy + CTAs sit)
-   and the top/bottom edges so the copy stays crisp, leaving the tree readable
-   on the right. */
+/* LEFT legibility scrim - darkens behind the hero copy + CTAs without adding
+   full-width top/bottom bands that can read as horizontal seams. */
 .home-hero-plate__scrim {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(125% 100% at 0% 46%, rgba(5, 11, 8, 0.64), rgba(5, 11, 8, 0.28) 44%, transparent 72%),
-    linear-gradient(180deg, rgba(5, 11, 8, 0.32), transparent 22%),
-    linear-gradient(0deg, rgba(5, 11, 8, 0.48), transparent 30%);
+    radial-gradient(132% 108% at 2% 46%, rgba(5, 11, 8, 0.66), rgba(5, 11, 8, 0.3) 44%, transparent 74%);
 }
 /* mobile/coarse: the cover framing + right-bias are computed in JS in-canvas
    (the scroll-pan is disabled there → a calm static framing). Only the copy
    scrim needs a narrow-viewport tweak. */
 @media (max-width: 720px) {
   .home-hero-plate__scrim {
-    /* on a narrow viewport the copy spans the width — darken more globally. */
+    /* on a narrow viewport the copy spans the width - darken more broadly
+       without reintroducing a full-width horizontal band. */
     background:
-      radial-gradient(150% 100% at 0% 42%, rgba(5, 11, 8, 0.9), rgba(5, 11, 8, 0.55) 46%, transparent 78%),
-      linear-gradient(180deg, rgba(5, 11, 8, 0.6), transparent 30%),
-      linear-gradient(0deg, rgba(5, 11, 8, 0.72), transparent 34%);
+      radial-gradient(165% 118% at 8% 42%, rgba(5, 11, 8, 0.9), rgba(5, 11, 8, 0.56) 50%, transparent 82%);
   }
 }
 /* motion-off / reduced motion: still plate, no mist drift (the overlay canvas
