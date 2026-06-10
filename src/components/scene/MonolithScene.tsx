@@ -13,6 +13,7 @@ import { PostFX } from "./PostFX";
 import { useGlowTexture, usePointerParallax } from "./sceneTokens";
 import { useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
+import { MOTION_SPEED } from "@/lib/motionConfig";
 
 export type MonolithParams = {
   /** 0..1 overall activity — scales flow speed + glow. Mock/static for now. */
@@ -154,7 +155,7 @@ function TrustRail({ motionOn }: { motionOn: boolean }) {
 
   useFrame((state) => {
     if (!motionOn) return;
-    const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 2.2);
+    const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * MOTION_SPEED * 1.2); // ~0.84 rad/s effective (was 2.2)
     nodeMats.current.forEach((m, i) => {
       if (!m) return;
       // gold nodes hold steadier; green nodes breathe a touch, out of phase
@@ -282,7 +283,7 @@ function Packets({
   const t = useRef(0);
 
   useFrame((_, dt) => {
-    if (motionOn) t.current += dt * speed;
+    if (motionOn) t.current += dt * speed * MOTION_SPEED;
     groups.current.forEach((g, i) => {
       if (!g) return;
       g.visible = motionOn; // static fallback: rail glows, signal holds still
@@ -345,7 +346,7 @@ function Rig({
   useFrame((state, dt) => {
     const g = groupRef.current;
     if (!g) return;
-    const t = state.clock.elapsedTime;
+    const t = state.clock.elapsedTime * MOTION_SPEED;
     const sway = motionOn ? Math.sin(t * 0.3) * 0.05 : 0;
     const targetY = ptr.current.x * 0.32 + sway;
     const targetX = -ptr.current.y * 0.12;

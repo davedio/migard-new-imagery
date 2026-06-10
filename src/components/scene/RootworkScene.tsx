@@ -21,6 +21,7 @@ import {
 } from "react";
 import type { ProofStatus } from "@/lib/network";
 import * as THREE from "three";
+import { MOTION_SPEED } from "@/lib/motionConfig";
 
 export type RootworkParams = {
   /** 0..1 overall activity — derived from snap.l2.throughput / 40. */
@@ -224,7 +225,7 @@ function LayerRings({
 
   useFrame((state) => {
     if (!motionOn) return;
-    const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 1.5);
+    const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * MOTION_SPEED * 1.1); // ~0.77 rad/s effective (was 1.5)
 
     // Target emissive intensity for the Proof ring based on proof lifecycle.
     // pending → dim (0.6), generated → elevated (3.2), settled → elevated (3.2)
@@ -373,7 +374,7 @@ function Sap({
   const _q = useMemo(() => new THREE.Quaternion(), []);
 
   useFrame((_, dt) => {
-    if (motionOn) t.current += dt * speed;
+    if (motionOn) t.current += dt * speed * MOTION_SPEED;
     drops.forEach((d, i) => {
       const g = groups.current[i];
       if (!g) return;
@@ -433,7 +434,7 @@ function Bedrock({
   const rim = useRef<THREE.MeshStandardMaterial>(null);
   useFrame((state) => {
     if (!motionOn) return;
-    const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 1.1);
+    const k = 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * MOTION_SPEED * 1.1); // ~0.77 rad/s effective
     if (core.current) core.current.opacity = 0.32 + k * 0.22;
     if (rim.current) rim.current.emissiveIntensity = 1.5 + k * 0.7;
   });
@@ -504,7 +505,7 @@ function Rig({
   useFrame((state, dt) => {
     const g = groupRef.current;
     if (!g) return;
-    const time = state.clock.elapsedTime;
+    const time = state.clock.elapsedTime * MOTION_SPEED;
     const sway = motionOn ? Math.sin(time * 0.28) * 0.045 : 0;
     const targetY = ptr.current.x * 0.3 + sway;
     const targetX = -ptr.current.y * 0.1;

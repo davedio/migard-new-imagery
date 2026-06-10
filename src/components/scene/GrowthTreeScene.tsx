@@ -37,6 +37,7 @@ import {
   type RefObject,
 } from "react";
 import * as THREE from "three";
+import { MOTION_SPEED } from "@/lib/motionConfig";
 import type { ProofStatus } from "@/lib/network";
 
 export type GrowthParams = {
@@ -261,7 +262,7 @@ function GrowingWood({
 
   const t = useRef(0);
   useFrame((_, dt) => {
-    if (motionOn) t.current += dt;
+    if (motionOn) t.current += dt * MOTION_SPEED;
     const g = growthRef.current;
     const set = (m: { uniforms: BarkUniforms }, grow: number, lead: number) => {
       m.uniforms.uTime.value = t.current;
@@ -358,7 +359,7 @@ function Sap({
   const _q = useMemo(() => new THREE.Quaternion(), []);
 
   useFrame((_, dt) => {
-    if (motionOn) t.current += dt * speed;
+    if (motionOn) t.current += dt * speed * MOTION_SPEED;
     const g = growthRef.current;
     drops.forEach((d, i) => {
       const grp = groups.current[i];
@@ -484,7 +485,7 @@ function Leaves({
     const m = ref.current;
     if (!m) return;
     const canopy = growthRef.current.canopy;
-    const breeze = motionOn ? state.clock.elapsedTime : 0;
+    const breeze = motionOn ? state.clock.elapsedTime * MOTION_SPEED : 0;
     leaves.forEach((lf, i) => {
       // reveal once canopy growth passes this leaf's threshold
       const k = smooth(clamp((canopy - order[i]) / 0.18));
@@ -556,7 +557,7 @@ function L1Anchors({
   const groups = useRef<(THREE.Group | null)[]>([]);
 
   useFrame((state) => {
-    const t = motionOn ? state.clock.elapsedTime : 0;
+    const t = motionOn ? state.clock.elapsedTime * MOTION_SPEED : 0;
     const root = growthRef.current.root;
     blocks.forEach((b, i) => {
       const k = smooth(clamp((root - b.reveal) / 0.2));
@@ -641,7 +642,7 @@ function Seed({
   const halo = useRef<THREE.Sprite>(null);
   useFrame((state) => {
     const g = growthRef.current;
-    const pulse = motionOn ? 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * 1.4) : 0.6;
+    const pulse = motionOn ? 0.5 + 0.5 * Math.sin(state.clock.elapsedTime * MOTION_SPEED * 1.2) : 0.6; // ~0.84 rad/s effective (was 1.4)
     // ember fades as the canopy establishes
     const life = 1 - smooth(clamp((g.canopy - 0.2) / 0.6)) * 0.7;
     if (core.current) {

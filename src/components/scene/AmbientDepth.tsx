@@ -19,6 +19,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { MOTION_SPEED } from "@/lib/motionConfig";
 import { useMotionPref } from "@/lib/motion";
 
 /* ---- fog plane: fullscreen clip-space quad running the ported mist fbm ---- */
@@ -74,7 +75,7 @@ function FogPlane({ motionOn }: { motionOn: boolean }) {
     if (!u) return;
     const dpr = state.viewport.dpr;
     u.u_res.value.set(state.size.width * dpr, state.size.height * dpr);
-    if (motionOn) u.u_time.value += dt;
+    if (motionOn) u.u_time.value += dt * MOTION_SPEED;
   });
 
   return (

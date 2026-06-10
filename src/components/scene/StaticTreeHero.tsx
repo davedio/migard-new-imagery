@@ -1,5 +1,6 @@
 "use client";
 
+import { MOTION_SPEED } from "@/lib/motionConfig";
 import { useEffect, useRef } from "react";
 import type { NetworkSnapshot } from "@/lib/network";
 
@@ -1081,7 +1082,8 @@ export default function StaticTreeHero({
     let prev = performance.now();
 
     const frame = (now: number) => {
-      const dt = Math.min(0.05, (now - prev) / 1000);
+      // MOTION_SPEED applied ONCE at the rAF boundary — sim constants below are sim-seconds.
+      const dt = Math.min(0.05, (now - prev) / 1000) * MOTION_SPEED;
       prev = now;
       const moving = motionRef.current;
       const s = snapRef.current;

@@ -70,8 +70,8 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       className="motion-toggle"
       onClick={onToggle}
       aria-pressed={on}
-      aria-label={`Motion ${on ? "on" : "off"}`}
-      title={`Motion ${on ? "on" : "off"}`}
+      aria-label={on ? "Turn motion effects off" : "Turn motion effects on"}
+      title={on ? "Turn motion effects off" : "Turn motion effects on"}
     >
       <span className="motion-toggle__glyph" data-on={on} aria-hidden />
     </button>

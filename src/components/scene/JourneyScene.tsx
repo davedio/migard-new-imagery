@@ -34,6 +34,7 @@
    ============================================================ */
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { MOTION_SPEED } from "@/lib/motionConfig";
 import {
   EffectComposer,
   Bloom,
@@ -303,7 +304,8 @@ function Bark({
 
   const t = useRef(0);
   useFrame((_, dt) => {
-    if (motionOn) t.current += dt;
+    // MOTION_SPEED applied ONCE at the frame boundary (ambient shader clock).
+    if (motionOn) t.current += dt * MOTION_SPEED;
     const b = beatsRef.current;
     [trunkMat, rootMat, canopyMat].forEach((m) => {
       m.uniforms.uTime.value = t.current;
@@ -377,14 +379,15 @@ function AmbientSap({
   useFrame((_, dt) => {
     const m = mesh.current;
     if (!m) return;
-    if (motionOn) t.current += dt * speed;
+    if (motionOn) t.current += dt * speed * MOTION_SPEED;
     dots.forEach((d, i) => {
       const f = (t.current + d.phase) % 1;
       d.curve.getPointAt(clamp(f, 0, 0.999), _p);
       const head = f;
       const a = smooth(clamp(head / 0.1)) * (1 - smooth(clamp((head - 0.85) / 0.15)));
       dummy.position.copy(_p);
-      dummy.scale.setScalar(Math.max(0.04 + a * 0.07, 1e-3));
+      // larger, calmer motes — each reads as a deliberate light (was 0.04 + a*0.07)
+      dummy.scale.setScalar(Math.max(0.07 + a * 0.12, 1e-3));
       dummy.updateMatrix();
       m.setMatrixAt(i, dummy.matrix);
     });
@@ -480,7 +483,7 @@ function TxSparks({
         wobble: rand() * Math.PI * 2,
         // each spark joins the queue at a slightly different time -> a "gathering" feel
         joinDelay: rand() * 0.4,
-        scale: 0.06 + rand() * 0.05,
+        scale: 0.1 + rand() * 0.08, // ~1.7x larger sparks (was 0.06 + rand()*0.05)
       };
     });
   }, [tree, count]);
@@ -525,7 +528,8 @@ function TxSparks({
     const m = mesh.current;
     if (!m) return;
     const b = beatsRef.current;
-    if (motionOn) t.current += dt;
+    // MOTION_SPEED applied ONCE here — ping freqs below are sim-rad/s.
+    if (motionOn) t.current += dt * MOTION_SPEED;
     const time = t.current;
 
     // batch centre: above the fork while batching, then down the trunk
@@ -604,7 +608,7 @@ function TxSparks({
       const s =
         d.scale *
         (1 + batchAmt * (1 - settleAmt) * 0.5 + settleAmt * 0.6 +
-          (motionOn ? 0.12 * Math.sin(time * 4 + d.phase) : 0));
+          (motionOn ? 0.08 * Math.sin(time * 1.4 + d.phase) : 0)); // calm shimmer (~1.0 rad/s effective; was 4)
       dummy.scale.setScalar(Math.max(s, 1e-3));
       dummy.updateMatrix();
       m.setMatrixAt(i, dummy.matrix);
@@ -664,7 +668,7 @@ function BatchCore({
   const t = useRef(0);
 
   useFrame((_, dt) => {
-    if (motionOn) t.current += dt;
+    if (motionOn) t.current += dt * MOTION_SPEED;
     const b = beatsRef.current;
     const g = group.current;
     if (!g) return;
@@ -691,13 +695,13 @@ function BatchCore({
       const m = core.current.material as THREE.MeshStandardMaterial;
       // green/gold while on the trunk, cobalt as it sinks to L1
       m.emissive.copy(GREEN_BRIGHT).lerp(COBALT_BRIGHT, clamp(b.descend * 0.5 + b.settle));
-      m.emissiveIntensity = 2.2 + (motionOn ? Math.sin(t.current * 3) * 0.3 : 0);
+      m.emissiveIntensity = 2.2 + (motionOn ? Math.sin(t.current * 1.2) * 0.3 : 0); // ~0.84 rad/s effective (was 3)
     }
     if (halo.current) {
       const sm = halo.current.material as THREE.SpriteMaterial;
       sm.opacity = present * 0.7;
       sm.color.copy(GREEN_BRIGHT).lerp(COBALT_BRIGHT, clamp(b.descend * 0.5 + b.settle));
-      const hs = 3.2 + (motionOn ? Math.sin(t.current * 2.4) * 0.3 : 0);
+      const hs = 3.2 + (motionOn ? Math.sin(t.current * 1.0) * 0.3 : 0); // ~0.7 rad/s effective (was 2.4)
       halo.current.scale.set(hs, hs, 1);
     }
   });
@@ -786,7 +790,7 @@ function Leaves({
 
   useFrame((state) => {
     if (!motionOn) return;
-    const breeze = state.clock.elapsedTime;
+    const breeze = state.clock.elapsedTime * MOTION_SPEED;
     if (group.current) {
       group.current.rotation.z = Math.sin(breeze * 0.35) * 0.02;
       group.current.rotation.x = Math.cos(breeze * 0.27) * 0.015;
@@ -846,7 +850,7 @@ function L1Bedrock({
   const sprites = useRef<THREE.Sprite[]>([]);
 
   useFrame((state) => {
-    const t = motionOn ? state.clock.elapsedTime : 0;
+    const t = motionOn ? state.clock.elapsedTime * MOTION_SPEED : 0;
     const b = beatsRef.current;
     // confirmation pulse: a sharp flash at settle onset, then a steady lock glow
     const flash = Math.exp(-Math.pow((b.settle - 0.6) * 4, 2)) * 1.6;
@@ -855,7 +859,7 @@ function L1Bedrock({
       const m = mats.current[i];
       if (m) {
         const base = 0.5 + lock * (settled ? 2.2 : 1.7);
-        m.emissiveIntensity = base + flash + (motionOn ? Math.sin(t * 1.6 + bl.phase) * 0.3 * lock : 0);
+        m.emissiveIntensity = base + flash + (motionOn ? Math.sin(t * 1.2 + bl.phase) * 0.3 * lock : 0); // ~0.84 rad/s effective
       }
       const sp = sprites.current[i];
       if (sp) {
@@ -927,7 +931,7 @@ function SettlementPoolMaterial({
   );
   useFrame((_, dt) => {
     if (!mat.current) return;
-    if (motionOn) uniforms.uTime.value += dt;
+    if (motionOn) uniforms.uTime.value += dt * MOTION_SPEED;
     uniforms.uSettle.value = beatsRef.current.settle;
   });
   return (
@@ -1050,7 +1054,7 @@ function GodRays({ motionOn }: { motionOn: boolean }) {
   const group = useRef<THREE.Group>(null);
   useFrame((state) => {
     if (!motionOn || !group.current) return;
-    group.current.rotation.y = state.clock.elapsedTime * 0.02;
+    group.current.rotation.y = state.clock.elapsedTime * MOTION_SPEED * 0.02;
   });
   const shafts = useMemo(() => {
     const rand = mulberry32(7);
@@ -1177,8 +1181,8 @@ function SceneContents({
   const smoothedP = useRef(motionOn ? 0 : STATIC_P);
 
   // particle budgets scale with capability
-  const sparkCount = heavy ? 220 : 70;
-  const sapCount = heavy ? 34 : 16;
+  const sparkCount = heavy ? 130 : 48; // fewer, larger sparks (was 220 / 70)
+  const sapCount = heavy ? 20 : 10; // fewer, larger ambient motes (was 34 / 16)
 
   // dynamic lights we animate with the descent
   const keyLight = useRef<THREE.PointLight>(null);
