@@ -185,12 +185,15 @@ function Scene({
   plate,
   position = "center",
   mobilePosition,
+  ghost,
   children,
 }: {
   id: string;
   plate: string;
   position?: string;
   mobilePosition?: string;
+  /** giant outlined stratum numeral pinned with the stage (editorial depth) */
+  ghost?: string;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLElement>(null);
@@ -198,6 +201,7 @@ function Scene({
   const progress = useViewProgress(ref);
   const y = useTransform(progress, [0, 1], ["-4.5%", "4.5%"]);
   const scale = useTransform(progress, [0, 1], [1.07, 1.02]);
+  const ghostY = useTransform(progress, [0, 1], ["6%", "-6%"]);
 
   return (
     <section ref={ref} id={id} className="v2-scene" data-scene={id}>
@@ -213,6 +217,14 @@ function Scene({
           }}
         />
         <div className="v2-scene__veil" />
+        {ghost ? (
+          <motion.div
+            className="v2-scene__ghost"
+            style={{ y: motionOn ? ghostY : 0 }}
+          >
+            {ghost}
+          </motion.div>
+        ) : null}
       </div>
       <div className="v2-scene__body">{children}</div>
     </section>
@@ -1111,7 +1123,7 @@ export default function HomeV2() {
       <Hero />
       <Marquee />
 
-      <Scene id="canopy" plate={PLATES.canopy} position="74% 40%">
+      <Scene id="canopy" plate={PLATES.canopy} position="74% 40%" ghost="01">
         <Chapter
           n="01"
           stratum="Canopy — the thesis"
@@ -1125,6 +1137,7 @@ export default function HomeV2() {
         plate={PLATES.strata}
         position="50% 32%"
         mobilePosition="58% 32%"
+        ghost="02"
       >
         <Chapter
           n="02"
@@ -1140,6 +1153,7 @@ export default function HomeV2() {
         plate={PLATES.roots}
         position="68% 64%"
         mobilePosition="74% 60%"
+        ghost="03"
       >
         <Chapter
           n="03"
@@ -1156,7 +1170,7 @@ export default function HomeV2() {
         <Ledger />
       </Scene>
 
-      <Scene id="stone" plate={PLATES.stone} position="56% 48%">
+      <Scene id="stone" plate={PLATES.stone} position="56% 48%" ghost="04">
         <Chapter
           n="04"
           stratum="Stone — why eUTXO"
@@ -1178,6 +1192,7 @@ export default function HomeV2() {
         plate={PLATES.strata}
         position="50% 96%"
         mobilePosition="56% 96%"
+        ghost="05"
       >
         <Chapter
           n="05"

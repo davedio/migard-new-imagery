@@ -178,22 +178,9 @@ function cameraAt(idx: number, local: number, focals: Focal[]): Focal {
    We sample the path as a function of journey progress `p` plus a small
    time-based sway so the comet reads as alive, not on rails.
    ================================================================ */
-function packetPos(p: number, t: number, cx: number, spread: number) {
-  // Screen-space vertical travel: enters from just above the top, rides
-  // down to just past centre as it nears settlement — the plate pan does
-  // the rest of the "descent". Eased so entry/landing feel intentional.
-  const e = smooth(p);
-  const y = lerp(0.16, 0.74, e);
-  // Horizontal: follow the trunk centreline, narrowing toward the roots,
-  // with an organic sway that eases out as it settles.
-  const narrow = lerp(1.0, 0.18, e);
-  const sway =
-    (Math.sin(t * 0.9 + p * 7.0) * 0.045 + Math.sin(t * 1.7 + 1.3) * 0.018) *
-    narrow *
-    (1 - e * 0.8);
-  const x = cx + sway * (spread / 0.2);
-  return { x, y };
-}
+/* (the old viewport-space packetPos was replaced by the image-anchored
+   packetUV inside the overlay effect — the packet now rides the MEASURED
+   trunk centerline of the actual plate) */
 
 /* ================================================================
    Overlay model — built once, deterministically, in plate-relative
@@ -340,6 +327,10 @@ export default function PhotorealBackdrop({
   // same eased descent as the plate (perfect coupling = no jitter, tracking
   // shot feel). Written by the plate-pan loop, read by the overlay loop.
   const panProgRef = useRef(0);
+  // the LIVE camera (pan % + zoom) published by the plate loop so the
+  // overlay can project image-space anchors through the same transform —
+  // this is what keeps the fx ON the tree at any zoom (V2 round-5 fix).
+  const camRef = useRef({ y: 42, s: 1.06 });
   const model = useMemo(() => buildModel(wide), [wide]);
 
   // ---- plate parallax pan + PER-STAGE ZOOM (rAF, ref-driven) ----
@@ -361,6 +352,8 @@ export default function PhotorealBackdrop({
       const cam = cameraAt(2, 0, focals); // park on the COMMIT mid-trunk focal
       el.style.setProperty("--plate-y", `${cam.focY}%`);
       el.style.setProperty("--plate-scale", "1.04");
+      camRef.current.y = cam.focY;
+      camRef.current.s = 1.04;
       stage?.style.setProperty("--plate-settle", "0");
       if (dof) {
         dof.style.setProperty("--focus-y", "46%");
@@ -409,21 +402,19 @@ export default function PhotorealBackdrop({
 
       el.style.setProperty("--plate-y", `${camY.toFixed(3)}%`);
       el.style.setProperty("--plate-scale", camS.toFixed(4));
+      // publish the live camera for the overlay's image->screen projection
+      camRef.current.y = camY;
+      camRef.current.s = camS;
       // settle 0..1 drives the cobalt grade on the post layer at the roots
       const settle = smooth(clamp((cur - 0.66) / 0.34));
       stage?.style.setProperty("--plate-settle", settle.toFixed(3));
 
-      // DEPTH OF FIELD: keep the focus sweet-spot locked to the packet. The
-      // packet's screen-y is lerp(0.16, 0.74, e) (see packetPos), so we put
-      // focus-y exactly there. DOF strength eases UP mid-descent and relaxes
-      // a touch at the calm canopy + the settled L1 bloom.
+      // DEPTH OF FIELD strength (focus-y itself is written by the overlay
+      // loop from the packet's REAL projected screen position).
       if (dof) {
-        const e = smooth(cur);
-        const focusY = lerp(16, 74, e); // dead-on the packet core
         const dofAmt =
           lerp(0.45, 1, smooth(clamp(cur / 0.5))) *
           lerp(1, 0.7, smooth(clamp((cur - 0.85) / 0.15)));
-        dof.style.setProperty("--focus-y", `${focusY.toFixed(2)}%`);
         dof.style.setProperty("--dof", dofAmt.toFixed(3));
       }
       raf = requestAnimationFrame(tick);
@@ -455,9 +446,235 @@ export default function PhotorealBackdrop({
     resize();
     window.addEventListener("resize", resize);
 
-    const { nodes, edges, motes, glints, cx, spread } = model;
-    const nx = (n: { x: number }) => n.x * W;
-    const ny = (n: { y: number }) => n.y * H;
+    const { nodes, edges, motes, glints } = model;
+
+    /* ================================================================
+       IMAGE-ANCHORED ANATOMY (V2 round-5). The overlay used to live in
+       viewport-normalized coords tuned to the old plate; with the 4K
+       plate + deep per-stage zooms it drifted off the tree. Now the
+       plate image itself is sampled (the proven HeroSapOrbs approach):
+       a green-dominance grid yields the trunk CENTERLINE + width per
+       row, canopy spark sites, and the cobalt VAULT (blue centroid) —
+       and every anchor is projected image -> screen through the live
+       cover + pan + zoom transform, so the fx sit ON the tree at any
+       camera position.
+       ================================================================ */
+    const ROWS = 96;
+    const anat = {
+      ready: false,
+      c: new Float32Array(ROWS).fill(model.cx), // centerline u per row
+      w: new Float32Array(ROWS).fill(model.spread), // half-width per row
+      vaultU: model.cx,
+      vaultV: 0.92,
+      canopy: [] as { u: number; v: number }[],
+    };
+    const rowAt = (arr: Float32Array, v: number) => {
+      const f = clamp(v) * (ROWS - 1);
+      const i = Math.floor(f);
+      return lerp(arr[i], arr[Math.min(ROWS - 1, i + 1)], f - i);
+    };
+    const cAt = (v: number) => rowAt(anat.c, v);
+    const wAt = (v: number) => rowAt(anat.w, v);
+
+    let imgW = 0;
+    let imgH = 0;
+    const posX = wide ? 0.68 : 0.5; // CSS background-position-x of the plate
+    /* image-normalized (u,v) -> screen px, through cover + pan + zoom */
+    const tX = (u: number) => {
+      if (!imgW) return u * W;
+      const s0 = Math.max(W / imgW, H / imgH);
+      const sx = u * imgW * s0 + (W - imgW * s0) * posX;
+      return (sx - W / 2) * camRef.current.s + W / 2;
+    };
+    const tY = (v: number) => {
+      if (!imgH) return v * H;
+      const s0 = Math.max(W / imgW, H / imgH);
+      const sy = v * imgH * s0 + (H - imgH * s0) * (camRef.current.y / 100);
+      return (sy - H / 2) * camRef.current.s + H / 2;
+    };
+    const nx = (n: { x: number }) => tX(n.x);
+    const ny = (n: { y: number }) => tY(n.y);
+
+    /* rebuild the model IN PLACE on the measured anatomy (same seeds, same
+       beat logic — only the anchors move onto the real tree) */
+    const rebuildOnAnatomy = () => {
+      const rand = mulberry32(20260608);
+      nodes.length = 0;
+      const NODE_COUNT = 26;
+      for (let i = 0; i < NODE_COUNT; i++) {
+        const ty = i / (NODE_COUNT - 1);
+        const v = lerp(0.06, 0.9, ty) + (rand() - 0.5) * 0.03;
+        const half = wAt(v) * lerp(1.35, 0.55, ty);
+        const u = cAt(v) + (rand() - 0.5) * 2 * half;
+        nodes.push({
+          x: u,
+          y: v,
+          r: 1.8 + rand() * 2.4,
+          phase: rand() * Math.PI * 2,
+          fire: 0,
+          watcher: ty > 0.12 && ty < 0.62 && Math.abs(u - cAt(v)) > wAt(v) * 0.55,
+          blink: rand() * Math.PI * 2,
+        });
+      }
+      edges.length = 0;
+      const seen = new Set<string>();
+      for (let i = 0; i < nodes.length; i++) {
+        const order = nodes
+          .map((n, j) => ({
+            j,
+            d:
+              Math.hypot(n.x - nodes[i].x, (n.y - nodes[i].y) * 0.7) +
+              (n.y < nodes[i].y ? 0.18 : 0),
+          }))
+          .filter((o) => o.j !== i)
+          .sort((a, b) => a.d - b.d);
+        const links = 1 + Math.floor(rand() * 2);
+        for (let k = 0; k < links && k < order.length; k++) {
+          const j = order[k].j;
+          const key = i < j ? `${i}-${j}` : `${j}-${i}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          edges.push({ a: i, b: j, fire: 0 });
+        }
+      }
+      glints.length = 0;
+      const glintCount = wide ? 14 : 18;
+      for (let i = 0; i < glintCount; i++) {
+        const site = anat.canopy.length
+          ? anat.canopy[Math.floor(rand() * anat.canopy.length)]
+          : { u: cAt(0.16) + (rand() - 0.5) * 0.3, v: 0.05 + rand() * 0.24 };
+        glints.push({
+          x: site.u,
+          y: site.v,
+          r: 0.8 + rand() * 1.6,
+          tw: 0.8 + rand() * 1.8,
+          ph: rand() * Math.PI * 2,
+        });
+      }
+      motes.length = 0;
+      const moteCount = wide ? 12 : 16;
+      for (let i = 0; i < moteCount; i++) {
+        const v = rand();
+        motes.push({
+          x: cAt(v) + (rand() - 0.5) * 2 * (wAt(v) + 0.1),
+          y: v,
+          vx: (rand() - 0.5) * 0.01,
+          vy: 0.012 + rand() * 0.022,
+          s: 0.8 + rand() * 1.8,
+          sway: rand() * Math.PI * 2,
+          twk: 0.6 + rand() * 1.4,
+        });
+      }
+    };
+
+    /* one repaint hook so the static (motion-off) frame refreshes once the
+       anatomy lands */
+    let repaint: (() => void) | null = null;
+
+    const plateImg = new Image();
+    plateImg.src = wide
+      ? "/plates/worldtree-wide.avif"
+      : "/plates/worldtree-tall-4k.avif";
+    plateImg.onload = () => {
+      imgW = plateImg.naturalWidth;
+      imgH = plateImg.naturalHeight;
+      const gw = 144;
+      const gh = Math.max(2, Math.round((imgH / imgW) * gw));
+      const off = document.createElement("canvas");
+      off.width = gw;
+      off.height = gh;
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      if (!octx) return;
+      octx.drawImage(plateImg, 0, 0, gw, gh);
+      const data = octx.getImageData(0, 0, gw, gh).data;
+      const green = (gx: number, gy: number) => {
+        const i = (gy * gw + gx) * 4;
+        return Math.max(0, data[i + 1] - Math.max(data[i], data[i + 2]));
+      };
+      const blue = (gx: number, gy: number) => {
+        const i = (gy * gw + gx) * 4;
+        return Math.max(0, data[i + 2] - Math.max(data[i], data[i + 1]));
+      };
+      /* centerline + width per row (green-weighted centroid + std dev) */
+      let prevC = 0.5;
+      let prevW = 0.18;
+      for (let r = 0; r < ROWS; r++) {
+        const gy = Math.min(gh - 1, Math.round((r / (ROWS - 1)) * (gh - 1)));
+        let sum = 0;
+        let sx = 0;
+        let sxx = 0;
+        for (let gx = 0; gx < gw; gx++) {
+          const s = green(gx, gy);
+          if (s > 26) {
+            sum += s;
+            sx += s * gx;
+            sxx += s * gx * gx;
+          }
+        }
+        if (sum > 0) {
+          const mean = sx / sum;
+          const std = Math.sqrt(Math.max(0, sxx / sum - mean * mean));
+          prevC = mean / gw;
+          prevW = clamp(Math.max(std * 1.7, 4) / gw, 0.025, 0.3);
+        }
+        anat.c[r] = prevC;
+        anat.w[r] = prevW;
+      }
+      /* light smoothing so the centerline is a path, not a zigzag */
+      for (let pass = 0; pass < 2; pass++) {
+        for (let r = 1; r < ROWS - 1; r++) {
+          anat.c[r] = (anat.c[r - 1] + anat.c[r] * 2 + anat.c[r + 1]) / 4;
+          anat.w[r] = (anat.w[r - 1] + anat.w[r] * 2 + anat.w[r + 1]) / 4;
+        }
+      }
+      /* canopy spark sites (lit cells in the crown) */
+      const vTop = Math.floor(gh * 0.03);
+      const vBot = Math.floor(gh * 0.34);
+      for (let gy = vTop; gy < vBot; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+          if (green(gx, gy) > 60 && anat.canopy.length < 420) {
+            anat.canopy.push({ u: gx / gw, v: gy / gh });
+          }
+        }
+      }
+      /* the cobalt vault: blue centroid of the bedrock band */
+      let bsum = 0;
+      let bu = 0;
+      let bv = 0;
+      for (let gy = Math.floor(gh * 0.74); gy < gh; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+          const s = blue(gx, gy);
+          if (s > 30) {
+            bsum += s;
+            bu += s * (gx / gw);
+            bv += s * (gy / gh);
+          }
+        }
+      }
+      if (bsum > 0) {
+        anat.vaultU = bu / bsum;
+        anat.vaultV = bv / bsum;
+      } else {
+        anat.vaultU = cAt(0.92);
+        anat.vaultV = 0.92;
+      }
+      anat.ready = true;
+      rebuildOnAnatomy();
+      repaint?.();
+    };
+
+    /* the packet's path, in image space: canopy -> down the MEASURED
+       centerline -> into the vault. Replaces the old viewport path. */
+    const packetUV = (p: number, t: number) => {
+      const e = smooth(p);
+      const v = lerp(0.085, anat.ready ? anat.vaultV - 0.01 : 0.9, e);
+      const narrow = lerp(1, 0.16, e);
+      const sway =
+        (Math.sin(t * 0.9 + p * 7.0) * 0.6 + Math.sin(t * 1.7 + 1.3) * 0.25) *
+        narrow;
+      const u = lerp(cAt(v) + sway * wAt(v), anat.vaultU, e * e);
+      return { x: u, y: v };
+    };
 
     /* ---- the network draw (also the reduced-motion frame) ----
        `glow` = ambient breathing. Each node/edge also carries its own
@@ -544,12 +761,12 @@ export default function PhotorealBackdrop({
     if (!motionOn) {
       const renderStatic = () => {
         const pStat = 0.42;
-        const pk = packetPos(pStat, 0, cx, spread);
+        const pk = packetUV(pStat, 0);
         // publish the resting packet screen position so a static badge can
         // anchor to it (the StageGraphic static fallback reads this).
         if (packetRef?.current) {
-          packetRef.current.x = pk.x * W;
-          packetRef.current.y = pk.y * H;
+          packetRef.current.x = tX(pk.x);
+          packetRef.current.y = tY(pk.y);
         }
         // a calm, partially-lit constellation with the packet resting
         // mid-trunk (no animation).
@@ -564,8 +781,8 @@ export default function PhotorealBackdrop({
         ctx.globalCompositeOperation = "lighter";
         drawNetwork(pStat, 0.8, 0, 0);
         // the resting packet seed
-        const px = pk.x * W;
-        const py = pk.y * H;
+        const px = tX(pk.x);
+        const py = tY(pk.y);
         const seed = ctx.createRadialGradient(px, py, 0, px, py, 26);
         seed.addColorStop(0, `rgba(${GREEN}, 0.95)`);
         seed.addColorStop(0.4, `rgba(${GREEN}, 0.4)`);
@@ -576,6 +793,7 @@ export default function PhotorealBackdrop({
         ctx.fill();
         ctx.globalCompositeOperation = "source-over";
       };
+      repaint = renderStatic; // repaint once the sampled anatomy lands
       renderStatic();
       window.addEventListener("resize", renderStatic);
       return () => {
@@ -593,7 +811,7 @@ export default function PhotorealBackdrop({
     // rather than a few visible segments — the hallmark of the polished look.
     const WAKE = 64;
     const wake: { x: number; y: number }[] = [];
-    for (let i = 0; i < WAKE; i++) wake.push({ x: cx, y: 0.16 });
+    for (let i = 0; i < WAKE; i++) wake.push({ x: cAt(0.085), y: 0.085 });
 
     // confirmation ripple rings spawned at settlement
     type Ring = { t: number; born: number };
@@ -640,16 +858,24 @@ export default function PhotorealBackdrop({
       const watchT =
         sIdx === 3 ? Math.sin(smooth(clamp((sLocal - 0.05) / 0.9)) * Math.PI) : 0;
 
-      // packet position in normalized coords + px
-      const pk = packetPos(p, t, cx, spread);
-      const px = pk.x * W;
-      const py = pk.y * H;
+      // packet position: image-space along the measured centerline,
+      // projected to screen through the live camera
+      const pk = packetUV(p, t);
+      const px = tX(pk.x);
+      const py = tY(pk.y);
       // publish the live packet screen position so the floating StageGraphic
       // badge can anchor to it on the tree (single source of truth — the
       // badge never drifts from the comet / plate pan).
       if (packetRef?.current) {
         packetRef.current.x = px;
         packetRef.current.y = py;
+      }
+      // DOF focus rides the packet's REAL projected position
+      if (dofRef.current) {
+        dofRef.current.style.setProperty(
+          "--focus-y",
+          `${clamp((py / H) * 100, 8, 88).toFixed(2)}%`,
+        );
       }
       // packet hue shifts green -> cobalt as it nears the roots
       const pkCol = mixRGB(GREEN, COBALT, settle);
@@ -680,8 +906,8 @@ export default function PhotorealBackdrop({
           const tw = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * gl.tw + gl.ph));
           const a = submitT * tw * lerp(0.9, 0.25, converge);
           const r = gl.r * lerp(1.4, 0.5, converge);
-          const gx = hx * W;
-          const gy = hy * H;
+          const gx = tX(hx);
+          const gy = tY(hy);
           const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, r * 4);
           g.addColorStop(0, `rgba(${GREEN}, ${a})`);
           g.addColorStop(1, `rgba(${GREEN}, 0)`);
@@ -710,20 +936,22 @@ export default function PhotorealBackdrop({
       if (sequenceT > 0.001 || commitT > 0.001) {
         const QN = 7;
         // queue spans from a little above the packet up the trunk
-        const top = clamp(pk.y - 0.3, 0.06, 0.7);
-        const bottomY = clamp(pk.y - 0.06, 0.1, 0.78);
+        // (image-v offsets: ~one viewport-quarter above the packet)
+        const top = clamp(pk.y - 0.2, 0.05, 0.7);
+        const bottomY = clamp(pk.y - 0.04, 0.07, 0.78);
         // COMMIT compresses the slots toward the packet (the "bundle")
         const compress = commitT; // 0 = full queue, ->1 = collapsed onto packet
         for (let i = 0; i < QN; i++) {
           const f = i / (QN - 1); // 0 top .. 1 nearest packet
           const baseY = lerp(top, bottomY, f);
-          const slotY = lerp(baseY, pk.y - 0.02, compress * 0.92);
-          const slotX = lerp(cx, pk.x, 0.35 + 0.3 * f);
+          const slotY = lerp(baseY, pk.y - 0.015, compress * 0.92);
+          // the queue hugs the MEASURED trunk centerline at each slot's row
+          const slotX = lerp(cAt(slotY), pk.x, 0.35 + 0.3 * f);
           // settle-in jitter at the start of SEQUENCE, easing to a clean line
           const settleIn = smooth(clamp((sequenceT - f * 0.12) / 0.5));
           const jitter = (1 - settleIn) * Math.sin(t * 6 + i) * 0.012;
-          const x = (slotX + jitter) * W;
-          const y = slotY * H;
+          const x = tX(slotX + jitter);
+          const y = tY(slotY);
           // alpha: rise as the queue orders, fade as it compresses away
           const a = clamp(
             (sequenceT * settleIn + commitT * 0.8) * (1 - compress * 0.65),
@@ -813,9 +1041,10 @@ export default function PhotorealBackdrop({
       ctx.lineJoin = "round";
       ctx.lineCap = "round";
       const wakeFade = 1 - arrival * 0.45;
-      // px helpers for a wake sample
-      const wpx = (i: number) => wake[i].x * W;
-      const wpy = (i: number) => wake[i].y * H;
+      // px helpers for a wake sample (projected through the live camera, so
+      // the whole tail pans/zooms WITH the tree)
+      const wpx = (i: number) => tX(wake[i].x);
+      const wpy = (i: number) => tY(wake[i].y);
 
       const drawWakePass = (
         widthHead: number,
@@ -1034,7 +1263,7 @@ export default function PhotorealBackdrop({
         if (m.y > 1.05) {
           m.y = -0.04;
           m.x = clamp(
-            cx + (Math.random() - 0.5) * 2 * (spread + 0.16),
+            cAt(0.1) + (Math.random() - 0.5) * 2 * (wAt(0.1) + 0.12),
             0.06,
             0.96,
           );
@@ -1045,19 +1274,14 @@ export default function PhotorealBackdrop({
         const a = tw + lit * 0.55;
         const col = lit > 0.2 ? pkCol : GREEN;
         const r = m.s * (1 + lit * 1.2);
-        const g = ctx.createRadialGradient(
-          m.x * W,
-          m.y * H,
-          0,
-          m.x * W,
-          m.y * H,
-          r * 3,
-        );
+        const mx = tX(m.x);
+        const my = tY(m.y);
+        const g = ctx.createRadialGradient(mx, my, 0, mx, my, r * 3);
         g.addColorStop(0, `rgba(${col}, ${a})`);
         g.addColorStop(1, `rgba(${col}, 0)`);
         ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.arc(m.x * W, m.y * H, r * 3, 0, Math.PI * 2);
+        ctx.arc(mx, my, r * 3, 0, Math.PI * 2);
         ctx.fill();
       }
 

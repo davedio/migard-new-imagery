@@ -442,6 +442,32 @@ h2 em,
   background-position: center;
   will-change: transform;
 }
+/* giant outlined stratum numeral — editorial depth layered between the
+   plate and the copy, pinned with the stage and counter-drifting a touch */
+.v2-scene__ghost {
+  position: absolute;
+  right: 2%;
+  bottom: 4%;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: clamp(170px, 26vw, 420px);
+  font-weight: 700;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 241, 230, 0.085);
+  pointer-events: none;
+  user-select: none;
+}
+@media (max-width: 760px) {
+  .v2-scene__ghost {
+    font-size: clamp(120px, 38vw, 200px);
+    right: 4%;
+    bottom: 6%;
+    -webkit-text-stroke-color: rgba(244, 241, 230, 0.065);
+  }
+}
+
 .v2-scene__veil {
   position: absolute;
   inset: 0;
