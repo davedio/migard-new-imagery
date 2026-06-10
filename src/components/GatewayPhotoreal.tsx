@@ -15,6 +15,10 @@ import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
 import { AboutFold } from "./site/AboutFold";
+import { Section } from "@/components/site/ui";
+import { StatTiles } from "@/components/site/StatTiles";
+import { EutxoComparison } from "@/components/site/EutxoComparison";
+import { Roadmap } from "@/components/site/Roadmap";
 
 const SECTION_PAD = "clamp(48px,6.5vh,88px) var(--gut)";
 
@@ -433,7 +437,27 @@ export default function GatewayPhotoreal() {
             solid cutoff, so the tree stays visible behind the cards. */}
         <div className="home-body">
           <ExploreGrid />
+          {/* Protocol at-a-glance stats (moved here from How It Works). */}
+          <Section
+            eyebrow="Protocol at a glance"
+            title="Fast confirmations now, final settlement on Cardano."
+            lead="The numbers behind Midgard's pre-alpha testnet: usable speed today, with final settlement on Cardano."
+            tight
+          >
+            <StatTiles />
+          </Section>
           <AboutFold />
+          {/* Why eUTXO — moved here from How It Works. */}
+          <Section
+            eyebrow="Why eUTXO"
+            title="Why eUTXO builds a better rollup."
+            lead="Cardano's eUTXO model makes fraud proofs surgical: Midgard re-executes only the inputs of a bad transaction — no global state scan."
+            glow="gold"
+          >
+            <EutxoComparison />
+          </Section>
+          {/* Path to mainnet — moved here from How It Works. */}
+          <Roadmap />
           <ClosingCTA />
         </div>
       </main>
