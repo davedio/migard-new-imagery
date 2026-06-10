@@ -1,11 +1,20 @@
 "use client";
 
 /* ============================================================================
-   CursorWave — the Corn-Revolution header effect: characters near the
-   pointer lift and magnify, rippling through the headline as the cursor
-   moves. Text is split into per-character spans (words stay unbreakable);
-   a lerped rAF loop drives transforms only while the pointer is near, so
-   idle cost is zero. Fine pointers + motion-on only.
+   WaveText — the Corn-Revolution header effect, take two (review: "the words
+   appeared to split apart into glowing orbs that were connected").
+
+   Each heading samples its own glyphs into particle home-points (the text is
+   drawn to an offscreen canvas in its exact computed font, then the ink is
+   sampled on a grid). Near the cursor, the DOM characters fade out and their
+   particles take over: they scatter away from the pointer as luminous sap
+   orbs — Midgard green with the odd gold bead — connected to their close
+   neighbours by thin filaments (the constellation/plexus). Leave, and the
+   orbs sail home and the type reassembles.
+
+   Cost model: everything is parked until the pointer comes near a heading;
+   one rAF loop per active heading; particles are root-relative so scrolling
+   needs no re-measure. Fine pointers + motion-on only.
    ========================================================================== */
 
 import {
@@ -18,9 +27,9 @@ import {
 } from "react";
 import { useMotionPref } from "@/lib/motion";
 
-const RADIUS = 140; // px influence radius around the pointer
-const LIFT = 13; // max upward px
-const GROW = 0.2; // max extra scale
+const RADIUS = 120; // px influence radius around the pointer
+const SCATTER = 38; // max displacement away from the cursor
+const LINK_F = 3.4; // link reach = sample stride × this
 
 function splitChars(node: ReactNode, k: { n: number }): ReactNode {
   if (typeof node === "string") {
@@ -46,6 +55,17 @@ function splitChars(node: ReactNode, k: { n: number }): ReactNode {
   return node;
 }
 
+type Particle = {
+  hx: number; // home (root-relative)
+  hy: number;
+  x: number;
+  y: number;
+  a: number; // activation 0..1
+  size: number;
+  seed: number;
+  gold: boolean;
+};
+
 export function WaveText({
   children,
   className,
@@ -54,63 +74,219 @@ export function WaveText({
   className?: string;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { motionOn } = useMotionPref();
 
   useEffect(() => {
     const root = ref.current;
-    if (!root || !motionOn) return;
+    const canvas = canvasRef.current;
+    if (!root || !canvas || !motionOn) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
     const chars = Array.from(root.querySelectorAll<HTMLElement>(".cw-ch"));
     if (chars.length === 0) return;
 
+    /* the entrance mask would clip scattered orbs — once the reveal is long
+       done, open it up (the mask only matters during the line reveal) */
+    const mask = root.closest<HTMLElement>(".v2-mask");
+    const maskTimer = window.setTimeout(() => {
+      if (mask) mask.style.overflow = "visible";
+    }, 1900);
+
+    const PAD = 72; // canvas margin beyond the text box, room for scatter
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    let particles: Particle[] = [];
+    let charPos: { x: number; y: number }[] = []; // char centers, root-relative
+    let stride = 7;
+    /* prominence scales with the type: a 100px hero glyph sheds bigger,
+       farther-flying orbs than a 30px one */
+    let radiusEff = RADIUS;
+    let scatterEff = SCATTER;
+    let sizeBoost = 1;
     let raf = 0;
     let active = false;
-    let needMeasure = true;
-    let px = -9999;
+    let px = -9999; // pointer, root-relative
     let py = -9999;
-    const lift = new Array<number>(chars.length).fill(0);
-    const centers = new Array<{ x: number; y: number } | null>(chars.length).fill(null);
+    let pin = false; // pointer inside the influence zone
+    let t = 0;
 
-    const measure = () => {
-      for (let i = 0; i < chars.length; i++) {
-        const r = chars[i].getBoundingClientRect();
-        centers[i] = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    const build = () => {
+      const rr = root.getBoundingClientRect();
+      if (rr.width === 0) return;
+      canvas.style.left = `${-PAD}px`;
+      canvas.style.top = `${-PAD}px`;
+      canvas.style.width = `${rr.width + PAD * 2}px`;
+      canvas.style.height = `${rr.height + PAD * 2}px`;
+      canvas.width = Math.round((rr.width + PAD * 2) * DPR);
+      canvas.height = Math.round((rr.height + PAD * 2) * DPR);
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+      /* draw every char into an offscreen canvas at its exact place */
+      const off = document.createElement("canvas");
+      off.width = Math.max(2, Math.round(rr.width));
+      off.height = Math.max(2, Math.round(rr.height));
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      if (!octx) return;
+
+      charPos = [];
+      let fontPx = 32;
+      for (const ch of chars) {
+        const cr = ch.getBoundingClientRect();
+        const cs = getComputedStyle(ch);
+        fontPx = parseFloat(cs.fontSize) || fontPx;
+        octx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        const text = ch.textContent || "";
+        const m = octx.measureText(text);
+        const x = cr.left - rr.left;
+        const y = cr.top - rr.top + (m.actualBoundingBoxAscent || fontPx * 0.78);
+        octx.fillStyle = "#fff";
+        octx.fillText(text, x, y);
+        charPos.push({
+          x: cr.left - rr.left + cr.width / 2,
+          y: cr.top - rr.top + cr.height / 2,
+        });
       }
-      needMeasure = false;
+
+      /* sample the ink on a grid → particle homes */
+      stride = Math.max(5, Math.round(fontPx / 9));
+      radiusEff = Math.max(RADIUS, fontPx * 1.55);
+      scatterEff = Math.max(SCATTER, fontPx * 0.5);
+      sizeBoost = Math.min(2.1, Math.max(0.9, fontPx / 52));
+      const data = octx.getImageData(0, 0, off.width, off.height).data;
+      particles = [];
+      for (let gy = 0; gy < off.height; gy += stride) {
+        for (let gx = 0; gx < off.width; gx += stride) {
+          if (data[(gy * off.width + gx) * 4 + 3] > 110) {
+            particles.push({
+              hx: gx,
+              hy: gy,
+              x: gx,
+              y: gy,
+              a: 0,
+              size: 0.9 + Math.random() * 1.3,
+              seed: Math.random() * Math.PI * 2,
+              gold: Math.random() < 0.11,
+            });
+          }
+        }
+      }
     };
 
-    const near = () => {
-      const r = root.getBoundingClientRect();
+    const inZone = () => {
+      const rr = root.getBoundingClientRect();
       return (
-        px > r.left - RADIUS &&
-        px < r.right + RADIUS &&
-        py > r.top - RADIUS &&
-        py < r.bottom + RADIUS
+        px > -RADIUS &&
+        px < rr.width + RADIUS &&
+        py > -RADIUS &&
+        py < rr.height + RADIUS
       );
     };
 
+    const fall = (d: number, r: number) =>
+      d >= r ? 0 : Math.pow(1 - d / r, 1.6);
+
     const tick = () => {
-      if (needMeasure) measure();
-      let energy = 0;
+      t += 1 / 60;
+      const w = canvas.width / DPR;
+      const h = canvas.height / DPR;
+      ctx.clearRect(0, 0, w, h);
+
+      /* per-char fade — type gives way where the orbs take over */
       for (let i = 0; i < chars.length; i++) {
-        const c = centers[i];
+        const c = charPos[i];
         if (!c) continue;
-        const d = Math.hypot(c.x - px, c.y - py);
-        const target = d < RADIUS ? Math.pow(1 - d / RADIUS, 1.7) : 0;
-        lift[i] += (target - lift[i]) * 0.16;
-        const f = lift[i];
-        energy = Math.max(energy, f);
-        if (f > 0.004) {
-          chars[i].style.transform = `translateY(${(-LIFT * f).toFixed(2)}px) scale(${(
-            1 + GROW * f
-          ).toFixed(4)})`;
-        } else if (chars[i].style.transform) {
-          chars[i].style.transform = "";
+        const f = pin ? fall(Math.hypot(c.x - px, c.y - py), radiusEff * 0.92) : 0;
+        const el = chars[i];
+        if (f > 0.015) {
+          el.style.opacity = String(Math.max(0, 1 - f * 1.25));
+          el.style.transform = `scale(${(1 - f * 0.1).toFixed(3)})`;
+        } else if (el.style.opacity !== "") {
+          el.style.opacity = "";
+          el.style.transform = "";
         }
       }
-      if (energy < 0.004 && !near()) {
-        active = false; // fully settled and pointer gone — park the loop
+
+      /* particles: activate near the cursor, scatter away from it */
+      const act: Particle[] = [];
+      let energy = 0;
+      for (const p of particles) {
+        const d = Math.hypot(p.hx - px, p.hy - py);
+        const target = pin ? fall(d, radiusEff) : 0;
+        p.a += (target - p.a) * 0.16;
+        if (p.a < 0.02) continue;
+        energy = Math.max(energy, p.a);
+        const dd = Math.max(8, d);
+        const ux = (p.hx - px) / dd;
+        const uy = (p.hy - py) / dd;
+        const wob = Math.sin(t * 2.1 + p.seed) * 0.35 + 0.8;
+        const mag = p.a * scatterEff * wob;
+        /* a touch of swirl (perpendicular drift) keeps it organic */
+        const sw = Math.sin(t * 1.4 + p.seed * 2) * p.a * 7;
+        p.x = p.hx + ux * mag - uy * sw;
+        p.y = p.hy + uy * mag + ux * sw;
+        act.push(p);
+      }
+
+      /* filaments between close, active orbs — the connected constellation */
+      const reach = stride * LINK_F;
+      ctx.lineWidth = 1.15;
+      for (let i = 0; i < act.length; i++) {
+        const a = act[i];
+        for (let j = i + 1; j < act.length; j++) {
+          const b = act[j];
+          const dx = a.x - b.x;
+          if (dx > reach || dx < -reach) continue;
+          const dy = a.y - b.y;
+          if (dy > reach || dy < -reach) continue;
+          const dist = Math.hypot(dx, dy);
+          if (dist > reach) continue;
+          const al = Math.min(a.a, b.a) * (1 - dist / reach) * 0.42;
+          if (al < 0.02) continue;
+          ctx.strokeStyle = `rgba(78, 243, 131, ${al.toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(a.x + PAD, a.y + PAD);
+          ctx.lineTo(b.x + PAD, b.y + PAD);
+          ctx.stroke();
+        }
+      }
+
+      /* the orbs — sap-green beads, white-hot hearts, the odd gold one */
+      ctx.globalCompositeOperation = "lighter";
+      for (const p of act) {
+        const r = p.size * sizeBoost * (0.7 + p.a * 0.9);
+        const gx = p.x + PAD;
+        const gy = p.y + PAD;
+        ctx.beginPath();
+        ctx.arc(gx, gy, r * 2.6, 0, Math.PI * 2);
+        ctx.fillStyle = p.gold
+          ? `rgba(224, 163, 60, ${(p.a * 0.3).toFixed(3)})`
+          : `rgba(0, 255, 102, ${(p.a * 0.28).toFixed(3)})`;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(gx, gy, r * 0.95, 0, Math.PI * 2);
+        ctx.fillStyle = p.gold
+          ? `rgba(255, 233, 188, ${(p.a * 0.98).toFixed(3)})`
+          : `rgba(232, 255, 242, ${(p.a * 0.95).toFixed(3)})`;
+        ctx.shadowColor = p.gold
+          ? "rgba(224, 163, 60, 0.95)"
+          : "rgba(0, 255, 102, 0.95)";
+        ctx.shadowBlur = 12;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      ctx.globalCompositeOperation = "source-over";
+
+      if (energy < 0.02 && !pin) {
+        /* fully reassembled and the pointer is gone — park */
+        ctx.clearRect(0, 0, w, h);
+        chars.forEach((c) => {
+          c.style.opacity = "";
+          c.style.transform = "";
+        });
+        active = false;
         return;
       }
       raf = requestAnimationFrame(tick);
@@ -119,33 +295,54 @@ export function WaveText({
     const wake = () => {
       if (active) return;
       active = true;
-      needMeasure = true;
+      if (particles.length === 0) build();
       raf = requestAnimationFrame(tick);
     };
+
     const onMove = (e: PointerEvent) => {
-      px = e.clientX;
-      py = e.clientY;
-      if (!active && near()) wake();
+      const rr = root.getBoundingClientRect();
+      px = e.clientX - rr.left;
+      py = e.clientY - rr.top;
+      pin = inZone();
+      if (pin) wake();
     };
-    const onShift = () => {
-      needMeasure = true;
+    let rebuildTimer = 0;
+    const onResize = () => {
+      window.clearTimeout(rebuildTimer);
+      rebuildTimer = window.setTimeout(() => {
+        particles = [];
+        if (active) build();
+      }, 180);
     };
 
+    /* build lazily on first approach; fonts may land late — rebuild once ready */
+    void document.fonts?.ready.then(() => {
+      if (particles.length) build();
+    });
+
     window.addEventListener("pointermove", onMove, { passive: true });
-    window.addEventListener("scroll", onShift, { passive: true });
-    window.addEventListener("resize", onShift);
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("scroll", onShift);
-      window.removeEventListener("resize", onShift);
+      window.removeEventListener("resize", onResize);
+      window.clearTimeout(maskTimer);
+      window.clearTimeout(rebuildTimer);
       cancelAnimationFrame(raf);
-      chars.forEach((c) => (c.style.transform = ""));
+      chars.forEach((c) => {
+        c.style.opacity = "";
+        c.style.transform = "";
+      });
     };
   }, [motionOn]);
 
   return (
-    <span ref={ref} className={className}>
+    <span
+      ref={ref}
+      className={className}
+      style={{ position: "relative", display: "inline-block" }}
+    >
       {splitChars(children, { n: 0 })}
+      <canvas ref={canvasRef} className="cw-canvas" aria-hidden />
     </span>
   );
 }

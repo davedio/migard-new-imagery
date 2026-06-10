@@ -1166,15 +1166,20 @@ h2 em,
   will-change: transform;
 }
 
-/* ---- cursor-wave characters (CursorWave.tsx) ---- */
+/* ---- cursor-shatter headers (CursorWave.tsx) ---- */
 .cw-w {
   display: inline-block;
   white-space: pre;
 }
 .cw-ch {
   display: inline-block;
-  will-change: transform;
-  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+}
+.cw-canvas {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
 }
 
 /* ===========================================================================
