@@ -7,6 +7,8 @@ import {
   Callout,
   Actions,
 } from "@/components/site/ui";
+import { NextSteps } from "@/components/site/NextSteps";
+import { PartOf } from "@/components/site/PartOf";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -19,7 +21,8 @@ export default function SecurityPage() {
   return (
     <main className="page-main">
       <PageHero
-        title="Secured by Cardano. Provable by anyone."
+        top={<PartOf parentHref="/how-it-works" parentLabel="How it works" />}
+        title="Secured by Cardano. Provable by anyone"
         sub="Midgard's security rests on Cardano Layer 1. Anyone can inspect the commitments, challenge invalid blocks, and verify how settlement works."
         actions={[
           { label: "Get Started", href: "/get-started", variant: "primary" },
@@ -27,15 +30,24 @@ export default function SecurityPage() {
         ]}
       />
 
-      <Section title="Anchored to Cardano.">
+      <Section title="Anchored to Cardano">
         <Prose
           items={[
             {
-              text: "Midgard is designed to anchor L2 state transitions to Cardano L1 and use Cardano smart contracts for verification.",
+              text: "Midgard is designed to anchor Layer 2 state transitions to Cardano and use Cardano smart contracts for verification.",
             },
             {
-              text: "Here's the mechanism: operators commit blocks to Cardano, anyone can challenge an invalid block during the challenge window, and Cardano contracts settle the result.",
+              text: "Here's the mechanism: operators commit blocks to Cardano, anyone can challenge an invalid block during the challenge window, and Cardano contracts settle the result. You can watch the full journey on the How It Works page.",
               variant: "dim",
+            },
+          ]}
+        />
+        <Actions
+          items={[
+            {
+              label: "Watch the challenge window in motion",
+              href: "/how-it-works#step-watch",
+              variant: "ghost",
             },
           ]}
         />
@@ -87,17 +99,43 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section id="security-contact" eyebrow="Security reporting" title="Responsible disclosure" tight>
-        <Callout
-          body="As Midgard matures, security review, monitoring, and a responsible-disclosure route should become part of the public trust surface."
-        />
+      <Section id="contact" eyebrow="Security reporting" title="Responsible disclosure" tight>
+        <Callout body="Found something? Report it through the security policy on GitHub or start from the official links page. As Midgard matures, security review, monitoring, and a responsible-disclosure route are part of the public trust surface." />
         <Actions
           items={[
-            { label: "Open official links", href: "/official-links#security-contact", variant: "ghost" },
+            {
+              label: "Read the security policy",
+              href: OFFICIAL_LINKS.securityPolicy,
+              variant: "ghost",
+            },
+            {
+              label: "Open official links",
+              href: "/official-links#security-contact",
+              variant: "ghost",
+            },
           ]}
         />
       </Section>
 
+      <NextSteps
+        items={[
+          {
+            label: "Verify the addresses yourself",
+            sub: "Every validator and state anchor on Cardano preprod",
+            href: "/contracts",
+          },
+          {
+            label: "Watch the challenge window in motion",
+            sub: "Ride a transaction down the world tree",
+            href: "/how-it-works",
+          },
+          {
+            label: "Choose your path",
+            sub: "Start as a user, start building, or run the protocol",
+            href: "/get-started",
+          },
+        ]}
+      />
     </main>
   );
 }

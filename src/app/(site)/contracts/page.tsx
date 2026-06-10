@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero, Section, Prose, CtaBand } from "@/components/site/ui";
+import { NextSteps } from "@/components/site/NextSteps";
+import { PartOf } from "@/components/site/PartOf";
 import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
@@ -28,8 +30,9 @@ export default function ContractsPage() {
   return (
     <main className="page-main">
       <PageHero
+        top={<PartOf parentHref="/how-it-works" parentLabel="How it works" />}
         label="Protocol contracts"
-        title="Inspect the on-chain path."
+        title="Inspect the on-chain path"
         sub="Every Midgard validator, state anchor, and bootstrap transaction on Cardano preprod — addresses you can open on an explorer and verify yourself."
         chips={
           <>
@@ -44,13 +47,24 @@ export default function ContractsPage() {
           </>
         }
         actions={[
-          { label: "Network status", href: "#status", variant: "primary" },
+          { label: "Network status", href: "#network-status", variant: "primary" },
           { label: "View topology", href: "#topology", variant: "ghost" },
         ]}
       />
 
+      {/* Sticky in-page TOC — the page is long and reference-heavy */}
+      <nav className="page-sticky-toc" aria-label="On this page">
+        <a href="#network-status">Status</a>
+        <a href="#queue">State queue</a>
+        <a href="#topology">Topology</a>
+        <a href="#addresses">Validators</a>
+        <a href="#anchors">State anchors</a>
+        <a href="#refs">Reference scripts</a>
+        <a href="#history">Genesis history</a>
+      </nav>
+
       {/* Live network status (moved from the testnet page) */}
-      <Section id="status" eyebrow="Network status" title="What's live right now.">
+      <Section id="network-status" eyebrow="Network status" title="What's live right now">
         <Prose
           items={[
             {
@@ -67,8 +81,9 @@ export default function ContractsPage() {
 
       {/* On-chain state queue animation (moved from the testnet page) */}
       <Section
+        id="queue"
         eyebrow="On-chain state queue"
-        title="Blocks commit. Root confirms."
+        title="Blocks commit. Root confirms"
         lead="Operators append committed blocks to a singly-linked queue. When a block's fraud-proof window closes, it folds into the confirmed state — oldest first, one L1 transaction at a time."
         glow="green"
       >
@@ -79,7 +94,7 @@ export default function ContractsPage() {
       <Section
         id="topology"
         eyebrow="01 · Contract topology"
-        title="Thirteen validators. One protocol."
+        title="Thirteen validators. One protocol"
       >
         <div className={styles.metaBar}>
           <span className={styles.metaActive}>
@@ -124,7 +139,7 @@ export default function ContractsPage() {
       <Section
         id="addresses"
         eyebrow="02 · Script addresses"
-        title="Seven core validators."
+        title="Seven core validators"
         lead="Live preprod script addresses. Open any address on the explorer to inspect its UTxOs, or copy it for your own tooling."
         glow="green"
       >
@@ -155,7 +170,7 @@ export default function ContractsPage() {
       <Section
         id="anchors"
         eyebrow="03 · State anchors"
-        title="Live protocol state."
+        title="Live protocol state"
         lead="Each anchor is an NFT-marked UTxO that holds a piece of live protocol state on L1. It is never destroyed — only consumed and re-created by validators during normal operation."
       >
         <div className={styles.anchorsGrid}>
@@ -181,7 +196,7 @@ export default function ContractsPage() {
       <Section
         id="refs"
         eyebrow="04 · Reference scripts"
-        title="Deployed once, referenced everywhere."
+        title="Deployed once, referenced everywhere"
         lead="Each validator was deployed once as an on-chain reference script, so transactions can point to it instead of carrying the script every time."
         glow="gold"
       >
@@ -201,7 +216,7 @@ export default function ContractsPage() {
       <Section
         id="history"
         eyebrow="05 · Protocol initialization"
-        title="Genesis deployment timeline."
+        title="Genesis deployment timeline"
         lead={`From the genesis transaction to the first confirmed state in about ${CONTRACTS_META.genesisToConfirmed}. Every step below is a real preprod transaction.`}
       >
         <div className={styles.timeline}>
@@ -299,9 +314,29 @@ export default function ContractsPage() {
         </Reveal>
       </Section>
 
+      <NextSteps
+        items={[
+          {
+            label: "Read the security model",
+            sub: "How challenges and fraud proofs keep these contracts honest",
+            href: "/security",
+          },
+          {
+            label: "Watch a transaction travel",
+            sub: "The journey these addresses anchor, step by step",
+            href: "/how-it-works",
+          },
+          {
+            label: "Start building",
+            sub: "Builder quickstart, SDK surfaces, and docs",
+            href: "/get-started#builder-quickstart",
+          },
+        ]}
+      />
+
       <CtaBand
         eyebrow="Verify everything"
-        title="Read the source, run the node."
+        title="Read the source, run the node"
         lead="Every address on this page resolves on a public preprod explorer. The implementation, SDK surfaces, and node behavior live in the repository."
         actions={[
           { label: "Explore on GitHub", href: OFFICIAL_LINKS.github, variant: "primary", icon: <GitHubIcon size={15} /> },

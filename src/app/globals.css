@@ -4096,3 +4096,75 @@ body.cursor-none * {
   border-radius: 5px;
   color: var(--text-dim);
 }
+
+/* ---- journey act: intro/cue fade + short-viewport static fallback ---- */
+/* The cue clears almost immediately (gone by ~4% of the act); the intro
+   copy hands off to the floating stage badge by ~14%. Driven per-frame via
+   --journey-p (set in HowItWorksExperience), so it inherits the inertial
+   scroll smoothing. */
+.hiw-act__cue {
+  opacity: calc(1 - min(var(--journey-p, 0) * 24, 1));
+}
+.hiw-act__intro {
+  opacity: calc(1 - min(var(--journey-p, 0) * 7, 1));
+}
+/* Short viewports (zoomed browsers, small laptops): the pinned 800vh ride
+   degrades into dead black bands — collapse the act to a single static
+   frame; the stacked recap sections below carry the story. Mirrors the
+   max-height gate in HowItWorksExperience. */
+@media (max-height: 640px) {
+  .hiw-act {
+    min-height: auto;
+  }
+  .hiw-act__viewport {
+    position: relative;
+    min-height: auto;
+  }
+  .hiw-act__cue {
+    display: none;
+  }
+  .hiw-act__intro {
+    opacity: 1;
+  }
+}
+
+/* ---- sticky in-page TOC bar (long reference pages, e.g. /contracts) ---- */
+.page-sticky-toc {
+  position: sticky;
+  top: 64px;
+  z-index: 30;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: min(var(--maxw), calc(100% - 2 * var(--gut)));
+  margin: 0 auto;
+  padding: 8px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  background: rgba(7, 15, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.page-sticky-toc a {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: color 0.16s var(--ease), background 0.16s var(--ease);
+}
+.page-sticky-toc a:hover {
+  color: var(--text-hi);
+  background: rgba(32, 190, 67, 0.08);
+}
+@media (max-width: 700px) {
+  .page-sticky-toc {
+    display: none;
+  }
+}
+/* anchor offset so sticky chrome never covers section headings */
+.page-main section[id] {
+  scroll-margin-top: 128px;
+}

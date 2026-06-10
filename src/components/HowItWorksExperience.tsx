@@ -163,7 +163,7 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
             Watch a transaction
             <br />
             travel to{" "}
-            <span style={{ color: "var(--green-bright)" }}>Cardano</span>.
+            <span style={{ color: "var(--green-bright)" }}>Cardano</span>
           </h1>
           <p className="hiw-act__lead">
             Midgard is a Cardano-native optimistic rollup. Scroll to ride one
@@ -207,7 +207,23 @@ export default function HowItWorksExperience({
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
   }, []);
-  const advanced = motionOn && finePointer;
+
+  // Short viewports (zoomed browsers, small laptops) can't host the pinned
+  // 800vh journey without ugly dead bands — fall back to the static composed
+  // frame + the stacked recap sections (same path reduced motion uses).
+  // Mirrors the CSS @media (max-height: 640px) rules in globals.css.
+  const [shortViewport, setShortViewport] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-height: 640px)");
+    const apply = () => setShortViewport(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  const journeyOn = motionOn && !shortViewport;
+  const advanced = journeyOn && finePointer;
 
   // Always use the TALL plate so EVERY viewport (incl. desktop) genuinely
   // descends the tree canopy -> L1 on scroll. The old wide-plate path on
@@ -250,6 +266,9 @@ export default function HowItWorksExperience({
         const rect = act.getBoundingClientRect();
         const span = Math.max(1, rect.height - window.innerHeight);
         journeyProgressRef.current = clamp(-rect.top / span);
+        // drives the intro/cue fade-out in CSS — the scroll cue must clear
+        // long before the released panel can slide under the nav logo.
+        act.style.setProperty("--journey-p", journeyProgressRef.current.toFixed(4));
       }
       springProgress.set(journeyProgressRef.current);
       raf = requestAnimationFrame(tick);
@@ -269,7 +288,7 @@ export default function HowItWorksExperience({
           <PhotorealBackdrop
             progressRef={journeyProgressRef}
             packetRef={packetRef}
-            motionOn={motionOn}
+            motionOn={journeyOn}
             wide={wide}
           />
           {/* the floating on-tree stage badge lives INSIDE .scene-stage so it
