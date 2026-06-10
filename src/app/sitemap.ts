@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 const SITE_URL = "https://midgard-gateway.vercel.app";
 
 /* Canonical, indexable routes only — /home now permanently redirects to /,
-   and /access + /home-alt are intentionally excluded (robots disallows them). */
+   and /access is intentionally excluded (robots disallows it). */
 const ROUTES = [
   "",
   "/how-it-works",

@@ -207,7 +207,7 @@ a {
      --plate-settle on the .plate-stage parent (see above). */
   --plate-y: 42%;
   --plate-scale: 1.06;
-  background-image: url("/plates/worldtree-tall.jpg");
+  background-image: url("/plates/worldtree-tall.avif");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% var(--plate-y);
@@ -222,7 +222,7 @@ a {
   filter: contrast(1.07) saturate(1.08) brightness(1.015);
 }
 .plate-stage__img--wide {
-  background-image: url("/plates/worldtree-wide.jpg");
+  background-image: url("/plates/worldtree-wide.avif");
   /* tree sits to the right; bias the framing there */
   background-position: 68% var(--plate-y);
 }
@@ -873,8 +873,8 @@ a {
   gap: 9px;
   white-space: nowrap;
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.06em;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
   padding: 12px 20px;
   border-radius: var(--r);
   border: 1px solid transparent;
@@ -883,15 +883,19 @@ a {
   background: none;
   color: var(--text-hi);
 }
+/* Solid primary — the one unmistakable action per view (design audit 2026-06-10).
+   Ink-on-green is 7.7:1, AA at any size. */
 .btn--primary {
-  background: linear-gradient(180deg, rgba(32, 190, 67, 0.42), rgba(32, 190, 67, 0.19));
-  border-color: rgba(32, 190, 67, 0.9);
-  color: var(--green-bright);
-  box-shadow: inset 0 0 0 1px rgba(32, 190, 67, 0.18), inset 0 0 20px rgba(32, 190, 67, 0.12);
+  background: linear-gradient(180deg, #27d04e, #1da93c);
+  border-color: #35e25c;
+  color: #06130a;
+  font-weight: 600;
+  box-shadow: 0 10px 32px -10px var(--green-glow), inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 .btn--primary:hover {
-  border-color: var(--midgard-green);
-  box-shadow: inset 0 0 24px rgba(32, 190, 67, 0.22), 0 8px 30px -12px var(--green-glow);
+  background: linear-gradient(180deg, #2fdd58, #22b945);
+  border-color: #4cea6e;
+  box-shadow: 0 14px 38px -10px var(--green-glow), inset 0 1px 0 rgba(255, 255, 255, 0.26);
   transform: translateY(-1px);
 }
 .btn--ghost {
@@ -905,24 +909,26 @@ a {
   background: var(--gold-ghost);
 }
 
-.home-hero__actions .btn--ghost {
-  border-color: rgba(207, 154, 46, 0.9);
-  background: linear-gradient(180deg, rgba(142, 83, 34, 0.42), rgba(76, 42, 22, 0.19));
-  color: #f0b45a;
-  box-shadow:
-    inset 0 0 0 1px rgba(207, 154, 46, 0.18),
-    inset 0 0 20px rgba(207, 116, 46, 0.12),
-    0 10px 34px -18px rgba(207, 116, 46, 0.52);
+/* Hero secondary: gold text-link, not a second competing button
+   (design audit 2026-06-10, finding 01). */
+.btn-link--gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: var(--gold-bright);
+  padding: 13px 6px;
+  transition: color 0.2s var(--ease), gap 0.2s var(--ease);
+}
+.btn-link--gold::after {
+  content: "→";
 }
 
-.home-hero__actions .btn--ghost:hover {
-  border-color: rgba(224, 163, 60, 0.92);
-  background: linear-gradient(180deg, rgba(166, 96, 38, 0.46), rgba(94, 49, 23, 0.26));
-  color: var(--gold-bright);
-  box-shadow:
-    inset 0 0 24px rgba(207, 116, 46, 0.22),
-    0 8px 30px -12px rgba(224, 121, 48, 0.58);
-  transform: translateY(-1px);
+.btn-link--gold:hover {
+  color: #f0b45a;
+  gap: 11px;
 }
 
 @media (max-width: 520px) {
@@ -1058,12 +1064,40 @@ button.panel:hover {
 /* ---- reveal-on-scroll (fade + lift) ---- */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+  transform: translateY(14px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
 }
 .reveal.in {
   opacity: 1;
   transform: none;
+}
+/* Stagger mode: the wrapper stays visible, direct children cascade in 80ms
+   apart (design audit 2026-06-10, finding 03). */
+.reveal.reveal--stagger {
+  opacity: 1;
+  transform: none;
+}
+.reveal--stagger > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+}
+.reveal--stagger.in > * {
+  opacity: 1;
+  transform: none;
+}
+.reveal--stagger.in > *:nth-child(2) { transition-delay: 80ms; }
+.reveal--stagger.in > *:nth-child(3) { transition-delay: 160ms; }
+.reveal--stagger.in > *:nth-child(4) { transition-delay: 240ms; }
+.reveal--stagger.in > *:nth-child(5) { transition-delay: 320ms; }
+.reveal--stagger.in > *:nth-child(6) { transition-delay: 400ms; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal--stagger > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* ---- accessibility ---- */
@@ -1567,7 +1601,7 @@ button.panel:hover {
 }
 
 .security-backdrop__wash {
-  background-image: url("/backdrops/security-tree-roots.png");
+  background-image: url("/backdrops/security-tree-roots.avif");
   background-size: cover;
   background-position: center;
   filter: blur(12px) brightness(0.96) saturate(1.04);
@@ -1576,7 +1610,7 @@ button.panel:hover {
 }
 
 .security-backdrop__image {
-  background-image: url("/backdrops/security-tree-roots.png");
+  background-image: url("/backdrops/security-tree-roots.avif");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -2398,7 +2432,7 @@ button.panel:hover {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url("/hero-tree-green.png");
+  background-image: url("/hero-tree-green.avif");
   background-size: cover;
   background-position: var(--splash-bg-position);
   filter: brightness(0.42) saturate(0.85) contrast(1.02);

@@ -7,8 +7,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      // private preview gate + unlisted design exploration
-      disallow: ["/access", "/home-alt"],
+      // private preview gate
+      disallow: ["/access"],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };

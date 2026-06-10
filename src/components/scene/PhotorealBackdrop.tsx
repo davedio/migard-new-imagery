@@ -36,7 +36,7 @@
    inside .scene-stage by the host, so they stay viewport-fixed under
    the smooth-scroll transform):
 
-     1. THE PLATE — worldtree-tall.jpg (emerald canopy -> gnarled trunk
+     1. THE PLATE — worldtree-tall.avif (emerald canopy -> gnarled trunk
         -> roots over mossy rock with a COBALT L1 glow at the base). As
         the page scrolls DOWN, the plate PANS + ZOOMS canopy -> roots in
         FIVE eased dwells (one per stage), coupled to the packet so you

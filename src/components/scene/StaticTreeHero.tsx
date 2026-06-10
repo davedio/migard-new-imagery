@@ -7,7 +7,7 @@ import type { NetworkSnapshot } from "@/lib/network";
 /* ============================================================
    StaticTreeHero — IMAGE-BACKGROUND hero track.
 
-   A static world-tree PNG (public/hero-tree-green.png) + a 2D
+   A static world-tree plate (public/hero-tree-green.avif) + a 2D
    <canvas> "sap" engine that animates blockchain activity as light
    moving through the painted veins, in phases:
 
@@ -37,7 +37,7 @@ import type { NetworkSnapshot } from "@/lib/network";
    so both forks coexist.
    ============================================================ */
 
-const BG_SRC = "/hero-tree-green.png";
+const BG_SRC = "/hero-tree-green.avif";
 
 // Intrinsic size of the background art — used to mirror `cover` in the canvas.
 const IMG_ASPECT = 1672 / 941;

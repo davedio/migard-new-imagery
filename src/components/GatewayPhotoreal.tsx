@@ -182,7 +182,9 @@ function Reveal({
     if (!el) return;
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => e.isIntersecting && setSeen(true)),
-      { threshold: 0.2 },
+      // Pre-trigger just below the fold — no full-viewport voids while
+      // scrolling (design audit 2026-06-10, finding 03).
+      { threshold: 0.05, rootMargin: "0px 0px 12% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -237,12 +239,12 @@ function Hero() {
           Get Started
         </Link>
         <a
-          className="btn btn--ghost"
+          className="btn-link--gold"
           href="https://anastasia-labs.github.io/midgard/midgard.pdf"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Whitepaper
+          Read the whitepaper
         </a>
       </div>
     </header>
@@ -359,9 +361,21 @@ function ExploreGrid() {
 }
 
 function ClosingCTA() {
+  // Compact closing band (design audit 2026-06-10, finding 02): headline,
+  // lead, and actions framed together inside the terminal viewport, with a
+  // root-glow floor so the page never ends on a black void.
   return (
-    <section style={{ padding: "clamp(60px,9vh,112px) var(--gut)" }}>
+    <section
+      style={{
+        padding: "clamp(48px,6.5vh,88px) var(--gut) clamp(44px,6vh,76px)",
+        background:
+          "radial-gradient(70% 90% at 50% 115%, rgba(32,190,67,0.10), transparent 65%)",
+      }}
+    >
       <Reveal style={{ maxWidth: 720, marginInline: "auto", textAlign: "center" }}>
+        <div className="eyebrow" style={{ justifyContent: "center" }}>
+          The gateway is open
+        </div>
         <h2 style={{ ...h2Style, maxWidth: "none", marginInline: "auto" }}>
           Scale Cardano. Settle on Cardano.
         </h2>
@@ -370,7 +384,7 @@ function ClosingCTA() {
           inspect the source, and bring an app that needs more speed and lower
           fees.
         </p>
-        <div style={{ display: "flex", gap: 12, marginTop: 30, flexWrap: "wrap", justifyContent: "center" }}>
+        <div style={{ display: "flex", gap: 12, marginTop: 24, flexWrap: "wrap", justifyContent: "center" }}>
           <Link className="btn btn--primary" href="/get-started">
             Start with a use case
           </Link>

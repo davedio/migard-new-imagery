@@ -3,7 +3,7 @@
 /* ============================================================
    PhotorealHomeHero — the HOME page hero backdrop.
 
-   A photoreal world-tree PLATE (public/plates/hero-tree.jpg — a wide frame
+   A photoreal world-tree PLATE (public/plates/hero-tree.avif — a wide frame
    with the tree offset RIGHT, misty negative space LEFT, CONTINUOUS green
    bioluminescent veins up the trunk + branches and down into the roots, and a
    cobalt glow in the root hollow) with a live "sap" overlay so the hero feels
@@ -44,7 +44,7 @@
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { MOTION_SPEED } from "@/lib/motionConfig";
 
-const PLATE_SRC = "/plates/hero-tree.jpg";
+const PLATE_SRC = "/plates/hero-tree.avif";
 
 /* Intrinsic plate aspect (2600×1451) — used to mirror `cover` in the canvas and
    to scale x by aspect so on-screen lane lengths/speeds stay isotropic. */

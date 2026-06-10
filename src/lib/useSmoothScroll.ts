@@ -37,7 +37,9 @@ type Options = {
 export function useSmoothScroll(
   progressRef: React.RefObject<number>,
   motionOn: boolean,
-  { ease = 0.085 }: Options = {},
+  // 0.13 keeps the cinematic glide at roughly half the settle-lag of the
+  // old 0.085 (design audit 2026-06-10, finding 04).
+  { ease = 0.13 }: Options = {},
 ) {
   // raw native progress, updated on scroll (cheap, no transform)
   const rawProgressRef = useRef(0);

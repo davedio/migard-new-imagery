@@ -17,11 +17,14 @@ import {
 export function Reveal({
   children,
   delay = 0,
+  stagger = false,
   className = "",
   style,
 }: {
   children: ReactNode;
   delay?: number;
+  /** Cascade direct children in 80ms apart instead of gating the whole block. */
+  stagger?: boolean;
   className?: string;
   style?: CSSProperties;
 }) {
@@ -48,7 +51,9 @@ export function Reveal({
           }
         }
       },
-      { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
+      // Pre-trigger just below the fold so sections are already alive when
+      // they enter view — no full-viewport voids (design audit 2026-06-10).
+      { threshold: 0.05, rootMargin: "0px 0px 12% 0px" }
     );
 
     io.observe(el);
@@ -58,7 +63,7 @@ export function Reveal({
   return (
     <div
       ref={ref}
-      className={`reveal${seen ? " in" : ""}${className ? ` ${className}` : ""}`}
+      className={`reveal${stagger ? " reveal--stagger" : ""}${seen ? " in" : ""}${className ? ` ${className}` : ""}`}
       style={{ transitionDelay: `${delay}ms`, ...style }}
     >
       {children}
