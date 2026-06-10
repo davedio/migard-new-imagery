@@ -99,34 +99,25 @@ const GROW_MAX = 1.0;
 const GROW_FAST = 0.34;
 const FIRST_GLOW_DELAY = 0.45;
 const STARTUP_RAMP_SECONDS = 4.0;
-const BLOB_VSPEED = 0.042; // height/sec, held fork → root tip (constant visual)
-const BLOB_VSPEED_JIT = 0.006;
-const MERGE_CAP = 5.2; // hard ceiling on a consolidated blob's visual size
+const TRUNK_PACKET_VSPEED = 0.052; // image-height/sec for sequenced packets
+const TRUNK_PACKET_VSPEED_JIT = 0.009;
 
-/* ── ORGANIC MERGE / BLOB tunables (the reworked canopy→trunk→roots flow) ──
-   Canopy orbs no longer dump into 3 fixed nodes. Instead a small pool of MERGE
-   CORES drifts near the canopy base; descending canopy orbs are absorbed by the
-   nearest core (it GROWS in size + brightness). When a core ripens it converts
-   into ONE consolidated trunk blob that glides the full trunk, then fans into
-   the roots at the crown. Feel-driven — these are the dials the owner tunes. */
-const MERGE_CORES_MAX = 2; // ~1–2 big blobs accreting at a time (client's ask)
-const MERGE_CORE_MIN_GAP = 0.07; // min x-spread between simultaneous cores (img space)
-const MERGE_ABSORB_R = 0.052; // canopy orb within this img-space radius is absorbed
-const MERGE_RIPE_MASS = 9; // accumulated "mass" at which a core becomes a trunk blob
-const MERGE_RIPE_MASS_JIT = 4; // ± jitter so blobs don't all fire at one size
-const MERGE_CORE_TTL = 7.0; // safety: a core that never ripens still releases
-const MERGE_BLOB_BASE = 1.7; // base visual size of a released consolidated blob
-const MERGE_BLOB_PER_MASS = 0.12; // extra size per unit accumulated mass
-// the canopy-base band the cores wander across (x around the trunk-top, just
-// above the fork) — varying x, NOT fixed columns.
-const MERGE_BAND_X0 = TRUNK_X - 0.085;
-const MERGE_BAND_X1 = TRUNK_X + 0.075;
-const MERGE_BAND_Y = FORK_Y - 0.01;
-const MERGE_BAND_Y_JIT = 0.018;
-
-/* ── CROWN ROOT-FAN split: how the consolidated trunk blob breaks back out ── */
-const CROWN_SPLIT_MIN = 3; // big blob splits into this many root streams…
-const CROWN_SPLIT_MAX = 5; // …up to this many (client: "several smaller streams")
+/* ── BATCHER / SEQUENCER tunables ──
+   Canopy orbs stay small and distributed, then temporarily queue in 3-5 local
+   batcher pockets at the fork. Each pocket grows only modestly, holds for a
+   beat, then releases individual packets in order down the vertical trunk. */
+const BATCH_NODE_COUNT = 5;
+const BATCH_NODE_COUNT_LITE = 3;
+const BATCH_QUEUE_CAP = 5;
+const BATCH_READY_MIN = 3;
+const BATCH_READY_MAX = 4;
+const BATCH_HOLD_MIN = 1.05;
+const BATCH_HOLD_MAX = 1.75;
+const BATCH_RELEASE_EVERY = 0.26;
+const BATCH_RELEASE_JIT = 0.06;
+const BATCH_NODE_X0 = TRUNK_X - 0.088;
+const BATCH_NODE_X1 = TRUNK_X + 0.078;
+const BATCH_NODE_Y = FORK_Y - 0.012;
 
 /* ── INDIVIDUAL L1 BLAST tunables (the blue connection burst at a root tip) ── */
 const BLAST_RING_R = 26; // px reach of the expanding blue shockwave ring
@@ -143,9 +134,8 @@ type Lane = {
 };
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
-// phase 0 = canopy orb (grows in place, then descends), 1 = consolidated trunk
-// blob (rides the full trunk), 2 = root-fan stream, 3 = "locked-in" L1 blast at
-// a root tip.
+// phase 0 = canopy orb (grows in place, then descends), 1 = sequenced trunk
+// packet, 2 = root stream, 3 = "locked-in" L1 blast at a root tip.
 type Particle = {
   phase: 0 | 1 | 2 | 3;
   seg: number;
@@ -160,28 +150,36 @@ type Particle = {
   r0?: number;
   growDelay?: number;
   settled?: boolean; // static fallback: a calm BLUE orb resting at an L1 root tip
-  mass?: number; // accumulated merge mass a trunk blob carries (drives split fan-out)
-  big?: boolean; // a consolidated blob (renders as a larger, rounder luminous mass)
-  xJit?: number; // small per-blob x offset so trunk descent isn't pixel-rigid
+  xJit?: number; // small packet x offset so releases originate from their batcher
 };
 
-/* A drifting accretion point near the canopy base. Descending canopy orbs are
-   absorbed by the nearest core, which grows in mass/size; once ripe it releases
-   a single consolidated trunk blob. ~1–2 active at once, at varying x. */
-type MergeCore = {
-  x: number; // current img-space position (wanders)
+type QueuedOrb = {
+  size: number;
+  alt: boolean;
+  r0: number;
+  sourceX: number;
+  age: number;
+  order: number;
+};
+
+/* A small batcher pocket at the fork. It never absorbs into one giant sprite;
+   it holds a capped queue of individual orbs, pulses modestly, then releases
+   them FIFO down the trunk so sequencing reads visually. */
+type BatchNode = {
+  x: number;
   y: number;
-  homeX: number; // target the core drifts toward
+  homeX: number;
   homeY: number;
-  vx: number; // gentle drift velocity
-  mass: number; // accumulated absorbed value
-  count: number; // how many orbs absorbed (for feel/brightness)
-  size: number; // current visual size of the gathering blob
-  ripe: number; // mass threshold for this core to release a trunk blob
-  glow: number; // halo intensity, bumped on each absorb
-  pulse: number; // quick flash on absorb / release
-  age: number; // seconds alive (TTL safety release)
-  active: boolean;
+  vx: number;
+  queue: QueuedOrb[];
+  age: number;
+  hold: number;
+  readyAt: number;
+  releaseTimer: number;
+  pulse: number;
+  glow: number;
+  sequence: number;
+  ready: boolean;
 };
 
 type LeafNode = { x: number; y: number; phase: number; flash: number };
@@ -809,70 +807,38 @@ export default function PhotorealHomeHero({
     /* ---- particle field state ---- */
     const particles: Particle[] = [];
 
-    /* MERGE CORES — the drifting accretion points that replace the 3 fixed
-       gather nodes. A core picks a fresh home x somewhere across the canopy-base
-       band each time it spawns, so blobs coalesce at VARYING x (not 3 columns).
-       Kept far enough apart that ~1–2 read as distinct masses at once. */
-    const mergeCores: MergeCore[] = [];
-    const freshRipe = () =>
-      MERGE_RIPE_MASS + (Math.random() * 2 - 1) * MERGE_RIPE_MASS_JIT;
-    const pickCoreHomeX = (): number => {
-      // bias x by where canopy orbs currently are, so the core forms under the
-      // active part of the canopy; reject picks too close to an existing core.
-      for (let tries = 0; tries < 8; tries++) {
-        const x = lerp(MERGE_BAND_X0, MERGE_BAND_X1, Math.random());
-        let ok = true;
-        for (const c of mergeCores)
-          if (c.active && Math.abs(c.homeX - x) < MERGE_CORE_MIN_GAP) {
-            ok = false;
-            break;
-          }
-        if (ok) return x;
-      }
-      return lerp(MERGE_BAND_X0, MERGE_BAND_X1, Math.random());
+    const freshReadyAt = () =>
+      BATCH_READY_MIN +
+      Math.floor(Math.random() * (BATCH_READY_MAX - BATCH_READY_MIN + 1));
+    const freshHold = () =>
+      BATCH_HOLD_MIN + Math.random() * (BATCH_HOLD_MAX - BATCH_HOLD_MIN);
+    const makeBatchNodes = (): BatchNode[] => {
+      const count = lite ? BATCH_NODE_COUNT_LITE : BATCH_NODE_COUNT;
+      return Array.from({ length: count }, (_, i) => {
+        const u = i / (count - 1);
+        const jx = Math.sin((i + 1) * 18.13) * 0.009;
+        const jy = Math.sin((i + 1) * 2.05) * 0.011 + (i % 2 ? 0.007 : -0.003);
+        const homeX = lerp(BATCH_NODE_X0, BATCH_NODE_X1, u) + jx;
+        const homeY = BATCH_NODE_Y + jy;
+        return {
+          x: homeX,
+          y: homeY,
+          homeX,
+          homeY,
+          vx: 0,
+          queue: [],
+          age: 0,
+          hold: freshHold(),
+          readyAt: freshReadyAt(),
+          releaseTimer: BATCH_RELEASE_EVERY * (0.4 + Math.random() * 0.8),
+          pulse: 0,
+          glow: 0,
+          sequence: 0,
+          ready: false,
+        };
+      });
     };
-    const spawnMergeCore = (): MergeCore | null => {
-      if (mergeCores.filter((c) => c.active).length >= MERGE_CORES_MAX)
-        return null;
-      const homeX = pickCoreHomeX();
-      const homeY = MERGE_BAND_Y + (Math.random() * 2 - 1) * MERGE_BAND_Y_JIT;
-      const core: MergeCore = {
-        x: homeX + (Math.random() * 2 - 1) * 0.02,
-        y: homeY,
-        homeX,
-        homeY,
-        vx: 0,
-        mass: 0,
-        count: 0,
-        size: 0.5,
-        ripe: freshRipe(),
-        glow: 0.2,
-        pulse: 0,
-        age: 0,
-        active: true,
-      };
-      mergeCores.push(core);
-      return core;
-    };
-    // nearest ACTIVE core to an img-space point (for absorbing canopy orbs); will
-    // lazily spawn a core if there's room and none is near enough.
-    const coreForOrb = (px: number, py: number): MergeCore | null => {
-      let best: MergeCore | null = null;
-      let bestD = Infinity;
-      for (const c of mergeCores) {
-        if (!c.active) continue;
-        const d = Math.hypot((c.x - px) * IMG_ASPECT, c.y - py);
-        if (d < bestD) {
-          bestD = d;
-          best = c;
-        }
-      }
-      if (!best || bestD > MERGE_ABSORB_R) {
-        const made = spawnMergeCore();
-        if (made) return made;
-      }
-      return best;
-    };
+    const batchNodes = makeBatchNodes();
 
     let spawnTimer = FIRST_GLOW_DELAY;
     let surge = 0;
@@ -955,12 +921,12 @@ export default function PhotorealHomeHero({
       const w = tree.canopy[seg].width;
       const sizeRoll = Math.random();
       const topSize =
-        sizeRoll < 0.7
-          ? 0.22 + Math.pow(Math.random(), 1.35) * 0.34
-          : sizeRoll < 0.93
-            ? 0.56 + Math.random() * 0.4
-            : 1.0 + Math.random() * 0.55;
-      const size = topSize * (0.78 + w * 0.42);
+        sizeRoll < 0.76
+          ? 0.16 + Math.pow(Math.random(), 1.35) * 0.28
+          : sizeRoll < 0.96
+            ? 0.42 + Math.random() * 0.28
+            : 0.72 + Math.random() * 0.28;
+      const size = topSize * (0.72 + w * 0.3);
       const sizeN = clamp(size / 1.6, 0, 1);
       const growTime =
         (fast
@@ -989,7 +955,7 @@ export default function PhotorealHomeHero({
     };
 
     // pick the trunk strand whose x is closest to a given img-space x (so the
-    // consolidated blob lands on the painted trunk vein under the core).
+    // sequenced packet starts under its batcher pocket).
     const trunkSegForX = (x: number): number => {
       let best = 0;
       let bestD = Infinity;
@@ -1004,132 +970,129 @@ export default function PhotorealHomeHero({
       return best;
     };
 
-    // CANOPY MERGE: a descending canopy orb reaching the base is ABSORBED by the
-    // nearest drifting core, which grows in mass / size / brightness instead of
-    // the orb snapping to one of 3 fixed nodes. Returns the core it fed (so the
-    // caller can splice the consumed orb).
-    const absorbIntoCore = (p: Particle, pt: Pt): MergeCore | null => {
-      const core = coreForOrb(pt.x, pt.y);
-      if (!core) return null;
-      const v = Math.max(0.5, p.size + p.grow * 0.4);
-      core.mass += v;
-      core.count += 1;
-      // grow the gathering blob's radius by volume (cbrt) so accumulation reads
-      // as one bigger rounder mass, not a sum of dots.
-      core.size = Math.min(
-        MERGE_CAP,
-        Math.cbrt(core.size ** 3 + (0.7 + v * 0.5) ** 3),
-      );
-      core.glow = Math.min(1.2, core.glow + 0.22 + v * 0.05);
-      core.pulse = Math.min(1, core.pulse + 0.3 + v * 0.05);
-      // ease the core's home toward the absorbed orb so the mass tracks where the
-      // canopy is actually feeding it (organic, not a fixed column).
-      core.homeX = lerp(core.homeX, pt.x, 0.12);
-      return core;
+    const resetBatchNode = (node: BatchNode) => {
+      node.age = 0;
+      node.hold = freshHold();
+      node.readyAt = freshReadyAt();
+      node.releaseTimer = BATCH_RELEASE_EVERY * (0.65 + Math.random() * 0.6);
+      node.ready = false;
+      node.glow = Math.min(node.glow, 0.18);
     };
 
-    // RELEASE: a ripe core becomes ONE consolidated trunk blob that glides the
-    // FULL trunk carrying the accumulated mass. The core then deactivates (a new
-    // one will form as fresh canopy orbs arrive).
-    const releaseConsolidatedBlob = (core: MergeCore) => {
-      core.active = false;
-      core.pulse = 1;
-      core.glow = 1.2;
-      if (particles.length >= MAX_PARTICLES) return;
-      const size = clamp(
-        MERGE_BLOB_BASE + core.mass * MERGE_BLOB_PER_MASS,
-        MERGE_BLOB_BASE,
-        MERGE_CAP,
-      );
-      particles.push({
-        phase: 1,
-        seg: trunkSegForX(core.x),
-        t: 0,
-        speed: BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT,
-        size,
-        grow: 1,
-        growRate: 0,
-        hold: 0,
-        alt: Math.random() < 0.5,
+    const queueIntoBatch = (p: Particle, pt: Pt) => {
+      let best: BatchNode | null = null;
+      let bestScore = Infinity;
+      for (const node of batchNodes) {
+        const overflow = Math.max(0, node.queue.length - BATCH_QUEUE_CAP + 1);
+        const d = Math.hypot((node.x - pt.x) * IMG_ASPECT, (node.y - pt.y) * 1.4);
+        const score = d + node.queue.length * 0.012 + overflow * 4;
+        if (score < bestScore) {
+          bestScore = score;
+          best = node;
+        }
+      }
+      if (!best) return;
+      if (best.queue.length >= BATCH_QUEUE_CAP) {
+        best.ready = true;
+        best.releaseTimer = Math.min(best.releaseTimer, 0.03);
+        return;
+      }
+      const orb: QueuedOrb = {
+        size: clamp(0.44 + p.size * 0.58, 0.46, 1.08),
+        alt: p.alt,
+        r0: p.r0 ?? Math.random(),
+        sourceX: pt.x,
         age: 0,
-        r0: Math.random(),
-        mass: core.mass,
-        big: true,
-        // bias the blob toward the core's x so it doesn't snap dead-centre, then
-        // it rides the trunk strand from there.
-        xJit: clamp((core.x - TRUNK_X) * 0.5, -0.02, 0.02),
-      });
-      surge = Math.max(surge, 0.18);
+        order: best.sequence++,
+      };
+      best.queue.push(orb);
+      if (best.queue.length === 1) {
+        best.age = 0;
+        best.ready = false;
+        best.hold = freshHold();
+        best.readyAt = freshReadyAt();
+      }
+      best.homeX = lerp(best.homeX, pt.x, 0.06);
+      best.glow = Math.min(0.72, best.glow + 0.14);
+      best.pulse = Math.min(1, best.pulse + 0.34);
+      if (best.queue.length >= best.readyAt) best.ready = true;
+    };
+
+    const releaseQueuedOrb = (node: BatchNode) => {
+      const orb = node.queue.shift();
+      if (!orb) return;
+      if (particles.length < MAX_PARTICLES) {
+        const lane = trunkSegForX(node.x);
+        particles.push({
+          phase: 1,
+          seg: lane,
+          t: 0,
+          speed:
+            TRUNK_PACKET_VSPEED +
+            (Math.random() * 2 - 1) * TRUNK_PACKET_VSPEED_JIT,
+          size: clamp(orb.size * (0.98 + Math.random() * 0.18), 0.5, 1.24),
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: orb.alt,
+          age: 0,
+          r0: orb.r0,
+          xJit: clamp((node.x - TRUNK_X) * 0.5, -0.024, 0.024),
+        });
+      }
+      node.pulse = Math.min(1, node.pulse + 0.45);
+      node.glow = Math.min(0.72, node.glow + 0.18);
+      surge = Math.max(surge, 0.06);
+      if (node.queue.length === 0) resetBatchNode(node);
     };
 
     // spread the split streams across the WHOLE root fan so the blue L1 blasts
     // light up across the root system as individual connections (not one cluster).
     const MAJOR_ROOT_FRACS = [0.08, 0.2, 0.32, 0.44, 0.56, 0.68, 0.8, 0.92];
-    const rootIndexForTrunk = () => {
-      const frac = MAJOR_ROOT_FRACS[(Math.random() * MAJOR_ROOT_FRACS.length) | 0];
+    let rootCursor = (Math.random() * MAJOR_ROOT_FRACS.length) | 0;
+    const rootIndexForPacket = (p: Particle) => {
+      rootCursor = (rootCursor + 1 + Math.floor((p.r0 ?? 0) * 2)) % MAJOR_ROOT_FRACS.length;
+      const frac =
+        MAJOR_ROOT_FRACS[rootCursor] + (Math.random() * 2 - 1) * 0.018;
       return clamp(Math.round(frac * (tree.roots.length - 1)), 0, tree.roots.length - 1);
     };
 
-    // CROWN ROOT-FAN: the consolidated trunk blob arrives at the crown and BREAKS
-    // BACK OUT into several smaller streams that follow the green root veins to
-    // their tips. The blob's mass is divided across the streams (conserved feel).
-    const splitIntoRoots = (p: Particle) => {
-      const streams = clamp(
-        CROWN_SPLIT_MIN +
-          Math.round(Math.random() * (CROWN_SPLIT_MAX - CROWN_SPLIT_MIN)),
-        1,
-        tree.roots.length,
-      );
-      // distinct root lanes spread across the fan (dedup so blasts don't stack).
-      const picks = new Set<number>();
-      let guard = 0;
-      while (picks.size < streams && guard++ < streams * 6)
-        picks.add(rootIndexForTrunk());
-      const segs = [...picks];
-      // child stream size: the big blob's volume divided across streams, so each
-      // root stream is clearly SMALLER than the trunk blob but still substantial.
-      const childSize = clamp(
-        Math.cbrt((p.size ** 3) / Math.max(1, segs.length)) * 1.18,
-        0.7,
-        MERGE_CAP * 0.7,
-      );
-      const childMass = (p.mass ?? p.size) / Math.max(1, segs.length);
-      // re-purpose the original blob as the first stream (no orphan particle).
+    const routeIntoRoot = (p: Particle) => {
       p.phase = 2;
-      p.seg = segs[0];
+      p.seg = rootIndexForPacket(p);
       p.t = Math.random() * 0.02;
-      p.size = childSize;
-      p.big = false;
-      p.mass = childMass;
-      p.speed = (BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT) * 1.04;
-      p.age = Math.max(p.age, 0.4);
-      // spawn the remaining streams as fresh root-fan blobs.
-      for (let k = 1; k < segs.length; k++) {
-        if (particles.length >= MAX_PARTICLES) break;
-        particles.push({
-          phase: 2,
-          seg: segs[k],
-          t: Math.random() * 0.04,
-          speed: (BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT) * 1.04,
-          size: childSize * (0.86 + Math.random() * 0.28),
-          grow: 1,
-          growRate: 0,
-          hold: 0,
-          alt: Math.random() < 0.5,
-          age: 0.4,
-          r0: Math.random(),
-          mass: childMass,
-        });
-      }
-      surge = Math.max(surge, 0.12);
+      p.size = clamp(p.size * (0.84 + Math.random() * 0.18), 0.48, 1.06);
+      p.speed =
+        (TRUNK_PACKET_VSPEED +
+          (Math.random() * 2 - 1) * TRUNK_PACKET_VSPEED_JIT) *
+        1.06;
+      p.age = Math.max(p.age, 0.32);
+      p.xJit = 0;
+      surge = Math.max(surge, 0.04);
     };
 
-    // STATIC fallback (reduced-motion / mobile): a CALM still version of the new
-    // story — a sparse canopy constellation, a COUPLE of big consolidated blobs
-    // resting on the trunk, a few root-fan streams, and a few SETTLED blue blasts
-    // at the root tips. No flow, no twinkle.
+    // STATIC fallback (reduced-motion / mobile): a calm still version of the
+    // story — canopy scatter, small batch queues, ordered trunk packets, and a
+    // few settled blue root tips. No giant accumulation glow.
     function seedStatic() {
       particles.length = 0;
+      for (const node of batchNodes) {
+        node.queue.length = 0;
+        node.age = 0.9;
+        node.ready = true;
+        node.pulse = 0.28;
+        node.glow = 0.24;
+        const qn = 2 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < qn; i++)
+          node.queue.push({
+            size: 0.52 + Math.random() * 0.28,
+            alt: i % 2 === 0,
+            r0: Math.random(),
+            sourceX: node.x,
+            age: 0.6 + i * 0.14,
+            order: node.sequence++,
+          });
+      }
       // a faint scatter of small canopy orbs (kept sparse on lite).
       const canopyStride = lite ? 3 : 2;
       for (let i = 0; i < tree.canopy.length; i += canopyStride)
@@ -1145,28 +1108,23 @@ export default function PhotorealHomeHero({
           alt: i % 2 === 0,
           age: 1,
         });
-      // two big consolidated blobs parked at different heights on the trunk.
-      const mid = (tree.trunk.length / 2) | 0;
-      const blobSpots: Array<[number, number]> = [
-        [clamp(mid, 0, tree.trunk.length - 1), 0.34],
-        [clamp(mid + 1, 0, tree.trunk.length - 1), 0.66],
-      ];
-      for (const [seg, t] of blobSpots)
+      // a few small sequenced packets already moving down the trunk.
+      for (let i = 0; i < Math.min(4, tree.trunk.length); i++)
         particles.push({
           phase: 1,
-          seg,
-          t,
+          seg: i,
+          t: 0.22 + i * 0.16,
           speed: 0,
-          size: 3.4,
+          size: 0.82 + (i % 2) * 0.16,
           grow: 1,
           growRate: 0,
           hold: 0,
-          alt: false,
+          alt: i % 2 === 0,
           age: 1,
-          big: true,
-          r0: 0.4,
+          r0: Math.random(),
+          xJit: 0,
         });
-      // a few root-fan streams settled mid-root (the split, held still).
+      // a few root streams settled mid-root.
       const fanRoots = tree.roots.length
         ? [0.2, 0.44, 0.68, 0.88].map((f) =>
             clamp(Math.round(f * (tree.roots.length - 1)), 0, tree.roots.length - 1),
@@ -1279,21 +1237,17 @@ export default function PhotorealHomeHero({
 
         if (!openingBurstDone && runTime >= FIRST_GLOW_DELAY) {
           openingBurstDone = true;
-          const burst = lite ? 8 : 14;
+          const burst = lite ? 9 : 18;
           for (let i = 0; i < burst; i++) spawnCanopy(true);
-          spawnMergeCore(); // seed a first accretion core so a blob forms early
           spawnTimer = 0.06;
         }
-        if (!openingReleaseDone && runTime >= 1.6) {
+        if (!openingReleaseDone && runTime >= 2.4) {
           openingReleaseDone = true;
-          // prime a core most of the way to ripe so the first consolidated blob
-          // glides down the trunk shortly after load (no long dead start).
-          const core = mergeCores.find((c) => c.active) ?? spawnMergeCore();
-          if (core) {
-            core.mass = Math.max(core.mass, core.ripe * 0.72);
-            core.size = Math.max(core.size, 2.2);
-            core.glow = Math.max(core.glow, 0.9);
-            core.pulse = Math.max(core.pulse, 0.7);
+          for (const node of batchNodes) {
+            if (node.queue.length >= 2) {
+              node.ready = true;
+              node.releaseTimer = Math.min(node.releaseTimer, 0.08 + Math.random() * 0.18);
+            }
           }
         }
 
@@ -1301,9 +1255,9 @@ export default function PhotorealHomeHero({
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
           const ramp = Math.min(1, runTime / STARTUP_RAMP_SECONDS);
-          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.5 ? 3 : 2));
-          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.16 + ramp * 0.14);
-          const meanGap = Math.max(0.14, 0.42 - ramp * 0.22);
+          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.45 ? 3 : 2));
+          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.18 + ramp * 0.16);
+          const meanGap = Math.max(0.1, 0.34 - ramp * 0.2);
           spawnTimer = meanGap * (0.5 + Math.random() * 0.9);
         }
 
@@ -1324,25 +1278,38 @@ export default function PhotorealHomeHero({
           p.t += advance * dt;
         }
 
-        // drift + age the merge cores (organic wander toward their home x/y; a
-        // little extra sag toward the fork as they fatten so the mass visibly
-        // sinks toward the trunk-top before it releases down the trunk).
-        for (const c of mergeCores) {
-          if (!c.active) continue;
-          c.age += dt;
-          const sink = clamp(c.mass / Math.max(1, c.ripe), 0, 1) * 0.012;
-          const tx = c.homeX;
-          const ty = c.homeY + sink;
-          c.vx += (tx - c.x) * 9 * dt;
-          c.vx *= 0.86;
-          c.x += c.vx * dt;
-          c.y = lerp(c.y, ty, 0.06);
-          c.glow = Math.max(0.15, c.glow - dt / 1.6);
-          c.pulse = Math.max(0, c.pulse - dt / 0.4);
+        // batch pockets drift subtly, hold capped FIFO queues, then release one
+        // sequenced packet at a time down the vertical trunk lanes.
+        for (const node of batchNodes) {
+          const busy = node.queue.length > 0;
+          if (busy) {
+            node.age += dt;
+            for (const orb of node.queue) orb.age += dt;
+            if (node.queue.length >= node.readyAt || node.age >= node.hold)
+              node.ready = true;
+            if (node.ready) {
+              node.releaseTimer -= dt;
+              if (node.releaseTimer <= 0) {
+                releaseQueuedOrb(node);
+                node.releaseTimer =
+                  BATCH_RELEASE_EVERY +
+                  (Math.random() * 2 - 1) * BATCH_RELEASE_JIT;
+              }
+            }
+          } else {
+            node.age = 0;
+            node.ready = false;
+          }
+          node.vx += (node.homeX - node.x) * 7 * dt;
+          node.vx *= 0.88;
+          node.x += node.vx * dt;
+          node.y = lerp(node.y, node.homeY + (busy ? 0.004 : 0), 0.045);
+          node.glow = Math.max(0, node.glow - dt / 1.2);
+          node.pulse = Math.max(0, node.pulse - dt / 0.42);
         }
 
-        // phase transitions: canopy → merge core; trunk → root-fan split; root
-        // tip → individual L1 blast.
+        // phase transitions: canopy → batch queue; trunk packet → root lane;
+        // root tip → individual L1 blast.
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           if (p.phase === 3) {
@@ -1352,33 +1319,16 @@ export default function PhotorealHomeHero({
           if (p.grow < 1 || p.t < 1) continue;
           if (p.phase === 0) {
             const end = sampleLane(tree.canopy[p.seg], 1).pt;
-            absorbIntoCore(p, end);
+            queueIntoBatch(p, end);
             particles.splice(i, 1);
           } else if (p.phase === 1) {
-            splitIntoRoots(p);
+            routeIntoRoot(p);
           } else {
             p.phase = 3;
             p.t = 1;
             p.hold = 0;
             p.age = 0;
           }
-        }
-
-        // RELEASE consolidated blobs: any ripe (or timed-out) core becomes one
-        // big blob gliding the full trunk, then the core retires.
-        for (let i = mergeCores.length - 1; i >= 0; i--) {
-          const c = mergeCores[i];
-          if (c.active && (c.mass >= c.ripe || c.age >= MERGE_CORE_TTL)) {
-            // release if ripe, or if a timed-out core gathered anything at all;
-            // a completely empty timed-out core is just retired (frees the slot).
-            if (c.mass >= c.ripe || c.count > 0) releaseConsolidatedBlob(c);
-            else {
-              c.active = false;
-              c.pulse = 0;
-            }
-          }
-          // reap retired cores once their farewell pulse has faded.
-          if (!c.active && c.pulse <= 0.02) mergeCores.splice(i, 1);
         }
 
         surge = Math.max(0, surge - dt / 1.4);
@@ -1435,27 +1385,54 @@ export default function PhotorealHomeHero({
       }
       ctx.globalAlpha = 1;
 
-      // MERGE CORES: the drifting accretion blobs at the canopy base. Drawn as a
-      // big, round, growing luminous green mass with a white-green heart — the
-      // small canopy orbs visibly coalesce into these before one rides the trunk.
-      for (const c of mergeCores) {
-        const cx = oX + c.x * dW;
-        const cy = oY + c.y * dH;
-        const mass = clamp(c.mass / Math.max(1, c.ripe), 0, 1);
-        const pulse = smooth01(c.pulse);
-        // outer green halo grows with accumulated mass (rounder & bigger = more
-        // gathered), with a quick bloom on each absorb / on release.
-        const lr = (5 + c.size * 4.6 + mass * 9) * glowBoost * (1 + pulse * 0.35);
-        ctx.globalAlpha = Math.min(0.7, 0.12 + mass * 0.34 + c.glow * 0.22 + pulse * 0.18);
-        ctx.drawImage(glowCore, cx - lr, cy - lr, lr * 2, lr * 2);
-        // a softer alt-green inner ring for body
-        const mr = lr * 0.6;
-        ctx.globalAlpha = Math.min(0.6, 0.1 + mass * 0.3 + pulse * 0.16);
-        ctx.drawImage(glowAlt, cx - mr, cy - mr, mr * 2, mr * 2);
-        // bright white-green heart
-        const hr = Math.min(11, 2 + c.size * 2.4 + mass * 3.2) * (1 + pulse * 0.3);
-        ctx.globalAlpha = Math.min(0.92, 0.34 + mass * 0.42 + pulse * 0.2);
-        ctx.drawImage(glowHeart, cx - hr, cy - hr, hr * 2, hr * 2);
+      // BATCHER POCKETS: capped queues of individual small orbs. They bunch for
+      // a beat, pulse modestly, then release FIFO. No accumulated white slab.
+      for (const node of batchNodes) {
+        const q = node.queue.length;
+        if (q === 0 && node.pulse <= 0.02) continue;
+        const cx = oX + node.x * dW;
+        const cy = oY + node.y * dH;
+        const pulse = smooth01(node.pulse);
+        const ready = node.ready ? 1 : 0;
+
+        const haloR = (11 + q * 2.25) * (1 + pulse * 0.12);
+        ctx.globalAlpha = Math.min(0.3, 0.05 + q * 0.024 + node.glow * 0.1);
+        ctx.drawImage(glowCore, cx - haloR, cy - haloR, haloR * 2, haloR * 2);
+
+        if (q > 1) {
+          ctx.globalAlpha = 0.13 + ready * 0.08;
+          ctx.strokeStyle = `rgba(${ready ? ALT_RGB : CORE_RGB},${ctx.globalAlpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(cx - 7, cy + 8);
+          ctx.lineTo(cx + 7, cy - 8);
+          ctx.stroke();
+          if (ready) {
+            ctx.globalAlpha = 0.16 + pulse * 0.12;
+            ctx.strokeStyle = `rgba(${ALT_RGB},${ctx.globalAlpha})`;
+            ctx.lineWidth = 0.9;
+            ctx.beginPath();
+            ctx.arc(cx, cy, haloR * 0.48, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+
+        for (let i = 0; i < q; i++) {
+          const orb = node.queue[i];
+          const row = Math.floor(i / 2);
+          const side = i % 2 === 0 ? -1 : 1;
+          const wobble =
+            Math.sin((now / 1000) * 1.8 + orb.r0 * 8 + i) * (moving ? 1.2 : 0.25);
+          const sx = cx + side * (3.6 + row * 0.8) + wobble;
+          const sy = cy - row * 5.2 + Math.cos(orb.r0 * 7 + i) * 1.3;
+          const sr = 5.2 + orb.size * 4.15 + pulse * 1.35;
+          const alpha = Math.min(0.78, 0.42 + orb.age * 0.16 + ready * 0.08);
+          ctx.globalAlpha = alpha;
+          ctx.drawImage(orb.alt ? glowAlt : glowCore, sx - sr, sy - sr, sr * 2, sr * 2);
+          const cr = Math.min(5.0, 1.55 + orb.size * 1.75);
+          ctx.globalAlpha = Math.min(0.66, alpha * 0.62);
+          ctx.drawImage(glowHeart, sx - cr, sy - cr, cr * 2, cr * 2);
+        }
         ctx.globalAlpha = 1;
       }
 
@@ -1465,10 +1442,9 @@ export default function PhotorealHomeHero({
         const s = sampleLane(lane, p.t);
         const tan = s.tan;
         const pt = s.pt;
-        // a consolidated trunk blob carries a small x-bias toward where its core
-        // formed, easing back onto the central trunk vein as it descends, so it
-        // glides the FULL trunk without snapping dead-centre at the fork.
-        const xOff = p.big && p.xJit ? p.xJit * (1 - p.t) : 0;
+        // a sequenced packet carries a small x-bias from its batcher pocket,
+        // easing back onto the trunk strand as it descends.
+        const xOff = p.xJit ? p.xJit * Math.max(0, 1 - p.t * 1.15) : 0;
         const x = oX + (pt.x + xOff) * dW;
         const y = oY + pt.y * dH;
         const es = p.size * (0.12 + 0.88 * smooth01(p.grow));
@@ -1553,18 +1529,24 @@ export default function PhotorealHomeHero({
         // soft comet tail trailing behind the bead — only once it's moving (and
         // not for the parked `settled` rest orbs, which sit still on L1).
         if (p.grow >= 1 && p.hold <= 0 && !p.settled) {
+          const trunkPacket = p.phase === 1;
           const tl = Math.hypot(tan.x * dW, tan.y * dH) || 1;
           const ux = (tan.x * dW) / tl;
           const uy = (tan.y * dH) / tl;
           const tailLen =
-            (9 + es * 7) * (rootPhase ? 1.08 : 1) * (1 + surge * 0.4) * (1 - nearL1 * 0.55);
+            (trunkPacket ? 5 + es * 4.2 : 8 + es * 6) *
+            (rootPhase ? 1.02 : 1) *
+            (1 + surge * 0.32) *
+            (1 - nearL1 * 0.55);
           const tx2 = x - ux * tailLen;
           const ty2 = y - uy * tailLen;
           const grad = ctx.createLinearGradient(x, y, tx2, ty2);
           grad.addColorStop(0, `rgba(${rgbStr},${(rootPhase ? 0.54 : 0.62) * life})`);
           grad.addColorStop(1, `rgba(${rgbStr},0)`);
           ctx.strokeStyle = grad;
-          ctx.lineWidth = (rootPhase ? 0.9 : 1) + es * (rootPhase ? 0.72 : 0.9);
+          ctx.lineWidth =
+            (trunkPacket ? 0.85 : rootPhase ? 0.9 : 1) +
+            es * (trunkPacket ? 0.55 : rootPhase ? 0.72 : 0.82);
           ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(x, y);
@@ -1573,33 +1555,25 @@ export default function PhotorealHomeHero({
         }
 
         // glow halo + heart, drawn as a slightly squashed/rotated ellipse so the
-        // orbs read as organic sap droplets rather than perfect circles. A
-        // consolidated trunk blob (p.big) renders ROUNDER + larger so it reads as
-        // one luminous mass gliding the trunk, not a droplet.
+        // orbs read as organic sap droplets rather than perfect circles.
         const r0 = p.r0 ?? 0.5;
-        const sq = p.big ? 0.93 + ((r0 * 7.13) % 1) * 0.12 : 0.8 + ((r0 * 7.13) % 1) * 0.4;
-        const r = (3 + es * (rootPhase ? 2.55 : p.big ? 3.9 : 3.2)) * glowBoost;
+        const sq = 0.8 + ((r0 * 7.13) % 1) * 0.4;
+        const r = (3.4 + es * (rootPhase ? 2.55 : 3.25)) * glowBoost;
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(r0 * Math.PI);
         ctx.scale(sq, 1 / sq);
-        const haloA = Math.min(1, (rootPhase ? 0.4 : p.big ? 0.52 : 0.47) * life);
+        const haloA = Math.min(1, (rootPhase ? 0.4 : 0.48) * life);
         // green halo (fades as the orb charges blue near the L1 tip)
         ctx.globalAlpha = haloA * (1 - nearL1);
         ctx.drawImage(p.alt ? glowAlt : glowCore, -r, -r, r * 2, r * 2);
-        // a consolidated blob gets a second softer green pass for body/volume.
-        if (p.big) {
-          const r2 = r * 0.62;
-          ctx.globalAlpha = haloA * 0.7 * (1 - nearL1);
-          ctx.drawImage(glowAlt, -r2, -r2, r2 * 2, r2 * 2);
-        }
         // blue halo blends in over the final root stretch
         if (nearL1 > 0.01) {
           ctx.globalAlpha = haloA * nearL1;
           ctx.drawImage(glowL1, -r, -r, r * 2, r * 2);
         }
         ctx.restore();
-        const cr = Math.min(p.big ? 11 : 7.5, 1.0 + es * (p.big ? 1.9 : 1.4)) * glowBoost;
+        const cr = Math.min(7.8, 1.6 + es * 1.95) * glowBoost;
         ctx.globalAlpha = Math.min(0.85, (0.42 + es * 0.4) * life);
         ctx.drawImage(glowHeart, x - cr, y - cr, cr * 2, cr * 2);
         // a faint blue core creeping in as it nears L1
