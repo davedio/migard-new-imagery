@@ -96,6 +96,10 @@ const SOCIAL = [
 export function SiteFooter() {
   return (
     <footer className="site-footer">
+      {/* V2 statement line — the site signs off in the display serif. */}
+      <Link href="/get-started" className="v2-footer-statement">
+        Take <em>root</em> on Cardano.<span className="arrow" aria-hidden>↗</span>
+      </Link>
       <div className="site-footer__top site-footer__top--sitemap">
         <div className="site-footer__brand">
           <div className="lock">

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import InteriorFluidBackground from "@/components/InteriorFluidBackground";
+import { CursorV2, ScrollProgress } from "@/components/v2/ChromeV2";
 
 /**
  * Layout for the (site) route group — every navigable page (home + children)
@@ -19,6 +20,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       {/* Subtle shared ambient layer — faint green/gold radial light so pages
           never fall into a flat black void below their hero (audit Phase 0). */}
       <div className="site-ambient" aria-hidden />
+      <ScrollProgress />
+      <CursorV2 />
       <SiteNav />
       {/* `data-scroll-content` is the smooth-scroll transform root. The fixed
           nav stays outside it; everything that scrolls (page content + footer)

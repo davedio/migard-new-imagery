@@ -67,7 +67,7 @@ export default function MidgardWordmark({
       <style jsx>{`
         .mw {
           position: relative; display: inline-block;
-          font-family: var(--font-syne), system-ui, sans-serif; font-weight: 700;
+          font-family: var(--font-schibsted), system-ui, sans-serif; font-weight: 700;
           letter-spacing: var(--ls, 0em); line-height: 1; user-select: none;
         }
         .mw__base { display: block; white-space: nowrap; color: #eaf2ec; }

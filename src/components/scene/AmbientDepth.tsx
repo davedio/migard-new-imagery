@@ -125,7 +125,7 @@ export default function AmbientDepth() {
   // CSS-only fallback: a static green-tinted mist, no canvas
   if (!webgl) {
     return (
-      <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+      <div aria-hidden className="ambient-depth" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
         <div
           style={{
             position: "absolute",
@@ -140,7 +140,7 @@ export default function AmbientDepth() {
   }
 
   return (
-    <div aria-hidden style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+    <div aria-hidden className="ambient-depth" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas
         frameloop={motionOn ? "always" : "demand"}
         dpr={[1, 1.75]}

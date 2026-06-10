@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import GatewayPhotoreal from "@/components/GatewayPhotoreal";
+import HomeV2 from "@/components/v2/HomeV2";
 import { SplashOverlay } from "@/components/site/SplashOverlay";
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default async function HomePage() {
   return (
     <>
       {!entered ? <SplashOverlay /> : null}
-      <GatewayPhotoreal />
+      <HomeV2 />
     </>
   );
 }

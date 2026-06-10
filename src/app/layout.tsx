@@ -1,28 +1,28 @@
 import type { Metadata } from "next";
-import { Poppins, Inter, JetBrains_Mono, Syne } from "next/font/google";
+import { Fraunces, Schibsted_Grotesk, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
+import "./v2.css";
 import { Providers } from "./providers";
 
-const display = Poppins({
+/* V2 type system — "Dark Ancient Tech": a carved old-style serif for display
+   (Fraunces, variable weight + optical size + italic), a crisp grotesk for
+   UI/body (Schibsted), and a HUD mono for data (Spline Sans Mono). */
+const display = Fraunces({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-fraunces",
   display: "swap",
 });
-const body = Inter({
+const body = Schibsted_Grotesk({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-schibsted",
   display: "swap",
 });
-const mono = JetBrains_Mono({
+const mono = Spline_Sans_Mono({
   subsets: ["latin"],
-  variable: "--font-jbmono",
-  display: "swap",
-});
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-syne",
+  style: ["normal", "italic"],
+  variable: "--font-splinemono",
   display: "swap",
 });
 
@@ -95,7 +95,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${mono.variable} ${syne.variable}`}
+      className={`${display.variable} ${body.variable} ${mono.variable}`}
     >
       <body>
         <script
