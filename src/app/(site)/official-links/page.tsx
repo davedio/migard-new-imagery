@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   title: "Midgard Official Links",
   description:
     "Use official Midgard links for the website, docs, GitHub, contracts, community, support, and security routes.",
+  openGraph: {
+    title: "Midgard Official Links",
+    images: [{ url: "/og/official-links.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/official-links.jpg"] },
 };
 
 export default function OfficialLinksPage() {

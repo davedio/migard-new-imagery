@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: "Midgard FAQ",
   description:
     "Answers to common Midgard questions about what it is, how it works, ADA fees, the three roles (users, builders, operators & watchers), security, and testnet.",
+  openGraph: {
+    title: "Midgard FAQ",
+    images: [{ url: "/og/faq.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/faq.jpg"] },
 };
 
 /* One source of truth: rendered by <Faq> AND serialized into FAQPage JSON-LD,

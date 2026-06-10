@@ -15,11 +15,30 @@ export const metadata: Metadata = {
   title: "Midgard Security",
   description:
     "Midgard's trust posture is built around Cardano L1 anchoring, eUTXO-aware fraud proofs, watchers, challenge paths, and public status surfaces.",
+  openGraph: {
+    title: "Midgard Security",
+    images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/security.jpg"] },
+};
+
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "How it works", item: "https://midgard-gateway.vercel.app/how-it-works" },
+    { "@type": "ListItem", position: 2, name: "Security", item: "https://midgard-gateway.vercel.app/security" },
+  ],
 };
 
 export default function SecurityPage() {
   return (
     <main className="page-main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <PageHero
         top={<PartOf parentHref="/how-it-works" parentLabel="How it works" />}
         title="Secured by Cardano. Provable by anyone"

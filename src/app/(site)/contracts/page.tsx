@@ -24,11 +24,30 @@ export const metadata: Metadata = {
   title: "Midgard Contracts & Testnet Status",
   description:
     "Midgard testnet status plus every validator, state anchor, reference script, and bootstrap transaction on Cardano preprod — live network status, verifiable addresses, and the full genesis deployment history.",
+  openGraph: {
+    title: "Midgard Contracts & Testnet Status",
+    images: [{ url: "/og/contracts.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/contracts.jpg"] },
+};
+
+
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "How it works", item: "https://midgard-gateway.vercel.app/how-it-works" },
+    { "@type": "ListItem", position: 2, name: "Contracts", item: "https://midgard-gateway.vercel.app/contracts" },
+  ],
 };
 
 export default function ContractsPage() {
   return (
     <main className="page-main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <PageHero
         top={<PartOf parentHref="/how-it-works" parentLabel="How it works" />}
         label="Protocol contracts"

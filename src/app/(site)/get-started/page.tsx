@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Get Started With Midgard",
   description:
     "Get started with Midgard in one of three roles: users, builders, and operators & watchers.",
+  openGraph: {
+    title: "Get Started With Midgard",
+    images: [{ url: "/og/get-started.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/get-started.jpg"] },
 };
 
 const AUDIENCE_PATHS: {

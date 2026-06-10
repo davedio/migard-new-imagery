@@ -42,10 +42,10 @@ export const metadata: Metadata = {
     siteName: "Midgard",
     images: [
       {
-        url: "/hero-tree-green.png",
-        width: 1672,
-        height: 941,
-        alt: "Midgard world-tree protocol architecture",
+        url: "/og/home.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Midgard — built to scale, rooted in Cardano",
       },
     ],
     type: "website",
@@ -55,12 +55,38 @@ export const metadata: Metadata = {
     title: "Midgard | Cardano-Native L2 Scaling",
     description:
       "A Cardano-native optimistic rollup for faster L2 execution with settlement back to Cardano L1.",
-    images: ["/hero-tree-green.png"],
+    images: ["/og/home.jpg"],
   },
   icons: {
     icon: "/midgard-icon.png",
     apple: "/midgard-icon.png",
   },
+};
+
+/* Organization + WebSite structured data — emitted once, sitewide. */
+const ORG_JSONLD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://midgard-gateway.vercel.app/#org",
+      name: "Midgard",
+      url: "https://midgard-gateway.vercel.app",
+      logo: "https://midgard-gateway.vercel.app/midgard-icon.png",
+      sameAs: [
+        "https://github.com/Anastasia-Labs/midgard",
+        "https://x.com/midgardprotocol",
+        "https://discord.gg/ZpjgHKWaZx",
+      ],
+      parentOrganization: { "@type": "Organization", name: "Anastasia Labs" },
+    },
+    {
+      "@type": "WebSite",
+      name: "Midgard",
+      url: "https://midgard-gateway.vercel.app",
+      publisher: { "@id": "https://midgard-gateway.vercel.app/#org" },
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -72,6 +98,10 @@ export default function RootLayout({
       className={`${display.variable} ${body.variable} ${mono.variable} ${syne.variable}`}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
+        />
         <div className="world-bg" aria-hidden />
         <Providers>{children}</Providers>
         <div className="world-grain" aria-hidden />

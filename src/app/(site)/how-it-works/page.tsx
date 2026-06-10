@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
     "How Midgard runs as a Cardano-native optimistic rollup: submit, sequence, commit, watch, and settle back to Cardano.",
+  openGraph: {
+    title: "How Midgard Works",
+    images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/how-it-works.jpg"] },
 };
 
 /* The five journey beats, restated as plain anchored text so the page works

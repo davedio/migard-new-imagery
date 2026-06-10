@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   title: "Midgard Roadmap",
   description:
     "The road from today's pre-alpha testnet to settlement on Cardano mainnet: four phases, paced by the work, not by dates.",
+  openGraph: {
+    title: "Midgard Roadmap",
+    images: [{ url: "/og/roadmap.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/roadmap.jpg"] },
 };
 
 export default function RoadmapPage() {

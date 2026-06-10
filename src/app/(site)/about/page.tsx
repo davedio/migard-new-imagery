@@ -15,6 +15,11 @@ export const metadata: Metadata = {
   title: "About Midgard",
   description:
     "Why Midgard exists: the use cases, the features, and the economic incentives behind a Cardano-native optimistic rollup built by Anastasia Labs.",
+  openGraph: {
+    title: "About Midgard",
+    images: [{ url: "/og/about.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/about.jpg"] },
 };
 
 export default function AboutPage() {

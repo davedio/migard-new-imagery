@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   title: "Midgard Brand Kit",
   description:
     "Official Midgard logos, colors, and typography, plus usage guidance. Download the marks and link back to the official site.",
+  openGraph: {
+    title: "Midgard Brand Kit",
+    images: [{ url: "/og/brand.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/brand.jpg"] },
 };
 
 const COLORS: { name: string; hex: string; note: string }[] = [

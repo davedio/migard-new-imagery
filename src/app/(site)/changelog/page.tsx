@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: "Midgard Changelog",
   description:
     "What actually shipped on the Midgard gateway and testnet, in order: deployments, site releases, and status changes.",
+  openGraph: {
+    title: "Midgard Changelog",
+    images: [{ url: "/og/changelog.jpg", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og/changelog.jpg"] },
 };
 
 /* Honest, sparse, append-only. Newest first. Each entry is something that
