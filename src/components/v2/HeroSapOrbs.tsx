@@ -49,6 +49,9 @@ type Orb = {
   strand: 0 | 1;
   anchorY: number | null;
   rise: number;
+  /** how fully this orb joins the helix (a minority stays on the bark so
+      the tree itself remains part of the magic) */
+  mix: number;
 };
 
 const smooth01 = (x: number) => {
@@ -88,6 +91,9 @@ export default function HeroSapOrbs({
     let gh = 0;
     let imgW = 0;
     let imgH = 0;
+    /* the helix axis — the trunk's true centre, measured from the green
+       mass of the plate itself so the spin wraps the TREE, not a guess */
+    let trunkX = 0;
     const spawnSites: { x: number; y: number }[] = [];
 
     const img = new Image();
@@ -124,6 +130,22 @@ export default function HeroSapOrbs({
           }
         }
       }
+      /* trunk centre = green-mass centroid of the mid band (trunk + roots
+         neck). This is where the helix must spin. */
+      let wsum = 0;
+      let xsum = 0;
+      const t0 = Math.floor(0.42 * gh);
+      const t1 = Math.floor(0.82 * gh);
+      for (let gy = t0; gy < t1; gy++) {
+        for (let gx = 0; gx < gw; gx++) {
+          const v = field[gy * gw + gx];
+          if (v > GREEN_MIN) {
+            wsum += v;
+            xsum += v * (gx / gw) * imgW;
+          }
+        }
+      }
+      trunkX = wsum > 0 ? xsum / wsum : imgW * 0.78;
       start();
     };
 
@@ -176,7 +198,7 @@ export default function HeroSapOrbs({
       const size = 0.7 + Math.random() * 1.5;
       const orb: Orb = o ?? {
         x: 0, y: 0, size, speed: 0, alpha: 0, tail: [], dying: false,
-        theta: 0, omega: 0, strand: 0, anchorY: null, rise: 0,
+        theta: 0, omega: 0, strand: 0, anchorY: null, rise: 0, mix: 1,
       };
       orb.x = site.x + (Math.random() - 0.5) * 6;
       orb.y = site.y;
@@ -191,6 +213,8 @@ export default function HeroSapOrbs({
       orb.strand = Math.random() < 0.5 ? 0 : 1;
       orb.anchorY = null;
       orb.rise = 0;
+      /* ~1 in 5 orbs keeps riding the bark veins through the dissolve */
+      orb.mix = Math.random() < 0.2 ? 0.1 + Math.random() * 0.15 : 1;
       return orb;
     };
 
@@ -256,7 +280,7 @@ export default function HeroSapOrbs({
             Math.random() * 10;
           if (v > bestV) { bestV = v; bestA = a; }
         }
-        if (bestV < GREEN_MIN && d < 0.4) {
+        if (bestV < GREEN_MIN && d * o.mix < 0.4) {
           /* vein ran out (root tip / off-tree) — let the light sink out */
           o.dying = true;
         }
@@ -271,15 +295,17 @@ export default function HeroSapOrbs({
         const sp = o.speed * boost * (1 + surge * 0.9);
         o.x += Math.sin(bestA) * sp * dt;
         o.y = Math.min(o.y + Math.cos(bestA) * sp * dt, imgH * 1.02);
-        if (o.y > imgH * 0.985 && d < 0.4) o.dying = true;
+        if (o.y > imgH * 0.985 && d * o.mix < 0.4) o.dying = true;
 
         /* ---- helix motion (the dissolve) ---- */
         let ix = o.x;
         let iy = o.y;
         let depthMod = 1;
-        if (d > 0.01) {
+        /* per-orb dissolve: bark-riders (low mix) barely leave the tree */
+        const di = d * o.mix;
+        if (di > 0.01) {
           if (o.anchorY === null) o.anchorY = o.y;
-          o.rise += dt * (22 + o.size * 9) * d;
+          o.rise += dt * (22 + o.size * 9) * di;
           let hy = o.anchorY - o.rise;
           /* strands loop: re-enter from below once they leave the canopy */
           if (hy < imgH * 0.04) {
@@ -295,11 +321,12 @@ export default function HeroSapOrbs({
             (hy / imgH) * Math.PI * 6.5 +
             (o.strand ? Math.PI : 0) +
             (o.theta % 0.6) * 0.6;
-          const R = imgW * (0.012 + 0.085 * d);
-          const hx = imgW * 0.72 + Math.cos(phase) * R;
+          /* axis = the measured trunk centre — the screw wraps the TREE */
+          const R = imgW * (0.012 + 0.105 * d);
+          const hx = trunkX + Math.cos(phase) * R;
           depthMod = 0.62 + 0.38 * Math.sin(phase + Math.PI / 2);
-          ix = lerp(o.x, hx, d);
-          iy = lerp(o.y, hy, d);
+          ix = lerp(o.x, hx, di);
+          iy = lerp(o.y, hy, di);
         } else if (o.anchorY !== null) {
           o.anchorY = null; /* scrolled back up — re-glue to the veins */
           o.rise = 0;

@@ -106,6 +106,13 @@ export function WaveText({
     let radiusEff = RADIUS;
     let scatterEff = SCATTER;
     let sizeBoost = 1;
+    /* RESPONSIVENESS: the root rect is CACHED. Reading layout on every
+       pointermove across a dozen headings thrashes the renderer and made
+       the effect feel sticky — moves are now pure arithmetic, and the
+       active instance refreshes its rect once per frame in the loop. */
+    let rect: DOMRect | null = null;
+    let ex = -9999; // last pointer, client coords
+    let ey = -9999;
     let raf = 0;
     let active = false;
     let px = -9999; // pointer, root-relative
@@ -175,14 +182,15 @@ export function WaveText({
       }
     };
 
-    const inZone = () => {
-      const rr = root.getBoundingClientRect();
-      return (
-        px > -RADIUS &&
-        px < rr.width + RADIUS &&
-        py > -RADIUS &&
-        py < rr.height + RADIUS
-      );
+    const syncPointer = () => {
+      if (!rect) rect = root.getBoundingClientRect();
+      px = ex - rect.left;
+      py = ey - rect.top;
+      pin =
+        px > -radiusEff &&
+        px < rect.width + radiusEff &&
+        py > -radiusEff &&
+        py < rect.height + radiusEff;
     };
 
     const fall = (d: number, r: number) =>
@@ -190,32 +198,38 @@ export function WaveText({
 
     const tick = () => {
       t += 1 / 60;
+      /* fresh geometry once per frame — tracking stays glued to the cursor
+         through scroll and layout shifts with zero per-move layout reads */
+      rect = root.getBoundingClientRect();
+      syncPointer();
       const w = canvas.width / DPR;
       const h = canvas.height / DPR;
       ctx.clearRect(0, 0, w, h);
 
-      /* per-char fade — type gives way where the orbs take over */
+      /* per-char fade — tight and decisive: letters under the cursor cut
+         out fast, edge letters barely dim (review: no mushy slow fades) */
       for (let i = 0; i < chars.length; i++) {
         const c = charPos[i];
         if (!c) continue;
-        const f = pin ? fall(Math.hypot(c.x - px, c.y - py), radiusEff * 0.92) : 0;
+        const f = pin ? fall(Math.hypot(c.x - px, c.y - py), radiusEff * 0.68) : 0;
         const el = chars[i];
-        if (f > 0.015) {
-          el.style.opacity = String(Math.max(0, 1 - f * 1.25));
-          el.style.transform = `scale(${(1 - f * 0.1).toFixed(3)})`;
+        if (f > 0.02) {
+          el.style.opacity = String(Math.max(0, 1 - f * 1.7));
+          el.style.transform = `scale(${(1 - f * 0.08).toFixed(3)})`;
         } else if (el.style.opacity !== "") {
           el.style.opacity = "";
           el.style.transform = "";
         }
       }
 
-      /* particles: activate near the cursor, scatter away from it */
+      /* particles: activate near the cursor, scatter away from it.
+         Asymmetric response — near-instant attack, graceful release. */
       const act: Particle[] = [];
       let energy = 0;
       for (const p of particles) {
         const d = Math.hypot(p.hx - px, p.hy - py);
         const target = pin ? fall(d, radiusEff) : 0;
-        p.a += (target - p.a) * 0.16;
+        p.a += (target - p.a) * (target > p.a ? 0.55 : 0.22);
         if (p.a < 0.02) continue;
         energy = Math.max(energy, p.a);
         const dd = Math.max(8, d);
@@ -300,14 +314,17 @@ export function WaveText({
     };
 
     const onMove = (e: PointerEvent) => {
-      const rr = root.getBoundingClientRect();
-      px = e.clientX - rr.left;
-      py = e.clientY - rr.top;
-      pin = inZone();
+      ex = e.clientX;
+      ey = e.clientY;
+      syncPointer(); // pure arithmetic against the cached rect
       if (pin) wake();
+    };
+    const onScroll = () => {
+      rect = null; // next move/frame re-measures
     };
     let rebuildTimer = 0;
     const onResize = () => {
+      rect = null;
       window.clearTimeout(rebuildTimer);
       rebuildTimer = window.setTimeout(() => {
         particles = [];
@@ -315,18 +332,37 @@ export function WaveText({
       }, 180);
     };
 
-    /* build lazily on first approach; fonts may land late — rebuild once ready */
+    /* pre-build off the critical path as soon as the heading is on screen —
+       the first hover must respond instantly, no build hiccup */
+    const ric = (
+      window as Window & { requestIdleCallback?: (cb: () => void) => number }
+    ).requestIdleCallback;
+    const idle = (cb: () => void) =>
+      ric ? ric(cb) : window.setTimeout(cb, 60);
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && particles.length === 0) {
+        idle(() => {
+          if (particles.length === 0) build();
+        });
+        io.disconnect();
+      }
+    });
+    io.observe(root);
+    /* fonts may land late — resample once they're ready */
     void document.fonts?.ready.then(() => {
       if (particles.length) build();
     });
 
     window.addEventListener("pointermove", onMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       window.clearTimeout(maskTimer);
       window.clearTimeout(rebuildTimer);
+      io.disconnect();
       cancelAnimationFrame(raf);
       chars.forEach((c) => {
         c.style.opacity = "";
