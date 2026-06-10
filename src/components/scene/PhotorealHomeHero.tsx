@@ -80,6 +80,7 @@ const TRUNK_STRANDS = [-0.0036, -0.0013, 0.0013, 0.0036];
 const DOME = { cx: 0.73, cy: 0.2, rx: 0.21, ry: 0.17 }; // canopy foliage spread
 const FORK_Y = 0.4; // canopy base: branches gather to the trunk top
 const CROWN_Y = 0.6; // lower trunk base: roots begin to splay
+const L1_HOLLOW = { x: TRUNK_X - 0.018, y: 0.655 }; // cobalt Cardano/L1 hollow
 const GATHER_NODES = [
   { x: TRUNK_X - 0.04, y: FORK_Y - 0.012, strand: 0 },
   { x: TRUNK_X - 0.003, y: FORK_Y + 0.001, strand: 1 },
@@ -93,7 +94,7 @@ const PARTICLE_ALT = "#33ff33";
 
 /* Tunables (ported from StaticTreeHero, trimmed for a CALM ambient home hero —
    far fewer lanes/particles than the data-driven How-It-Works track). */
-const FLASH_DUR = 1.5; // length of the BLUE "connected to L1" blast at a root tip
+const FLASH_DUR = 0.9; // fast BLUE "connected to L1" blink at final root/L1 point
 const GROW_MIN = 0.4;
 const GROW_MAX = 1.0;
 const GROW_FAST = 0.34;
@@ -101,6 +102,7 @@ const FIRST_GLOW_DELAY = 0.45;
 const STARTUP_RAMP_SECONDS = 4.0;
 const TRUNK_PACKET_VSPEED = 0.052; // image-height/sec for sequenced packets
 const TRUNK_PACKET_VSPEED_JIT = 0.009;
+const L1_HOLLOW_ROUTE_CHANCE = 0.34; // some, not all, packets enter the blue L1 hollow
 
 /* ── BATCHER / SEQUENCER tunables ──
    Canopy orbs stay small and distributed, then temporarily queue in 3-5 local
@@ -120,8 +122,8 @@ const BATCH_NODE_X1 = TRUNK_X + 0.078;
 const BATCH_NODE_Y = FORK_Y - 0.012;
 
 /* ── INDIVIDUAL L1 BLAST tunables (the blue connection burst at a root tip) ── */
-const BLAST_RING_R = 26; // px reach of the expanding blue shockwave ring
-const BLAST_SPARK_R = 15; // px reach of the hot cyan-blue spark core
+const BLAST_RING_R = 38; // px reach of the fast expanding blue shockwave ring
+const BLAST_SPARK_R = 18; // px reach of the hot cyan-blue spark core
 
 type Pt = { x: number; y: number };
 type Lane = {
@@ -131,6 +133,7 @@ type Lane = {
   gi?: number;
   ang?: number;
   high?: boolean;
+  l1?: boolean;
 };
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
@@ -151,6 +154,7 @@ type Particle = {
   growDelay?: number;
   settled?: boolean; // static fallback: a calm BLUE orb resting at an L1 root tip
   xJit?: number; // small packet x offset so releases originate from their batcher
+  l1Center?: boolean; // this packet routes through the blue Cardano/L1 hollow
 };
 
 type QueuedOrb = {
@@ -458,10 +462,8 @@ function buildTree(lite: boolean, field?: VeinField): Tree {
   });
 
   // ROOTS: crown → splay → tip. Wide asymmetric fan (further left than right),
-  // each tip snapped onto a painted root vein. CHANGE 2 — the lanes are pushed
-  // DEEPER so orbs follow the roots all the way to their tips near the cobalt L1
-  // bedrock at the base (instead of stopping high on the trunk/upper roots), and
-  // there are MORE of them so the descent reads as a steady stream settling.
+  // each tip snapped onto a painted root vein. The lower lanes stay calmer than
+  // the canopy so packets read as sequenced settlement, not erratic wandering.
   const roots: Lane[] = [];
   const NR = lite ? 18 : 28;
   for (let i = 0; i < NR; i++) {
@@ -489,12 +491,64 @@ function buildTree(lite: boolean, field?: VeinField): Tree {
       0.034,
     );
     const base = catmullRom([crown, gate, mid, tip], 14);
-    const woven = snake(base, 0.0025 + a * 0.0025, 1, (i * 2.1 + 1) % (Math.PI * 2));
-    const onT = field ? fitToTree(woven, onTree, 0.03, 2) : smoothPoly(woven, 2);
+    const woven = snake(base, 0.0012 + a * 0.0014, 1, (i * 2.1 + 1) % (Math.PI * 2));
+    const onT = field ? fitToTree(woven, onTree, 0.026, 2) : smoothPoly(woven, 3);
     roots.push({
       poly: onT,
       width: clamp(1.15 - a * 0.6, 0.5, 1.15),
       len: polyLen(onT),
+    });
+  }
+
+  // Explicit Cardano/L1 hollow lanes. These are intentionally separate from the
+  // normal green root fan: they enter the cobalt hole directly, but routing only
+  // sends a minority of packets through them so the symbolism stays legible.
+  const l1Count = lite ? 2 : 3;
+  for (let i = 0; i < l1Count; i++) {
+    const u = (i / (l1Count - 1)) * 2 - 1;
+    const tip: Pt = {
+      x: L1_HOLLOW.x + u * 0.012,
+      y: L1_HOLLOW.y + Math.sin((i + 1) * 2.15) * 0.005,
+    };
+    const entry = field
+      ? anchor(
+          {
+            x: TRUNK_X + u * 0.014,
+            y: 0.625 + Math.abs(u) * 0.012,
+          },
+          0.026,
+        )
+      : {
+          x: TRUNK_X + u * 0.014,
+          y: 0.625 + Math.abs(u) * 0.012,
+        };
+    const approach: Pt = {
+      x: lerp(entry.x, tip.x, 0.68),
+      y: lerp(entry.y, tip.y, 0.72),
+    };
+    const base = catmullRom(
+      [
+        crown,
+        { x: TRUNK_X + u * 0.004, y: CROWN_Y + 0.025 },
+        entry,
+        approach,
+        tip,
+      ],
+      14,
+    );
+    let onT = field ? fitToTree(base, onTree, 0.024, 1) : smoothPoly(base, 3);
+    onT = onT.map((p, idx) => {
+      const t = idx / (onT.length - 1);
+      const pull = smooth01((t - 0.58) / 0.42);
+      return pull > 0 ? blendPt(p, tip, pull * 0.92) : p;
+    });
+    onT = smoothPoly(onT, 1);
+    onT[onT.length - 1] = tip;
+    roots.push({
+      poly: onT,
+      width: clamp(0.92 - Math.abs(u) * 0.16, 0.68, 0.92),
+      len: polyLen(onT),
+      l1: true,
     });
   }
 
@@ -1046,20 +1100,40 @@ export default function PhotorealHomeHero({
       if (node.queue.length === 0) resetBatchNode(node);
     };
 
-    // spread the split streams across the WHOLE root fan so the blue L1 blasts
-    // light up across the root system as individual connections (not one cluster).
-    const MAJOR_ROOT_FRACS = [0.08, 0.2, 0.32, 0.44, 0.56, 0.68, 0.8, 0.92];
+    const splitRootIndices = () => {
+      const normal: number[] = [];
+      const l1: number[] = [];
+      tree.roots.forEach((root, idx) => (root.l1 ? l1 : normal).push(idx));
+      return { normal, l1 };
+    };
+
+    const rootAtFrac = (indices: number[], frac: number) => {
+      if (!indices.length) return 0;
+      const pos = clamp(Math.round(frac * (indices.length - 1)), 0, indices.length - 1);
+      return indices[pos];
+    };
+
+    // Spread most streams across stable root lanes, while a controlled minority
+    // deliberately enters the blue Cardano/L1 hollow through explicit center lanes.
+    const MAJOR_ROOT_FRACS = [0.18, 0.3, 0.42, 0.58, 0.7, 0.82];
     let rootCursor = (Math.random() * MAJOR_ROOT_FRACS.length) | 0;
+    let l1Cursor = 0;
     const rootIndexForPacket = (p: Particle) => {
+      const { normal, l1 } = splitRootIndices();
+      const seed = p.r0 ?? Math.random();
+      if (l1.length && seed < L1_HOLLOW_ROUTE_CHANCE) {
+        l1Cursor = (l1Cursor + 1 + Math.floor(seed * 3)) % l1.length;
+        return l1[l1Cursor];
+      }
       rootCursor = (rootCursor + 1 + Math.floor((p.r0 ?? 0) * 2)) % MAJOR_ROOT_FRACS.length;
-      const frac =
-        MAJOR_ROOT_FRACS[rootCursor] + (Math.random() * 2 - 1) * 0.018;
-      return clamp(Math.round(frac * (tree.roots.length - 1)), 0, tree.roots.length - 1);
+      const frac = MAJOR_ROOT_FRACS[rootCursor] + (((seed * 13.37) % 1) - 0.5) * 0.028;
+      return rootAtFrac(normal.length ? normal : tree.roots.map((_, idx) => idx), frac);
     };
 
     const routeIntoRoot = (p: Particle) => {
       p.phase = 2;
       p.seg = rootIndexForPacket(p);
+      p.l1Center = !!tree.roots[p.seg]?.l1;
       p.t = Math.random() * 0.02;
       p.size = clamp(p.size * (0.84 + Math.random() * 0.18), 0.48, 1.06);
       p.speed =
@@ -1125,10 +1199,11 @@ export default function PhotorealHomeHero({
           xJit: 0,
         });
       // a few root streams settled mid-root.
+      const { normal, l1 } = splitRootIndices();
+      const allRoots = tree.roots.map((_, idx) => idx);
+      const staticNormalRoots = normal.length ? normal : allRoots;
       const fanRoots = tree.roots.length
-        ? [0.2, 0.44, 0.68, 0.88].map((f) =>
-            clamp(Math.round(f * (tree.roots.length - 1)), 0, tree.roots.length - 1),
-          )
+        ? [0.22, 0.42, 0.62, 0.82].map((f) => rootAtFrac(staticNormalRoots, f))
         : [];
       for (let k = 0; k < fanRoots.length; k++)
         particles.push({
@@ -1145,8 +1220,12 @@ export default function PhotorealHomeHero({
         });
       // a few static BLUE blasts RESTING at L1 root tips (the settled payoff).
       const restRoots = tree.roots.length
-        ? [0.3, 0.52, 0.74, 0.92].map((f) =>
-            clamp(Math.round(f * (tree.roots.length - 1)), 0, tree.roots.length - 1),
+        ? Array.from(
+            new Set([
+              rootAtFrac(staticNormalRoots, 0.32),
+              rootAtFrac(staticNormalRoots, 0.68),
+              ...l1.slice(0, 2),
+            ]),
           )
         : [];
       for (const ri of restRoots)
@@ -1162,6 +1241,7 @@ export default function PhotorealHomeHero({
           alt: false,
           age: 1,
           settled: true,
+          l1Center: !!tree.roots[ri]?.l1,
         });
     }
 
@@ -1456,17 +1536,19 @@ export default function PhotorealHomeHero({
         // to a deep blue heart that fades. Reads as a distinct L1 event.
         if (p.phase === 3) {
           const fl = clamp(p.age / FLASH_DUR, 0, 1);
-          // sharp attack (first ~14%) → smooth decay: the blast envelope.
-          const blm = fl < 0.14 ? fl / 0.14 : Math.pow(1 - (fl - 0.14) / 0.86, 1.8);
+          // Fast attack, faster fade: a blink/pop rather than a lingering orb.
+          const attack = fl < 0.1 ? fl / 0.1 : 1;
+          const decay = fl < 0.1 ? 1 : Math.pow(1 - (fl - 0.1) / 0.9, 2.35);
+          const blm = attack * decay;
           // a couple of quick blue flickers on the way up sell the "connect".
-          const flick = fl < 0.32 ? 0.78 + 0.22 * Math.sin(fl * 64) : 1;
+          const flick = fl < 0.24 ? 0.82 + 0.18 * Math.sin(fl * 78) : 1;
           // per-blast variety so each connection reads as INDIVIDUAL (size/timing
           // jitter keyed off the orb's stable r0) — not one uniform wash.
           const seed = p.r0 ?? 0.5;
-          const blastScale = 0.82 + ((seed * 5.17) % 1) * 0.5;
+          const blastScale = (p.l1Center ? 1.14 : 0.9) + ((seed * 5.17) % 1) * 0.35;
           // bright cyan-blue halo bloom
-          const rr = (7 + es * 5) * (1 + blm * 2.0) * blastScale;
-          ctx.globalAlpha = Math.min(0.82, 0.12 + blm * 0.5) * flick;
+          const rr = (7 + es * 5) * (1 + blm * 2.45) * blastScale;
+          ctx.globalAlpha = Math.min(0.88, blm * 0.64) * flick;
           ctx.drawImage(glowL1, x - rr, y - rr, rr * 2, rr * 2);
           // hottest cyan spark right at the blast peak
           if (blm > 0.25) {
@@ -1476,11 +1558,11 @@ export default function PhotorealHomeHero({
           }
           // the RADIATING blue shockwave: an expanding ring that bursts outward on
           // the attack and fades — the distinct "connection" pop for this tip.
-          if (fl < 0.62) {
-            const ringT = fl / 0.62;
+          if (fl < 0.5) {
+            const ringT = fl / 0.5;
             const ringR =
-              (3 + es * 2) + smooth01(ringT) * (BLAST_RING_R + es * 6) * blastScale;
-            const ringA = (1 - ringT) * 0.6 * flick;
+              (4 + es * 2) + smooth01(ringT) * (BLAST_RING_R + es * 8) * blastScale;
+            const ringA = Math.pow(1 - ringT, 1.35) * 0.72 * flick;
             ctx.globalAlpha = ringA;
             ctx.strokeStyle = `rgba(${L1_SPARK_RGB},${ringA})`;
             ctx.lineWidth = 2.0 * (1 - ringT) + 0.5;
@@ -1496,15 +1578,27 @@ export default function PhotorealHomeHero({
             ctx.arc(x, y, ring2, 0, Math.PI * 2);
             ctx.stroke();
           }
+          // Packets that enter the hollow get a tight inner blue entry ripple.
+          if (p.l1Center && fl < 0.38) {
+            const entryT = fl / 0.38;
+            const entryA = Math.pow(1 - entryT, 1.55) * 0.58 * flick;
+            ctx.globalAlpha = entryA;
+            ctx.strokeStyle = `rgba(${L1_GLOW_RGB},${entryA})`;
+            ctx.lineWidth = 1.6 * (1 - entryT) + 0.35;
+            ctx.beginPath();
+            ctx.arc(x, y, (5 + es * 2) + smooth01(entryT) * 18 * blastScale, 0, Math.PI * 2);
+            ctx.stroke();
+          }
           // a hot cyan radial flare at the very peak — emphasises the burst.
           if (blm > 0.55) {
             const fr = (BLAST_SPARK_R + es * 3) * blm * blastScale;
             ctx.globalAlpha = (blm - 0.55) * 0.9 * flick;
             ctx.drawImage(glowL1Spark, x - fr, y - fr, fr * 2, fr * 2);
           }
-          // the deep Cardano-blue settled heart
-          ctx.globalAlpha = Math.min(0.92, 0.2 + blm * 0.72);
-          ctx.fillStyle = `rgba(${blm > 0.45 ? L1_SPARK_RGB : L1_CORE_RGB},${Math.min(0.92, 0.2 + blm * 0.72)})`;
+          // the blue heart fades fully out with the shockwave.
+          const heartA = Math.min(0.9, blm * 0.86 * flick);
+          ctx.globalAlpha = heartA;
+          ctx.fillStyle = `rgba(${blm > 0.45 ? L1_SPARK_RGB : L1_CORE_RGB},${heartA})`;
           ctx.beginPath();
           ctx.arc(x, y, 1.2 + es * 1.0 + blm * 3.2, 0, Math.PI * 2);
           ctx.fill();
