@@ -196,9 +196,9 @@ h2 em,
    Panels & cards — flatter, hairline, corner ticks; gold top-line stays.
    ------------------------------------------------------------------------- */
 .panel {
-  background: linear-gradient(180deg, rgba(244, 241, 230, 0.02), transparent 45%),
-    rgba(8, 13, 9, 0.62);
-  border: 1px solid var(--panel-edge);
+  background: linear-gradient(180deg, rgba(244, 241, 230, 0.03), transparent 45%),
+    rgba(8, 13, 9, 0.76);
+  border: 1px solid var(--panel-edge-strong);
   border-radius: var(--r);
 }
 .card__num {
@@ -442,31 +442,6 @@ h2 em,
   background-position: center;
   will-change: transform;
 }
-/* giant outlined stratum numeral — editorial depth layered between the
-   plate and the copy, pinned with the stage and counter-drifting a touch */
-.v2-scene__ghost {
-  position: absolute;
-  right: 2%;
-  bottom: 4%;
-  z-index: 1;
-  font-family: var(--font-mono);
-  font-size: clamp(170px, 26vw, 420px);
-  font-weight: 700;
-  line-height: 0.8;
-  letter-spacing: -0.05em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(244, 241, 230, 0.085);
-  pointer-events: none;
-  user-select: none;
-}
-@media (max-width: 760px) {
-  .v2-scene__ghost {
-    font-size: clamp(120px, 38vw, 200px);
-    right: 4%;
-    bottom: 6%;
-    -webkit-text-stroke-color: rgba(244, 241, 230, 0.065);
-  }
-}
 
 .v2-scene__veil {
   position: absolute;
@@ -603,6 +578,59 @@ h2 em,
   height: 34px;
   background: linear-gradient(180deg, var(--green-bright), transparent);
   animation: v2-cue 2.2s var(--ease) infinite;
+}
+.v2-hero-thesis {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  padding: clamp(86px, 12vh, 132px) var(--gut) clamp(54px, 9vh, 96px);
+  pointer-events: none;
+}
+.v2-hero-thesis::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(4, 7, 5, 0.92), rgba(4, 7, 5, 0.76) 43%, rgba(4, 7, 5, 0.18) 72%, transparent);
+}
+.v2-hero-thesis__inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+}
+.v2-hero-thesis h2 {
+  margin: 24px 0 0;
+  max-width: 10.5em;
+  font-size: clamp(32px, 5vw, 82px);
+  line-height: 1.04;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--bone);
+  text-wrap: balance;
+}
+.v2-hero-thesis .v2-statement {
+  max-width: none;
+  margin: clamp(24px, 4.8vh, 54px) 0 0;
+  padding: 0;
+}
+.v2-hero-thesis .v2-statement p {
+  max-width: 21em;
+  font-size: clamp(19px, 2.2vw, 34px);
+  line-height: 1.28;
+  color: rgba(232, 238, 229, 0.82);
+}
+.v2-hero-thesis .v2-statement .w {
+  opacity: 1;
+}
+.v2-hero-thesis .v2-statement .hi {
+  color: var(--bone);
+}
+.v2-hero-thesis .v2-statement .hi-green {
+  color: var(--green-bright);
 }
 @keyframes v2-cue {
   0% {
@@ -770,6 +798,10 @@ h2 em,
   padding: 20px 20px 18px;
   text-decoration: none;
 }
+#explore .panel.v2-explore__card {
+  background: linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
+    rgba(5, 11, 8, 0.72);
+}
 .v2-explore__num {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -806,8 +838,8 @@ h2 em,
   padding: 18px 18px 16px;
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
-  background: linear-gradient(180deg, rgba(244, 241, 230, 0.025), transparent 42%),
-    rgba(5, 11, 8, 0.55);
+  background: linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
+    rgba(5, 11, 8, 0.72);
 }
 .v2-tile .k {
   font-family: var(--font-mono);
@@ -851,7 +883,7 @@ h2 em,
   border: 1px solid var(--hairline);
 }
 .v2-duel__side {
-  background: rgba(5, 9, 6, 0.78);
+  background: rgba(5, 9, 6, 0.86);
   padding: clamp(26px, 4vh, 48px) clamp(20px, 3vw, 44px);
 }
 .v2-duel__side .tag {
@@ -877,7 +909,7 @@ h2 em,
 .v2-duel__side[data-side="us"] {
   background:
     radial-gradient(120% 100% at 100% 0%, rgba(78, 243, 131, 0.06), transparent 55%),
-    rgba(5, 9, 6, 0.78);
+    rgba(5, 9, 6, 0.86);
 }
 .v2-duel__side ul {
   list-style: none;
@@ -960,8 +992,8 @@ h2 em,
   padding: 22px 22px 20px;
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
-  background: linear-gradient(180deg, rgba(244, 241, 230, 0.025), transparent 42%),
-    rgba(5, 11, 8, 0.55);
+  background: linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
+    rgba(5, 11, 8, 0.72);
 }
 .v2-phase[data-state="later"] {
   --accent: var(--gold-bright);
@@ -1122,38 +1154,117 @@ h2 em,
 .plate-stage__img {
   background-image: url("/plates/worldtree-tall-4k.avif");
 }
+.stage-graphic__card {
+  align-items: flex-start;
+  background: linear-gradient(
+    100deg,
+    rgba(8, 14, 11, 0.88),
+    rgba(8, 14, 11, 0.72) 72%,
+    rgba(8, 14, 11, 0.54)
+  );
+  backdrop-filter: blur(11px) saturate(1.1);
+  -webkit-backdrop-filter: blur(11px) saturate(1.1);
+}
+.stage-graphic__body {
+  flex: 1 1 auto;
+}
+.stage-graphic__rail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(18px, 1fr));
+  gap: 5px;
+  margin-top: 12px;
+}
+.stage-graphic__rail span {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(215, 226, 216, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(215, 226, 216, 0.05);
+}
+.stage-graphic__rail span[data-active="true"] {
+  background: rgba(var(--sg), 0.55);
+  box-shadow: 0 0 10px -3px rgba(var(--sg), 0.8);
+}
+.stage-graphic__rail span[data-current="true"] {
+  background: rgb(var(--sg));
+}
+.stage-graphic__readouts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+  margin: 13px 0 0;
+}
+.stage-graphic__readout {
+  display: grid;
+  grid-template-columns: minmax(58px, 0.44fr) 1fr;
+  gap: 10px;
+  align-items: baseline;
+  padding-top: 7px;
+  border-top: 1px solid rgba(215, 226, 216, 0.1);
+}
+.stage-graphic__readout dt {
+  margin: 0;
+  font: 9px/1 var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.stage-graphic__readout dd {
+  margin: 0;
+  color: var(--text-hi);
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+.stage-graphic__readout[data-tone="bridge"] dd {
+  color: var(--gold-bright);
+}
+.stage-graphic__readout[data-tone="l1"] dd {
+  color: #6fe0ff;
+}
 /* larger badge on desktop only — the small-screen rules in globals.css
    must keep winning below 941px */
 @media (min-width: 941px) {
   .stage-graphic {
-    max-width: 360px;
+    max-width: 480px;
   }
   .stage-graphic__card {
-    gap: 16px;
-    padding: 16px 22px 17px 17px;
+    gap: 18px;
+    padding: 20px 26px 22px 19px;
   }
   .stage-graphic__medallion {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
   }
   .stage-graphic__medallion svg {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
   }
   .stage-graphic__tag {
-    font-size: 10.5px;
-    padding: 4px 10px;
+    font-size: 11px;
+    padding: 5px 11px;
   }
   .stage-graphic__name {
-    font-size: 26px;
+    font-size: 34px;
   }
   .stage-graphic__line {
-    font-size: 13.5px;
-    max-width: 30ch;
+    font-size: 15px;
+    max-width: 35ch;
   }
   .stage-graphic__count {
     font-size: 12px;
+  }
+  .stage-graphic__readouts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .stage-graphic__readout {
+    display: block;
+    min-width: 0;
+    padding-top: 9px;
+  }
+  .stage-graphic__readout dd {
+    margin-top: 5px;
+    font-size: 12.5px;
   }
 }
 
@@ -1230,6 +1341,35 @@ h2 em,
     font-size: clamp(32px, 9.6vw, 58px);
     line-height: 1.04;
   }
+  .v2-hero-thesis {
+    align-items: center;
+    padding: 86px var(--gut) 42px;
+  }
+  .v2-hero-thesis::before {
+    background: linear-gradient(180deg, transparent 0%, rgba(4, 7, 5, 0.78) 35%, rgba(4, 7, 5, 0.95) 100%);
+  }
+  .v2-hero-thesis .v2-ch__index {
+    gap: 12px;
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+  }
+  .v2-hero-thesis .v2-ch__index .rule {
+    flex-basis: 30px;
+  }
+  .v2-hero-thesis h2 {
+    margin-top: 18px;
+    font-size: clamp(30px, 9vw, 44px);
+  }
+  .v2-hero-thesis .v2-statement {
+    margin-top: 20px;
+  }
+  .v2-hero-thesis .v2-statement p {
+    font-size: clamp(16px, 4.6vw, 20px);
+    line-height: 1.32;
+  }
+  .v2-hero-thesis .v2-statement p + p {
+    margin-top: 1em;
+  }
   .v2-hero__meta {
     flex-direction: column;
     align-items: flex-start;
@@ -1275,4 +1415,7 @@ h2 em,
 .v2-home[data-motion="off"] .v2-hero__scrollcue .line,
 .v2-home[data-motion="off"] .v2-hero__eyebrow .tick {
   animation: none;
+}
+.v2-home[data-motion="off"] .v2-hero-thesis {
+  display: none;
 }

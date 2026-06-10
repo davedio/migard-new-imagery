@@ -53,7 +53,7 @@ export function usePointerParallax(motionOn: boolean) {
       ptr.current.x = (e.clientX / window.innerWidth) * 2 - 1;
       ptr.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
     };
-    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointermove", onMove, { passive: true });
     return () => window.removeEventListener("pointermove", onMove);
   }, [motionOn]);
   return ptr;
@@ -65,6 +65,18 @@ export type BarkMaps = {
   rough: THREE.Texture;
   ao: THREE.Texture;
 };
+
+function configureBarkTexture(
+  texture: THREE.Texture,
+  colorSpace: THREE.ColorSpace,
+  repeat?: THREE.Vector2,
+) {
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.anisotropy = 8;
+  texture.colorSpace = colorSpace;
+  if (repeat) texture.repeat.copy(repeat);
+  texture.needsUpdate = true;
+}
 
 /**
  * Shared bark textures (1K WebP, ~1.3MB total) — moved verbatim from the
@@ -80,15 +92,10 @@ export function useBarkMaps(): BarkMaps {
     "/textures/bark/oak_ao_1k.webp",
   ]);
   useMemo(() => {
-    for (const t of [diff, nor, rough, ao]) {
-      t.wrapS = t.wrapT = THREE.RepeatWrapping;
-      t.anisotropy = 8;
-      t.needsUpdate = true;
-    }
-    diff.colorSpace = THREE.SRGBColorSpace;
-    nor.colorSpace = THREE.NoColorSpace;
-    rough.colorSpace = THREE.NoColorSpace;
-    ao.colorSpace = THREE.NoColorSpace;
+    configureBarkTexture(diff, THREE.SRGBColorSpace);
+    configureBarkTexture(nor, THREE.NoColorSpace);
+    configureBarkTexture(rough, THREE.NoColorSpace);
+    configureBarkTexture(ao, THREE.NoColorSpace);
   }, [diff, nor, rough, ao]);
   return { diff, nor, rough, ao };
 }
@@ -101,16 +108,10 @@ export function cloneBarkMaps(maps: BarkMaps, repeat: THREE.Vector2): BarkMaps {
     rough: maps.rough.clone(),
     ao: maps.ao.clone(),
   };
-  for (const t of [c.diff, c.nor, c.rough, c.ao]) {
-    t.wrapS = t.wrapT = THREE.RepeatWrapping;
-    t.repeat.copy(repeat);
-    t.anisotropy = 8;
-    t.needsUpdate = true;
-  }
-  c.diff.colorSpace = THREE.SRGBColorSpace;
-  c.nor.colorSpace = THREE.NoColorSpace;
-  c.rough.colorSpace = THREE.NoColorSpace;
-  c.ao.colorSpace = THREE.NoColorSpace;
+  configureBarkTexture(c.diff, THREE.SRGBColorSpace, repeat);
+  configureBarkTexture(c.nor, THREE.NoColorSpace, repeat);
+  configureBarkTexture(c.rough, THREE.NoColorSpace, repeat);
+  configureBarkTexture(c.ao, THREE.NoColorSpace, repeat);
   return c;
 }
 

@@ -55,6 +55,8 @@ type Stage = {
   name: string;
   /** one compact line of supporting copy */
   line: string;
+  /** larger HUD readouts for the active step */
+  readouts: { k: string; v: string; tone?: Layer }[];
   layer: Layer;
 };
 
@@ -68,6 +70,11 @@ const STAGES: Stage[] = [
     tag: "Off-chain · L2",
     name: "Submit",
     line: "Validated against eUTXO rules — a soft confirmation, no L1 block wait.",
+    readouts: [
+      { k: "Action", v: "Validate transaction" },
+      { k: "Trust", v: "eUTXO rules" },
+      { k: "Signal", v: "Soft confirmation" },
+    ],
     layer: "l2",
   },
   {
@@ -75,6 +82,11 @@ const STAGES: Stage[] = [
     tag: "L2 Operator",
     name: "Sequence",
     line: "The operator orders transactions and assembles a block.",
+    readouts: [
+      { k: "Action", v: "Order transactions" },
+      { k: "Output", v: "Layer 2 block" },
+      { k: "Signal", v: "Execution fixed" },
+    ],
     layer: "l2",
   },
   {
@@ -82,6 +94,11 @@ const STAGES: Stage[] = [
     tag: "L1 State Queue",
     name: "Commit",
     line: "The block header enters Cardano's on-chain state queue, operator bond locked.",
+    readouts: [
+      { k: "Action", v: "Post commitment", tone: "bridge" },
+      { k: "Anchor", v: "Cardano queue", tone: "bridge" },
+      { k: "Bond", v: "Operator locked" },
+    ],
     layer: "l2",
   },
   {
@@ -89,6 +106,11 @@ const STAGES: Stage[] = [
     tag: "Challenge Window",
     name: "Watch",
     line: "Watchers replay every transaction and check validity against Cardano.",
+    readouts: [
+      { k: "Action", v: "Replay block", tone: "bridge" },
+      { k: "Check", v: "Fraud proof ready", tone: "bridge" },
+      { k: "Window", v: "Challenge active", tone: "bridge" },
+    ],
     layer: "bridge",
   },
   {
@@ -96,6 +118,11 @@ const STAGES: Stage[] = [
     tag: "L1 Confirmed",
     name: "Settle",
     line: "No fraud, maturity ends — merged into state, as final as Cardano itself.",
+    readouts: [
+      { k: "Action", v: "Merge state", tone: "l1" },
+      { k: "Root", v: "Cardano L1", tone: "l1" },
+      { k: "Status", v: "Confirmed", tone: "l1" },
+    ],
     layer: "l1",
   },
 ];
@@ -221,12 +248,11 @@ export default function StageGraphic({
         const bw = rect.width || 240;
         const bh = rect.height || 96;
         const m = 16; // viewport margin
-        // Pinned to the RIGHT of the tree (client request): the badge holds a
-        // steady right-rail x — clear of the trunk focal action — and rides
-        // VERTICALLY with the packet down the canopy -> roots journey.
+        // Pinned to the RIGHT of the tree: the larger HUD holds a steady
+        // right-rail x and rides vertically with the packet down the journey.
         const left = clamp(
-          Math.max(W * 0.6, pk.x + 56),
-          W * 0.5,
+          Math.max(W * 0.58, pk.x + 64),
+          W * 0.48,
           W - bw - m,
         );
         // vertically centre the badge on the packet head
@@ -235,11 +261,10 @@ export default function StageGraphic({
         top = clamp(top, m + 56, H - bh - m);
         el.style.transform = `translate3d(${left.toFixed(1)}px, ${top.toFixed(1)}px, 0)`;
         el.dataset.side = "right";
-        // reveal once positioned; fade down at the very top so the hero/intro
-        // breathes, back up once the journey begins. This loop is the sole
-        // authority for --sg-fade while tracking.
+        // reveal as soon as the packet position is real. The HUD is part of
+        // the opening read, so it stays visible from the first frame.
         positioned = true;
-        el.style.setProperty("--sg-fade", progress.get() < 0.02 ? "0" : "1");
+        el.style.setProperty("--sg-fade", "1");
       } else if (!positioned) {
         el.style.setProperty("--sg-fade", "0");
       }
@@ -279,6 +304,23 @@ export default function StageGraphic({
           </div>
           <div className="stage-graphic__name">{s.name}</div>
           <p className="stage-graphic__line">{s.line}</p>
+          <div className="stage-graphic__rail" aria-hidden>
+            {STAGES.map((stage, i) => (
+              <span
+                key={stage.id}
+                data-active={i <= active}
+                data-current={i === active}
+              />
+            ))}
+          </div>
+          <dl className="stage-graphic__readouts">
+            {s.readouts.map((row) => (
+              <div className="stage-graphic__readout" data-tone={row.tone ?? s.layer} key={row.k}>
+                <dt>{row.k}</dt>
+                <dd>{row.v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </div>

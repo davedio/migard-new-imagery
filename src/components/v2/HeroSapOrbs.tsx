@@ -26,16 +26,16 @@ import { useMotionPref } from "@/lib/motion";
 const PLATE_SRC = "/v2/hero-wide.avif";
 /* must mirror the plate div's background-position (desktop / ≤760px).
    Desktop pos-x is a RAMP synced with HomeV2's platePosX: the camera
-   turns toward the tree (72% -> 56%) through the dissolve. */
-const POS_MOBILE = { x: 0.78, y: 0.32 };
+   turns toward the tree (88% -> 100%) through the dissolve. */
+const POS_MOBILE = { x: 0.92, y: 0.32 };
 const POS_DESKTOP_Y = 0.38;
 const posXAt = (p: number) =>
-  0.72 + 0.2 * Math.min(1, Math.max(0, (p - 0.15) / 0.55));
+  0.88 + 0.12 * Math.min(1, Math.max(0, (p - 0.15) / 0.57));
 
 const GRID_W = 384; // downsample width for the vein field
-const SPAWN_BAND: [number, number] = [0.03, 0.4]; // canopy band (image-y fraction)
+const SPAWN_BAND: [number, number] = [0.02, 0.58]; // canopy-to-trunk band (image-y fraction)
 const GREEN_MIN = 34; // vein threshold in the 0-255 dominance score
-const TAIL = 9; // comet tail samples
+const TAIL = 11; // comet tail samples
 const CURSOR_R = 110; // px (canvas space) — orbs near the pointer hurry
 const CURSOR_BOOST = 2.1;
 
@@ -88,6 +88,7 @@ export default function HeroSapOrbs({
     let raf = 0;
     let running = false;
     let disposed = false;
+    let visible = false;
 
     /* ---- vein field ---- */
     let field: Uint8Array | null = null;
@@ -101,7 +102,6 @@ export default function HeroSapOrbs({
     const spawnSites: { x: number; y: number }[] = [];
 
     const img = new Image();
-    img.src = PLATE_SRC;
     img.onload = () => {
       if (disposed) return;
       imgW = img.naturalWidth;
@@ -150,7 +150,7 @@ export default function HeroSapOrbs({
         }
       }
       trunkX = wsum > 0 ? xsum / wsum : imgW * 0.78;
-      start();
+      syncRunState();
     };
 
     const green = (ix: number, iy: number): number => {
@@ -195,7 +195,7 @@ export default function HeroSapOrbs({
     };
 
     /* ---- orbs ---- */
-    const orbCount = () => (window.innerWidth <= 760 ? 46 : 96);
+    const orbCount = () => (window.innerWidth <= 760 ? 68 : 128);
     const orbs: Orb[] = [];
 
     const spawn = (o?: Orb): Orb | null => {
@@ -210,7 +210,7 @@ export default function HeroSapOrbs({
       orb.y = site.y;
       orb.size = size;
       /* small = fast, big = slow + linger */
-      orb.speed = (38 - size * 11) * (0.85 + Math.random() * 0.3);
+      orb.speed = (44 - size * 11) * (0.9 + Math.random() * 0.34);
       orb.alpha = 0;
       orb.tail = [];
       orb.dying = false;
@@ -238,10 +238,10 @@ export default function HeroSapOrbs({
       last = now;
       if (!field || W === 0) return;
 
-      /* dissolve factor from the hero scroll runway — fully formed by ~half
-         the runway, then HELD: the spin owns the rest of the scroll */
+      /* dissolve factor from the hero scroll runway — the lights first travel
+         down the tree, then break apart into the helix for the thesis phase. */
       const p = progressRef?.current ?? 0;
-      const d = smooth01((p - 0.18) / 0.3);
+      const d = smooth01((p - 0.38) / 0.34);
       /* the camera turn (synced with the plate's background-position ramp) */
       if (!mobile) offX = (W - imgW * scale) * posXAt(p);
 
@@ -251,7 +251,7 @@ export default function HeroSapOrbs({
         const o = spawn();
         if (!o) break;
         /* stagger initial fill down the tree so it doesn't pop in as a band */
-        o.y += Math.random() * imgH * 0.45;
+        o.y += Math.random() * imgH * 0.7;
         orbs.push(o);
       }
       if (orbs.length > want + 12) orbs.length = want + 12;
@@ -363,18 +363,18 @@ export default function HeroSapOrbs({
           const tp = o.tail[i];
           ctx.beginPath();
           ctx.arc(tp.x, tp.y, r * (1 - t * 0.72), 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * (0.16 + d * 0.12) * (1 - t)).toFixed(3)})`;
+          ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * (0.24 + d * 0.18) * (1 - t)).toFixed(3)})`;
           ctx.fill();
         }
         ctx.beginPath();
         ctx.arc(cx, cy, r * 2.3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * (0.15 + d * 0.18)).toFixed(3)})`;
+        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * (0.24 + d * 0.26)).toFixed(3)})`;
         ctx.fill();
         ctx.beginPath();
         ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * (0.85 + d * 0.15) * lerp(1, depthMod, d * 0.55)).toFixed(3)})`;
+        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * (0.94 + d * 0.06) * lerp(1, depthMod, d * 0.55)).toFixed(3)})`;
         ctx.shadowColor = "rgba(0, 255, 102, 0.95)";
-        ctx.shadowBlur = 10 + d * 14;
+        ctx.shadowBlur = 14 + d * 18;
         ctx.fill();
         ctx.shadowBlur = 0;
       }
@@ -392,17 +392,22 @@ export default function HeroSapOrbs({
       running = false;
       cancelAnimationFrame(raf);
     };
+    const syncRunState = () => (visible && !document.hidden && field ? start() : stop());
 
     const io = new IntersectionObserver(
-      ([entry]) => (entry.isIntersecting && field ? start() : stop()),
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        syncRunState();
+      },
       { threshold: 0.02 },
     );
     io.observe(host);
-    const onVis = () => (document.hidden ? stop() : field && start());
+    const onVis = syncRunState;
     const ro = new ResizeObserver(fit);
     ro.observe(host);
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("pointermove", onMove, { passive: true });
+    img.src = PLATE_SRC;
 
     return () => {
       disposed = true;
@@ -412,7 +417,7 @@ export default function HeroSapOrbs({
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("pointermove", onMove);
     };
-  }, [motionOn]);
+  }, [motionOn, progressRef]);
 
   if (!motionOn) return null;
   return (

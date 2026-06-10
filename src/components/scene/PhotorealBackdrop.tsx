@@ -131,16 +131,16 @@ function stageOf(p: number): { idx: number; local: number } {
    wide fallback uses a gentler set.
    ================================================================ */
 type Focal = { focY: number; scale: number };
-/* Client direction (2026-06-10): open ZOOMED INTO THE CANOPY so Submit
-   plays up close among the lit leaves, pull back slightly and descend the
-   trunk stage by stage, then push BACK IN at the bottom so settlement lands
-   inside the cobalt L1 root chamber. */
+/* Client direction (2026-06-10): open with the transaction packet already
+   visible and tracked. The first two dwells stay lower/less zoomed than the
+   old canopy push-in so Submit + Sequence do not drift above the viewport;
+   the lower half keeps the smoother descent that was already working. */
 const FOCALS_TALL: Focal[] = [
-  { focY: 6, scale: 1.44 }, // SUBMIT   · in the canopy (still reads as the tree)
-  { focY: 30, scale: 1.22 }, // SEQUENCE · upper trunk
-  { focY: 54, scale: 1.24 }, // COMMIT   · mid trunk
-  { focY: 76, scale: 1.2 }, // WATCH    · lower trunk / bridge
-  { focY: 99, scale: 1.34 }, // SETTLE   · into the cobalt L1 vault
+  { focY: -2, scale: 1.18 }, // SUBMIT   · visible packet in the upper canopy
+  { focY: 12, scale: 1.15 }, // SEQUENCE · upper trunk, still tracking the head
+  { focY: 38, scale: 1.18 }, // COMMIT   · mid trunk
+  { focY: 66, scale: 1.17 }, // WATCH    · lower trunk / bridge
+  { focY: 98, scale: 1.3 }, // SETTLE   · into the cobalt L1 vault
 ];
 const FOCALS_WIDE: Focal[] = [
   { focY: 18, scale: 1.34 },
@@ -153,16 +153,14 @@ const FOCALS_WIDE: Focal[] = [
 /* Eased camera path: hold near the active stage's focal point for the
    first ~70% of the stage (the DWELL where the beat plays and breathes),
    then ease GENTLY to the next stage's focal point over the last ~30% (the
-   TRAVEL). Stage 0 opens on a WIDE ESTABLISHING SHOT (the whole tree, so
-   the intro copy has context) and pushes INTO the canopy through the first
-   half of Submit — nothing is hidden at the top of the page (review
-   2026-06-10 pm). Returns the interpolated {focY, scale}. */
-const ESTABLISH: Focal = { focY: 34, scale: 1.06 };
+   TRAVEL). Stage 0 now starts on the packet, not an establishing offset, so
+   the first frame already has the orb in view. */
+const ESTABLISH: Focal = { focY: -2, scale: 1.16 };
 function cameraAt(idx: number, local: number, focals: Focal[]): Focal {
   let here = focals[idx];
   if (idx === 0) {
     // wide establish -> push-in to the canopy as Submit begins
-    const pushIn = smooth(clamp(local / 0.55));
+      const pushIn = smooth(clamp(local / 0.45));
     here = {
       focY: lerp(ESTABLISH.focY, here.focY, pushIn),
       scale: lerp(ESTABLISH.scale, here.scale, pushIn),
@@ -675,9 +673,10 @@ export default function PhotorealBackdrop({
 
     /* the packet's path, in image space: canopy -> down the MEASURED
        centerline -> into the vault. Replaces the old viewport path. */
+    const PACKET_START_V = 0.14;
     const packetUV = (p: number, t: number) => {
       const e = smooth(p);
-      const v = lerp(0.085, anat.ready ? anat.vaultV - 0.01 : 0.9, e);
+      const v = lerp(PACKET_START_V, anat.ready ? anat.vaultV - 0.01 : 0.9, e);
       const narrow = lerp(1, 0.16, e);
       const sway =
         (Math.sin(t * 0.9 + p * 7.0) * 0.6 + Math.sin(t * 1.7 + 1.3) * 0.25) *
@@ -821,7 +820,9 @@ export default function PhotorealBackdrop({
     // rather than a few visible segments — the hallmark of the polished look.
     const WAKE = 64;
     const wake: { x: number; y: number }[] = [];
-    for (let i = 0; i < WAKE; i++) wake.push({ x: cAt(0.085), y: 0.085 });
+    for (let i = 0; i < WAKE; i++) {
+      wake.push({ x: cAt(PACKET_START_V), y: PACKET_START_V });
+    }
 
     // confirmation ripple rings spawned at settlement
     type Ring = { t: number; born: number };
@@ -1318,7 +1319,7 @@ export default function PhotorealBackdrop({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [model, motionOn, packetRef, progressRef]);
+  }, [model, motionOn, packetRef, progressRef, wide]);
 
   return (
     <div

@@ -15,7 +15,7 @@
   padding: 10px 14px;
   border: 1px solid var(--panel-edge);
   border-radius: var(--r);
-  background: rgba(5, 11, 8, 0.4);
+  background: rgba(5, 11, 8, 0.62);
   font-family: var(--font-mono);
   font-size: 11.5px;
   letter-spacing: 0.04em;
@@ -446,7 +446,7 @@ a.copyValue:hover {
   font-size: 11px;
   letter-spacing: 0.05em;
   color: var(--text-dim);
-  background: rgba(5, 11, 8, 0.5);
+  background: rgba(5, 11, 8, 0.68);
 }
 .codeDot {
   width: 7px;

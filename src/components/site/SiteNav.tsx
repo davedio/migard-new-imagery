@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -59,31 +59,45 @@ const PROTOCOL_ROUTES = ["/how-it-works", "/security", "/contracts"];
 export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
-  const [drop, setDrop] = useState(false);
+  const [dropMenu, setDropMenu] = useState({ pathname: "", open: false });
   const [scrolled, setScrolled] = useState(false);
   const dropRef = useRef<HTMLDivElement | null>(null);
   const closeTimer = useRef<number | null>(null);
 
   const open = menu.open && menu.pathname === pathname;
+  const drop = dropMenu.open && dropMenu.pathname === pathname;
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 16);
-    onScroll();
+    let last = false;
+    const syncInitial = window.requestAnimationFrame(() => {
+      last = window.scrollY > 16;
+      setScrolled(last);
+    });
+    const onScroll = () => {
+      const next = window.scrollY > 16;
+      if (next === last) return;
+      last = next;
+      setScrolled(next);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.cancelAnimationFrame(syncInitial);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
-  /* Dropdown closes on route change, Escape, and outside click. */
-  useEffect(() => setDrop(false), [pathname]);
+  const closeDrop = useCallback(() => setDropMenu({ pathname, open: false }), [pathname]);
+
+  /* Dropdown closes on Escape and outside click. */
   useEffect(() => {
     if (!drop) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDrop(false);
+      if (e.key === "Escape") closeDrop();
     };
     const onDown = (e: PointerEvent) => {
       if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
-        setDrop(false);
+        closeDrop();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -92,7 +106,7 @@ export function SiteNav() {
       window.removeEventListener("keydown", onKey);
       window.removeEventListener("pointerdown", onDown);
     };
-  }, [drop]);
+  }, [closeDrop, drop]);
 
   useEffect(
     () => () => {
@@ -103,11 +117,11 @@ export function SiteNav() {
 
   const hoverOpen = () => {
     if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-    setDrop(true);
+    setDropMenu({ pathname, open: true });
   };
   const hoverClose = () => {
     if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setDrop(false), 140);
+    closeTimer.current = window.setTimeout(closeDrop, 140);
   };
 
   const closeMenu = () => setMenu({ pathname, open: false });
@@ -148,7 +162,7 @@ export function SiteNav() {
             onPointerLeave={hoverClose}
             onFocus={hoverOpen}
             onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) setDrop(false);
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) closeDrop();
             }}
           >
             <button
@@ -157,7 +171,12 @@ export function SiteNav() {
               data-active={protocolActive}
               aria-expanded={drop}
               aria-haspopup="true"
-              onClick={() => setDrop((d) => !d)}
+              onClick={() =>
+                setDropMenu((state) => ({
+                  pathname,
+                  open: state.pathname === pathname ? !state.open : true,
+                }))
+              }
             >
               How It Works
               <span className="site-nav__chevron" data-open={drop} aria-hidden>
@@ -173,7 +192,7 @@ export function SiteNav() {
                   role="menuitem"
                   className="site-nav__drop-item"
                   data-active={isActive(item.href)}
-                  onClick={() => setDrop(false)}
+                  onClick={closeDrop}
                 >
                   <span className="site-nav__drop-label">{item.label}</span>
                   <span className="site-nav__drop-sub">{item.sub}</span>

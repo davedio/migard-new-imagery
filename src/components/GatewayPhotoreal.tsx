@@ -43,11 +43,6 @@ const PhotorealHomeHero = dynamic(() => import("./scene/PhotorealHomeHero"), {
   ssr: false,
 });
 
-// Click-and-hold green "draw with light" orb — reused from How It Works.
-// Self-contained fixed canvas, pointer-events:none, gated to desktop + fine
-// pointer + motion-on (never blocks clicks/scroll).
-const LightOrbLayer = dynamic(() => import("./LightOrbLayer"), { ssr: false });
-
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
 function getHeroSafeRightEdge(viewportWidth: number) {
@@ -407,18 +402,6 @@ export default function GatewayPhotoreal() {
 
   const { motionOn, toggle } = useMotionPref();
 
-  // Desktop + fine-pointer gate for the click-and-hold draw orb (matches How
-  // It Works): only paint light where there's a precise cursor + motion is on.
-  const [finePointer, setFinePointer] = useState(false);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(pointer: fine)");
-    const apply = () => setFinePointer(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
-
   const params = deriveParams(snap);
 
   return (
@@ -432,9 +415,6 @@ export default function GatewayPhotoreal() {
           <StaticTreeHero snap={snap} motionOn={motionOn} />
         )}
       </div>
-
-      {/* draw-with-light orb, above the plate (z:2) and below content (z:10) */}
-      <LightOrbLayer enabled={motionOn && finePointer} />
 
       <main className="content">
         <Hero />

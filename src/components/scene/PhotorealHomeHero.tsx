@@ -117,15 +117,6 @@ const L1_HOLLOW_ROUTE_CHANCE = 0.34; // some, not all, packets enter the blue L1
 const MAX_CONCURRENT_BLASTS = 2;
 const ROOT_SLOT_COOLDOWN = 1.4; // sim-s (EFFECTIVE ~2s) before the same root fan blooms again
 
-/* ── QUEUED-ORB DRIFT at the batcher pockets ──
-   The old per-frame sine wobble (1.8 rad/s) twitched like a pinball. Queued
-   orbs now ride a SLOW orbital drift (0.7 rad/s sim ⇒ ~0.5 rad/s EFFECTIVE,
-   small radius) and ease into their slot with a critically-damped spring —
-   no instantaneous jumps, no direction reversals. Orbs glide. */
-const QUEUE_ORBIT_W = 0.7; // rad/s (sim) orbital angular frequency
-const QUEUE_ORBIT_R = 2.3; // px orbital radius
-const QUEUE_SPRING = 26; // spring stiffness for the slot glide (critically damped)
-
 /* ── BATCHER / SEQUENCER tunables ──
    Canopy orbs stay small and distributed, then temporarily queue in 3-5 local
    batcher pockets at the fork. Each pocket grows only modestly, holds for a

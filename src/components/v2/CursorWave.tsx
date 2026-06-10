@@ -29,7 +29,7 @@ import { useMotionPref } from "@/lib/motion";
 
 const RADIUS = 100; // px influence radius around the pointer — a tight disc
 const SCATTER = 20; // max displacement: letters break apart IN PLACE, not spray
-const LINK_F = 3.4; // link reach = sample stride × this
+const LINK_F = 4.8; // link reach = sample stride × this
 
 function splitChars(node: ReactNode, k: { n: number }): ReactNode {
   if (typeof node === "string") {
@@ -119,6 +119,7 @@ export function WaveText({
     let py = -9999;
     let pin = false; // pointer inside the influence zone
     let t = 0;
+    let nearViewport = false;
 
     const build = () => {
       const rr = root.getBoundingClientRect();
@@ -249,8 +250,8 @@ export function WaveText({
       /* filaments between close, active orbs — the connected constellation.
          Hard cap on the pair pass so dense headings can never jank a frame. */
       const reach = stride * LINK_F;
-      ctx.lineWidth = 1.15;
-      const linkN = Math.min(act.length, 240);
+      ctx.lineWidth = 1.25;
+      const linkN = Math.min(act.length, 280);
       for (let i = 0; i < linkN; i++) {
         const a = act[i];
         for (let j = i + 1; j < linkN; j++) {
@@ -261,8 +262,8 @@ export function WaveText({
           if (dy > reach || dy < -reach) continue;
           const dist = Math.hypot(dx, dy);
           if (dist > reach) continue;
-          const al = Math.min(a.a, b.a) * (1 - dist / reach) * 0.42;
-          if (al < 0.02) continue;
+          const al = Math.min(a.a, b.a) * (1 - dist / reach) * 0.56;
+          if (al < 0.012) continue;
           ctx.strokeStyle = `rgba(78, 243, 131, ${al.toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(a.x + PAD, a.y + PAD);
@@ -310,6 +311,16 @@ export function WaveText({
       raf = requestAnimationFrame(tick);
     };
 
+    const resetVisuals = () => {
+      const w = canvas.width / DPR;
+      const h = canvas.height / DPR;
+      ctx.clearRect(0, 0, w, h);
+      chars.forEach((c) => {
+        c.style.opacity = "";
+        c.style.transform = "";
+      });
+    };
+
     const wake = () => {
       if (active) return;
       active = true;
@@ -318,6 +329,7 @@ export function WaveText({
     };
 
     const onMove = (e: PointerEvent) => {
+      if (!nearViewport) return;
       ex = e.clientX;
       ey = e.clientY;
       syncPointer(); // pure arithmetic against the cached rect
@@ -343,14 +355,24 @@ export function WaveText({
     ).requestIdleCallback;
     const idle = (cb: () => void) =>
       ric ? ric(cb) : window.setTimeout(cb, 60);
-    const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && particles.length === 0) {
-        idle(() => {
-          if (particles.length === 0) build();
-        });
-        io.disconnect();
-      }
-    });
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        nearViewport = entry.isIntersecting;
+        if (!nearViewport) {
+          active = false;
+          pin = false;
+          cancelAnimationFrame(raf);
+          resetVisuals();
+          return;
+        }
+        if (particles.length === 0) {
+          idle(() => {
+            if (nearViewport && particles.length === 0) build();
+          });
+        }
+      },
+      { rootMargin: "24% 0px" },
+    );
     io.observe(root);
     /* fonts may land late — resample once they're ready */
     void document.fonts?.ready.then(() => {
@@ -368,10 +390,7 @@ export function WaveText({
       window.clearTimeout(rebuildTimer);
       io.disconnect();
       cancelAnimationFrame(raf);
-      chars.forEach((c) => {
-        c.style.opacity = "";
-        c.style.transform = "";
-      });
+      resetVisuals();
     };
   }, [motionOn]);
 

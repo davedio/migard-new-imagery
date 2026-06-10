@@ -5,7 +5,7 @@
    One continuous cinematic fall down the world-tree:
 
      HERO        the tree, whole               (hero-wide plate)
-     01 CANOPY   the thesis — L2 execution     (canopy-macro plate)
+     01 CANOPY   the thesis — L2 execution     (black helix phase)
      02 TRUNK    choose your path              (strata-tall plate, trunk crop)
      03 ROOTS    the ledger — protocol facts   (roots-bedrock plate)
      04 STONE    why eUTXO + who builds it     (stone-rune plate)
@@ -45,7 +45,6 @@ import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { WaveText } from "./CursorWave";
 
-const LightOrbLayer = dynamic(() => import("../LightOrbLayer"), { ssr: false });
 const HeroSapOrbs = dynamic(() => import("./HeroSapOrbs"), { ssr: false });
 
 /* ---------------------------------------------------------------------- */
@@ -54,7 +53,6 @@ const HeroSapOrbs = dynamic(() => import("./HeroSapOrbs"), { ssr: false });
 
 const PLATES = {
   hero: "/v2/hero-wide.avif",
-  canopy: "/v2/canopy-macro.avif",
   strata: "/v2/strata-tall.avif",
   roots: "/v2/roots-bedrock.avif",
   stone: "/v2/stone-rune.avif",
@@ -186,15 +184,12 @@ function Scene({
   plate,
   position = "center",
   mobilePosition,
-  ghost,
   children,
 }: {
   id: string;
   plate: string;
   position?: string;
   mobilePosition?: string;
-  /** giant outlined stratum numeral pinned with the stage (editorial depth) */
-  ghost?: string;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLElement>(null);
@@ -202,7 +197,6 @@ function Scene({
   const progress = useViewProgress(ref);
   const y = useTransform(progress, [0, 1], ["-4.5%", "4.5%"]);
   const scale = useTransform(progress, [0, 1], [1.07, 1.02]);
-  const ghostY = useTransform(progress, [0, 1], ["6%", "-6%"]);
 
   return (
     <section ref={ref} id={id} className="v2-scene" data-scene={id}>
@@ -218,14 +212,6 @@ function Scene({
           }}
         />
         <div className="v2-scene__veil" />
-        {ghost ? (
-          <motion.div
-            className="v2-scene__ghost"
-            style={{ y: motionOn ? ghostY : 0 }}
-          >
-            {ghost}
-          </motion.div>
-        ) : null}
       </div>
       <div className="v2-scene__body">{children}</div>
     </section>
@@ -315,6 +301,8 @@ function Motes({ heroRef }: { heroRef: RefObject<HTMLElement | null> }) {
     }));
 
     let last = performance.now();
+    let visible = false;
+    const syncRunState = () => (visible && !document.hidden ? start() : stop());
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
@@ -352,11 +340,14 @@ function Motes({ heroRef }: { heroRef: RefObject<HTMLElement | null> }) {
 
     // run only while the hero is on screen and the tab is visible
     const io = new IntersectionObserver(
-      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        syncRunState();
+      },
       { threshold: 0.02 },
     );
     io.observe(hero);
-    const onVis = () => (document.hidden ? stop() : start());
+    const onVis = syncRunState;
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("resize", fit);
 
@@ -415,11 +406,9 @@ function Hero() {
   const plateOuter = useRef<HTMLDivElement>(null);
   const { motionOn } = useMotionPref();
 
-  /* The Corn-Revolution grammar: the copy NEVER travels vertically — it sits
-     pinned and fades while only the background moves. The hero owns a 230svh
-     runway; the stage (plate + orbs + copy) is sticky for all of it. As you
-     scroll, the plate zooms slowly and the sap orbs detach from the veins
-     into a rising double-helix — the tree transforms into the network. */
+  /* The Corn-Revolution grammar: the stage stays sticky, while the text and
+     plate each move on their own scroll curves. The sap orbs travel down the
+     tree first, then detach into a double-helix for the thesis phase. */
   const heroProgress = usePinProgress(heroRef);
   const dissolveRef = useRef(0);
   useMotionValueEvent(heroProgress, "change", (v) => {
@@ -428,24 +417,30 @@ function Hero() {
   const plateY = useTransform(heroProgress, [0, 1], ["0%", "4%"]);
   const plateScale = useTransform(heroProgress, [0, 1], [1, 1.09]);
   /* the camera turns TOWARD the tree as it transforms: background-position
-     eases 72% -> 92% (HIGHER position-x pulls a right-side subject toward
+     eases 88% -> 100% (HIGHER position-x pulls a right-side subject toward
      centre) so the trunk and its helix land ~3/4 frame instead of bleeding
      off the right edge. HeroSapOrbs mirrors this exact ramp — keep in sync. */
-  const platePosX = useTransform(heroProgress, [0.15, 0.7], [72, 92]);
+  const platePosX = useTransform(heroProgress, [0.15, 0.72], [88, 100]);
   const platePos = useMotionTemplate`${platePosX}% 38%`;
-  /* the tree recedes a touch as the helix takes over — subtle, not a
-     blackout, but enough contrast for the beads to burn bright */
-  const recede = useTransform(heroProgress, [0.26, 0.75], [0, 0.36]);
-  const copyOpacity = useTransform(heroProgress, [0, 0.1, 0.22], [1, 1, 0]);
-  const copyScale = useTransform(heroProgress, [0, 0.22], [1, 0.97]);
+  /* The tree recedes behind the helix and the Canopy thesis. This overlay
+     sits below the sap canvas, so the beads stay bright against black. */
+  const recede = useTransform(heroProgress, [0.36, 0.56, 0.92], [0, 0.86, 0.94]);
+  const copyOpacity = useTransform(heroProgress, [0, 0.34, 0.5], [1, 1, 0]);
+  const copyY = useTransform(heroProgress, [0, 0.34, 0.5], ["0vh", "-10vh", "-42vh"]);
+  const copyScale = useTransform(heroProgress, [0, 0.5], [1, 0.985]);
+  const thesisOpacity = useTransform(heroProgress, [0.48, 0.58, 0.82, 0.94], [0, 1, 1, 0]);
+  const thesisY = useTransform(heroProgress, [0.48, 0.68, 0.94], ["34vh", "0vh", "-22vh"]);
 
   /* mouse parallax — lerped, fine pointers only, on its own wrapper so the
      transform never fights the scroll/intro layers */
   useEffect(() => {
     const el = plateOuter.current;
-    if (!el || !motionOn) return;
+    const hero = heroRef.current;
+    if (!el || !hero || !motionOn) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
     let raf = 0;
+    let running = false;
+    let visible = false;
     let tx = 0;
     let ty = 0;
     let cx = 0;
@@ -460,11 +455,32 @@ function Hero() {
       el.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0) scale(1.02)`;
       raf = requestAnimationFrame(tick);
     };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    raf = requestAnimationFrame(tick);
-    return () => {
-      window.removeEventListener("pointermove", onMove);
+    const start = () => {
+      if (running) return;
+      running = true;
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      running = false;
       cancelAnimationFrame(raf);
+    };
+    const syncRunState = () => (visible && !document.hidden ? start() : stop());
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        syncRunState();
+      },
+      { threshold: 0.02 },
+    );
+    io.observe(hero);
+    const onVis = syncRunState;
+    window.addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      stop();
+      io.disconnect();
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("visibilitychange", onVis);
     };
   }, [motionOn]);
 
@@ -487,17 +503,13 @@ function Hero() {
               className="v2-scene__plate"
               style={{
                 backgroundImage: `url(${PLATES.hero})`,
-                backgroundPosition: motionOn ? platePos : "72% 38%",
-                ["--pos-mobile" as string]: "78% 32%",
+                backgroundPosition: motionOn ? platePos : "88% 38%",
+                ["--pos-mobile" as string]: "92% 32%",
                 y: motionOn ? plateY : 0,
                 scale: motionOn ? plateScale : 1,
               }}
             >
-              {/* sap orbs share the plate's box + transforms, so they stay
-                  glued to the painted veins through every parallax move;
-                  past ~35% of the hero they detach into the helix */}
-              <HeroSapOrbs progressRef={dissolveRef} />
-              {/* the tree steps back as the network takes over */}
+              {/* the tree steps back as the helix and thesis take over */}
               <motion.div
                 style={{
                   position: "absolute",
@@ -506,16 +518,20 @@ function Hero() {
                   opacity: motionOn ? recede : 0,
                 }}
               />
+              {/* sap orbs share the plate's box + transforms, so they stay
+                  glued to the painted veins through every parallax move;
+                  later in the hero they detach into the helix */}
+              <HeroSapOrbs progressRef={dissolveRef} />
             </motion.div>
           </motion.div>
         </div>
         <Motes heroRef={heroRef} />
         <div className="v2-scene__veil" data-variant="hero" aria-hidden />
 
-        {/* copy is pinned INSIDE the sticky stage: it fades, never travels */}
+        {/* copy lives inside the sticky stage but moves vertically with scroll */}
         <motion.div
           className="v2-hero"
-          style={motionOn ? { opacity: copyOpacity, scale: copyScale } : undefined}
+          style={motionOn ? { opacity: copyOpacity, y: copyY, scale: copyScale } : undefined}
         >
           <div className="v2-hero__inner">
           <Rise>
@@ -566,6 +582,25 @@ function Hero() {
                 </span>
               </div>
             </Rise>
+          </div>
+        </motion.div>
+        <motion.div
+          id="canopy"
+          className="v2-hero-thesis"
+          style={motionOn ? { opacity: thesisOpacity, y: thesisY } : undefined}
+        >
+          <div className="v2-hero-thesis__inner">
+            <div className="v2-ch__index">
+              <span className="n">01</span>
+              <span className="rule" />
+              <span className="stratum">Canopy — the thesis</span>
+            </div>
+            <h2>
+              Scale that stays
+              <br />
+              on Cardano.
+            </h2>
+            <Statement reveal={false} />
           </div>
         </motion.div>
       </div>
@@ -628,7 +663,7 @@ const THESIS: Phrase[][] = [
   ],
 ];
 
-function Statement() {
+function Statement({ reveal = true }: { reveal?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { motionOn } = useMotionPref();
   /* 0 when the block's top crosses 86% of the viewport, 1 when its bottom
@@ -643,6 +678,7 @@ function Statement() {
     return clamp01((vh * 0.86 - r.top) / (vh * 0.36 + r.height));
   });
   useMotionValueEvent(prog, "change", (v) => {
+    if (!reveal) return;
     ref.current?.style.setProperty("--prog", v.toFixed(4));
   });
 
@@ -661,7 +697,7 @@ function Statement() {
     <div
       ref={ref}
       className="v2-statement"
-      style={{ ["--prog" as string]: motionOn ? 0 : 2 }}
+      style={{ ["--prog" as string]: motionOn && reveal ? 0 : 2 }}
     >
       {paragraphs.out.map((words, pi) => (
         <p key={pi}>
@@ -1114,14 +1150,6 @@ function MotionToggle() {
 
 export default function HomeV2() {
   const { motionOn } = useMotionPref();
-  const [finePointer, setFinePointer] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(pointer: fine)");
-    const apply = () => setFinePointer(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
-  }, []);
 
   return (
     <main className="v2-home" data-motion={motionOn ? "on" : "off"}>
@@ -1130,21 +1158,11 @@ export default function HomeV2() {
       <Hero />
       <Marquee />
 
-      <Scene id="canopy" plate={PLATES.canopy} position="74% 40%" ghost="01">
-        <Chapter
-          n="01"
-          stratum="Canopy — the thesis"
-          title={[<>Scale that stays</>, <>on Cardano.</>]}
-        />
-        <Statement />
-      </Scene>
-
       <Scene
         id="trunk"
         plate={PLATES.strata}
         position="50% 32%"
         mobilePosition="58% 32%"
-        ghost="02"
       >
         <Chapter
           n="02"
@@ -1160,7 +1178,6 @@ export default function HomeV2() {
         plate={PLATES.roots}
         position="68% 64%"
         mobilePosition="74% 60%"
-        ghost="03"
       >
         <Chapter
           n="03"
@@ -1177,7 +1194,7 @@ export default function HomeV2() {
         <Ledger />
       </Scene>
 
-      <Scene id="stone" plate={PLATES.stone} position="56% 48%" ghost="04">
+      <Scene id="stone" plate={PLATES.stone} position="56% 48%">
         <Chapter
           n="04"
           stratum="Stone — why eUTXO"
@@ -1199,7 +1216,6 @@ export default function HomeV2() {
         plate={PLATES.strata}
         position="50% 96%"
         mobilePosition="56% 96%"
-        ghost="05"
       >
         <Chapter
           n="05"
@@ -1213,7 +1229,6 @@ export default function HomeV2() {
 
       <DepthRail />
       <MotionToggle />
-      <LightOrbLayer enabled={motionOn && finePointer} />
     </main>
   );
 }

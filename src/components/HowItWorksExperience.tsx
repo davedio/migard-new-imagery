@@ -55,10 +55,6 @@ const PhotorealBackdrop = dynamic(() => import("./scene/PhotorealBackdrop"), {
 const StageGraphic = dynamic(() => import("./scene/StageGraphic"), {
   ssr: false,
 });
-// playful "draw with light" cursor toy: a held pointer paints a soft green
-// glowing orb + fading trail. Pointer-events:none overlay, desktop/motion only.
-const LightOrbLayer = dynamic(() => import("./LightOrbLayer"), { ssr: false });
-
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
 // Floating motion toggle (bottom-right). Shared nav/footer chrome comes from
@@ -302,9 +298,6 @@ export default function HowItWorksExperience({
             enabled={advanced}
           />
         </div>
-        {/* light-painting orb: above the scene, below the cursor. Gated to
-            desktop + fine pointer + motion-on (advanced). */}
-        <LightOrbLayer enabled={advanced} />
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>
 
