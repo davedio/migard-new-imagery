@@ -93,17 +93,44 @@ const PARTICLE_ALT = "#33ff33";
 
 /* Tunables (ported from StaticTreeHero, trimmed for a CALM ambient home hero —
    far fewer lanes/particles than the data-driven How-It-Works track). */
-const FLASH_DUR = 1.35; // length of the BLUE "connected to L1" blink at a root tip
+const FLASH_DUR = 1.5; // length of the BLUE "connected to L1" blast at a root tip
 const GROW_MIN = 0.4;
 const GROW_MAX = 1.0;
 const GROW_FAST = 0.34;
 const FIRST_GLOW_DELAY = 0.45;
 const STARTUP_RAMP_SECONDS = 4.0;
-const BLOB_VSPEED = 0.04; // height/sec, held fork → root tip (constant visual)
-const BLOB_VSPEED_JIT = 0.007;
-const MERGE_CAP = 4.0;
-const GATHER_MIN = 8;
-const GATHER_MAX = 14;
+const BLOB_VSPEED = 0.042; // height/sec, held fork → root tip (constant visual)
+const BLOB_VSPEED_JIT = 0.006;
+const MERGE_CAP = 5.2; // hard ceiling on a consolidated blob's visual size
+
+/* ── ORGANIC MERGE / BLOB tunables (the reworked canopy→trunk→roots flow) ──
+   Canopy orbs no longer dump into 3 fixed nodes. Instead a small pool of MERGE
+   CORES drifts near the canopy base; descending canopy orbs are absorbed by the
+   nearest core (it GROWS in size + brightness). When a core ripens it converts
+   into ONE consolidated trunk blob that glides the full trunk, then fans into
+   the roots at the crown. Feel-driven — these are the dials the owner tunes. */
+const MERGE_CORES_MAX = 2; // ~1–2 big blobs accreting at a time (client's ask)
+const MERGE_CORE_MIN_GAP = 0.07; // min x-spread between simultaneous cores (img space)
+const MERGE_ABSORB_R = 0.052; // canopy orb within this img-space radius is absorbed
+const MERGE_RIPE_MASS = 9; // accumulated "mass" at which a core becomes a trunk blob
+const MERGE_RIPE_MASS_JIT = 4; // ± jitter so blobs don't all fire at one size
+const MERGE_CORE_TTL = 7.0; // safety: a core that never ripens still releases
+const MERGE_BLOB_BASE = 1.7; // base visual size of a released consolidated blob
+const MERGE_BLOB_PER_MASS = 0.12; // extra size per unit accumulated mass
+// the canopy-base band the cores wander across (x around the trunk-top, just
+// above the fork) — varying x, NOT fixed columns.
+const MERGE_BAND_X0 = TRUNK_X - 0.085;
+const MERGE_BAND_X1 = TRUNK_X + 0.075;
+const MERGE_BAND_Y = FORK_Y - 0.01;
+const MERGE_BAND_Y_JIT = 0.018;
+
+/* ── CROWN ROOT-FAN split: how the consolidated trunk blob breaks back out ── */
+const CROWN_SPLIT_MIN = 3; // big blob splits into this many root streams…
+const CROWN_SPLIT_MAX = 5; // …up to this many (client: "several smaller streams")
+
+/* ── INDIVIDUAL L1 BLAST tunables (the blue connection burst at a root tip) ── */
+const BLAST_RING_R = 26; // px reach of the expanding blue shockwave ring
+const BLAST_SPARK_R = 15; // px reach of the hot cyan-blue spark core
 
 type Pt = { x: number; y: number };
 type Lane = {
@@ -116,8 +143,9 @@ type Lane = {
 };
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
-// phase 0 = canopy orb (grows in place, then descends), 1 = trunk blob,
-// 2 = root blob, 3 = "locked-in" flash playing out at a root tip
+// phase 0 = canopy orb (grows in place, then descends), 1 = consolidated trunk
+// blob (rides the full trunk), 2 = root-fan stream, 3 = "locked-in" L1 blast at
+// a root tip.
 type Particle = {
   phase: 0 | 1 | 2 | 3;
   seg: number;
@@ -132,19 +160,31 @@ type Particle = {
   r0?: number;
   growDelay?: number;
   settled?: boolean; // static fallback: a calm BLUE orb resting at an L1 root tip
+  mass?: number; // accumulated merge mass a trunk blob carries (drives split fan-out)
+  big?: boolean; // a consolidated blob (renders as a larger, rounder luminous mass)
+  xJit?: number; // small per-blob x offset so trunk descent isn't pixel-rigid
+};
+
+/* A drifting accretion point near the canopy base. Descending canopy orbs are
+   absorbed by the nearest core, which grows in mass/size; once ripe it releases
+   a single consolidated trunk blob. ~1–2 active at once, at varying x. */
+type MergeCore = {
+  x: number; // current img-space position (wanders)
+  y: number;
+  homeX: number; // target the core drifts toward
+  homeY: number;
+  vx: number; // gentle drift velocity
+  mass: number; // accumulated absorbed value
+  count: number; // how many orbs absorbed (for feel/brightness)
+  size: number; // current visual size of the gathering blob
+  ripe: number; // mass threshold for this core to release a trunk blob
+  glow: number; // halo intensity, bumped on each absorb
+  pulse: number; // quick flash on absorb / release
+  age: number; // seconds alive (TTL safety release)
+  active: boolean;
 };
 
 type LeafNode = { x: number; y: number; phase: number; flash: number };
-type GatherBucket = {
-  x: number;
-  y: number;
-  strand: number;
-  count: number;
-  value: number;
-  target: number;
-  glow: number;
-  pulse: number;
-};
 
 type VeinField = {
   snapBright: (p: Pt, radius?: number) => Pt;
@@ -767,17 +807,73 @@ export default function PhotorealHomeHero({
     ro.observe(canvas);
 
     /* ---- particle field state ---- */
-    const nextTarget = () =>
-      GATHER_MIN + ((Math.random() * (GATHER_MAX - GATHER_MIN + 1)) | 0);
     const particles: Particle[] = [];
-    const gatherBuckets: GatherBucket[] = GATHER_NODES.map((node) => ({
-      ...node,
-      count: 0,
-      value: 0,
-      target: nextTarget(),
-      glow: 0,
-      pulse: 0,
-    }));
+
+    /* MERGE CORES — the drifting accretion points that replace the 3 fixed
+       gather nodes. A core picks a fresh home x somewhere across the canopy-base
+       band each time it spawns, so blobs coalesce at VARYING x (not 3 columns).
+       Kept far enough apart that ~1–2 read as distinct masses at once. */
+    const mergeCores: MergeCore[] = [];
+    const freshRipe = () =>
+      MERGE_RIPE_MASS + (Math.random() * 2 - 1) * MERGE_RIPE_MASS_JIT;
+    const pickCoreHomeX = (): number => {
+      // bias x by where canopy orbs currently are, so the core forms under the
+      // active part of the canopy; reject picks too close to an existing core.
+      for (let tries = 0; tries < 8; tries++) {
+        const x = lerp(MERGE_BAND_X0, MERGE_BAND_X1, Math.random());
+        let ok = true;
+        for (const c of mergeCores)
+          if (c.active && Math.abs(c.homeX - x) < MERGE_CORE_MIN_GAP) {
+            ok = false;
+            break;
+          }
+        if (ok) return x;
+      }
+      return lerp(MERGE_BAND_X0, MERGE_BAND_X1, Math.random());
+    };
+    const spawnMergeCore = (): MergeCore | null => {
+      if (mergeCores.filter((c) => c.active).length >= MERGE_CORES_MAX)
+        return null;
+      const homeX = pickCoreHomeX();
+      const homeY = MERGE_BAND_Y + (Math.random() * 2 - 1) * MERGE_BAND_Y_JIT;
+      const core: MergeCore = {
+        x: homeX + (Math.random() * 2 - 1) * 0.02,
+        y: homeY,
+        homeX,
+        homeY,
+        vx: 0,
+        mass: 0,
+        count: 0,
+        size: 0.5,
+        ripe: freshRipe(),
+        glow: 0.2,
+        pulse: 0,
+        age: 0,
+        active: true,
+      };
+      mergeCores.push(core);
+      return core;
+    };
+    // nearest ACTIVE core to an img-space point (for absorbing canopy orbs); will
+    // lazily spawn a core if there's room and none is near enough.
+    const coreForOrb = (px: number, py: number): MergeCore | null => {
+      let best: MergeCore | null = null;
+      let bestD = Infinity;
+      for (const c of mergeCores) {
+        if (!c.active) continue;
+        const d = Math.hypot((c.x - px) * IMG_ASPECT, c.y - py);
+        if (d < bestD) {
+          bestD = d;
+          best = c;
+        }
+      }
+      if (!best || bestD > MERGE_ABSORB_R) {
+        const made = spawnMergeCore();
+        if (made) return made;
+      }
+      return best;
+    };
+
     let spawnTimer = FIRST_GLOW_DELAY;
     let surge = 0;
     let staticSeeded = false;
@@ -853,13 +949,6 @@ export default function PhotorealHomeHero({
       }
       return (Math.random() * tree.canopy.length) | 0;
     };
-    const bucketForCanopySeg = (seg: number): GatherBucket => {
-      let idx = tree.canopy[seg]?.gi ?? 1;
-      if (Math.random() < 0.12)
-        idx = clamp(idx + (Math.random() < 0.5 ? -1 : 1), 0, gatherBuckets.length - 1);
-      return gatherBuckets[idx];
-    };
-
     const spawnCanopy = (fast = false) => {
       if (particles.length >= MAX_PARTICLES) return;
       const seg = pickCanopySeg();
@@ -899,127 +988,213 @@ export default function PhotorealHomeHero({
       leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
     };
 
-    const releaseBlob = (
-      bucket: GatherBucket,
-      gatheredCount: number,
-      gatheredValue: number,
-    ) => {
-      const base = 0.86 + Math.sqrt(gatheredCount) * 0.22 + Math.sqrt(gatheredValue) * 0.32;
-      const addSize = clamp(base * (0.82 + Math.random() * 0.32), 1.05, MERGE_CAP);
-      if (Math.random() < 0.24) {
-        let host: Particle | null = null;
-        for (const p of particles)
-          if (p.phase === 1 && p.t < 0.28 && (!host || p.t < host.t)) host = p;
-        if (host) {
-          host.size = Math.min(MERGE_CAP, Math.cbrt(host.size ** 3 + addSize ** 3));
-          bucket.glow = 1;
-          bucket.pulse = Math.max(bucket.pulse, 0.8);
-          return;
+    // pick the trunk strand whose x is closest to a given img-space x (so the
+    // consolidated blob lands on the painted trunk vein under the core).
+    const trunkSegForX = (x: number): number => {
+      let best = 0;
+      let bestD = Infinity;
+      for (let i = 0; i < tree.trunk.length; i++) {
+        const p0 = tree.trunk[i].poly[0];
+        const d = Math.abs(p0.x - x);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
         }
       }
+      return best;
+    };
+
+    // CANOPY MERGE: a descending canopy orb reaching the base is ABSORBED by the
+    // nearest drifting core, which grows in mass / size / brightness instead of
+    // the orb snapping to one of 3 fixed nodes. Returns the core it fed (so the
+    // caller can splice the consumed orb).
+    const absorbIntoCore = (p: Particle, pt: Pt): MergeCore | null => {
+      const core = coreForOrb(pt.x, pt.y);
+      if (!core) return null;
+      const v = Math.max(0.5, p.size + p.grow * 0.4);
+      core.mass += v;
+      core.count += 1;
+      // grow the gathering blob's radius by volume (cbrt) so accumulation reads
+      // as one bigger rounder mass, not a sum of dots.
+      core.size = Math.min(
+        MERGE_CAP,
+        Math.cbrt(core.size ** 3 + (0.7 + v * 0.5) ** 3),
+      );
+      core.glow = Math.min(1.2, core.glow + 0.22 + v * 0.05);
+      core.pulse = Math.min(1, core.pulse + 0.3 + v * 0.05);
+      // ease the core's home toward the absorbed orb so the mass tracks where the
+      // canopy is actually feeding it (organic, not a fixed column).
+      core.homeX = lerp(core.homeX, pt.x, 0.12);
+      return core;
+    };
+
+    // RELEASE: a ripe core becomes ONE consolidated trunk blob that glides the
+    // FULL trunk carrying the accumulated mass. The core then deactivates (a new
+    // one will form as fresh canopy orbs arrive).
+    const releaseConsolidatedBlob = (core: MergeCore) => {
+      core.active = false;
+      core.pulse = 1;
+      core.glow = 1.2;
       if (particles.length >= MAX_PARTICLES) return;
+      const size = clamp(
+        MERGE_BLOB_BASE + core.mass * MERGE_BLOB_PER_MASS,
+        MERGE_BLOB_BASE,
+        MERGE_CAP,
+      );
       particles.push({
         phase: 1,
-        seg: clamp(
-          bucket.strand + (Math.random() < 0.18 ? (Math.random() < 0.5 ? -1 : 1) : 0),
-          0,
-          tree.trunk.length - 1,
-        ),
+        seg: trunkSegForX(core.x),
         t: 0,
         speed: BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT,
-        size: addSize,
+        size,
         grow: 1,
         growRate: 0,
         hold: 0,
         alt: Math.random() < 0.5,
         age: 0,
+        r0: Math.random(),
+        mass: core.mass,
+        big: true,
+        // bias the blob toward the core's x so it doesn't snap dead-centre, then
+        // it rides the trunk strand from there.
+        xJit: clamp((core.x - TRUNK_X) * 0.5, -0.02, 0.02),
       });
-      bucket.glow = 1;
-      bucket.pulse = Math.max(bucket.pulse, 0.9);
+      surge = Math.max(surge, 0.18);
     };
 
-    const collectAtBucket = (p: Particle) => {
-      const bucket = bucketForCanopySeg(p.seg);
-      bucket.count += 1;
-      bucket.value += Math.max(0.22, p.size);
-      bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
-      bucket.pulse = Math.min(1, bucket.pulse + 0.38 + p.size * 0.08);
-    };
-
-    // send proof orbs down the MAJOR root systems so the blue L1 blinks spread
-    // across the whole root fan (not just a couple of roots) — the payoff of the
-    // descent reads as a steady scatter of settlements along the roots.
+    // spread the split streams across the WHOLE root fan so the blue L1 blasts
+    // light up across the root system as individual connections (not one cluster).
     const MAJOR_ROOT_FRACS = [0.08, 0.2, 0.32, 0.44, 0.56, 0.68, 0.8, 0.92];
     const rootIndexForTrunk = () => {
       const frac = MAJOR_ROOT_FRACS[(Math.random() * MAJOR_ROOT_FRACS.length) | 0];
       return clamp(Math.round(frac * (tree.roots.length - 1)), 0, tree.roots.length - 1);
     };
-    const continueIntoRoot = (p: Particle) => {
+
+    // CROWN ROOT-FAN: the consolidated trunk blob arrives at the crown and BREAKS
+    // BACK OUT into several smaller streams that follow the green root veins to
+    // their tips. The blob's mass is divided across the streams (conserved feel).
+    const splitIntoRoots = (p: Particle) => {
+      const streams = clamp(
+        CROWN_SPLIT_MIN +
+          Math.round(Math.random() * (CROWN_SPLIT_MAX - CROWN_SPLIT_MIN)),
+        1,
+        tree.roots.length,
+      );
+      // distinct root lanes spread across the fan (dedup so blasts don't stack).
+      const picks = new Set<number>();
+      let guard = 0;
+      while (picks.size < streams && guard++ < streams * 6)
+        picks.add(rootIndexForTrunk());
+      const segs = [...picks];
+      // child stream size: the big blob's volume divided across streams, so each
+      // root stream is clearly SMALLER than the trunk blob but still substantial.
+      const childSize = clamp(
+        Math.cbrt((p.size ** 3) / Math.max(1, segs.length)) * 1.18,
+        0.7,
+        MERGE_CAP * 0.7,
+      );
+      const childMass = (p.mass ?? p.size) / Math.max(1, segs.length);
+      // re-purpose the original blob as the first stream (no orphan particle).
       p.phase = 2;
-      p.seg = rootIndexForTrunk();
-      p.t = Math.random() * 0.015;
-      p.speed *= 0.96 + Math.random() * 0.08;
+      p.seg = segs[0];
+      p.t = Math.random() * 0.02;
+      p.size = childSize;
+      p.big = false;
+      p.mass = childMass;
+      p.speed = (BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT) * 1.04;
       p.age = Math.max(p.age, 0.4);
-      surge = Math.max(surge, 0.06);
+      // spawn the remaining streams as fresh root-fan blobs.
+      for (let k = 1; k < segs.length; k++) {
+        if (particles.length >= MAX_PARTICLES) break;
+        particles.push({
+          phase: 2,
+          seg: segs[k],
+          t: Math.random() * 0.04,
+          speed: (BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT) * 1.04,
+          size: childSize * (0.86 + Math.random() * 0.28),
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: Math.random() < 0.5,
+          age: 0.4,
+          r0: Math.random(),
+          mass: childMass,
+        });
+      }
+      surge = Math.max(surge, 0.12);
     };
 
-    // STATIC fallback: a calm constellation of orbs sitting ON the veins (no
-    // flow) — born across the canopy lanes, trunk strands, and roots.
+    // STATIC fallback (reduced-motion / mobile): a CALM still version of the new
+    // story — a sparse canopy constellation, a COUPLE of big consolidated blobs
+    // resting on the trunk, a few root-fan streams, and a few SETTLED blue blasts
+    // at the root tips. No flow, no twinkle.
     function seedStatic() {
       particles.length = 0;
-      const canopyStride = lite ? 2 : 1;
+      // a faint scatter of small canopy orbs (kept sparse on lite).
+      const canopyStride = lite ? 3 : 2;
       for (let i = 0; i < tree.canopy.length; i += canopyStride)
         particles.push({
           phase: 0,
           seg: i,
           t: 0.55,
           speed: 0,
-          size: 0.45 * (0.6 + tree.canopy[i].width * 0.6),
+          size: 0.4 * (0.6 + tree.canopy[i].width * 0.6),
           grow: 1,
           growRate: 0,
           hold: 0,
           alt: i % 2 === 0,
           age: 1,
         });
-      for (let i = 0; i < tree.trunk.length; i++)
+      // two big consolidated blobs parked at different heights on the trunk.
+      const mid = (tree.trunk.length / 2) | 0;
+      const blobSpots: Array<[number, number]> = [
+        [clamp(mid, 0, tree.trunk.length - 1), 0.34],
+        [clamp(mid + 1, 0, tree.trunk.length - 1), 0.66],
+      ];
+      for (const [seg, t] of blobSpots)
         particles.push({
           phase: 1,
-          seg: i,
-          t: 0.5,
+          seg,
+          t,
           speed: 0,
-          size: 1.2,
+          size: 3.4,
           grow: 1,
           growRate: 0,
           hold: 0,
           alt: false,
           age: 1,
+          big: true,
+          r0: 0.4,
         });
-      for (let i = 0; i < tree.roots.length; i++)
+      // a few root-fan streams settled mid-root (the split, held still).
+      const fanRoots = tree.roots.length
+        ? [0.2, 0.44, 0.68, 0.88].map((f) =>
+            clamp(Math.round(f * (tree.roots.length - 1)), 0, tree.roots.length - 1),
+          )
+        : [];
+      for (let k = 0; k < fanRoots.length; k++)
         particles.push({
           phase: 2,
-          seg: i,
-          t: 0.5,
+          seg: fanRoots[k],
+          t: 0.55,
           speed: 0,
-          size: 0.8,
+          size: 1.0,
           grow: 1,
           growRate: 0,
           hold: 0,
-          alt: i % 2 === 0,
+          alt: k % 2 === 0,
           age: 1,
         });
-      // a couple of static BLUE orbs RESTING at L1 root tips (the settled L2→L1
-      // payoff held still) — phase 2, parked at the tip, flagged `settled`.
+      // a few static BLUE blasts RESTING at L1 root tips (the settled payoff).
       const restRoots = tree.roots.length
-        ? [
-            Math.round(tree.roots.length * 0.32),
-            Math.round(tree.roots.length * 0.55),
-            Math.round(tree.roots.length * 0.78),
-          ]
+        ? [0.3, 0.52, 0.74, 0.92].map((f) =>
+            clamp(Math.round(f * (tree.roots.length - 1)), 0, tree.roots.length - 1),
+          )
         : [];
       for (const ri of restRoots)
         particles.push({
           phase: 2,
-          seg: clamp(ri, 0, tree.roots.length - 1),
+          seg: ri,
           t: 0.965,
           speed: 0,
           size: 1.0,
@@ -1106,16 +1281,20 @@ export default function PhotorealHomeHero({
           openingBurstDone = true;
           const burst = lite ? 8 : 14;
           for (let i = 0; i < burst; i++) spawnCanopy(true);
-          for (const bucket of gatherBuckets) bucket.glow = Math.max(bucket.glow, 0.55);
+          spawnMergeCore(); // seed a first accretion core so a blob forms early
           spawnTimer = 0.06;
         }
         if (!openingReleaseDone && runTime >= 1.6) {
           openingReleaseDone = true;
-          const bucket = gatherBuckets[(Math.random() * gatherBuckets.length) | 0];
-          bucket.count = Math.max(bucket.count, bucket.target * 0.62);
-          bucket.value = Math.max(bucket.value, bucket.target * 0.42);
-          bucket.glow = Math.max(bucket.glow, 0.78);
-          bucket.pulse = Math.max(bucket.pulse, 0.72);
+          // prime a core most of the way to ripe so the first consolidated blob
+          // glides down the trunk shortly after load (no long dead start).
+          const core = mergeCores.find((c) => c.active) ?? spawnMergeCore();
+          if (core) {
+            core.mass = Math.max(core.mass, core.ripe * 0.72);
+            core.size = Math.max(core.size, 2.2);
+            core.glow = Math.max(core.glow, 0.9);
+            core.pulse = Math.max(core.pulse, 0.7);
+          }
         }
 
         // ambient canopy spawning — sparse drip that builds to a calm dotting.
@@ -1145,7 +1324,25 @@ export default function PhotorealHomeHero({
           p.t += advance * dt;
         }
 
-        // phase transitions: canopy → gather; trunk → root; root tip → flash.
+        // drift + age the merge cores (organic wander toward their home x/y; a
+        // little extra sag toward the fork as they fatten so the mass visibly
+        // sinks toward the trunk-top before it releases down the trunk).
+        for (const c of mergeCores) {
+          if (!c.active) continue;
+          c.age += dt;
+          const sink = clamp(c.mass / Math.max(1, c.ripe), 0, 1) * 0.012;
+          const tx = c.homeX;
+          const ty = c.homeY + sink;
+          c.vx += (tx - c.x) * 9 * dt;
+          c.vx *= 0.86;
+          c.x += c.vx * dt;
+          c.y = lerp(c.y, ty, 0.06);
+          c.glow = Math.max(0.15, c.glow - dt / 1.6);
+          c.pulse = Math.max(0, c.pulse - dt / 0.4);
+        }
+
+        // phase transitions: canopy → merge core; trunk → root-fan split; root
+        // tip → individual L1 blast.
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           if (p.phase === 3) {
@@ -1154,10 +1351,11 @@ export default function PhotorealHomeHero({
           }
           if (p.grow < 1 || p.t < 1) continue;
           if (p.phase === 0) {
-            collectAtBucket(p);
+            const end = sampleLane(tree.canopy[p.seg], 1).pt;
+            absorbIntoCore(p, end);
             particles.splice(i, 1);
           } else if (p.phase === 1) {
-            continueIntoRoot(p);
+            splitIntoRoots(p);
           } else {
             p.phase = 3;
             p.t = 1;
@@ -1166,20 +1364,23 @@ export default function PhotorealHomeHero({
           }
         }
 
-        // release each canopy-base batch pocket independently.
-        for (const bucket of gatherBuckets) {
-          while (bucket.count >= bucket.target && particles.length < MAX_PARTICLES) {
-            const batchCount = bucket.target;
-            const batchValue =
-              bucket.count > 0 ? (bucket.value / bucket.count) * batchCount : batchCount;
-            releaseBlob(bucket, batchCount, batchValue);
-            bucket.count -= batchCount;
-            bucket.value = Math.max(0, bucket.value - batchValue);
-            bucket.target = nextTarget();
+        // RELEASE consolidated blobs: any ripe (or timed-out) core becomes one
+        // big blob gliding the full trunk, then the core retires.
+        for (let i = mergeCores.length - 1; i >= 0; i--) {
+          const c = mergeCores[i];
+          if (c.active && (c.mass >= c.ripe || c.age >= MERGE_CORE_TTL)) {
+            // release if ripe, or if a timed-out core gathered anything at all;
+            // a completely empty timed-out core is just retired (frees the slot).
+            if (c.mass >= c.ripe || c.count > 0) releaseConsolidatedBlob(c);
+            else {
+              c.active = false;
+              c.pulse = 0;
+            }
           }
-          bucket.glow = Math.max(0, bucket.glow - dt / 1.1);
-          bucket.pulse = Math.max(0, bucket.pulse - dt / 0.42);
+          // reap retired cores once their farewell pulse has faded.
+          if (!c.active && c.pulse <= 0.02) mergeCores.splice(i, 1);
         }
+
         surge = Math.max(0, surge - dt / 1.4);
       } else if (!staticSeeded) {
         seedStatic();
@@ -1234,21 +1435,27 @@ export default function PhotorealHomeHero({
       }
       ctx.globalAlpha = 1;
 
-      // canopy-base batch pockets (the gather glow)
-      for (const bucket of gatherBuckets) {
-        if (bucket.count <= 0 && bucket.glow <= 0.01 && bucket.pulse <= 0.01) continue;
-        const fullness = Math.min(1, bucket.count / bucket.target);
-        const valueFullness = Math.min(1, bucket.value / (bucket.target * 0.65));
-        const mass = Math.max(fullness, valueFullness * 0.72);
-        const pulse = smooth01(bucket.pulse);
-        const lr = 6 + mass * 12 + bucket.glow * 6 + pulse * 5;
-        ctx.globalAlpha = Math.min(0.62, 0.05 + mass * 0.32 + bucket.glow * 0.24 + pulse * 0.16);
-        ctx.drawImage(glowCore, oX + bucket.x * dW - lr, oY + bucket.y * dH - lr, lr * 2, lr * 2);
-        ctx.globalAlpha = Math.min(0.85, 0.22 + mass * 0.42 + pulse * 0.2);
-        ctx.fillStyle = `rgba(204,255,219,${ctx.globalAlpha})`;
-        ctx.beginPath();
-        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 1.0 + mass * 3.0 + pulse * 1.3, 0, Math.PI * 2);
-        ctx.fill();
+      // MERGE CORES: the drifting accretion blobs at the canopy base. Drawn as a
+      // big, round, growing luminous green mass with a white-green heart — the
+      // small canopy orbs visibly coalesce into these before one rides the trunk.
+      for (const c of mergeCores) {
+        const cx = oX + c.x * dW;
+        const cy = oY + c.y * dH;
+        const mass = clamp(c.mass / Math.max(1, c.ripe), 0, 1);
+        const pulse = smooth01(c.pulse);
+        // outer green halo grows with accumulated mass (rounder & bigger = more
+        // gathered), with a quick bloom on each absorb / on release.
+        const lr = (5 + c.size * 4.6 + mass * 9) * glowBoost * (1 + pulse * 0.35);
+        ctx.globalAlpha = Math.min(0.7, 0.12 + mass * 0.34 + c.glow * 0.22 + pulse * 0.18);
+        ctx.drawImage(glowCore, cx - lr, cy - lr, lr * 2, lr * 2);
+        // a softer alt-green inner ring for body
+        const mr = lr * 0.6;
+        ctx.globalAlpha = Math.min(0.6, 0.1 + mass * 0.3 + pulse * 0.16);
+        ctx.drawImage(glowAlt, cx - mr, cy - mr, mr * 2, mr * 2);
+        // bright white-green heart
+        const hr = Math.min(11, 2 + c.size * 2.4 + mass * 3.2) * (1 + pulse * 0.3);
+        ctx.globalAlpha = Math.min(0.92, 0.34 + mass * 0.42 + pulse * 0.2);
+        ctx.drawImage(glowHeart, cx - hr, cy - hr, hr * 2, hr * 2);
         ctx.globalAlpha = 1;
       }
 
@@ -1258,7 +1465,11 @@ export default function PhotorealHomeHero({
         const s = sampleLane(lane, p.t);
         const tan = s.tan;
         const pt = s.pt;
-        const x = oX + pt.x * dW;
+        // a consolidated trunk blob carries a small x-bias toward where its core
+        // formed, easing back onto the central trunk vein as it descends, so it
+        // glides the FULL trunk without snapping dead-centre at the fork.
+        const xOff = p.big && p.xJit ? p.xJit * (1 - p.t) : 0;
+        const x = oX + (pt.x + xOff) * dW;
         const y = oY + pt.y * dH;
         const es = p.size * (0.12 + 0.88 * smooth01(p.grow));
         const rootPhase = p.phase === 2;
@@ -1269,30 +1480,51 @@ export default function PhotorealHomeHero({
         // to a deep blue heart that fades. Reads as a distinct L1 event.
         if (p.phase === 3) {
           const fl = clamp(p.age / FLASH_DUR, 0, 1);
-          // sharp attack (first ~14%) → smooth decay: the blink envelope.
+          // sharp attack (first ~14%) → smooth decay: the blast envelope.
           const blm = fl < 0.14 ? fl / 0.14 : Math.pow(1 - (fl - 0.14) / 0.86, 1.8);
           // a couple of quick blue flickers on the way up sell the "connect".
           const flick = fl < 0.32 ? 0.78 + 0.22 * Math.sin(fl * 64) : 1;
+          // per-blast variety so each connection reads as INDIVIDUAL (size/timing
+          // jitter keyed off the orb's stable r0) — not one uniform wash.
+          const seed = p.r0 ?? 0.5;
+          const blastScale = 0.82 + ((seed * 5.17) % 1) * 0.5;
           // bright cyan-blue halo bloom
-          const rr = (7 + es * 5) * (1 + blm * 2.0);
+          const rr = (7 + es * 5) * (1 + blm * 2.0) * blastScale;
           ctx.globalAlpha = Math.min(0.82, 0.12 + blm * 0.5) * flick;
           ctx.drawImage(glowL1, x - rr, y - rr, rr * 2, rr * 2);
-          // hottest cyan spark right at the blink peak
-          if (blm > 0.3) {
-            const sr = (4 + es * 3) * (0.6 + blm * 1.1);
-            ctx.globalAlpha = Math.min(0.9, (blm - 0.3) * 1.1) * flick;
+          // hottest cyan spark right at the blast peak
+          if (blm > 0.25) {
+            const sr = (4 + es * 3) * (0.6 + blm * 1.1) * blastScale;
+            ctx.globalAlpha = Math.min(0.95, (blm - 0.25) * 1.15) * flick;
             ctx.drawImage(glowL1Spark, x - sr, y - sr, sr * 2, sr * 2);
           }
-          // a quick expanding blue ring on the attack — the "settled" pop
-          if (fl < 0.5) {
-            const ringT = fl / 0.5;
-            const ringR = (3 + es * 2) + ringT * (10 + es * 6);
-            ctx.globalAlpha = (1 - ringT) * 0.5;
-            ctx.strokeStyle = `rgba(${L1_SPARK_RGB},${(1 - ringT) * 0.5})`;
-            ctx.lineWidth = 1.4 * (1 - ringT) + 0.4;
+          // the RADIATING blue shockwave: an expanding ring that bursts outward on
+          // the attack and fades — the distinct "connection" pop for this tip.
+          if (fl < 0.62) {
+            const ringT = fl / 0.62;
+            const ringR =
+              (3 + es * 2) + smooth01(ringT) * (BLAST_RING_R + es * 6) * blastScale;
+            const ringA = (1 - ringT) * 0.6 * flick;
+            ctx.globalAlpha = ringA;
+            ctx.strokeStyle = `rgba(${L1_SPARK_RGB},${ringA})`;
+            ctx.lineWidth = 2.0 * (1 - ringT) + 0.5;
             ctx.beginPath();
             ctx.arc(x, y, ringR, 0, Math.PI * 2);
             ctx.stroke();
+            // a second, fainter trailing ring for depth (still individual).
+            const ring2 = ringR * 0.62;
+            ctx.globalAlpha = ringA * 0.5;
+            ctx.strokeStyle = `rgba(${L1_GLOW_RGB},${ringA * 0.5})`;
+            ctx.lineWidth = 1.2 * (1 - ringT) + 0.4;
+            ctx.beginPath();
+            ctx.arc(x, y, ring2, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          // a hot cyan radial flare at the very peak — emphasises the burst.
+          if (blm > 0.55) {
+            const fr = (BLAST_SPARK_R + es * 3) * blm * blastScale;
+            ctx.globalAlpha = (blm - 0.55) * 0.9 * flick;
+            ctx.drawImage(glowL1Spark, x - fr, y - fr, fr * 2, fr * 2);
           }
           // the deep Cardano-blue settled heart
           ctx.globalAlpha = Math.min(0.92, 0.2 + blm * 0.72);
@@ -1341,26 +1573,34 @@ export default function PhotorealHomeHero({
         }
 
         // glow halo + heart, drawn as a slightly squashed/rotated ellipse so the
-        // orbs read as organic sap droplets rather than perfect circles.
+        // orbs read as organic sap droplets rather than perfect circles. A
+        // consolidated trunk blob (p.big) renders ROUNDER + larger so it reads as
+        // one luminous mass gliding the trunk, not a droplet.
         const r0 = p.r0 ?? 0.5;
-        const sq = 0.8 + ((r0 * 7.13) % 1) * 0.4;
-        const r = (3 + es * (rootPhase ? 2.55 : 3.2)) * glowBoost;
+        const sq = p.big ? 0.93 + ((r0 * 7.13) % 1) * 0.12 : 0.8 + ((r0 * 7.13) % 1) * 0.4;
+        const r = (3 + es * (rootPhase ? 2.55 : p.big ? 3.9 : 3.2)) * glowBoost;
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(r0 * Math.PI);
         ctx.scale(sq, 1 / sq);
-        const haloA = Math.min(1, (rootPhase ? 0.4 : 0.47) * life);
+        const haloA = Math.min(1, (rootPhase ? 0.4 : p.big ? 0.52 : 0.47) * life);
         // green halo (fades as the orb charges blue near the L1 tip)
         ctx.globalAlpha = haloA * (1 - nearL1);
         ctx.drawImage(p.alt ? glowAlt : glowCore, -r, -r, r * 2, r * 2);
+        // a consolidated blob gets a second softer green pass for body/volume.
+        if (p.big) {
+          const r2 = r * 0.62;
+          ctx.globalAlpha = haloA * 0.7 * (1 - nearL1);
+          ctx.drawImage(glowAlt, -r2, -r2, r2 * 2, r2 * 2);
+        }
         // blue halo blends in over the final root stretch
         if (nearL1 > 0.01) {
           ctx.globalAlpha = haloA * nearL1;
           ctx.drawImage(glowL1, -r, -r, r * 2, r * 2);
         }
         ctx.restore();
-        const cr = Math.min(7.5, 1.0 + es * 1.4) * glowBoost;
-        ctx.globalAlpha = Math.min(0.8, (0.42 + es * 0.4) * life);
+        const cr = Math.min(p.big ? 11 : 7.5, 1.0 + es * (p.big ? 1.9 : 1.4)) * glowBoost;
+        ctx.globalAlpha = Math.min(0.85, (0.42 + es * 0.4) * life);
         ctx.drawImage(glowHeart, x - cr, y - cr, cr * 2, cr * 2);
         // a faint blue core creeping in as it nears L1
         if (nearL1 > 0.01) {
