@@ -51,7 +51,6 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
 const PhotorealBackdrop = dynamic(() => import("./scene/PhotorealBackdrop"), {
   ssr: false,
 });
-const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 // The floating on-tree stage badge — rides the descending packet and surfaces
 // the active lifecycle stage (replaces the old fixed HUD panel + emoji marker).
 const StageGraphic = dynamic(() => import("./scene/StageGraphic"), {
@@ -287,7 +286,6 @@ export default function HowItWorksExperience({
         {/* light-painting orb: above the scene, below the cursor. Gated to
             desktop + fine pointer + motion-on (advanced). */}
         <LightOrbLayer enabled={advanced} />
-        <CustomCursor enabled={advanced} />
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>
 
