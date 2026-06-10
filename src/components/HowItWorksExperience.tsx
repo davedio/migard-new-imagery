@@ -208,14 +208,15 @@ export default function HowItWorksExperience({
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  // Short viewports (zoomed browsers, small laptops) can't host the pinned
-  // 800vh journey without ugly dead bands — fall back to the static composed
-  // frame + the stacked recap sections (same path reduced motion uses).
-  // Mirrors the CSS @media (max-height: 640px) rules in globals.css.
+  // Truly tiny viewports (landscape phones, embedded webviews) can't host the
+  // pinned 800vh journey — fall back to the static composed frame + the
+  // stacked recap sections (same path reduced motion uses). Laptops always
+  // get the ride: the threshold sits below any normal browser window.
+  // Mirrors the CSS @media (max-height: 480px) rules in globals.css.
   const [shortViewport, setShortViewport] = useState(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mq = window.matchMedia("(max-height: 640px)");
+    const mq = window.matchMedia("(max-height: 480px)");
     const apply = () => setShortViewport(mq.matches);
     apply();
     mq.addEventListener("change", apply);

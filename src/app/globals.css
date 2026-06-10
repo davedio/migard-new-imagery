@@ -4108,11 +4108,11 @@ body.cursor-none * {
 .hiw-act__intro {
   opacity: calc(1 - min(var(--journey-p, 0) * 7, 1));
 }
-/* Short viewports (zoomed browsers, small laptops): the pinned 800vh ride
-   degrades into dead black bands — collapse the act to a single static
-   frame; the stacked recap sections below carry the story. Mirrors the
-   max-height gate in HowItWorksExperience. */
-@media (max-height: 640px) {
+/* Truly tiny viewports (landscape phones, embedded webviews): collapse the
+   act to a single static frame; the stacked recap sections below carry the
+   story. Threshold sits below normal laptop windows so the ride always
+   plays on desktop. Mirrors the max-height gate in HowItWorksExperience. */
+@media (max-height: 480px) {
   .hiw-act {
     min-height: auto;
   }
