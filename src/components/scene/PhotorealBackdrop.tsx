@@ -131,19 +131,23 @@ function stageOf(p: number): { idx: number; local: number } {
    wide fallback uses a gentler set.
    ================================================================ */
 type Focal = { focY: number; scale: number };
+/* Client direction (2026-06-10): open ZOOMED INTO THE CANOPY so Submit
+   plays up close among the lit leaves, pull back slightly and descend the
+   trunk stage by stage, then push BACK IN at the bottom so settlement lands
+   inside the cobalt L1 root chamber. */
 const FOCALS_TALL: Focal[] = [
-  { focY: 8, scale: 1.07 }, // SUBMIT   · canopy
-  { focY: 32, scale: 1.11 }, // SEQUENCE · upper trunk
-  { focY: 55, scale: 1.13 }, // COMMIT   · mid trunk
-  { focY: 76, scale: 1.11 }, // WATCH    · lower trunk / bridge
-  { focY: 97, scale: 1.06 }, // SETTLE   · roots / L1
+  { focY: 5, scale: 1.58 }, // SUBMIT   · IN the canopy, leaves filling frame
+  { focY: 30, scale: 1.26 }, // SEQUENCE · upper trunk
+  { focY: 54, scale: 1.28 }, // COMMIT   · mid trunk
+  { focY: 76, scale: 1.24 }, // WATCH    · lower trunk / bridge
+  { focY: 99, scale: 1.38 }, // SETTLE   · into the cobalt L1 vault
 ];
 const FOCALS_WIDE: Focal[] = [
-  { focY: 26, scale: 1.04 },
-  { focY: 40, scale: 1.06 },
-  { focY: 56, scale: 1.08 },
-  { focY: 70, scale: 1.06 },
-  { focY: 82, scale: 1.03 },
+  { focY: 18, scale: 1.34 },
+  { focY: 40, scale: 1.14 },
+  { focY: 56, scale: 1.16 },
+  { focY: 70, scale: 1.12 },
+  { focY: 86, scale: 1.26 },
 ];
 
 /* Eased camera path: hold near the active stage's focal point for the

@@ -65,6 +65,38 @@ const PLATES = {
 
 const EASE_EXPO = [0.16, 1, 0.3, 1] as const;
 
+const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
+
+/* Element-scoped scroll progress, computed from the element's own rect on
+   every page-scroll tick. (motion's useScroll({target}) silently fell back
+   to PAGE progress here — geometry we own is geometry that works.)
+   Returns 0 when the element's top reaches the viewport bottom and 1 when
+   its bottom reaches the viewport top. */
+function useViewProgress(ref: RefObject<HTMLElement | null>) {
+  const { scrollYProgress } = useScroll();
+  return useTransform(scrollYProgress, () => {
+    const el = ref.current;
+    if (el == null || typeof window === "undefined") return 0;
+    const r = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    return clamp01((vh - r.top) / (vh + r.height));
+  });
+}
+
+/* Progress through a PINNED runway (section taller than the viewport whose
+   stage is sticky): 0 while the section top is at/below the viewport top,
+   1 when its bottom meets the viewport bottom. */
+function usePinProgress(ref: RefObject<HTMLElement | null>) {
+  const { scrollYProgress } = useScroll();
+  return useTransform(scrollYProgress, () => {
+    const el = ref.current;
+    if (el == null || typeof window === "undefined") return 0;
+    const r = el.getBoundingClientRect();
+    const travel = Math.max(1, r.height - window.innerHeight);
+    return clamp01(-r.top / travel);
+  });
+}
+
 /** Masked line reveal — each line slides up out of an overflow-hidden row.
     The viewport observer lives on the UNCLIPPED mask wrapper (a fully
     translated child inside overflow:hidden has an empty intersection rect
@@ -163,12 +195,9 @@ function Scene({
 }) {
   const ref = useRef<HTMLElement>(null);
   const { motionOn } = useMotionPref();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const y = useTransform(scrollYProgress, [0, 1], ["-4.5%", "4.5%"]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1.07, 1.02]);
+  const progress = useViewProgress(ref);
+  const y = useTransform(progress, [0, 1], ["-4.5%", "4.5%"]);
+  const scale = useTransform(progress, [0, 1], [1.07, 1.02]);
 
   return (
     <section ref={ref} id={id} className="v2-scene" data-scene={id}>
@@ -373,15 +402,22 @@ function Hero() {
   const plateOuter = useRef<HTMLDivElement>(null);
   const { motionOn } = useMotionPref();
 
-  /* scroll parallax — the plate sinks slower than the page */
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
+  /* The Corn-Revolution grammar: the copy NEVER travels vertically — it sits
+     pinned and fades while only the background moves. The hero owns a 230svh
+     runway; the stage (plate + orbs + copy) is sticky for all of it. As you
+     scroll, the plate zooms slowly and the sap orbs detach from the veins
+     into a rising double-helix — the tree transforms into the network. */
+  const heroProgress = usePinProgress(heroRef);
+  const dissolveRef = useRef(0);
+  useMotionValueEvent(heroProgress, "change", (v) => {
+    dissolveRef.current = v;
   });
-  const plateY = useTransform(scrollYProgress, [0, 1], ["0%", "9%"]);
-  const plateScale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
-  const copyY = useTransform(scrollYProgress, [0, 1], ["0%", "-26%"]);
-  const copyOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  const plateY = useTransform(heroProgress, [0, 1], ["0%", "5%"]);
+  const plateScale = useTransform(heroProgress, [0, 1], [1, 1.16]);
+  /* the tree recedes a touch as the helix takes over — subtle, not a blackout */
+  const recede = useTransform(heroProgress, [0.35, 0.9], [0, 0.32]);
+  const copyOpacity = useTransform(heroProgress, [0, 0.16, 0.32], [1, 1, 0]);
+  const copyScale = useTransform(heroProgress, [0, 0.32], [1, 0.97]);
 
   /* mouse parallax — lerped, fine pointers only, on its own wrapper so the
      transform never fights the scroll/intro layers */
@@ -413,9 +449,14 @@ function Hero() {
   }, [motionOn]);
 
   return (
-    <section ref={heroRef} id="top" className="v2-scene" data-scene="hero">
-      <div className="v2-scene__stage" aria-hidden>
-        <div ref={plateOuter} style={{ position: "absolute", inset: 0 }}>
+    <section
+      ref={heroRef}
+      id="top"
+      className="v2-scene v2-scene--hero"
+      data-scene="hero"
+    >
+      <div className="v2-scene__stage">
+        <div ref={plateOuter} style={{ position: "absolute", inset: 0 }} aria-hidden>
           <motion.div
             style={{ position: "absolute", inset: 0 }}
             initial={motionOn ? { opacity: 0, scale: 1.09 } : false}
@@ -433,19 +474,28 @@ function Hero() {
               }}
             >
               {/* sap orbs share the plate's box + transforms, so they stay
-                  glued to the painted veins through every parallax move */}
-              <HeroSapOrbs />
+                  glued to the painted veins through every parallax move;
+                  past ~35% of the hero they detach into the helix */}
+              <HeroSapOrbs progressRef={dissolveRef} />
+              {/* the tree steps back as the network takes over */}
+              <motion.div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "#040705",
+                  opacity: motionOn ? recede : 0,
+                }}
+              />
             </motion.div>
           </motion.div>
         </div>
         <Motes heroRef={heroRef} />
-        <div className="v2-scene__veil" data-variant="hero" />
-      </div>
+        <div className="v2-scene__veil" data-variant="hero" aria-hidden />
 
-      <div className="v2-scene__body">
+        {/* copy is pinned INSIDE the sticky stage: it fades, never travels */}
         <motion.div
           className="v2-hero"
-          style={motionOn ? { y: copyY, opacity: copyOpacity } : undefined}
+          style={motionOn ? { opacity: copyOpacity, scale: copyScale } : undefined}
         >
           <div className="v2-hero__inner">
           <Rise>
@@ -561,11 +611,18 @@ const THESIS: Phrase[][] = [
 function Statement() {
   const ref = useRef<HTMLDivElement>(null);
   const { motionOn } = useMotionPref();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.86", "end 0.5"],
+  /* 0 when the block's top crosses 86% of the viewport, 1 when its bottom
+     reaches the middle — same grammar as the old target offsets, computed
+     from the element's own rect. */
+  const { scrollYProgress } = useScroll();
+  const prog = useTransform(scrollYProgress, () => {
+    const el = ref.current;
+    if (el == null || typeof window === "undefined") return 0;
+    const r = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    return clamp01((vh * 0.86 - r.top) / (vh * 0.36 + r.height));
   });
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
+  useMotionValueEvent(prog, "change", (v) => {
     ref.current?.style.setProperty("--prog", v.toFixed(4));
   });
 

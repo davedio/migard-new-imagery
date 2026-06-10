@@ -20,7 +20,7 @@
    Runs only while visible, the tab is foreground, and motion is on.
    ========================================================================== */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { useMotionPref } from "@/lib/motion";
 
 const PLATE_SRC = "/v2/hero-wide.avif";
@@ -43,9 +43,31 @@ type Orb = {
   alpha: number;
   tail: { x: number; y: number }[];
   dying: boolean;
+  /* helix (dissolve) state */
+  theta: number;
+  omega: number;
+  strand: 0 | 1;
+  anchorY: number | null;
+  rise: number;
 };
 
-export default function HeroSapOrbs() {
+const smooth01 = (x: number) => {
+  const c = Math.max(0, Math.min(1, x));
+  return c * c * (3 - 2 * c);
+};
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+/**
+ * progressRef (0→1, the hero's scroll runway) drives the TRANSFORM:
+ * below ~30% the orbs ride the painted veins; past it they detach into a
+ * rising double-helix around the trunk — the tree "breaks into" the network.
+ * Fully reversible on scroll-up.
+ */
+export default function HeroSapOrbs({
+  progressRef,
+}: {
+  progressRef?: RefObject<number>;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { motionOn } = useMotionPref();
 
@@ -154,6 +176,7 @@ export default function HeroSapOrbs() {
       const size = 0.7 + Math.random() * 1.5;
       const orb: Orb = o ?? {
         x: 0, y: 0, size, speed: 0, alpha: 0, tail: [], dying: false,
+        theta: 0, omega: 0, strand: 0, anchorY: null, rise: 0,
       };
       orb.x = site.x + (Math.random() - 0.5) * 6;
       orb.y = site.y;
@@ -163,6 +186,11 @@ export default function HeroSapOrbs() {
       orb.alpha = 0;
       orb.tail = [];
       orb.dying = false;
+      orb.theta = Math.random() * Math.PI * 2;
+      orb.omega = 0.7 + Math.random() * 0.9;
+      orb.strand = Math.random() < 0.5 ? 0 : 1;
+      orb.anchorY = null;
+      orb.rise = 0;
       return orb;
     };
 
@@ -177,8 +205,12 @@ export default function HeroSapOrbs() {
       last = now;
       if (!field || W === 0) return;
 
-      /* population control */
-      const want = orbCount();
+      /* dissolve factor from the hero scroll runway */
+      const p = progressRef?.current ?? 0;
+      const d = smooth01((p - 0.28) / 0.42);
+
+      /* population control — the burst thickens the helix */
+      const want = Math.round(orbCount() * (1 + d * 0.8));
       while (orbs.length < want) {
         const o = spawn();
         if (!o) break;
@@ -186,6 +218,7 @@ export default function HeroSapOrbs() {
         o.y += Math.random() * imgH * 0.45;
         orbs.push(o);
       }
+      if (orbs.length > want + 12) orbs.length = want + 12;
 
       nextSurge -= dt;
       if (nextSurge <= 0) {
@@ -208,13 +241,7 @@ export default function HeroSapOrbs() {
           o.alpha = Math.min(1, o.alpha + dt * 1.2);
         }
 
-        /* cursor proximity boost (canvas space) */
-        const cx = o.x * scale + offX;
-        const cy = o.y * scale + offY;
-        const cd = Math.hypot(cx - cursor.x, cy - cursor.y);
-        const boost = cd < CURSOR_R ? CURSOR_BOOST - (cd / CURSOR_R) * (CURSOR_BOOST - 1) : 1;
-
-        /* pick the greenest of five downward directions */
+        /* ---- vein motion (always simmering underneath) ---- */
         let bestA = 0;
         let bestV = -1;
         for (const a of [-0.9, -0.45, 0, 0.45, 0.9]) {
@@ -224,39 +251,80 @@ export default function HeroSapOrbs() {
             Math.random() * 10;
           if (v > bestV) { bestV = v; bestA = a; }
         }
-
-        if (bestV < GREEN_MIN) {
+        if (bestV < GREEN_MIN && d < 0.4) {
           /* vein ran out (root tip / off-tree) — let the light sink out */
           o.dying = true;
         }
 
+        /* cursor proximity boost (canvas space, against the drawn position) */
+        const pcx = o.x * scale + offX;
+        const pcy = o.y * scale + offY;
+        const cdst = Math.hypot(pcx - cursor.x, pcy - cursor.y);
+        const boost =
+          cdst < CURSOR_R ? CURSOR_BOOST - (cdst / CURSOR_R) * (CURSOR_BOOST - 1) : 1;
+
         const sp = o.speed * boost * (1 + surge * 0.9);
         o.x += Math.sin(bestA) * sp * dt;
-        o.y += Math.cos(bestA) * sp * dt;
-        if (o.y > imgH * 0.985) o.dying = true;
+        o.y = Math.min(o.y + Math.cos(bestA) * sp * dt, imgH * 1.02);
+        if (o.y > imgH * 0.985 && d < 0.4) o.dying = true;
+
+        /* ---- helix motion (the dissolve) ---- */
+        let ix = o.x;
+        let iy = o.y;
+        let depthMod = 1;
+        if (d > 0.01) {
+          if (o.anchorY === null) o.anchorY = o.y;
+          o.theta += o.omega * dt * (0.6 + d * 1.6);
+          o.rise += dt * (22 + o.size * 9) * d;
+          const phase = o.theta + (o.strand ? Math.PI : 0);
+          const R = imgW * (0.015 + 0.13 * d);
+          const hx = imgW * 0.72 + Math.cos(phase) * R;
+          let hy = o.anchorY - o.rise;
+          /* strands loop: re-enter from below once they leave the canopy */
+          if (hy < imgH * 0.04) {
+            o.rise = 0;
+            o.anchorY = imgH * (0.72 + Math.random() * 0.2);
+            hy = o.anchorY;
+          }
+          depthMod = 0.62 + 0.38 * Math.sin(phase + Math.PI / 2);
+          ix = lerp(o.x, hx, d);
+          iy = lerp(o.y, hy, d);
+        } else if (o.anchorY !== null) {
+          o.anchorY = null; /* scrolled back up — re-glue to the veins */
+          o.rise = 0;
+        }
+
+        const cx = ix * scale + offX;
+        const cy = iy * scale + offY;
 
         o.tail.unshift({ x: cx, y: cy });
         if (o.tail.length > TAIL) o.tail.pop();
 
-        /* comet: green tail … white-hot head */
-        const r = o.size * (1 + surge * 0.25);
-        for (let i = o.tail.length - 1; i >= 1; i--) {
-          const t = i / o.tail.length;
-          const p = o.tail[i];
+        /* comet: green tail … white-hot head. In the helix the tail shortens
+           and the head brightens — beads of light on two strands. */
+        const r = o.size * (1 + surge * 0.25) * lerp(1, depthMod, d);
+        /* never exceeds the samples we actually have (a fresh orb has 1) */
+        const tailN = Math.min(
+          o.tail.length,
+          Math.max(2, Math.round(o.tail.length * (1 - d * 0.55))),
+        );
+        for (let i = tailN - 1; i >= 1; i--) {
+          const t = i / tailN;
+          const tp = o.tail[i];
           ctx.beginPath();
-          ctx.arc(p.x, p.y, r * (1 - t * 0.72), 0, Math.PI * 2);
+          ctx.arc(tp.x, tp.y, r * (1 - t * 0.72), 0, Math.PI * 2);
           ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * 0.16 * (1 - t)).toFixed(3)})`;
           ctx.fill();
         }
         ctx.beginPath();
         ctx.arc(cx, cy, r * 1.9, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * 0.12).toFixed(3)})`;
+        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * (0.12 + d * 0.08)).toFixed(3)})`;
         ctx.fill();
         ctx.beginPath();
         ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * 0.85).toFixed(3)})`;
+        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * (0.85 + d * 0.15) * lerp(1, depthMod, d * 0.7)).toFixed(3)})`;
         ctx.shadowColor = "rgba(0, 255, 102, 0.9)";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = 10 + d * 6;
         ctx.fill();
         ctx.shadowBlur = 0;
       }

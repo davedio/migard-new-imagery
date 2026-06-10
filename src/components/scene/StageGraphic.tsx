@@ -208,9 +208,6 @@ export default function StageGraphic({
     }
     if (!el) return;
     let raf = 0;
-    // remembered side so a hair of packet sway near centre can't make the
-    // badge flip-flop frame to frame (hysteresis around the midline).
-    let side: "left" | "right" = "right";
     // hide until the packet position is real (avoids a 1-frame top-left flash
     // before PhotorealBackdrop's loop publishes the first packet position).
     let positioned = false;
@@ -223,27 +220,21 @@ export default function StageGraphic({
         const rect = el.getBoundingClientRect();
         const bw = rect.width || 240;
         const bh = rect.height || 96;
-        const gap = 40; // clear of the comet head + its bloom
         const m = 16; // viewport margin
-        // Choose the side with MORE room so the badge sits beside the packet
-        // and clear of the centre focal action, without being clamped against
-        // an edge. Hysteresis (a 6% dead-band around the packet) keeps it
-        // from flipping while the packet sways across the midline.
-        const roomLeft = pk.x - gap - bw - m; // space if placed to the left
-        const roomRight = W - m - (pk.x + gap + bw); // space if placed right
-        const bias = W * 0.06;
-        if (side === "right" && roomLeft > roomRight + bias) side = "left";
-        else if (side === "left" && roomRight > roomLeft + bias) side = "right";
-        let left = side === "right" ? pk.x + gap : pk.x - gap - bw;
+        // Pinned to the RIGHT of the tree (client request): the badge holds a
+        // steady right-rail x — clear of the trunk focal action — and rides
+        // VERTICALLY with the packet down the canopy -> roots journey.
+        const left = clamp(
+          Math.max(W * 0.6, pk.x + 56),
+          W * 0.5,
+          W - bw - m,
+        );
         // vertically centre the badge on the packet head
         let top = pk.y - bh / 2;
-        // clamp into the viewport (top margin clears the fixed site nav).
-        // Keep the badge off the far-left edge — sit it a bit further to the
-        // RIGHT, nearer the tree (per request), while still beside the packet.
-        left = clamp(left, Math.min(W * 0.12, W - bw - m), W - bw - m);
+        // clamp into the viewport (top margin clears the fixed site nav)
         top = clamp(top, m + 56, H - bh - m);
         el.style.transform = `translate3d(${left.toFixed(1)}px, ${top.toFixed(1)}px, 0)`;
-        el.dataset.side = side;
+        el.dataset.side = "right";
         // reveal once positioned; fade down at the very top so the hero/intro
         // breathes, back up once the journey begins. This loop is the sole
         // authority for --sg-fade while tracking.

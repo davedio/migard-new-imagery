@@ -27,7 +27,7 @@ export default function AboutPage() {
     <main className="page-main">
       <PageHero
         compact
-        tone="moss"
+        tone="tree"
         label="About"
         title="Scale that stays on Cardano"
         sub="The nontechnical story in one page: what Midgard is for, what makes it different, and why the people running it are motivated to keep it honest."

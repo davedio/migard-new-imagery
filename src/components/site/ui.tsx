@@ -88,7 +88,7 @@ export function PageHero({
   /** ~60vh hero instead of full viewport — interior pages get content above the fold. */
   compact?: boolean;
   /** Subtle per-section tint over the shared fluid background so interior pages stop looking identical. */
-  tone?: "emerald" | "moss" | "cobalt" | "ember" | "ink";
+  tone?: "emerald" | "moss" | "cobalt" | "ember" | "ink" | "tree";
 }) {
   const cls = `page-hero${compact ? " page-hero--compact" : ""}${
     tone && tone !== "emerald" ? ` page-hero--tone-${tone}` : ""
