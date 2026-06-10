@@ -2,32 +2,60 @@ import Link from "next/link";
 import Image from "next/image";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import { NetworkChip } from "@/components/site/NetworkChip";
 
-const EXPLORE = [
-  { label: "Home", href: "/home" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Security", href: "/security" },
-  { label: "Get Started", href: "/get-started" },
-  { label: "Docs", href: OFFICIAL_LINKS.github, external: true },
-] as const;
+type FooterLink = {
+  label: string;
+  href: string;
+  external?: boolean;
+  github?: boolean;
+};
 
-const RESOURCES = [
-  { label: "Contracts", href: "/contracts" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Official links", href: "/official-links" },
-  { label: "Security contact", href: "/official-links#security-contact" },
-] as const;
+/* Full sitemap — every kept page is reachable from here without crowding
+   the top nav. Anchors (#users, #builder-quickstart, #operators,
+   #network-status, #contact) are owned by their pages. */
+const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = [
+  {
+    title: "Protocol",
+    links: [
+      { label: "How It Works", href: "/how-it-works" },
+      { label: "Security", href: "/security" },
+      { label: "Contracts", href: "/contracts" },
+      { label: "Network status", href: "/contracts#network-status" },
+    ],
+  },
+  {
+    title: "Get started",
+    links: [
+      { label: "Start as a user", href: "/get-started#users" },
+      { label: "Start building", href: "/get-started#builder-quickstart" },
+      { label: "Run the protocol", href: "/get-started#operators" },
+      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "FAQ", href: "/faq" },
+      { label: "Official links", href: "/official-links" },
+      { label: "Roadmap", href: "/roadmap" },
+      { label: "Changelog", href: "/changelog" },
+      { label: "Brand kit", href: "/brand" },
+      { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Security contact", href: "/security#contact" },
+      { label: "X", href: OFFICIAL_LINKS.x, external: true },
+      { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
+    ],
+  },
+];
 
-const CHANNELS = [
-  { label: "GitHub", href: OFFICIAL_LINKS.github },
-  { label: "Discord", href: OFFICIAL_LINKS.discord },
-  { label: "X", href: OFFICIAL_LINKS.x },
-] as const;
-
-const LEGAL = [
-  "Terms publishing soon",
-  "Privacy publishing soon",
-] as const;
+const LEGAL = ["Terms publishing soon", "Privacy publishing soon"] as const;
 
 // Recognizable brand glyphs for the official channels. Inline SVG keeps the
 // footer a static server component with no extra dependencies.
@@ -62,21 +90,21 @@ const SOCIAL = [
 ];
 
 /**
- * Shared footer for the (site) route group. Server component — purely static
- * markup.
+ * Shared footer for the (site) route group — the full sitemap. Static server
+ * markup except the compact NetworkChip, which is its own client island.
  */
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="site-footer__top">
+      <div className="site-footer__top site-footer__top--sitemap">
         <div className="site-footer__brand">
           <div className="lock">
             <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} />
             <span className="wm">Midgard</span>
           </div>
           <p>
-            Built by Anastasia Labs. A Cardano-native Layer 2 built for
-            speed, scale, and security.
+            Midgard is a Cardano-native optimistic rollup: Layer 2 speed with
+            settlement anchored to Cardano. Built by Anastasia Labs.
           </p>
 
           <div
@@ -100,65 +128,40 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="site-footer__col">
-          <h4>Explore</h4>
-          <ul>
-            {EXPLORE.map((l) => (
-              <li key={l.href}>
-                {"external" in l && l.external ? (
-                  <a
-                    href={l.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="site-footer__link--external"
-                  >
-                    {l.label}
-                    <GitHubIcon size={14} aria-hidden />
-                  </a>
-                ) : (
-                  <Link href={l.href}>{l.label}</Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="site-footer__col">
-          <h4>Resources</h4>
-          <ul>
-            {RESOURCES.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href}>{l.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="site-footer__col">
-          <h4>Channels</h4>
-          <ul>
-            {CHANNELS.map((l) => (
-              <li key={l.label}>
-                <a href={l.href} target="_blank" rel="noreferrer">
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        {COLUMNS.map((col) => (
+          <div className="site-footer__col" key={col.title}>
+            <h4>{col.title}</h4>
+            <ul>
+              {col.links.map((l) => (
+                <li key={l.label}>
+                  {l.external ? (
+                    <a
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={l.github ? "site-footer__link--external" : undefined}
+                    >
+                      {l.label}
+                      {l.github ? <GitHubIcon size={14} aria-hidden /> : null}
+                    </a>
+                  ) : (
+                    <Link href={l.href}>{l.label}</Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
 
       <div className="site-footer__bottom">
         <div className="site-footer__legal">
           {LEGAL.map((label) => (
-            <span key={label}>
-              {label}
-            </span>
+            <span key={label}>{label}</span>
           ))}
         </div>
-        <span className="meta">
-          © 2026 Midgard · Always start from official links
-        </span>
+        <NetworkChip />
+        <span className="meta">© 2026 Midgard · Always start from official links</span>
       </div>
     </footer>
   );

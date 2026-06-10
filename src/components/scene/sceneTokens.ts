@@ -4,27 +4,22 @@
    sceneTokens — shared building blocks for the R3F scenes.
 
    Consolidates helpers that were duplicated verbatim across
-   WorldTreeScene / RootworkScene / MonolithScene:
-     - mulberry32   deterministic PRNG (stable geometry across reloads)
+   WorldTreeScene / RootworkScene / MonolithScene / GrowthTreeScene /
+   JourneyScene:
+     - mulberry32   deterministic PRNG (re-exported from ./prng, which is
+                    three-free so Canvas2D backdrops can share it too)
      - useGlowTexture  soft radial glow sprite
      - usePointerParallax  window-level pointer tracking for camera rigs
+     - useBarkMaps / cloneBarkMaps  the shared 1K oak bark PBR set
    Plus the shared colour palette, kept in sync with globals.css so every
    scene speaks the same green/gold language.
    ============================================================ */
 
+import { useLoader } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
-/** Deterministic RNG so procedural geometry looks identical every load. */
-export function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
+export { mulberry32 } from "./prng";
 
 /** Soft white radial glow sprite, reused for sap points, root tips, L1 blocks. */
 export function useGlowTexture() {
@@ -62,6 +57,61 @@ export function usePointerParallax(motionOn: boolean) {
     return () => window.removeEventListener("pointermove", onMove);
   }, [motionOn]);
   return ptr;
+}
+
+export type BarkMaps = {
+  diff: THREE.Texture;
+  nor: THREE.Texture;
+  rough: THREE.Texture;
+  ao: THREE.Texture;
+};
+
+/**
+ * Shared bark textures (1K WebP, ~1.3MB total) — moved verbatim from the
+ * identical copies in GrowthTreeScene / JourneyScene so the loading +
+ * colour-space setup lives once. (RootworkScene / WorldTreeScene use
+ * different map subsets/wrapping and keep their own paths.)
+ */
+export function useBarkMaps(): BarkMaps {
+  const [diff, nor, rough, ao] = useLoader(THREE.TextureLoader, [
+    "/textures/bark/oak_diff_1k.webp",
+    "/textures/bark/oak_nor_gl_1k.webp",
+    "/textures/bark/oak_rough_1k.webp",
+    "/textures/bark/oak_ao_1k.webp",
+  ]);
+  useMemo(() => {
+    for (const t of [diff, nor, rough, ao]) {
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.anisotropy = 8;
+      t.needsUpdate = true;
+    }
+    diff.colorSpace = THREE.SRGBColorSpace;
+    nor.colorSpace = THREE.NoColorSpace;
+    rough.colorSpace = THREE.NoColorSpace;
+    ao.colorSpace = THREE.NoColorSpace;
+  }, [diff, nor, rough, ao]);
+  return { diff, nor, rough, ao };
+}
+
+/** Per-region clones of the bark set with their own repeat (verbatim move). */
+export function cloneBarkMaps(maps: BarkMaps, repeat: THREE.Vector2): BarkMaps {
+  const c = {
+    diff: maps.diff.clone(),
+    nor: maps.nor.clone(),
+    rough: maps.rough.clone(),
+    ao: maps.ao.clone(),
+  };
+  for (const t of [c.diff, c.nor, c.rough, c.ao]) {
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.copy(repeat);
+    t.anisotropy = 8;
+    t.needsUpdate = true;
+  }
+  c.diff.colorSpace = THREE.SRGBColorSpace;
+  c.nor.colorSpace = THREE.NoColorSpace;
+  c.rough.colorSpace = THREE.NoColorSpace;
+  c.ao.colorSpace = THREE.NoColorSpace;
+  return c;
 }
 
 /** Core palette, mirrored from globals.css tokens (green / gold / inks). */

@@ -1,0 +1,68 @@
+import Link from "next/link";
+
+export type NextStepItem = {
+  label: string;
+  /** Optional one-line supporting text under the label. */
+  sub?: string;
+  href: string;
+};
+
+/**
+ * End-of-page "Next steps" block: a titled row of 2–3 arrow-link cards in the
+ * brand panel style. Server component, presentational only — styles live in
+ * globals.css under "NEXT STEPS".
+ *
+ *   <NextSteps items={[{ label: "Read the security model", href: "/security" }]} />
+ */
+export function NextSteps({
+  title = "Next steps",
+  items,
+}: {
+  title?: string;
+  items: NextStepItem[];
+}) {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <section className="next-steps" aria-label={title}>
+      <div className="next-steps__inner">
+        <div className="next-steps__head">
+          <span className="eyebrow">{title}</span>
+        </div>
+        <div className="next-steps__grid">
+          {items.map((item) => {
+            const external = /^https?:\/\//.test(item.href);
+            const inner = (
+              <>
+                <span className="next-steps__label">
+                  {item.label}
+                  <span className="next-steps__arrow" aria-hidden>
+                    →
+                  </span>
+                </span>
+                {item.sub ? (
+                  <span className="next-steps__sub">{item.sub}</span>
+                ) : null}
+              </>
+            );
+            return external ? (
+              <a
+                key={item.href}
+                className="next-steps__card panel"
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {inner}
+              </a>
+            ) : (
+              <Link key={item.href} className="next-steps__card panel" href={item.href}>
+                {inner}
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -42,6 +42,7 @@
    ============================================================ */
 
 import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { MOTION_SPEED } from "@/lib/motionConfig";
 
 const PLATE_SRC = "/plates/hero-tree.jpg";
 
@@ -93,16 +94,37 @@ const PARTICLE_CORE = "#00ff66";
 const PARTICLE_ALT = "#33ff33";
 
 /* Tunables (ported from StaticTreeHero, trimmed for a CALM ambient home hero —
-   far fewer lanes/particles than the data-driven How-It-Works track). */
-const FLASH_DUR = 0.9; // fast BLUE "connected to L1" blink at final root/L1 point
+   far fewer lanes/particles than the data-driven How-It-Works track).
+
+   TIME BASE: the frame loop multiplies dt by MOTION_SPEED (0.7) exactly ONCE
+   at the rAF boundary, so every time/speed constant below is in "sim seconds"
+   and runs at 0.7x wall-clock. Comments quote the EFFECTIVE (wall-clock)
+   values where pacing matters. */
+const FLASH_DUR = 1.2; // L1 settlement bloom length (sim-s) — EFFECTIVE ~1.7s: a soft charge-and-decay, no longer a blink
 const GROW_MIN = 0.4;
 const GROW_MAX = 1.0;
 const GROW_FAST = 0.34;
 const FIRST_GLOW_DELAY = 0.45;
 const STARTUP_RAMP_SECONDS = 4.0;
-const TRUNK_PACKET_VSPEED = 0.052; // image-height/sec for sequenced packets
-const TRUNK_PACKET_VSPEED_JIT = 0.009;
+const TRUNK_PACKET_VSPEED = 0.043; // image-height/sec (sim) — EFFECTIVE ~0.030: a deliberate, unhurried descent (was 0.052)
+const TRUNK_PACKET_VSPEED_JIT = 0.0074; // scaled in proportion (EFFECTIVE ~0.005; was 0.009)
 const L1_HOLLOW_ROUTE_CHANCE = 0.34; // some, not all, packets enter the blue L1 hollow
+
+/* ── SETTLEMENT SEQUENCING ──
+   At most this many root-tip blooms play at once; extra arrivals HOLD at the
+   tip (fully blue-charged) until a slot frees, and each major root fan gets a
+   cooldown — so settlement reads SEQUENCED, never popcorn. */
+const MAX_CONCURRENT_BLASTS = 2;
+const ROOT_SLOT_COOLDOWN = 1.4; // sim-s (EFFECTIVE ~2s) before the same root fan blooms again
+
+/* ── QUEUED-ORB DRIFT at the batcher pockets ──
+   The old per-frame sine wobble (1.8 rad/s) twitched like a pinball. Queued
+   orbs now ride a SLOW orbital drift (0.7 rad/s sim ⇒ ~0.5 rad/s EFFECTIVE,
+   small radius) and ease into their slot with a critically-damped spring —
+   no instantaneous jumps, no direction reversals. Orbs glide. */
+const QUEUE_ORBIT_W = 0.7; // rad/s (sim) orbital angular frequency
+const QUEUE_ORBIT_R = 2.3; // px orbital radius
+const QUEUE_SPRING = 26; // spring stiffness for the slot glide (critically damped)
 
 /* ── BATCHER / SEQUENCER tunables ──
    Canopy orbs stay small and distributed, then temporarily queue in 3-5 local
@@ -115,7 +137,7 @@ const BATCH_READY_MIN = 3;
 const BATCH_READY_MAX = 4;
 const BATCH_HOLD_MIN = 1.05;
 const BATCH_HOLD_MAX = 1.75;
-const BATCH_RELEASE_EVERY = 0.26;
+const BATCH_RELEASE_EVERY = 0.34; // sim-s between sequenced releases — EFFECTIVE ~0.49s (was 0.26)
 const BATCH_RELEASE_JIT = 0.06;
 const BATCH_NODE_X0 = TRUNK_X - 0.088;
 const BATCH_NODE_X1 = TRUNK_X + 0.078;
@@ -162,8 +184,17 @@ type QueuedOrb = {
   alt: boolean;
   r0: number;
   sourceX: number;
+  sourceY: number; // arrival point (image space) so the orb GLIDES into its slot
   age: number;
   order: number;
+  // critically-damped slot-glide state: px offset from the pocket centre +
+  // velocity. Initialised from the canopy arrival point on first draw so the
+  // orb eases in — no instantaneous jump into the queue.
+  ox: number;
+  oy: number;
+  ovx: number;
+  ovy: number;
+  oInit: boolean;
 };
 
 /* A small batcher pocket at the fork. It never absorbs into one giant sprite;
@@ -213,6 +244,13 @@ const L1_CORE_RGB = rgb("#0033ad"); // Cardano blue (the settled L1 heart)
 const L1_GLOW_RGB = rgb("#3aa0ff"); // bright cyan-blue halo at the connection
 const L1_SPARK_RGB = rgb("#6fe0ff"); // hottest cyan-blue spark at the blink peak
 
+/* Pre-mixed green→blue colour ramps (17 steps each) so the hot draw loop
+   never rebuilds "r,g,b" strings via mixRgb per orb per frame — the per-frame
+   string/parse work is hoisted to init (perf). */
+const L1_MIX_STEPS = 16;
+const L1_MIX_CORE: string[] = [];
+const L1_MIX_ALT: string[] = [];
+
 const clamp = (v: number, lo: number, hi: number) =>
   v < lo ? lo : v > hi ? hi : v;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -220,6 +258,12 @@ const smooth01 = (x: number) => {
   const c = clamp(x, 0, 1);
   return c * c * (3 - 2 * c);
 };
+
+// populate the green→blue ramps (here, after lerp/mixRgb are initialised)
+for (let i = 0; i <= L1_MIX_STEPS; i++) {
+  L1_MIX_CORE.push(mixRgb(CORE_RGB, L1_GLOW_RGB, i / L1_MIX_STEPS));
+  L1_MIX_ALT.push(mixRgb(ALT_RGB, L1_GLOW_RGB, i / L1_MIX_STEPS));
+}
 
 /* ---- curve / vein-fitting helpers (ported verbatim from StaticTreeHero) ---- */
 function catmullRom(points: Pt[], samplesPer: number): Pt[] {
@@ -609,32 +653,36 @@ function sampleLane(lane: Lane, t: number): { pt: Pt; tan: Pt } {
   return { pt, tan };
 }
 
-// Luminous radial sprite (ported from StaticTreeHero.makeGlow).
+// Luminous radial sprite (ported from StaticTreeHero.makeGlow), re-rastered
+// at 192px to match the ~1.8x larger draw sizes (so nothing samples blurry),
+// with a GENTLER alpha ramp — brighter through the mid-falloff, softer at the
+// edge — so each orb reads as a deliberate light source, not a hard spark.
 function makeGlow(rgbStr: string): HTMLCanvasElement {
-  const S = 128;
+  const S = 192;
   const c = document.createElement("canvas");
   c.width = c.height = S;
   const g = c.getContext("2d")!;
   const grd = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
-  grd.addColorStop(0, `rgba(${rgbStr},0.95)`);
-  grd.addColorStop(0.12, `rgba(${rgbStr},0.7)`);
-  grd.addColorStop(0.3, `rgba(${rgbStr},0.32)`);
-  grd.addColorStop(0.6, `rgba(${rgbStr},0.09)`);
+  grd.addColorStop(0, `rgba(${rgbStr},0.92)`);
+  grd.addColorStop(0.16, `rgba(${rgbStr},0.62)`);
+  grd.addColorStop(0.38, `rgba(${rgbStr},0.3)`);
+  grd.addColorStop(0.68, `rgba(${rgbStr},0.1)`);
   grd.addColorStop(1, `rgba(${rgbStr},0)`);
   g.fillStyle = grd;
   g.fillRect(0, 0, S, S);
   return c;
 }
 
-// White-green "heart" stamped at each orb's centre (ported from makeCore).
+// White-green "heart" stamped at each orb's centre (ported from makeCore),
+// re-rastered at 96px for the larger hearts, mid-stop eased out a touch.
 function makeCore(): HTMLCanvasElement {
-  const S = 64;
+  const S = 96;
   const c = document.createElement("canvas");
   c.width = c.height = S;
   const g = c.getContext("2d")!;
   const grd = g.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
   grd.addColorStop(0, "rgba(238,255,245,0.96)");
-  grd.addColorStop(0.35, "rgba(178,255,208,0.5)");
+  grd.addColorStop(0.4, "rgba(178,255,208,0.48)");
   grd.addColorStop(1, "rgba(120,255,170,0)");
   g.fillStyle = grd;
   g.fillRect(0, 0, S, S);
@@ -783,7 +831,8 @@ export default function PhotorealHomeHero({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const MAX_PARTICLES = lite ? 220 : 520;
+    // fewer, larger orbs (was 220/520): each light should read as deliberate
+    const MAX_PARTICLES = lite ? 130 : 300;
 
     /* ---- build the lanes (parametric first; re-snap once the plate loads) ---- */
     const makeLeaves = (t: Tree): LeafNode[] =>
@@ -1056,8 +1105,15 @@ export default function PhotorealHomeHero({
         alt: p.alt,
         r0: p.r0 ?? Math.random(),
         sourceX: pt.x,
+        sourceY: pt.y,
         age: 0,
         order: best.sequence++,
+        // slot-glide state seeds from the arrival point on first draw
+        ox: 0,
+        oy: 0,
+        ovx: 0,
+        ovy: 0,
+        oInit: false,
       };
       best.queue.push(orb);
       if (best.queue.length === 1) {
@@ -1115,7 +1171,10 @@ export default function PhotorealHomeHero({
 
     // Spread most streams across stable root lanes, while a controlled minority
     // deliberately enters the blue Cardano/L1 hollow through explicit center lanes.
+    // Each major fan slot carries a COOLDOWN so consecutive packets fan out
+    // across DIFFERENT roots — settlement blooms read sequenced, not popcorn.
     const MAJOR_ROOT_FRACS = [0.18, 0.3, 0.42, 0.58, 0.7, 0.82];
+    const rootSlotNextFree = MAJOR_ROOT_FRACS.map(() => 0); // runTime timestamps
     let rootCursor = (Math.random() * MAJOR_ROOT_FRACS.length) | 0;
     let l1Cursor = 0;
     const rootIndexForPacket = (p: Particle) => {
@@ -1125,8 +1184,24 @@ export default function PhotorealHomeHero({
         l1Cursor = (l1Cursor + 1 + Math.floor(seed * 3)) % l1.length;
         return l1[l1Cursor];
       }
-      rootCursor = (rootCursor + 1 + Math.floor((p.r0 ?? 0) * 2)) % MAJOR_ROOT_FRACS.length;
-      const frac = MAJOR_ROOT_FRACS[rootCursor] + (((seed * 13.37) % 1) - 0.5) * 0.028;
+      // walk the fan, preferring the first slot whose cooldown has expired;
+      // if all are cooling, take the one that frees soonest.
+      let pick = -1;
+      for (let k = 0; k < MAJOR_ROOT_FRACS.length; k++) {
+        const idx = (rootCursor + 1 + k) % MAJOR_ROOT_FRACS.length;
+        if (rootSlotNextFree[idx] <= runTime) {
+          pick = idx;
+          break;
+        }
+      }
+      if (pick < 0) {
+        pick = 0;
+        for (let k = 1; k < rootSlotNextFree.length; k++)
+          if (rootSlotNextFree[k] < rootSlotNextFree[pick]) pick = k;
+      }
+      rootCursor = pick;
+      rootSlotNextFree[pick] = runTime + ROOT_SLOT_COOLDOWN;
+      const frac = MAJOR_ROOT_FRACS[pick] + (((seed * 13.37) % 1) - 0.5) * 0.028;
       return rootAtFrac(normal.length ? normal : tree.roots.map((_, idx) => idx), frac);
     };
 
@@ -1163,8 +1238,14 @@ export default function PhotorealHomeHero({
             alt: i % 2 === 0,
             r0: Math.random(),
             sourceX: node.x,
+            sourceY: node.y,
             age: 0.6 + i * 0.14,
             order: node.sequence++,
+            ox: 0,
+            oy: 0,
+            ovx: 0,
+            ovy: 0,
+            oInit: true, // static seed sits directly in its slot (no glide-in)
           });
       }
       // a faint scatter of small canopy orbs (kept sparse on lite).
@@ -1302,22 +1383,35 @@ export default function PhotorealHomeHero({
        ============================================================ */
     let raf = 0;
     let prev = performance.now();
+    // scaled simulation clock — drives every ambient oscillator below so the
+    // whole engine breathes at the same 0.7x pace (never use now/1000).
+    let simNow = 0;
+    // the soft green canopy bloom over the plate is rebuilt only when the
+    // cover transform actually moves — idle frames reuse the gradient (perf).
+    let plateBloom: CanvasGradient | null = null;
+    let plateBloomKey = "";
     const frame = (now: number) => {
-      const dt = Math.min(0.05, (now - prev) / 1000);
+      // MOTION_SPEED is applied exactly ONCE here, at the rAF boundary: the
+      // simulation (orb growth, spawn cadence, decays, oscillators) runs at
+      // 0.7x wall-clock. The cover pan keeps the RAW dt — it follows live
+      // user scroll, and slowing that spring would read as lag, not calm.
+      const rawDt = Math.min(0.05, (now - prev) / 1000);
       prev = now;
+      const dt = rawDt * MOTION_SPEED;
+      simNow += dt;
       const moving = motionOn;
 
-      const { oX, oY, dW, dH } = computeCover(dt);
+      const { oX, oY, dW, dH } = computeCover(rawDt);
 
       /* ---- simulate ---- */
       if (moving) {
         staticSeeded = false;
         runTime += dt;
-        focusAngle = Math.PI * 0.5 + Math.PI * 0.72 * Math.sin((now / 1000) * 0.65);
+        focusAngle = Math.PI * 0.5 + Math.PI * 0.72 * Math.sin(simNow * 0.65);
 
         if (!openingBurstDone && runTime >= FIRST_GLOW_DELAY) {
           openingBurstDone = true;
-          const burst = lite ? 9 : 18;
+          const burst = lite ? 6 : 12; // calmer opening (was 9/18)
           for (let i = 0; i < burst; i++) spawnCanopy(true);
           spawnTimer = 0.06;
         }
@@ -1331,14 +1425,16 @@ export default function PhotorealHomeHero({
           }
         }
 
-        // ambient canopy spawning — sparse drip that builds to a calm dotting.
+        // ambient canopy spawning — a deliberate drip: mostly SINGLE births,
+        // ~0.42–0.62 sim-s apart ⇒ EFFECTIVE ~0.6–0.9s between spawns
+        // (was every 0.17–0.34s with 1–4 orb clusters: too frantic).
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
           const ramp = Math.min(1, runTime / STARTUP_RAMP_SECONDS);
-          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.45 ? 3 : 2));
-          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.18 + ramp * 0.16);
-          const meanGap = Math.max(0.1, 0.34 - ramp * 0.2);
-          spawnTimer = meanGap * (0.5 + Math.random() * 0.9);
+          const cluster = 1 + (Math.random() < 0.25 * ramp ? 1 : 0);
+          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.12 + ramp * 0.1);
+          const meanGap = 0.62 - ramp * 0.1; // 0.62 → 0.52 sim-s
+          spawnTimer = meanGap * (0.8 + Math.random() * 0.4);
         }
 
         // grow in place, then advance along the current lane
@@ -1389,7 +1485,10 @@ export default function PhotorealHomeHero({
         }
 
         // phase transitions: canopy → batch queue; trunk packet → root lane;
-        // root tip → individual L1 blast.
+        // root tip → individual L1 settlement bloom (capped + sequenced).
+        let activeBlasts = 0;
+        for (const p of particles)
+          if (p.phase === 3 && p.age < FLASH_DUR * 0.7) activeBlasts++;
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           if (p.phase === 3) {
@@ -1404,6 +1503,14 @@ export default function PhotorealHomeHero({
           } else if (p.phase === 1) {
             routeIntoRoot(p);
           } else {
+            // stagger settlement: only MAX_CONCURRENT_BLASTS blooms at once —
+            // extra arrivals HOLD at the tip, fully blue-charged, until a
+            // slot frees, so the payoff reads sequenced rather than popcorn.
+            if (activeBlasts >= MAX_CONCURRENT_BLASTS) {
+              p.t = 0.9999;
+              continue;
+            }
+            activeBlasts++;
             p.phase = 3;
             p.t = 1;
             p.hold = 0;
@@ -1433,19 +1540,25 @@ export default function PhotorealHomeHero({
       }
 
       // light grade to match the old CSS filter (contrast/saturate/brightness).
-      // a soft green canopy bloom + an overall lift, screen-blended.
+      // a soft green canopy bloom + an overall lift, screen-blended. The
+      // gradient is cached and only rebuilt when the cover transform moves
+      // ≥1px (idle frames skip the per-frame createRadialGradient — perf).
       ctx.globalCompositeOperation = "screen";
-      const bloom = ctx.createRadialGradient(
-        oX + 0.72 * dW,
-        oY + 0.26 * dH,
-        0,
-        oX + 0.72 * dW,
-        oY + 0.26 * dH,
-        dW * 0.4,
-      );
-      bloom.addColorStop(0, "rgba(26,84,40,0.18)");
-      bloom.addColorStop(1, "rgba(26,84,40,0)");
-      ctx.fillStyle = bloom;
+      const bloomKey = `${oX | 0},${oY | 0},${dW | 0}`;
+      if (!plateBloom || bloomKey !== plateBloomKey) {
+        plateBloomKey = bloomKey;
+        plateBloom = ctx.createRadialGradient(
+          oX + 0.72 * dW,
+          oY + 0.26 * dH,
+          0,
+          oX + 0.72 * dW,
+          oY + 0.26 * dH,
+          dW * 0.4,
+        );
+        plateBloom.addColorStop(0, "rgba(26,84,40,0.18)");
+        plateBloom.addColorStop(1, "rgba(26,84,40,0)");
+      }
+      ctx.fillStyle = plateBloom;
       ctx.fillRect(0, 0, W, H);
 
       // 2) the sap engine — orbs ride the SAME transform as the plate.
@@ -1453,11 +1566,12 @@ export default function PhotorealHomeHero({
       const glowBoost = 1 + surge * 0.6;
 
       // softly shimmering canopy leaf glints at the vein tips
+      // (1.1 rad/s sim ⇒ ~0.77 rad/s EFFECTIVE — ambient-breathing band)
       for (const lf of leaves) {
-        const shimmer = moving ? 0.04 * Math.sin((now / 1000) * 1.1 + lf.phase) : 0;
+        const shimmer = moving ? 0.04 * Math.sin(simNow * 1.1 + lf.phase) : 0;
         const a = Math.min(0.4, 0.05 + shimmer + lf.flash * 0.45);
         if (a > 0.02) {
-          const lr = 7 + lf.flash * 11;
+          const lr = 9 + lf.flash * 13; // a touch larger to match the bigger orbs
           ctx.globalAlpha = a;
           ctx.drawImage(glowAlt, oX + lf.x * dW - lr, oY + lf.y * dH - lr, lr * 2, lr * 2);
         }
@@ -1475,7 +1589,7 @@ export default function PhotorealHomeHero({
         const pulse = smooth01(node.pulse);
         const ready = node.ready ? 1 : 0;
 
-        const haloR = (11 + q * 2.25) * (1 + pulse * 0.12);
+        const haloR = (16 + q * 3.4) * (1 + pulse * 0.12); // ~1.5x to wrap the larger orbs
         ctx.globalAlpha = Math.min(0.3, 0.05 + q * 0.024 + node.glow * 0.1);
         ctx.drawImage(glowCore, cx - haloR, cy - haloR, haloR * 2, haloR * 2);
 

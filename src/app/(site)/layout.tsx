@@ -16,6 +16,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <InteriorFluidBackground />
+      {/* Subtle shared ambient layer — faint green/gold radial light so pages
+          never fall into a flat black void below their hero (audit Phase 0). */}
+      <div className="site-ambient" aria-hidden />
       <SiteNav />
       {/* `data-scroll-content` is the smooth-scroll transform root. The fixed
           nav stays outside it; everything that scrolls (page content + footer)

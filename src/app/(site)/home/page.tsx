@@ -1,12 +1,10 @@
-import type { Metadata } from "next";
-import GatewayPhotoreal from "@/components/GatewayPhotoreal";
+import { permanentRedirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Midgard",
-  description:
-    "Midgard is a Cardano-native optimistic rollup. High-throughput Layer 2 performance with a trust path that settles back to Cardano.",
-};
-
-export default function HomePage() {
-  return <GatewayPhotoreal />;
+/**
+ * The canonical home now lives at `/` (src/app/(site)/page.tsx) — the root URL
+ * carries the SEO weight and first-time visitors get the one-time splash
+ * overlay there. This stub keeps every old /home link working.
+ */
+export default function HomeRedirect() {
+  permanentRedirect("/");
 }

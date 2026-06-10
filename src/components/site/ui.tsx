@@ -70,6 +70,9 @@ export function PageHero({
   actions,
   chips,
   media,
+  top,
+  compact,
+  tone,
 }: {
   label?: string;
   title: ReactNode;
@@ -79,15 +82,25 @@ export function PageHero({
   chips?: ReactNode;
   /** Optional decorative background graphic layered behind the hero text (e.g. an interactive canvas). */
   media?: ReactNode;
+  /** Optional slot rendered above the eyebrow (e.g. a <PartOf/> breadcrumb). */
+  top?: ReactNode;
+  /** ~60vh hero instead of full viewport — interior pages get content above the fold. */
+  compact?: boolean;
+  /** Subtle per-section tint over the shared fluid background so interior pages stop looking identical. */
+  tone?: "emerald" | "moss" | "cobalt" | "ember" | "ink";
 }) {
+  const cls = `page-hero${compact ? " page-hero--compact" : ""}${
+    tone && tone !== "emerald" ? ` page-hero--tone-${tone}` : ""
+  }`;
   return (
-    <header className="page-hero">
+    <header className={cls}>
       {media ? (
         <div className="page-hero__media" aria-hidden="true">
           {media}
         </div>
       ) : null}
       <div className="page-hero__inner">
+        {top ? <Reveal>{top}</Reveal> : null}
         {label ? (
           <Reveal>
             <div className="eyebrow">{label}</div>
