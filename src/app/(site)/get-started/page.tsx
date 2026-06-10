@@ -76,6 +76,7 @@ export default function GetStartedPage() {
               body={a.body}
               cta={a.cta}
               href={a.href}
+              ctaGlow
               delay={Number(a.num) * 70}
             />
           ))}
@@ -105,6 +106,7 @@ export default function GetStartedPage() {
             cta="View GitHub"
             ctaIcon={<GitHubIcon size={13} />}
             href={OFFICIAL_LINKS.github}
+            ctaGlow
             delay={70}
           />
           <Card
@@ -121,6 +123,7 @@ export default function GetStartedPage() {
             body="The best feedback names a flow, a constraint, a wallet state, or a fallback path that needs to work."
             cta="Register interest"
             href={OFFICIAL_LINKS.intakeForm}
+            ctaGlow
             delay={210}
           />
         </CardGrid>

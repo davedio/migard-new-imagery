@@ -178,7 +178,7 @@ export default function StageGraphic({
   /** advanced (desktop + fine pointer + motion-on): drives the tracking */
   enabled: boolean;
 }) {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => stageIndex(progress.get()));
   const rootRef = useRef<HTMLDivElement>(null);
 
   // swap the active stage when the index crosses a threshold (5x total).
@@ -188,11 +188,6 @@ export default function StageGraphic({
     const idx = stageIndex(v);
     setActive((prev) => (prev === idx ? prev : idx));
   });
-
-  // keep in sync if progress is already mid-page on mount
-  useEffect(() => {
-    setActive(stageIndex(progress.get()));
-  }, [progress]);
 
   // ---- follow the live packet, imperatively (no per-frame React state) ----
   // The badge sits to the side of the packet head, auto-flipping so it never
@@ -242,8 +237,10 @@ export default function StageGraphic({
         let left = side === "right" ? pk.x + gap : pk.x - gap - bw;
         // vertically centre the badge on the packet head
         let top = pk.y - bh / 2;
-        // clamp into the viewport (top margin clears the fixed site nav)
-        left = clamp(left, m, W - bw - m);
+        // clamp into the viewport (top margin clears the fixed site nav).
+        // Keep the badge off the far-left edge — sit it a bit further to the
+        // RIGHT, nearer the tree (per request), while still beside the packet.
+        left = clamp(left, Math.min(W * 0.12, W - bw - m), W - bw - m);
         top = clamp(top, m + 56, H - bh - m);
         el.style.transform = `translate3d(${left.toFixed(1)}px, ${top.toFixed(1)}px, 0)`;
         el.dataset.side = side;

@@ -14,7 +14,11 @@ import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { useMotionPref } from "@/lib/motion";
 import type { NetworkSnapshot } from "@/lib/network";
 import type { SceneParams } from "./scene/WorldTreeScene";
-import { AboutFold } from "./site/AboutFold";
+import { AboutFold, ThesisSection } from "./site/AboutFold";
+import { Section } from "@/components/site/ui";
+import { StatTiles } from "@/components/site/StatTiles";
+import { EutxoComparison } from "@/components/site/EutxoComparison";
+import { Roadmap } from "@/components/site/Roadmap";
 
 const SECTION_PAD = "clamp(48px,6.5vh,88px) var(--gut)";
 
@@ -311,7 +315,7 @@ function ExploreGrid() {
           <Reveal key={a.title} delay={i * 70}>
             <Link
               href={a.href}
-              className="panel"
+              className="panel panel--select-glow"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -343,14 +347,7 @@ function ExploreGrid() {
               >
                 {a.line}
               </p>
-              <span
-                style={{
-                  marginTop: 14,
-                  fontFamily: "var(--font-mono)",
-                  fontSize: 12,
-                  color: "var(--green-bright)",
-                }}
-              >
+              <span className="panel-cta-glow">
                 {a.cta} →
               </span>
             </Link>
@@ -432,8 +429,30 @@ export default function GatewayPhotoreal() {
             soft legibility scrims (see .home-body in globals.css) instead of a
             solid cutoff, so the tree stays visible behind the cards. */}
         <div className="home-body">
+          {/* The thesis leads, above "choose your path". */}
+          <ThesisSection />
           <ExploreGrid />
-          <AboutFold />
+          {/* Protocol at-a-glance stats (moved here from How It Works). */}
+          <Section
+            eyebrow="Protocol at a glance"
+            title="Fast confirmations now, final settlement on Cardano."
+            lead="The numbers behind Midgard's pre-alpha testnet: usable speed today, with final settlement on Cardano."
+            tight
+          >
+            <StatTiles />
+          </Section>
+          <AboutFold showThesis={false} />
+          {/* Why eUTXO — moved here from How It Works. */}
+          <Section
+            eyebrow="Why eUTXO"
+            title="Why eUTXO builds a better rollup."
+            lead="Cardano's eUTXO model makes fraud proofs surgical: Midgard re-executes only the inputs of a bad transaction — no global state scan."
+            glow="gold"
+          >
+            <EutxoComparison />
+          </Section>
+          {/* Path to mainnet — moved here from How It Works. */}
+          <Roadmap />
           <ClosingCTA />
         </div>
       </main>

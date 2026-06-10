@@ -9,22 +9,28 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
    its hero, the testnet-status cards, and the closing band were dropped.
    ========================================================================= */
 
-export function AboutFold() {
+export function ThesisSection() {
+  return (
+    <Section eyebrow="The thesis" title="Scale that stays on Cardano.">
+      <Prose
+        items={[
+          {
+            text: "The usual way to scale a blockchain is to leave it — move to a faster network, accept a weaker security model, learn a new stack, and split your liquidity on the way out.",
+          },
+          {
+            text: "Midgard keeps you on Cardano. Your apps run at Layer 2 speed, and every result settles back to Cardano L1.",
+            variant: "emph",
+          },
+        ]}
+      />
+    </Section>
+  );
+}
+
+export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) {
   return (
     <>
-      <Section eyebrow="The thesis" title="Scale that stays on Cardano.">
-        <Prose
-          items={[
-            {
-              text: "The usual way to scale a blockchain is to leave it — move to a faster network, accept a weaker security model, learn a new stack, and split your liquidity on the way out.",
-            },
-            {
-              text: "Midgard keeps you on Cardano. Your apps run at Layer 2 speed, and every result settles back to Cardano L1.",
-              variant: "emph",
-            },
-          ]}
-        />
-      </Section>
+      {showThesis && <ThesisSection />}
 
       <Section eyebrow="Who builds it" title="Built by Anastasia Labs.">
         <Prose

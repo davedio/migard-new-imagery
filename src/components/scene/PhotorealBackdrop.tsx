@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/immutability -- canvas nodes/edges/motes carry mutable renderer state in the rAF loop. */
+
 /* ============================================================
    PhotorealBackdrop — the CONVERGENCE variant of the How It Works
    journey backdrop: the CINEMATIC look fused with the STORYTELLING
@@ -333,7 +335,7 @@ export default function PhotorealBackdrop({
   // shared, rAF-smoothed pan progress so the canvas packet rides the EXACT
   // same eased descent as the plate (perfect coupling = no jitter, tracking
   // shot feel). Written by the plate-pan loop, read by the overlay loop.
-  const panProgRef = useRef(clamp(progressRef.current ?? 0));
+  const panProgRef = useRef(0);
   const model = useMemo(() => buildModel(wide), [wide]);
 
   // ---- plate parallax pan + PER-STAGE ZOOM (rAF, ref-driven) ----
@@ -364,7 +366,8 @@ export default function PhotorealBackdrop({
     }
 
     let raf = 0;
-    let cur = panProgRef.current;
+    let cur = clamp(progressRef.current ?? panProgRef.current);
+    panProgRef.current = cur;
     let vel = 0; // velocity term for a critically-damped follow (no jitter)
     // separately-smoothed camera focal so the dwell+zoom eases between
     // stages instead of snapping at thresholds (buttery, never jerky).
@@ -1077,7 +1080,7 @@ export default function PhotorealBackdrop({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [model, motionOn, progressRef]);
+  }, [model, motionOn, packetRef, progressRef]);
 
   return (
     <div

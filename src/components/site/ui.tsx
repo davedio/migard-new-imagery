@@ -225,6 +225,7 @@ export function Card({
   cta,
   ctaIcon,
   href,
+  ctaGlow = false,
   delay = 0,
 }: {
   num?: string;
@@ -234,9 +235,12 @@ export function Card({
   /** Optional leading icon (e.g. a brand glyph) rendered before the cta text. */
   ctaIcon?: ReactNode;
   href?: string;
+  /** Opt-in luminous CTA treatment for high-value path/action cards. */
+  ctaGlow?: boolean;
   delay?: number;
 }) {
   const external = href ? /^https?:\/\//.test(href) : false;
+  const cardClass = `card panel${ctaGlow ? " card--cta-glow" : ""}`;
   const inner = (
     <>
       {num ? <div className="card__num">{num}</div> : null}
@@ -262,7 +266,7 @@ export function Card({
       {href && external ? (
         <a
           href={href}
-          className="card panel"
+          className={cardClass}
           style={{ width: "100%" }}
           target="_blank"
           rel="noreferrer"
@@ -270,11 +274,11 @@ export function Card({
           {inner}
         </a>
       ) : href ? (
-        <Link href={href} className="card panel" style={{ width: "100%" }}>
+        <Link href={href} className={cardClass} style={{ width: "100%" }}>
           {inner}
         </Link>
       ) : (
-        <div className="card panel" style={{ width: "100%" }}>
+        <div className={cardClass} style={{ width: "100%" }}>
           {inner}
         </div>
       )}

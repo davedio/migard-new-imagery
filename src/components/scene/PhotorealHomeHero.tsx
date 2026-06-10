@@ -80,6 +80,7 @@ const TRUNK_STRANDS = [-0.0036, -0.0013, 0.0013, 0.0036];
 const DOME = { cx: 0.73, cy: 0.2, rx: 0.21, ry: 0.17 }; // canopy foliage spread
 const FORK_Y = 0.4; // canopy base: branches gather to the trunk top
 const CROWN_Y = 0.6; // lower trunk base: roots begin to splay
+const L1_HOLLOW = { x: TRUNK_X - 0.018, y: 0.655 }; // cobalt Cardano/L1 hollow
 const GATHER_NODES = [
   { x: TRUNK_X - 0.04, y: FORK_Y - 0.012, strand: 0 },
   { x: TRUNK_X - 0.003, y: FORK_Y + 0.001, strand: 1 },
@@ -93,17 +94,36 @@ const PARTICLE_ALT = "#33ff33";
 
 /* Tunables (ported from StaticTreeHero, trimmed for a CALM ambient home hero —
    far fewer lanes/particles than the data-driven How-It-Works track). */
-const FLASH_DUR = 1.35; // length of the BLUE "connected to L1" blink at a root tip
+const FLASH_DUR = 0.9; // fast BLUE "connected to L1" blink at final root/L1 point
 const GROW_MIN = 0.4;
 const GROW_MAX = 1.0;
 const GROW_FAST = 0.34;
 const FIRST_GLOW_DELAY = 0.45;
 const STARTUP_RAMP_SECONDS = 4.0;
-const BLOB_VSPEED = 0.04; // height/sec, held fork → root tip (constant visual)
-const BLOB_VSPEED_JIT = 0.007;
-const MERGE_CAP = 4.0;
-const GATHER_MIN = 8;
-const GATHER_MAX = 14;
+const TRUNK_PACKET_VSPEED = 0.052; // image-height/sec for sequenced packets
+const TRUNK_PACKET_VSPEED_JIT = 0.009;
+const L1_HOLLOW_ROUTE_CHANCE = 0.34; // some, not all, packets enter the blue L1 hollow
+
+/* ── BATCHER / SEQUENCER tunables ──
+   Canopy orbs stay small and distributed, then temporarily queue in 3-5 local
+   batcher pockets at the fork. Each pocket grows only modestly, holds for a
+   beat, then releases individual packets in order down the vertical trunk. */
+const BATCH_NODE_COUNT = 5;
+const BATCH_NODE_COUNT_LITE = 3;
+const BATCH_QUEUE_CAP = 5;
+const BATCH_READY_MIN = 3;
+const BATCH_READY_MAX = 4;
+const BATCH_HOLD_MIN = 1.05;
+const BATCH_HOLD_MAX = 1.75;
+const BATCH_RELEASE_EVERY = 0.26;
+const BATCH_RELEASE_JIT = 0.06;
+const BATCH_NODE_X0 = TRUNK_X - 0.088;
+const BATCH_NODE_X1 = TRUNK_X + 0.078;
+const BATCH_NODE_Y = FORK_Y - 0.012;
+
+/* ── INDIVIDUAL L1 BLAST tunables (the blue connection burst at a root tip) ── */
+const BLAST_RING_R = 38; // px reach of the fast expanding blue shockwave ring
+const BLAST_SPARK_R = 18; // px reach of the hot cyan-blue spark core
 
 type Pt = { x: number; y: number };
 type Lane = {
@@ -113,11 +133,12 @@ type Lane = {
   gi?: number;
   ang?: number;
   high?: boolean;
+  l1?: boolean;
 };
 type Tree = { canopy: Lane[]; trunk: Lane[]; roots: Lane[] };
 
-// phase 0 = canopy orb (grows in place, then descends), 1 = trunk blob,
-// 2 = root blob, 3 = "locked-in" flash playing out at a root tip
+// phase 0 = canopy orb (grows in place, then descends), 1 = sequenced trunk
+// packet, 2 = root stream, 3 = "locked-in" L1 blast at a root tip.
 type Particle = {
   phase: 0 | 1 | 2 | 3;
   seg: number;
@@ -132,19 +153,40 @@ type Particle = {
   r0?: number;
   growDelay?: number;
   settled?: boolean; // static fallback: a calm BLUE orb resting at an L1 root tip
+  xJit?: number; // small packet x offset so releases originate from their batcher
+  l1Center?: boolean; // this packet routes through the blue Cardano/L1 hollow
+};
+
+type QueuedOrb = {
+  size: number;
+  alt: boolean;
+  r0: number;
+  sourceX: number;
+  age: number;
+  order: number;
+};
+
+/* A small batcher pocket at the fork. It never absorbs into one giant sprite;
+   it holds a capped queue of individual orbs, pulses modestly, then releases
+   them FIFO down the trunk so sequencing reads visually. */
+type BatchNode = {
+  x: number;
+  y: number;
+  homeX: number;
+  homeY: number;
+  vx: number;
+  queue: QueuedOrb[];
+  age: number;
+  hold: number;
+  readyAt: number;
+  releaseTimer: number;
+  pulse: number;
+  glow: number;
+  sequence: number;
+  ready: boolean;
 };
 
 type LeafNode = { x: number; y: number; phase: number; flash: number };
-type GatherBucket = {
-  x: number;
-  y: number;
-  strand: number;
-  count: number;
-  value: number;
-  target: number;
-  glow: number;
-  pulse: number;
-};
 
 type VeinField = {
   snapBright: (p: Pt, radius?: number) => Pt;
@@ -420,10 +462,8 @@ function buildTree(lite: boolean, field?: VeinField): Tree {
   });
 
   // ROOTS: crown → splay → tip. Wide asymmetric fan (further left than right),
-  // each tip snapped onto a painted root vein. CHANGE 2 — the lanes are pushed
-  // DEEPER so orbs follow the roots all the way to their tips near the cobalt L1
-  // bedrock at the base (instead of stopping high on the trunk/upper roots), and
-  // there are MORE of them so the descent reads as a steady stream settling.
+  // each tip snapped onto a painted root vein. The lower lanes stay calmer than
+  // the canopy so packets read as sequenced settlement, not erratic wandering.
   const roots: Lane[] = [];
   const NR = lite ? 18 : 28;
   for (let i = 0; i < NR; i++) {
@@ -451,12 +491,64 @@ function buildTree(lite: boolean, field?: VeinField): Tree {
       0.034,
     );
     const base = catmullRom([crown, gate, mid, tip], 14);
-    const woven = snake(base, 0.0025 + a * 0.0025, 1, (i * 2.1 + 1) % (Math.PI * 2));
-    const onT = field ? fitToTree(woven, onTree, 0.03, 2) : smoothPoly(woven, 2);
+    const woven = snake(base, 0.0012 + a * 0.0014, 1, (i * 2.1 + 1) % (Math.PI * 2));
+    const onT = field ? fitToTree(woven, onTree, 0.026, 2) : smoothPoly(woven, 3);
     roots.push({
       poly: onT,
       width: clamp(1.15 - a * 0.6, 0.5, 1.15),
       len: polyLen(onT),
+    });
+  }
+
+  // Explicit Cardano/L1 hollow lanes. These are intentionally separate from the
+  // normal green root fan: they enter the cobalt hole directly, but routing only
+  // sends a minority of packets through them so the symbolism stays legible.
+  const l1Count = lite ? 2 : 3;
+  for (let i = 0; i < l1Count; i++) {
+    const u = (i / (l1Count - 1)) * 2 - 1;
+    const tip: Pt = {
+      x: L1_HOLLOW.x + u * 0.012,
+      y: L1_HOLLOW.y + Math.sin((i + 1) * 2.15) * 0.005,
+    };
+    const entry = field
+      ? anchor(
+          {
+            x: TRUNK_X + u * 0.014,
+            y: 0.625 + Math.abs(u) * 0.012,
+          },
+          0.026,
+        )
+      : {
+          x: TRUNK_X + u * 0.014,
+          y: 0.625 + Math.abs(u) * 0.012,
+        };
+    const approach: Pt = {
+      x: lerp(entry.x, tip.x, 0.68),
+      y: lerp(entry.y, tip.y, 0.72),
+    };
+    const base = catmullRom(
+      [
+        crown,
+        { x: TRUNK_X + u * 0.004, y: CROWN_Y + 0.025 },
+        entry,
+        approach,
+        tip,
+      ],
+      14,
+    );
+    let onT = field ? fitToTree(base, onTree, 0.024, 1) : smoothPoly(base, 3);
+    onT = onT.map((p, idx) => {
+      const t = idx / (onT.length - 1);
+      const pull = smooth01((t - 0.58) / 0.42);
+      return pull > 0 ? blendPt(p, tip, pull * 0.92) : p;
+    });
+    onT = smoothPoly(onT, 1);
+    onT[onT.length - 1] = tip;
+    roots.push({
+      poly: onT,
+      width: clamp(0.92 - Math.abs(u) * 0.16, 0.68, 0.92),
+      len: polyLen(onT),
+      l1: true,
     });
   }
 
@@ -767,17 +859,41 @@ export default function PhotorealHomeHero({
     ro.observe(canvas);
 
     /* ---- particle field state ---- */
-    const nextTarget = () =>
-      GATHER_MIN + ((Math.random() * (GATHER_MAX - GATHER_MIN + 1)) | 0);
     const particles: Particle[] = [];
-    const gatherBuckets: GatherBucket[] = GATHER_NODES.map((node) => ({
-      ...node,
-      count: 0,
-      value: 0,
-      target: nextTarget(),
-      glow: 0,
-      pulse: 0,
-    }));
+
+    const freshReadyAt = () =>
+      BATCH_READY_MIN +
+      Math.floor(Math.random() * (BATCH_READY_MAX - BATCH_READY_MIN + 1));
+    const freshHold = () =>
+      BATCH_HOLD_MIN + Math.random() * (BATCH_HOLD_MAX - BATCH_HOLD_MIN);
+    const makeBatchNodes = (): BatchNode[] => {
+      const count = lite ? BATCH_NODE_COUNT_LITE : BATCH_NODE_COUNT;
+      return Array.from({ length: count }, (_, i) => {
+        const u = i / (count - 1);
+        const jx = Math.sin((i + 1) * 18.13) * 0.009;
+        const jy = Math.sin((i + 1) * 2.05) * 0.011 + (i % 2 ? 0.007 : -0.003);
+        const homeX = lerp(BATCH_NODE_X0, BATCH_NODE_X1, u) + jx;
+        const homeY = BATCH_NODE_Y + jy;
+        return {
+          x: homeX,
+          y: homeY,
+          homeX,
+          homeY,
+          vx: 0,
+          queue: [],
+          age: 0,
+          hold: freshHold(),
+          readyAt: freshReadyAt(),
+          releaseTimer: BATCH_RELEASE_EVERY * (0.4 + Math.random() * 0.8),
+          pulse: 0,
+          glow: 0,
+          sequence: 0,
+          ready: false,
+        };
+      });
+    };
+    const batchNodes = makeBatchNodes();
+
     let spawnTimer = FIRST_GLOW_DELAY;
     let surge = 0;
     let staticSeeded = false;
@@ -853,25 +969,18 @@ export default function PhotorealHomeHero({
       }
       return (Math.random() * tree.canopy.length) | 0;
     };
-    const bucketForCanopySeg = (seg: number): GatherBucket => {
-      let idx = tree.canopy[seg]?.gi ?? 1;
-      if (Math.random() < 0.12)
-        idx = clamp(idx + (Math.random() < 0.5 ? -1 : 1), 0, gatherBuckets.length - 1);
-      return gatherBuckets[idx];
-    };
-
     const spawnCanopy = (fast = false) => {
       if (particles.length >= MAX_PARTICLES) return;
       const seg = pickCanopySeg();
       const w = tree.canopy[seg].width;
       const sizeRoll = Math.random();
       const topSize =
-        sizeRoll < 0.7
-          ? 0.22 + Math.pow(Math.random(), 1.35) * 0.34
-          : sizeRoll < 0.93
-            ? 0.56 + Math.random() * 0.4
-            : 1.0 + Math.random() * 0.55;
-      const size = topSize * (0.78 + w * 0.42);
+        sizeRoll < 0.76
+          ? 0.16 + Math.pow(Math.random(), 1.35) * 0.28
+          : sizeRoll < 0.96
+            ? 0.42 + Math.random() * 0.28
+            : 0.72 + Math.random() * 0.28;
+      const size = topSize * (0.72 + w * 0.3);
       const sizeN = clamp(size / 1.6, 0, 1);
       const growTime =
         (fast
@@ -899,127 +1008,230 @@ export default function PhotorealHomeHero({
       leaves[seg].flash = Math.min(1, leaves[seg].flash + 0.72);
     };
 
-    const releaseBlob = (
-      bucket: GatherBucket,
-      gatheredCount: number,
-      gatheredValue: number,
-    ) => {
-      const base = 0.86 + Math.sqrt(gatheredCount) * 0.22 + Math.sqrt(gatheredValue) * 0.32;
-      const addSize = clamp(base * (0.82 + Math.random() * 0.32), 1.05, MERGE_CAP);
-      if (Math.random() < 0.24) {
-        let host: Particle | null = null;
-        for (const p of particles)
-          if (p.phase === 1 && p.t < 0.28 && (!host || p.t < host.t)) host = p;
-        if (host) {
-          host.size = Math.min(MERGE_CAP, Math.cbrt(host.size ** 3 + addSize ** 3));
-          bucket.glow = 1;
-          bucket.pulse = Math.max(bucket.pulse, 0.8);
-          return;
+    // pick the trunk strand whose x is closest to a given img-space x (so the
+    // sequenced packet starts under its batcher pocket).
+    const trunkSegForX = (x: number): number => {
+      let best = 0;
+      let bestD = Infinity;
+      for (let i = 0; i < tree.trunk.length; i++) {
+        const p0 = tree.trunk[i].poly[0];
+        const d = Math.abs(p0.x - x);
+        if (d < bestD) {
+          bestD = d;
+          best = i;
         }
       }
-      if (particles.length >= MAX_PARTICLES) return;
-      particles.push({
-        phase: 1,
-        seg: clamp(
-          bucket.strand + (Math.random() < 0.18 ? (Math.random() < 0.5 ? -1 : 1) : 0),
-          0,
-          tree.trunk.length - 1,
-        ),
-        t: 0,
-        speed: BLOB_VSPEED + (Math.random() * 2 - 1) * BLOB_VSPEED_JIT,
-        size: addSize,
-        grow: 1,
-        growRate: 0,
-        hold: 0,
-        alt: Math.random() < 0.5,
+      return best;
+    };
+
+    const resetBatchNode = (node: BatchNode) => {
+      node.age = 0;
+      node.hold = freshHold();
+      node.readyAt = freshReadyAt();
+      node.releaseTimer = BATCH_RELEASE_EVERY * (0.65 + Math.random() * 0.6);
+      node.ready = false;
+      node.glow = Math.min(node.glow, 0.18);
+    };
+
+    const queueIntoBatch = (p: Particle, pt: Pt) => {
+      let best: BatchNode | null = null;
+      let bestScore = Infinity;
+      for (const node of batchNodes) {
+        const overflow = Math.max(0, node.queue.length - BATCH_QUEUE_CAP + 1);
+        const d = Math.hypot((node.x - pt.x) * IMG_ASPECT, (node.y - pt.y) * 1.4);
+        const score = d + node.queue.length * 0.012 + overflow * 4;
+        if (score < bestScore) {
+          bestScore = score;
+          best = node;
+        }
+      }
+      if (!best) return;
+      if (best.queue.length >= BATCH_QUEUE_CAP) {
+        best.ready = true;
+        best.releaseTimer = Math.min(best.releaseTimer, 0.03);
+        return;
+      }
+      const orb: QueuedOrb = {
+        size: clamp(0.44 + p.size * 0.58, 0.46, 1.08),
+        alt: p.alt,
+        r0: p.r0 ?? Math.random(),
+        sourceX: pt.x,
         age: 0,
-      });
-      bucket.glow = 1;
-      bucket.pulse = Math.max(bucket.pulse, 0.9);
+        order: best.sequence++,
+      };
+      best.queue.push(orb);
+      if (best.queue.length === 1) {
+        best.age = 0;
+        best.ready = false;
+        best.hold = freshHold();
+        best.readyAt = freshReadyAt();
+      }
+      best.homeX = lerp(best.homeX, pt.x, 0.06);
+      best.glow = Math.min(0.72, best.glow + 0.14);
+      best.pulse = Math.min(1, best.pulse + 0.34);
+      if (best.queue.length >= best.readyAt) best.ready = true;
     };
 
-    const collectAtBucket = (p: Particle) => {
-      const bucket = bucketForCanopySeg(p.seg);
-      bucket.count += 1;
-      bucket.value += Math.max(0.22, p.size);
-      bucket.glow = Math.min(1, bucket.glow + 0.32 + p.size * 0.08);
-      bucket.pulse = Math.min(1, bucket.pulse + 0.38 + p.size * 0.08);
-    };
-
-    // send proof orbs down the MAJOR root systems so the blue L1 blinks spread
-    // across the whole root fan (not just a couple of roots) — the payoff of the
-    // descent reads as a steady scatter of settlements along the roots.
-    const MAJOR_ROOT_FRACS = [0.08, 0.2, 0.32, 0.44, 0.56, 0.68, 0.8, 0.92];
-    const rootIndexForTrunk = () => {
-      const frac = MAJOR_ROOT_FRACS[(Math.random() * MAJOR_ROOT_FRACS.length) | 0];
-      return clamp(Math.round(frac * (tree.roots.length - 1)), 0, tree.roots.length - 1);
-    };
-    const continueIntoRoot = (p: Particle) => {
-      p.phase = 2;
-      p.seg = rootIndexForTrunk();
-      p.t = Math.random() * 0.015;
-      p.speed *= 0.96 + Math.random() * 0.08;
-      p.age = Math.max(p.age, 0.4);
+    const releaseQueuedOrb = (node: BatchNode) => {
+      const orb = node.queue.shift();
+      if (!orb) return;
+      if (particles.length < MAX_PARTICLES) {
+        const lane = trunkSegForX(node.x);
+        particles.push({
+          phase: 1,
+          seg: lane,
+          t: 0,
+          speed:
+            TRUNK_PACKET_VSPEED +
+            (Math.random() * 2 - 1) * TRUNK_PACKET_VSPEED_JIT,
+          size: clamp(orb.size * (0.98 + Math.random() * 0.18), 0.5, 1.24),
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: orb.alt,
+          age: 0,
+          r0: orb.r0,
+          xJit: clamp((node.x - TRUNK_X) * 0.5, -0.024, 0.024),
+        });
+      }
+      node.pulse = Math.min(1, node.pulse + 0.45);
+      node.glow = Math.min(0.72, node.glow + 0.18);
       surge = Math.max(surge, 0.06);
+      if (node.queue.length === 0) resetBatchNode(node);
     };
 
-    // STATIC fallback: a calm constellation of orbs sitting ON the veins (no
-    // flow) — born across the canopy lanes, trunk strands, and roots.
+    const splitRootIndices = () => {
+      const normal: number[] = [];
+      const l1: number[] = [];
+      tree.roots.forEach((root, idx) => (root.l1 ? l1 : normal).push(idx));
+      return { normal, l1 };
+    };
+
+    const rootAtFrac = (indices: number[], frac: number) => {
+      if (!indices.length) return 0;
+      const pos = clamp(Math.round(frac * (indices.length - 1)), 0, indices.length - 1);
+      return indices[pos];
+    };
+
+    // Spread most streams across stable root lanes, while a controlled minority
+    // deliberately enters the blue Cardano/L1 hollow through explicit center lanes.
+    const MAJOR_ROOT_FRACS = [0.18, 0.3, 0.42, 0.58, 0.7, 0.82];
+    let rootCursor = (Math.random() * MAJOR_ROOT_FRACS.length) | 0;
+    let l1Cursor = 0;
+    const rootIndexForPacket = (p: Particle) => {
+      const { normal, l1 } = splitRootIndices();
+      const seed = p.r0 ?? Math.random();
+      if (l1.length && seed < L1_HOLLOW_ROUTE_CHANCE) {
+        l1Cursor = (l1Cursor + 1 + Math.floor(seed * 3)) % l1.length;
+        return l1[l1Cursor];
+      }
+      rootCursor = (rootCursor + 1 + Math.floor((p.r0 ?? 0) * 2)) % MAJOR_ROOT_FRACS.length;
+      const frac = MAJOR_ROOT_FRACS[rootCursor] + (((seed * 13.37) % 1) - 0.5) * 0.028;
+      return rootAtFrac(normal.length ? normal : tree.roots.map((_, idx) => idx), frac);
+    };
+
+    const routeIntoRoot = (p: Particle) => {
+      p.phase = 2;
+      p.seg = rootIndexForPacket(p);
+      p.l1Center = !!tree.roots[p.seg]?.l1;
+      p.t = Math.random() * 0.02;
+      p.size = clamp(p.size * (0.84 + Math.random() * 0.18), 0.48, 1.06);
+      p.speed =
+        (TRUNK_PACKET_VSPEED +
+          (Math.random() * 2 - 1) * TRUNK_PACKET_VSPEED_JIT) *
+        1.06;
+      p.age = Math.max(p.age, 0.32);
+      p.xJit = 0;
+      surge = Math.max(surge, 0.04);
+    };
+
+    // STATIC fallback (reduced-motion / mobile): a calm still version of the
+    // story — canopy scatter, small batch queues, ordered trunk packets, and a
+    // few settled blue root tips. No giant accumulation glow.
     function seedStatic() {
       particles.length = 0;
-      const canopyStride = lite ? 2 : 1;
+      for (const node of batchNodes) {
+        node.queue.length = 0;
+        node.age = 0.9;
+        node.ready = true;
+        node.pulse = 0.28;
+        node.glow = 0.24;
+        const qn = 2 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < qn; i++)
+          node.queue.push({
+            size: 0.52 + Math.random() * 0.28,
+            alt: i % 2 === 0,
+            r0: Math.random(),
+            sourceX: node.x,
+            age: 0.6 + i * 0.14,
+            order: node.sequence++,
+          });
+      }
+      // a faint scatter of small canopy orbs (kept sparse on lite).
+      const canopyStride = lite ? 3 : 2;
       for (let i = 0; i < tree.canopy.length; i += canopyStride)
         particles.push({
           phase: 0,
           seg: i,
           t: 0.55,
           speed: 0,
-          size: 0.45 * (0.6 + tree.canopy[i].width * 0.6),
+          size: 0.4 * (0.6 + tree.canopy[i].width * 0.6),
           grow: 1,
           growRate: 0,
           hold: 0,
           alt: i % 2 === 0,
           age: 1,
         });
-      for (let i = 0; i < tree.trunk.length; i++)
+      // a few small sequenced packets already moving down the trunk.
+      for (let i = 0; i < Math.min(4, tree.trunk.length); i++)
         particles.push({
           phase: 1,
           seg: i,
-          t: 0.5,
+          t: 0.22 + i * 0.16,
           speed: 0,
-          size: 1.2,
-          grow: 1,
-          growRate: 0,
-          hold: 0,
-          alt: false,
-          age: 1,
-        });
-      for (let i = 0; i < tree.roots.length; i++)
-        particles.push({
-          phase: 2,
-          seg: i,
-          t: 0.5,
-          speed: 0,
-          size: 0.8,
+          size: 0.82 + (i % 2) * 0.16,
           grow: 1,
           growRate: 0,
           hold: 0,
           alt: i % 2 === 0,
           age: 1,
+          r0: Math.random(),
+          xJit: 0,
         });
-      // a couple of static BLUE orbs RESTING at L1 root tips (the settled L2→L1
-      // payoff held still) — phase 2, parked at the tip, flagged `settled`.
+      // a few root streams settled mid-root.
+      const { normal, l1 } = splitRootIndices();
+      const allRoots = tree.roots.map((_, idx) => idx);
+      const staticNormalRoots = normal.length ? normal : allRoots;
+      const fanRoots = tree.roots.length
+        ? [0.22, 0.42, 0.62, 0.82].map((f) => rootAtFrac(staticNormalRoots, f))
+        : [];
+      for (let k = 0; k < fanRoots.length; k++)
+        particles.push({
+          phase: 2,
+          seg: fanRoots[k],
+          t: 0.55,
+          speed: 0,
+          size: 1.0,
+          grow: 1,
+          growRate: 0,
+          hold: 0,
+          alt: k % 2 === 0,
+          age: 1,
+        });
+      // a few static BLUE blasts RESTING at L1 root tips (the settled payoff).
       const restRoots = tree.roots.length
-        ? [
-            Math.round(tree.roots.length * 0.32),
-            Math.round(tree.roots.length * 0.55),
-            Math.round(tree.roots.length * 0.78),
-          ]
+        ? Array.from(
+            new Set([
+              rootAtFrac(staticNormalRoots, 0.32),
+              rootAtFrac(staticNormalRoots, 0.68),
+              ...l1.slice(0, 2),
+            ]),
+          )
         : [];
       for (const ri of restRoots)
         particles.push({
           phase: 2,
-          seg: clamp(ri, 0, tree.roots.length - 1),
+          seg: ri,
           t: 0.965,
           speed: 0,
           size: 1.0,
@@ -1029,6 +1241,7 @@ export default function PhotorealHomeHero({
           alt: false,
           age: 1,
           settled: true,
+          l1Center: !!tree.roots[ri]?.l1,
         });
     }
 
@@ -1104,27 +1317,27 @@ export default function PhotorealHomeHero({
 
         if (!openingBurstDone && runTime >= FIRST_GLOW_DELAY) {
           openingBurstDone = true;
-          const burst = lite ? 8 : 14;
+          const burst = lite ? 9 : 18;
           for (let i = 0; i < burst; i++) spawnCanopy(true);
-          for (const bucket of gatherBuckets) bucket.glow = Math.max(bucket.glow, 0.55);
           spawnTimer = 0.06;
         }
-        if (!openingReleaseDone && runTime >= 1.6) {
+        if (!openingReleaseDone && runTime >= 2.4) {
           openingReleaseDone = true;
-          const bucket = gatherBuckets[(Math.random() * gatherBuckets.length) | 0];
-          bucket.count = Math.max(bucket.count, bucket.target * 0.62);
-          bucket.value = Math.max(bucket.value, bucket.target * 0.42);
-          bucket.glow = Math.max(bucket.glow, 0.78);
-          bucket.pulse = Math.max(bucket.pulse, 0.72);
+          for (const node of batchNodes) {
+            if (node.queue.length >= 2) {
+              node.ready = true;
+              node.releaseTimer = Math.min(node.releaseTimer, 0.08 + Math.random() * 0.18);
+            }
+          }
         }
 
         // ambient canopy spawning — sparse drip that builds to a calm dotting.
         spawnTimer -= dt;
         if (spawnTimer <= 0) {
           const ramp = Math.min(1, runTime / STARTUP_RAMP_SECONDS);
-          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.5 ? 3 : 2));
-          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.16 + ramp * 0.14);
-          const meanGap = Math.max(0.14, 0.42 - ramp * 0.22);
+          const cluster = 1 + Math.floor(ramp * (Math.random() < 0.45 ? 3 : 2));
+          for (let k = 0; k < cluster; k++) spawnCanopy(Math.random() < 0.18 + ramp * 0.16);
+          const meanGap = Math.max(0.1, 0.34 - ramp * 0.2);
           spawnTimer = meanGap * (0.5 + Math.random() * 0.9);
         }
 
@@ -1145,7 +1358,38 @@ export default function PhotorealHomeHero({
           p.t += advance * dt;
         }
 
-        // phase transitions: canopy → gather; trunk → root; root tip → flash.
+        // batch pockets drift subtly, hold capped FIFO queues, then release one
+        // sequenced packet at a time down the vertical trunk lanes.
+        for (const node of batchNodes) {
+          const busy = node.queue.length > 0;
+          if (busy) {
+            node.age += dt;
+            for (const orb of node.queue) orb.age += dt;
+            if (node.queue.length >= node.readyAt || node.age >= node.hold)
+              node.ready = true;
+            if (node.ready) {
+              node.releaseTimer -= dt;
+              if (node.releaseTimer <= 0) {
+                releaseQueuedOrb(node);
+                node.releaseTimer =
+                  BATCH_RELEASE_EVERY +
+                  (Math.random() * 2 - 1) * BATCH_RELEASE_JIT;
+              }
+            }
+          } else {
+            node.age = 0;
+            node.ready = false;
+          }
+          node.vx += (node.homeX - node.x) * 7 * dt;
+          node.vx *= 0.88;
+          node.x += node.vx * dt;
+          node.y = lerp(node.y, node.homeY + (busy ? 0.004 : 0), 0.045);
+          node.glow = Math.max(0, node.glow - dt / 1.2);
+          node.pulse = Math.max(0, node.pulse - dt / 0.42);
+        }
+
+        // phase transitions: canopy → batch queue; trunk packet → root lane;
+        // root tip → individual L1 blast.
         for (let i = particles.length - 1; i >= 0; i--) {
           const p = particles[i];
           if (p.phase === 3) {
@@ -1154,10 +1398,11 @@ export default function PhotorealHomeHero({
           }
           if (p.grow < 1 || p.t < 1) continue;
           if (p.phase === 0) {
-            collectAtBucket(p);
+            const end = sampleLane(tree.canopy[p.seg], 1).pt;
+            queueIntoBatch(p, end);
             particles.splice(i, 1);
           } else if (p.phase === 1) {
-            continueIntoRoot(p);
+            routeIntoRoot(p);
           } else {
             p.phase = 3;
             p.t = 1;
@@ -1166,20 +1411,6 @@ export default function PhotorealHomeHero({
           }
         }
 
-        // release each canopy-base batch pocket independently.
-        for (const bucket of gatherBuckets) {
-          while (bucket.count >= bucket.target && particles.length < MAX_PARTICLES) {
-            const batchCount = bucket.target;
-            const batchValue =
-              bucket.count > 0 ? (bucket.value / bucket.count) * batchCount : batchCount;
-            releaseBlob(bucket, batchCount, batchValue);
-            bucket.count -= batchCount;
-            bucket.value = Math.max(0, bucket.value - batchValue);
-            bucket.target = nextTarget();
-          }
-          bucket.glow = Math.max(0, bucket.glow - dt / 1.1);
-          bucket.pulse = Math.max(0, bucket.pulse - dt / 0.42);
-        }
         surge = Math.max(0, surge - dt / 1.4);
       } else if (!staticSeeded) {
         seedStatic();
@@ -1234,21 +1465,54 @@ export default function PhotorealHomeHero({
       }
       ctx.globalAlpha = 1;
 
-      // canopy-base batch pockets (the gather glow)
-      for (const bucket of gatherBuckets) {
-        if (bucket.count <= 0 && bucket.glow <= 0.01 && bucket.pulse <= 0.01) continue;
-        const fullness = Math.min(1, bucket.count / bucket.target);
-        const valueFullness = Math.min(1, bucket.value / (bucket.target * 0.65));
-        const mass = Math.max(fullness, valueFullness * 0.72);
-        const pulse = smooth01(bucket.pulse);
-        const lr = 6 + mass * 12 + bucket.glow * 6 + pulse * 5;
-        ctx.globalAlpha = Math.min(0.62, 0.05 + mass * 0.32 + bucket.glow * 0.24 + pulse * 0.16);
-        ctx.drawImage(glowCore, oX + bucket.x * dW - lr, oY + bucket.y * dH - lr, lr * 2, lr * 2);
-        ctx.globalAlpha = Math.min(0.85, 0.22 + mass * 0.42 + pulse * 0.2);
-        ctx.fillStyle = `rgba(204,255,219,${ctx.globalAlpha})`;
-        ctx.beginPath();
-        ctx.arc(oX + bucket.x * dW, oY + bucket.y * dH, 1.0 + mass * 3.0 + pulse * 1.3, 0, Math.PI * 2);
-        ctx.fill();
+      // BATCHER POCKETS: capped queues of individual small orbs. They bunch for
+      // a beat, pulse modestly, then release FIFO. No accumulated white slab.
+      for (const node of batchNodes) {
+        const q = node.queue.length;
+        if (q === 0 && node.pulse <= 0.02) continue;
+        const cx = oX + node.x * dW;
+        const cy = oY + node.y * dH;
+        const pulse = smooth01(node.pulse);
+        const ready = node.ready ? 1 : 0;
+
+        const haloR = (11 + q * 2.25) * (1 + pulse * 0.12);
+        ctx.globalAlpha = Math.min(0.3, 0.05 + q * 0.024 + node.glow * 0.1);
+        ctx.drawImage(glowCore, cx - haloR, cy - haloR, haloR * 2, haloR * 2);
+
+        if (q > 1) {
+          ctx.globalAlpha = 0.13 + ready * 0.08;
+          ctx.strokeStyle = `rgba(${ready ? ALT_RGB : CORE_RGB},${ctx.globalAlpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(cx - 7, cy + 8);
+          ctx.lineTo(cx + 7, cy - 8);
+          ctx.stroke();
+          if (ready) {
+            ctx.globalAlpha = 0.16 + pulse * 0.12;
+            ctx.strokeStyle = `rgba(${ALT_RGB},${ctx.globalAlpha})`;
+            ctx.lineWidth = 0.9;
+            ctx.beginPath();
+            ctx.arc(cx, cy, haloR * 0.48, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+
+        for (let i = 0; i < q; i++) {
+          const orb = node.queue[i];
+          const row = Math.floor(i / 2);
+          const side = i % 2 === 0 ? -1 : 1;
+          const wobble =
+            Math.sin((now / 1000) * 1.8 + orb.r0 * 8 + i) * (moving ? 1.2 : 0.25);
+          const sx = cx + side * (3.6 + row * 0.8) + wobble;
+          const sy = cy - row * 5.2 + Math.cos(orb.r0 * 7 + i) * 1.3;
+          const sr = 5.2 + orb.size * 4.15 + pulse * 1.35;
+          const alpha = Math.min(0.78, 0.42 + orb.age * 0.16 + ready * 0.08);
+          ctx.globalAlpha = alpha;
+          ctx.drawImage(orb.alt ? glowAlt : glowCore, sx - sr, sy - sr, sr * 2, sr * 2);
+          const cr = Math.min(5.0, 1.55 + orb.size * 1.75);
+          ctx.globalAlpha = Math.min(0.66, alpha * 0.62);
+          ctx.drawImage(glowHeart, sx - cr, sy - cr, cr * 2, cr * 2);
+        }
         ctx.globalAlpha = 1;
       }
 
@@ -1258,7 +1522,10 @@ export default function PhotorealHomeHero({
         const s = sampleLane(lane, p.t);
         const tan = s.tan;
         const pt = s.pt;
-        const x = oX + pt.x * dW;
+        // a sequenced packet carries a small x-bias from its batcher pocket,
+        // easing back onto the trunk strand as it descends.
+        const xOff = p.xJit ? p.xJit * Math.max(0, 1 - p.t * 1.15) : 0;
+        const x = oX + (pt.x + xOff) * dW;
         const y = oY + pt.y * dH;
         const es = p.size * (0.12 + 0.88 * smooth01(p.grow));
         const rootPhase = p.phase === 2;
@@ -1269,34 +1536,69 @@ export default function PhotorealHomeHero({
         // to a deep blue heart that fades. Reads as a distinct L1 event.
         if (p.phase === 3) {
           const fl = clamp(p.age / FLASH_DUR, 0, 1);
-          // sharp attack (first ~14%) → smooth decay: the blink envelope.
-          const blm = fl < 0.14 ? fl / 0.14 : Math.pow(1 - (fl - 0.14) / 0.86, 1.8);
+          // Fast attack, faster fade: a blink/pop rather than a lingering orb.
+          const attack = fl < 0.1 ? fl / 0.1 : 1;
+          const decay = fl < 0.1 ? 1 : Math.pow(1 - (fl - 0.1) / 0.9, 2.35);
+          const blm = attack * decay;
           // a couple of quick blue flickers on the way up sell the "connect".
-          const flick = fl < 0.32 ? 0.78 + 0.22 * Math.sin(fl * 64) : 1;
+          const flick = fl < 0.24 ? 0.82 + 0.18 * Math.sin(fl * 78) : 1;
+          // per-blast variety so each connection reads as INDIVIDUAL (size/timing
+          // jitter keyed off the orb's stable r0) — not one uniform wash.
+          const seed = p.r0 ?? 0.5;
+          const blastScale = (p.l1Center ? 1.14 : 0.9) + ((seed * 5.17) % 1) * 0.35;
           // bright cyan-blue halo bloom
-          const rr = (7 + es * 5) * (1 + blm * 2.0);
-          ctx.globalAlpha = Math.min(0.82, 0.12 + blm * 0.5) * flick;
+          const rr = (7 + es * 5) * (1 + blm * 2.45) * blastScale;
+          ctx.globalAlpha = Math.min(0.88, blm * 0.64) * flick;
           ctx.drawImage(glowL1, x - rr, y - rr, rr * 2, rr * 2);
-          // hottest cyan spark right at the blink peak
-          if (blm > 0.3) {
-            const sr = (4 + es * 3) * (0.6 + blm * 1.1);
-            ctx.globalAlpha = Math.min(0.9, (blm - 0.3) * 1.1) * flick;
+          // hottest cyan spark right at the blast peak
+          if (blm > 0.25) {
+            const sr = (4 + es * 3) * (0.6 + blm * 1.1) * blastScale;
+            ctx.globalAlpha = Math.min(0.95, (blm - 0.25) * 1.15) * flick;
             ctx.drawImage(glowL1Spark, x - sr, y - sr, sr * 2, sr * 2);
           }
-          // a quick expanding blue ring on the attack — the "settled" pop
+          // the RADIATING blue shockwave: an expanding ring that bursts outward on
+          // the attack and fades — the distinct "connection" pop for this tip.
           if (fl < 0.5) {
             const ringT = fl / 0.5;
-            const ringR = (3 + es * 2) + ringT * (10 + es * 6);
-            ctx.globalAlpha = (1 - ringT) * 0.5;
-            ctx.strokeStyle = `rgba(${L1_SPARK_RGB},${(1 - ringT) * 0.5})`;
-            ctx.lineWidth = 1.4 * (1 - ringT) + 0.4;
+            const ringR =
+              (4 + es * 2) + smooth01(ringT) * (BLAST_RING_R + es * 8) * blastScale;
+            const ringA = Math.pow(1 - ringT, 1.35) * 0.72 * flick;
+            ctx.globalAlpha = ringA;
+            ctx.strokeStyle = `rgba(${L1_SPARK_RGB},${ringA})`;
+            ctx.lineWidth = 2.0 * (1 - ringT) + 0.5;
             ctx.beginPath();
             ctx.arc(x, y, ringR, 0, Math.PI * 2);
             ctx.stroke();
+            // a second, fainter trailing ring for depth (still individual).
+            const ring2 = ringR * 0.62;
+            ctx.globalAlpha = ringA * 0.5;
+            ctx.strokeStyle = `rgba(${L1_GLOW_RGB},${ringA * 0.5})`;
+            ctx.lineWidth = 1.2 * (1 - ringT) + 0.4;
+            ctx.beginPath();
+            ctx.arc(x, y, ring2, 0, Math.PI * 2);
+            ctx.stroke();
           }
-          // the deep Cardano-blue settled heart
-          ctx.globalAlpha = Math.min(0.92, 0.2 + blm * 0.72);
-          ctx.fillStyle = `rgba(${blm > 0.45 ? L1_SPARK_RGB : L1_CORE_RGB},${Math.min(0.92, 0.2 + blm * 0.72)})`;
+          // Packets that enter the hollow get a tight inner blue entry ripple.
+          if (p.l1Center && fl < 0.38) {
+            const entryT = fl / 0.38;
+            const entryA = Math.pow(1 - entryT, 1.55) * 0.58 * flick;
+            ctx.globalAlpha = entryA;
+            ctx.strokeStyle = `rgba(${L1_GLOW_RGB},${entryA})`;
+            ctx.lineWidth = 1.6 * (1 - entryT) + 0.35;
+            ctx.beginPath();
+            ctx.arc(x, y, (5 + es * 2) + smooth01(entryT) * 18 * blastScale, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          // a hot cyan radial flare at the very peak — emphasises the burst.
+          if (blm > 0.55) {
+            const fr = (BLAST_SPARK_R + es * 3) * blm * blastScale;
+            ctx.globalAlpha = (blm - 0.55) * 0.9 * flick;
+            ctx.drawImage(glowL1Spark, x - fr, y - fr, fr * 2, fr * 2);
+          }
+          // the blue heart fades fully out with the shockwave.
+          const heartA = Math.min(0.9, blm * 0.86 * flick);
+          ctx.globalAlpha = heartA;
+          ctx.fillStyle = `rgba(${blm > 0.45 ? L1_SPARK_RGB : L1_CORE_RGB},${heartA})`;
           ctx.beginPath();
           ctx.arc(x, y, 1.2 + es * 1.0 + blm * 3.2, 0, Math.PI * 2);
           ctx.fill();
@@ -1321,18 +1623,24 @@ export default function PhotorealHomeHero({
         // soft comet tail trailing behind the bead — only once it's moving (and
         // not for the parked `settled` rest orbs, which sit still on L1).
         if (p.grow >= 1 && p.hold <= 0 && !p.settled) {
+          const trunkPacket = p.phase === 1;
           const tl = Math.hypot(tan.x * dW, tan.y * dH) || 1;
           const ux = (tan.x * dW) / tl;
           const uy = (tan.y * dH) / tl;
           const tailLen =
-            (9 + es * 7) * (rootPhase ? 1.08 : 1) * (1 + surge * 0.4) * (1 - nearL1 * 0.55);
+            (trunkPacket ? 5 + es * 4.2 : 8 + es * 6) *
+            (rootPhase ? 1.02 : 1) *
+            (1 + surge * 0.32) *
+            (1 - nearL1 * 0.55);
           const tx2 = x - ux * tailLen;
           const ty2 = y - uy * tailLen;
           const grad = ctx.createLinearGradient(x, y, tx2, ty2);
           grad.addColorStop(0, `rgba(${rgbStr},${(rootPhase ? 0.54 : 0.62) * life})`);
           grad.addColorStop(1, `rgba(${rgbStr},0)`);
           ctx.strokeStyle = grad;
-          ctx.lineWidth = (rootPhase ? 0.9 : 1) + es * (rootPhase ? 0.72 : 0.9);
+          ctx.lineWidth =
+            (trunkPacket ? 0.85 : rootPhase ? 0.9 : 1) +
+            es * (trunkPacket ? 0.55 : rootPhase ? 0.72 : 0.82);
           ctx.lineCap = "round";
           ctx.beginPath();
           ctx.moveTo(x, y);
@@ -1344,12 +1652,12 @@ export default function PhotorealHomeHero({
         // orbs read as organic sap droplets rather than perfect circles.
         const r0 = p.r0 ?? 0.5;
         const sq = 0.8 + ((r0 * 7.13) % 1) * 0.4;
-        const r = (3 + es * (rootPhase ? 2.55 : 3.2)) * glowBoost;
+        const r = (3.4 + es * (rootPhase ? 2.55 : 3.25)) * glowBoost;
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(r0 * Math.PI);
         ctx.scale(sq, 1 / sq);
-        const haloA = Math.min(1, (rootPhase ? 0.4 : 0.47) * life);
+        const haloA = Math.min(1, (rootPhase ? 0.4 : 0.48) * life);
         // green halo (fades as the orb charges blue near the L1 tip)
         ctx.globalAlpha = haloA * (1 - nearL1);
         ctx.drawImage(p.alt ? glowAlt : glowCore, -r, -r, r * 2, r * 2);
@@ -1359,8 +1667,8 @@ export default function PhotorealHomeHero({
           ctx.drawImage(glowL1, -r, -r, r * 2, r * 2);
         }
         ctx.restore();
-        const cr = Math.min(7.5, 1.0 + es * 1.4) * glowBoost;
-        ctx.globalAlpha = Math.min(0.8, (0.42 + es * 0.4) * life);
+        const cr = Math.min(7.8, 1.6 + es * 1.95) * glowBoost;
+        ctx.globalAlpha = Math.min(0.85, (0.42 + es * 0.4) * life);
         ctx.drawImage(glowHeart, x - cr, y - cr, cr * 2, cr * 2);
         // a faint blue core creeping in as it nears L1
         if (nearL1 > 0.01) {

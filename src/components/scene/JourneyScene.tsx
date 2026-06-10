@@ -330,7 +330,6 @@ function Bark({
    AMBIENT SAP — slow green/gold pulses riding the limbs, the tree's
    baseline "alive" signal beneath the transaction story. Instanced.
    ================================================================ */
-const UP = new THREE.Vector3(0, 1, 0);
 type SapDot = { curve: THREE.CatmullRomCurve3; phase: number; kind: "root" | "canopy" };
 
 function AmbientSap({

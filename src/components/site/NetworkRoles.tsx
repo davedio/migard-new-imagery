@@ -47,17 +47,6 @@ const metricStyle: CSSProperties = {
   color: "var(--green-bright)",
 };
 
-const ctaStyle: CSSProperties = {
-  marginTop: 12,
-  fontFamily: "var(--font-mono)",
-  fontSize: 12.5,
-  color: "var(--text-hi)",
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 8,
-  textDecoration: "none",
-};
-
 export function NetworkRoles() {
   return (
     <Section
@@ -75,7 +64,7 @@ export function NetworkRoles() {
       >
         {/* Card 1 — Become a Watcher */}
         <Reveal style={{ display: "flex" }}>
-          <div className="panel" style={{ ...cardStyle, width: "100%" }}>
+          <div className="panel panel--select-glow" style={{ ...cardStyle, width: "100%" }}>
             <span style={eyebrowStyle}>Submit Fraud Proofs</span>
             <h3 style={titleStyle}>Become a Watcher</h3>
             <p style={bodyStyle}>
@@ -84,7 +73,7 @@ export function NetworkRoles() {
               keep operators honest.
             </p>
             <a
-              style={{ ...metricStyle, textDecoration: "none", display: "block" }}
+              className="panel-cta-glow"
               href={OFFICIAL_LINKS.intakeForm}
               target="_blank"
               rel="noreferrer"
@@ -96,7 +85,7 @@ export function NetworkRoles() {
 
         {/* Card 2 — Become an Operator */}
         <Reveal delay={70} style={{ display: "flex" }}>
-          <div className="panel" style={{ ...cardStyle, width: "100%" }}>
+          <div className="panel panel--select-glow" style={{ ...cardStyle, width: "100%" }}>
             <span style={eyebrowStyle}>Institutional Infrastructure</span>
             <h3 style={titleStyle}>Become an Operator</h3>
             <p style={bodyStyle}>
@@ -105,7 +94,7 @@ export function NetworkRoles() {
             </p>
             <div style={metricStyle}>Bond: 50K–200K ADA</div>
             <a
-              style={ctaStyle}
+              className="panel-cta-glow"
               href={OFFICIAL_LINKS.intakeForm}
               target="_blank"
               rel="noreferrer"

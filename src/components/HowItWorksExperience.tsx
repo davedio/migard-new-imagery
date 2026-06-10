@@ -27,7 +27,7 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
    ProtocolLifecycle, the Layers reference, the eUTXO comparison —
    flow in beneath the act and reinforce what the 3D just showed.
 
-   This component owns the three RESN-class interaction systems, all
+   This component owns the two RESN-class interaction systems, all
    desktop + fine-pointer + motion-on only and fully bypassed under
    reduced motion (so the page reads as normally-stacked sections over
    a single composed frame):
@@ -35,8 +35,7 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
      1. inertial smooth scroll (useSmoothScroll) — native scrollbar
         kept, the (site) layout's [data-scroll-content] wrapper is
         rAF-lerped for weight.
-     2. a custom magnetic cursor (CustomCursor) with contextual labels.
-     3. a spring-smoothed scroll progress feeding BOTH the 3D scene
+     2. a spring-smoothed scroll progress feeding BOTH the 3D scene
         (buttery beats) and the HUD chapter labels.
 
    Because the experience mounts only on this route and unmounts on
@@ -51,7 +50,6 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
 const PhotorealBackdrop = dynamic(() => import("./scene/PhotorealBackdrop"), {
   ssr: false,
 });
-const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 // The floating on-tree stage badge — rides the descending packet and surfaces
 // the active lifecycle stage (replaces the old fixed HUD panel + emoji marker).
 const StageGraphic = dynamic(() => import("./scene/StageGraphic"), {
@@ -64,8 +62,7 @@ const LightOrbLayer = dynamic(() => import("./LightOrbLayer"), { ssr: false });
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
 // Floating motion toggle (bottom-right). Shared nav/footer chrome comes from
-// the (site) layout; the experience keeps only this control. Tagged for the
-// custom cursor + magnet like every other interactive target.
+// the (site) layout; the experience keeps only this control.
 function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     <button
@@ -75,8 +72,6 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       aria-pressed={on}
       aria-label={`Motion ${on ? "on" : "off"}`}
       title={`Motion ${on ? "on" : "off"}`}
-      data-cursor={on ? "motion off" : "motion on"}
-      data-magnetic
     >
       <span className="motion-toggle__glyph" data-on={on} aria-hidden />
     </button>
@@ -131,7 +126,10 @@ function useCardTilt(active: boolean) {
    until mounted). */
 function BodyPortal({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
   if (!mounted) return null;
   return createPortal(children, document.body);
 }
@@ -287,7 +285,6 @@ export default function HowItWorksExperience({
         {/* light-painting orb: above the scene, below the cursor. Gated to
             desktop + fine pointer + motion-on (advanced). */}
         <LightOrbLayer enabled={advanced} />
-        <CustomCursor enabled={advanced} />
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>
 
