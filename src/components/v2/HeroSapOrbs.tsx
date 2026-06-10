@@ -197,6 +197,9 @@ export default function HeroSapOrbs({
     /* surge state — a rare, soft event pulse */
     let surge = 0;
     let nextSurge = 5 + Math.random() * 6;
+    /* shared helix clock — all beads spin on the SAME screw so the two
+       strands read as coherent DNA, not a particle cloud */
+    let helixT = 0;
 
     let last = performance.now();
     const tick = (now: number) => {
@@ -205,12 +208,13 @@ export default function HeroSapOrbs({
       last = now;
       if (!field || W === 0) return;
 
-      /* dissolve factor from the hero scroll runway */
+      /* dissolve factor from the hero scroll runway — fully formed by ~half
+         the runway, then HELD: the spin owns the rest of the scroll */
       const p = progressRef?.current ?? 0;
-      const d = smooth01((p - 0.28) / 0.42);
+      const d = smooth01((p - 0.18) / 0.3);
 
       /* population control — the burst thickens the helix */
-      const want = Math.round(orbCount() * (1 + d * 0.8));
+      const want = Math.round(orbCount() * (1 + d * 1.15));
       while (orbs.length < want) {
         const o = spawn();
         if (!o) break;
@@ -226,6 +230,7 @@ export default function HeroSapOrbs({
         nextSurge = 6 + Math.random() * 7;
       }
       surge = Math.max(0, surge - dt * 0.55);
+      helixT += dt;
 
       ctx.clearRect(0, 0, W, H);
       ctx.globalCompositeOperation = "lighter";
@@ -274,11 +279,7 @@ export default function HeroSapOrbs({
         let depthMod = 1;
         if (d > 0.01) {
           if (o.anchorY === null) o.anchorY = o.y;
-          o.theta += o.omega * dt * (0.6 + d * 1.6);
           o.rise += dt * (22 + o.size * 9) * d;
-          const phase = o.theta + (o.strand ? Math.PI : 0);
-          const R = imgW * (0.015 + 0.13 * d);
-          const hx = imgW * 0.72 + Math.cos(phase) * R;
           let hy = o.anchorY - o.rise;
           /* strands loop: re-enter from below once they leave the canopy */
           if (hy < imgH * 0.04) {
@@ -286,6 +287,16 @@ export default function HeroSapOrbs({
             o.anchorY = imgH * (0.72 + Math.random() * 0.2);
             hy = o.anchorY;
           }
+          /* phase = shared clock + height along the screw + strand offset
+             (+ a whisper of per-bead jitter) — beads at the same height
+             line up into two clean spiralling strands */
+          const phase =
+            helixT * 1.7 +
+            (hy / imgH) * Math.PI * 6.5 +
+            (o.strand ? Math.PI : 0) +
+            (o.theta % 0.6) * 0.6;
+          const R = imgW * (0.012 + 0.085 * d);
+          const hx = imgW * 0.72 + Math.cos(phase) * R;
           depthMod = 0.62 + 0.38 * Math.sin(phase + Math.PI / 2);
           ix = lerp(o.x, hx, d);
           iy = lerp(o.y, hy, d);
@@ -302,7 +313,10 @@ export default function HeroSapOrbs({
 
         /* comet: green tail … white-hot head. In the helix the tail shortens
            and the head brightens — beads of light on two strands. */
-        const r = o.size * (1 + surge * 0.25) * lerp(1, depthMod, d);
+        /* beads swell ~75% in the helix — the spin must be the loudest
+           thing on screen (review: brighter, more prominent) */
+        const r =
+          o.size * (1 + surge * 0.25) * lerp(1, depthMod, d) * (1 + d * 0.75);
         /* never exceeds the samples we actually have (a fresh orb has 1) */
         const tailN = Math.min(
           o.tail.length,
@@ -313,18 +327,18 @@ export default function HeroSapOrbs({
           const tp = o.tail[i];
           ctx.beginPath();
           ctx.arc(tp.x, tp.y, r * (1 - t * 0.72), 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * 0.16 * (1 - t)).toFixed(3)})`;
+          ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * (0.16 + d * 0.12) * (1 - t)).toFixed(3)})`;
           ctx.fill();
         }
         ctx.beginPath();
-        ctx.arc(cx, cy, r * 1.9, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * (0.12 + d * 0.08)).toFixed(3)})`;
+        ctx.arc(cx, cy, r * 2.3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * (0.15 + d * 0.18)).toFixed(3)})`;
         ctx.fill();
         ctx.beginPath();
         ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * (0.85 + d * 0.15) * lerp(1, depthMod, d * 0.7)).toFixed(3)})`;
-        ctx.shadowColor = "rgba(0, 255, 102, 0.9)";
-        ctx.shadowBlur = 10 + d * 6;
+        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * (0.85 + d * 0.15) * lerp(1, depthMod, d * 0.55)).toFixed(3)})`;
+        ctx.shadowColor = "rgba(0, 255, 102, 0.95)";
+        ctx.shadowBlur = 10 + d * 14;
         ctx.fill();
         ctx.shadowBlur = 0;
       }

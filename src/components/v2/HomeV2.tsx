@@ -414,10 +414,11 @@ function Hero() {
   });
   const plateY = useTransform(heroProgress, [0, 1], ["0%", "5%"]);
   const plateScale = useTransform(heroProgress, [0, 1], [1, 1.16]);
-  /* the tree recedes a touch as the helix takes over — subtle, not a blackout */
-  const recede = useTransform(heroProgress, [0.35, 0.9], [0, 0.32]);
-  const copyOpacity = useTransform(heroProgress, [0, 0.16, 0.32], [1, 1, 0]);
-  const copyScale = useTransform(heroProgress, [0, 0.32], [1, 0.97]);
+  /* the tree recedes a touch as the helix takes over — subtle, not a
+     blackout, but enough contrast for the beads to burn bright */
+  const recede = useTransform(heroProgress, [0.26, 0.75], [0, 0.36]);
+  const copyOpacity = useTransform(heroProgress, [0, 0.1, 0.22], [1, 1, 0]);
+  const copyScale = useTransform(heroProgress, [0, 0.22], [1, 0.97]);
 
   /* mouse parallax — lerped, fine pointers only, on its own wrapper so the
      transform never fights the scroll/intro layers */
