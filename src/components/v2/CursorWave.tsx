@@ -27,8 +27,8 @@ import {
 } from "react";
 import { useMotionPref } from "@/lib/motion";
 
-const RADIUS = 120; // px influence radius around the pointer
-const SCATTER = 38; // max displacement away from the cursor
+const RADIUS = 100; // px influence radius around the pointer — a tight disc
+const SCATTER = 20; // max displacement: letters break apart IN PLACE, not spray
 const LINK_F = 3.4; // link reach = sample stride × this
 
 function splitChars(node: ReactNode, k: { n: number }): ReactNode {
@@ -157,10 +157,11 @@ export function WaveText({
         });
       }
 
-      /* sample the ink on a grid → particle homes */
-      stride = Math.max(5, Math.round(fontPx / 9));
-      radiusEff = Math.max(RADIUS, fontPx * 1.55);
-      scatterEff = Math.max(SCATTER, fontPx * 0.5);
+      /* sample the ink on a grid → particle homes (denser = clearer
+         letter-shaped constellations) */
+      stride = Math.max(4, Math.round(fontPx / 11));
+      radiusEff = Math.max(RADIUS, fontPx * 1.15);
+      scatterEff = Math.max(SCATTER, fontPx * 0.26);
       sizeBoost = Math.min(2.1, Math.max(0.9, fontPx / 52));
       const data = octx.getImageData(0, 0, off.width, off.height).data;
       particles = [];
@@ -206,50 +207,53 @@ export function WaveText({
       const h = canvas.height / DPR;
       ctx.clearRect(0, 0, w, h);
 
-      /* per-char fade — tight and decisive: letters under the cursor cut
-         out fast, edge letters barely dim (review: no mushy slow fades) */
+      /* per-char fade — a CLEAN circular cutout directly under the cursor:
+         inside the disc the type is gone, at the rim it cuts fast, outside
+         it is untouched (review: clear cover over the cursor, seamless) */
       for (let i = 0; i < chars.length; i++) {
         const c = charPos[i];
         if (!c) continue;
-        const f = pin ? fall(Math.hypot(c.x - px, c.y - py), radiusEff * 0.68) : 0;
+        const f = pin ? fall(Math.hypot(c.x - px, c.y - py), radiusEff * 0.62) : 0;
         const el = chars[i];
         if (f > 0.02) {
-          el.style.opacity = String(Math.max(0, 1 - f * 1.7));
-          el.style.transform = `scale(${(1 - f * 0.08).toFixed(3)})`;
+          el.style.opacity = String(Math.max(0, 1 - f * 2.2));
+          el.style.transform = `scale(${(1 - f * 0.06).toFixed(3)})`;
         } else if (el.style.opacity !== "") {
           el.style.opacity = "";
           el.style.transform = "";
         }
       }
 
-      /* particles: activate near the cursor, scatter away from it.
-         Asymmetric response — near-instant attack, graceful release. */
+      /* particles: activate near the cursor, breaking the glyphs apart in
+         place. Near-instant attack, brisk reform. */
       const act: Particle[] = [];
       let energy = 0;
       for (const p of particles) {
         const d = Math.hypot(p.hx - px, p.hy - py);
         const target = pin ? fall(d, radiusEff) : 0;
-        p.a += (target - p.a) * (target > p.a ? 0.55 : 0.22);
+        p.a += (target - p.a) * (target > p.a ? 0.7 : 0.3);
         if (p.a < 0.02) continue;
         energy = Math.max(energy, p.a);
         const dd = Math.max(8, d);
         const ux = (p.hx - px) / dd;
         const uy = (p.hy - py) / dd;
-        const wob = Math.sin(t * 2.1 + p.seed) * 0.35 + 0.8;
+        const wob = Math.sin(t * 2.1 + p.seed) * 0.22 + 0.88;
         const mag = p.a * scatterEff * wob;
-        /* a touch of swirl (perpendicular drift) keeps it organic */
-        const sw = Math.sin(t * 1.4 + p.seed * 2) * p.a * 7;
+        /* a whisper of swirl keeps it organic without smearing the form */
+        const sw = Math.sin(t * 1.4 + p.seed * 2) * p.a * 3.5;
         p.x = p.hx + ux * mag - uy * sw;
         p.y = p.hy + uy * mag + ux * sw;
         act.push(p);
       }
 
-      /* filaments between close, active orbs — the connected constellation */
+      /* filaments between close, active orbs — the connected constellation.
+         Hard cap on the pair pass so dense headings can never jank a frame. */
       const reach = stride * LINK_F;
       ctx.lineWidth = 1.15;
-      for (let i = 0; i < act.length; i++) {
+      const linkN = Math.min(act.length, 240);
+      for (let i = 0; i < linkN; i++) {
         const a = act[i];
-        for (let j = i + 1; j < act.length; j++) {
+        for (let j = i + 1; j < linkN; j++) {
           const b = act[j];
           const dx = a.x - b.x;
           if (dx > reach || dx < -reach) continue;

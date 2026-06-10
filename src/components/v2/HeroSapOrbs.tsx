@@ -24,9 +24,13 @@ import { useEffect, useRef, type RefObject } from "react";
 import { useMotionPref } from "@/lib/motion";
 
 const PLATE_SRC = "/v2/hero-wide.avif";
-/* must mirror the plate div's background-position (desktop / ≤760px) */
-const POS_DESKTOP = { x: 0.72, y: 0.38 };
+/* must mirror the plate div's background-position (desktop / ≤760px).
+   Desktop pos-x is a RAMP synced with HomeV2's platePosX: the camera
+   turns toward the tree (72% -> 56%) through the dissolve. */
 const POS_MOBILE = { x: 0.78, y: 0.32 };
+const POS_DESKTOP_Y = 0.38;
+const posXAt = (p: number) =>
+  0.72 + 0.2 * Math.min(1, Math.max(0, (p - 0.15) / 0.55));
 
 const GRID_W = 384; // downsample width for the vein field
 const SPAWN_BAND: [number, number] = [0.03, 0.4]; // canopy band (image-y fraction)
@@ -163,6 +167,7 @@ export default function HeroSapOrbs({
     let scale = 1;
     let offX = 0;
     let offY = 0;
+    let mobile = false;
     const DPR = Math.min(window.devicePixelRatio || 1, 2);
 
     const fit = () => {
@@ -172,10 +177,11 @@ export default function HeroSapOrbs({
       canvas.height = H * DPR;
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       if (!imgW) return;
-      const pos = window.innerWidth <= 760 ? POS_MOBILE : POS_DESKTOP;
+      mobile = window.innerWidth <= 760;
       scale = Math.max(W / imgW, H / imgH);
-      offX = (W - imgW * scale) * pos.x;
-      offY = (H - imgH * scale) * pos.y;
+      offY = (H - imgH * scale) * (mobile ? POS_MOBILE.y : POS_DESKTOP_Y);
+      /* offX is progress-dependent on desktop — refreshed each tick */
+      offX = (W - imgW * scale) * (mobile ? POS_MOBILE.x : posXAt(0));
     };
 
     /* ---- cursor (canvas space) ---- */
@@ -236,6 +242,8 @@ export default function HeroSapOrbs({
          the runway, then HELD: the spin owns the rest of the scroll */
       const p = progressRef?.current ?? 0;
       const d = smooth01((p - 0.18) / 0.3);
+      /* the camera turn (synced with the plate's background-position ramp) */
+      if (!mobile) offX = (W - imgW * scale) * posXAt(p);
 
       /* population control — the burst thickens the helix */
       const want = Math.round(orbCount() * (1 + d * 1.15));
@@ -305,7 +313,8 @@ export default function HeroSapOrbs({
         const di = d * o.mix;
         if (di > 0.01) {
           if (o.anchorY === null) o.anchorY = o.y;
-          o.rise += dt * (22 + o.size * 9) * di;
+          /* stately rise — the spin should be WATCHED, not flicked past */
+          o.rise += dt * (11 + o.size * 5) * di;
           let hy = o.anchorY - o.rise;
           /* strands loop: re-enter from below once they leave the canopy */
           if (hy < imgH * 0.04) {
@@ -317,8 +326,8 @@ export default function HeroSapOrbs({
              (+ a whisper of per-bead jitter) — beads at the same height
              line up into two clean spiralling strands */
           const phase =
-            helixT * 1.7 +
-            (hy / imgH) * Math.PI * 6.5 +
+            helixT * 1.05 +
+            (hy / imgH) * Math.PI * 4.6 +
             (o.strand ? Math.PI : 0) +
             (o.theta % 0.6) * 0.6;
           /* axis = the measured trunk centre — the screw wraps the TREE */

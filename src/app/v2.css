@@ -484,12 +484,12 @@ h2 em,
 }
 
 /* ---- hero ---- */
-/* 300svh runway: the stage (plate + orbs + copy) pins for all of it.
+/* 380svh runway: the stage (plate + orbs + copy) pins for all of it.
    Scroll only moves the BACKGROUND; the words fade in place. The extra
-   length is the helix dwell — the spin owns the stage for ~1.5 viewports
-   before the descent continues (review 2026-06-10). */
+   length is the helix dwell — the transformation unfolds SLOWLY with
+   scroll so the spin can actually be watched (review 2026-06-10 pm). */
 .v2-scene--hero {
-  height: 300svh;
+  height: 380svh;
 }
 .v2-home[data-motion="off"] .v2-scene--hero {
   height: auto; /* reduced motion: a plain one-viewport hero */

@@ -136,11 +136,11 @@ type Focal = { focY: number; scale: number };
    trunk stage by stage, then push BACK IN at the bottom so settlement lands
    inside the cobalt L1 root chamber. */
 const FOCALS_TALL: Focal[] = [
-  { focY: 5, scale: 1.58 }, // SUBMIT   · IN the canopy, leaves filling frame
-  { focY: 30, scale: 1.26 }, // SEQUENCE · upper trunk
-  { focY: 54, scale: 1.28 }, // COMMIT   · mid trunk
-  { focY: 76, scale: 1.24 }, // WATCH    · lower trunk / bridge
-  { focY: 99, scale: 1.38 }, // SETTLE   · into the cobalt L1 vault
+  { focY: 6, scale: 1.44 }, // SUBMIT   · in the canopy (still reads as the tree)
+  { focY: 30, scale: 1.22 }, // SEQUENCE · upper trunk
+  { focY: 54, scale: 1.24 }, // COMMIT   · mid trunk
+  { focY: 76, scale: 1.2 }, // WATCH    · lower trunk / bridge
+  { focY: 99, scale: 1.34 }, // SETTLE   · into the cobalt L1 vault
 ];
 const FOCALS_WIDE: Focal[] = [
   { focY: 18, scale: 1.34 },
@@ -153,11 +153,21 @@ const FOCALS_WIDE: Focal[] = [
 /* Eased camera path: hold near the active stage's focal point for the
    first ~70% of the stage (the DWELL where the beat plays and breathes),
    then ease GENTLY to the next stage's focal point over the last ~30% (the
-   TRAVEL). The longer dwell + later, shorter transition make each stage
-   linger noticeably before the calm move to the next (client note: slower,
-   more deliberate). Returns the interpolated {focY, scale}. */
+   TRAVEL). Stage 0 opens on a WIDE ESTABLISHING SHOT (the whole tree, so
+   the intro copy has context) and pushes INTO the canopy through the first
+   half of Submit — nothing is hidden at the top of the page (review
+   2026-06-10 pm). Returns the interpolated {focY, scale}. */
+const ESTABLISH: Focal = { focY: 34, scale: 1.06 };
 function cameraAt(idx: number, local: number, focals: Focal[]): Focal {
-  const here = focals[idx];
+  let here = focals[idx];
+  if (idx === 0) {
+    // wide establish -> push-in to the canopy as Submit begins
+    const pushIn = smooth(clamp(local / 0.55));
+    here = {
+      focY: lerp(ESTABLISH.focY, here.focY, pushIn),
+      scale: lerp(ESTABLISH.scale, here.scale, pushIn),
+    };
+  }
   const next = focals[Math.min(focals.length - 1, idx + 1)];
   // dwell then travel — eased so it's smooth, never jerky. The dwell now
   // holds through ~70% of the stage so the beat sits still longer.

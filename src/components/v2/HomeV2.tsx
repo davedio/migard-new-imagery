@@ -23,6 +23,7 @@ import dynamic from "next/dynamic";
 import {
   animate,
   motion,
+  useMotionTemplate,
   useMotionValueEvent,
   useScroll,
   useTransform,
@@ -424,8 +425,14 @@ function Hero() {
   useMotionValueEvent(heroProgress, "change", (v) => {
     dissolveRef.current = v;
   });
-  const plateY = useTransform(heroProgress, [0, 1], ["0%", "5%"]);
-  const plateScale = useTransform(heroProgress, [0, 1], [1, 1.16]);
+  const plateY = useTransform(heroProgress, [0, 1], ["0%", "4%"]);
+  const plateScale = useTransform(heroProgress, [0, 1], [1, 1.09]);
+  /* the camera turns TOWARD the tree as it transforms: background-position
+     eases 72% -> 92% (HIGHER position-x pulls a right-side subject toward
+     centre) so the trunk and its helix land ~3/4 frame instead of bleeding
+     off the right edge. HeroSapOrbs mirrors this exact ramp — keep in sync. */
+  const platePosX = useTransform(heroProgress, [0.15, 0.7], [72, 92]);
+  const platePos = useMotionTemplate`${platePosX}% 38%`;
   /* the tree recedes a touch as the helix takes over — subtle, not a
      blackout, but enough contrast for the beads to burn bright */
   const recede = useTransform(heroProgress, [0.26, 0.75], [0, 0.36]);
@@ -480,7 +487,7 @@ function Hero() {
               className="v2-scene__plate"
               style={{
                 backgroundImage: `url(${PLATES.hero})`,
-                backgroundPosition: "72% 38%",
+                backgroundPosition: motionOn ? platePos : "72% 38%",
                 ["--pos-mobile" as string]: "78% 32%",
                 y: motionOn ? plateY : 0,
                 scale: motionOn ? plateScale : 1,
