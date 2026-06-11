@@ -200,7 +200,7 @@ a {
   background-position: 50% var(--plate-y);
   transform: scale(var(--plate-scale)) translateZ(0);
   transform-origin: 50% 50%;
-  will-change: background-position, transform;
+  will-change: transform;
   /* Filmic tone baked onto the plate itself: a gentle contrast S + a touch
      of saturation/brightness so the photoreal frame reads graded, not flat.
      Kept to compositor-cheap CSS filters (no per-frame SVG) so the pan stays
@@ -277,11 +277,14 @@ a {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  overflow: hidden;
   --focus-y: 46%;
-  --dof: 1;
-  /* the blur strength scales with --dof (eases up near settlement) */
-  backdrop-filter: blur(calc(2.4px * var(--dof)));
-  -webkit-backdrop-filter: blur(calc(2.4px * var(--dof)));
+  /* JS animates OPACITY only (compositor-cheap). The blur itself is baked
+     once onto the .plate-stage__dof-img child — the old animated
+     backdrop-filter re-blurred the entire frame every frame and was the
+     page's biggest jank source (perf pass 2026-06-11). */
+  opacity: 0;
+  will-change: opacity;
   /* keep the centre band (around the packet) in focus: mask OUT the
      middle so the blur only applies to the periphery */
   -webkit-mask-image: radial-gradient(
@@ -299,6 +302,25 @@ a {
     #000 86%
   );
 }
+/* the pre-blurred plate copy: identical cover framing, camera transform
+   synced by JS to the sharp plate, blur baked once (cached as a layer) */
+.plate-stage__dof-img {
+  position: absolute;
+  inset: 0;
+  background-image: url("/plates/worldtree-tall.avif");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% var(--plate-y, 42%);
+  transform: scale(1.06) translateZ(0);
+  transform-origin: 50% 50%;
+  filter: blur(3px) contrast(1.07) saturate(1.08) brightness(1.015);
+  will-change: transform;
+}
+.plate-stage__dof-img--wide {
+  background-image: url("/plates/worldtree-wide.avif");
+  background-position: 68% var(--plate-y, 42%);
+}
+
 /* a faint darkening of the out-of-focus region for depth separation */
 .plate-stage__dof::after {
   content: "";

@@ -178,6 +178,7 @@ export default function ShatterHeading({
       }
 
       count = homesX.length;
+      cacheRect();
       X = Float32Array.from(homesX);
       Y = Float32Array.from(homesY);
       HX = Float32Array.from(homesX);
@@ -195,6 +196,15 @@ export default function ShatterHeading({
     let raf = 0;
     let running = false;
     let lastT = 0;
+    /* the canvas lives in the FIXED stage — its viewport rect only changes
+       on resize, never on scroll. Cached: reading getBoundingClientRect on
+       every pointermove forced a style/layout pass per heading per event
+       (the documented cause of the first cursor effect's stickiness). */
+    let canvasRect = { left: 0, top: 0 };
+    const cacheRect = () => {
+      const r = canvas.getBoundingClientRect();
+      canvasRect = { left: r.left, top: r.top };
+    };
 
     const visible = () => {
       /* skip work while our overlay band is faded out */
@@ -213,9 +223,8 @@ export default function ShatterHeading({
       const firstSeen = lastCX < -8e4;
       lastCX = e.clientX;
       lastCY = e.clientY;
-      const rect = canvas.getBoundingClientRect();
-      mx = e.clientX - rect.left;
-      my = e.clientY - rect.top;
+      mx = e.clientX - canvasRect.left;
+      my = e.clientY - canvasRect.top;
       if (firstSeen || moved < 2) return;
       /* wake letters whose center is within reach */
       for (const L of letters) {

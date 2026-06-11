@@ -143,7 +143,7 @@ export default function AmbientDepth() {
     <div aria-hidden className="ambient-depth" style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
       <Canvas
         frameloop={motionOn ? "always" : "demand"}
-        dpr={[1, 1.75]}
+        dpr={[1, 1.5]}
         gl={{ alpha: true, antialias: false, powerPreference: "high-performance" }}
         camera={{ position: [0, 0, 8], fov: 50 }}
         style={{ position: "absolute", inset: 0 }}

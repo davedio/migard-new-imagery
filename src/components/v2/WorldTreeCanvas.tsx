@@ -118,13 +118,21 @@ export default function WorldTreeCanvas({
   /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
   tickRef: React.RefObject<((dt: number) => void) | null>;
 }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  /* TWO stacked canvases (perf pass 2026-06-11): the PLATE layer redraws
+     only when the camera/fades actually move (during a dwell it costs
+     nothing), and at DPR 1 — the Corn site ships its whole frame at 1.0;
+     a cover-scaled photo can't tell. The PARTICLE layer redraws every
+     frame at up to 1.5 so the glows stay crisp. */
+  const bgRef = useRef<HTMLCanvasElement>(null);
+  const fgRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const bg = bgRef.current;
+    const fg = fgRef.current;
+    if (!bg || !fg) return;
+    const bctx = bg.getContext("2d");
+    const ctx = fg.getContext("2d");
+    if (!bctx || !ctx) return;
 
     let disposed = false;
 
@@ -139,6 +147,10 @@ export default function WorldTreeCanvas({
     const roots = new Image();
     let treeReady = false;
     let rootsReady = false;
+    /* GPU-friendly pre-decoded bitmaps for the per-frame blits */
+    let treeBmp: ImageBitmap | null = null;
+    let rootsBmp: ImageBitmap | null = null;
+    let lastSig = -1;
     let field: Uint8Array | null = null;
     let gw = 0;
     let gh = 0;
@@ -202,6 +214,9 @@ export default function WorldTreeCanvas({
         }
       }
       trunkX = wsum > 0 ? xsum / wsum : imgW * 0.78;
+      createImageBitmap(tree).then((b) => {
+        if (!disposed) treeBmp = b;
+      }).catch(() => {});
 
       /* ---- settlement path: greedy turn-limited walk down the trunk ---- */
       {
@@ -249,6 +264,9 @@ export default function WorldTreeCanvas({
     };
     roots.onload = () => {
       rootsReady = true;
+      createImageBitmap(roots).then((b) => {
+        if (!disposed) rootsBmp = b;
+      }).catch(() => {});
     };
     tree.src = TREE_SRC;
     roots.src = ROOTS_SRC;
@@ -257,12 +275,18 @@ export default function WorldTreeCanvas({
     let W = 0;
     let H = 0;
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
+    const BG_DPR = 1;
+    let bgDirty = true;
     const fit = () => {
       W = window.innerWidth;
       H = window.innerHeight;
-      canvas.width = Math.round(W * DPR);
-      canvas.height = Math.round(H * DPR);
+      fg.width = Math.round(W * DPR);
+      fg.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      bg.width = Math.round(W * BG_DPR);
+      bg.height = Math.round(H * BG_DPR);
+      bctx.setTransform(BG_DPR, 0, 0, BG_DPR, 0, 0);
+      bgDirty = true;
     };
     fit();
     window.addEventListener("resize", fit);
@@ -323,28 +347,43 @@ export default function WorldTreeCanvas({
       const px = (ix: number) => ix * scale + offX;
       const py = (iy: number) => iy * scale + offY;
 
-      /* ---- plates ---- */
+      /* ---- plates (background canvas, only when the camera moved) ---- */
+      const sig =
+        Math.round(offX * 4) * 31 +
+        Math.round(offY * 4) * 7 +
+        Math.round(scale * imgW * 4) +
+        Math.round(ph.black * 250) * 131 +
+        Math.round(ph.rootsFade * 250) * 257 +
+        (ph.rootsFade > 0.004 ? Math.round(rest * 250) * 521 : 0);
+      if (bgDirty || sig !== lastSig) {
+        lastSig = sig;
+        bgDirty = false;
+        bctx.clearRect(0, 0, W, H);
+        const treeAlpha = (1 - ph.rootsFade) * (1 - ph.black * 0.55);
+        if (treeAlpha > 0.004) {
+          bctx.globalAlpha = treeAlpha;
+          bctx.drawImage(treeBmp ?? tree, offX, offY, imgW * scale, imgH * scale);
+        }
+        if (rootsReady && ph.rootsFade > 0.004) {
+          /* the roots close-up gets its own gentle framing drift */
+          const rs =
+            Math.max(W / roots.naturalWidth, H / roots.naturalHeight) * (1.04 + rest * 0.05);
+          const rx = (W - roots.naturalWidth * rs) * 0.5;
+          const ry = (H - roots.naturalHeight * rs) * lerp(0.7, 0.52, rest);
+          bctx.globalAlpha = ph.rootsFade;
+          bctx.drawImage(rootsBmp ?? roots, rx, ry, roots.naturalWidth * rs, roots.naturalHeight * rs);
+        }
+        bctx.globalAlpha = 1;
+        /* the thesis dwell sinks everything toward black so the helix owns
+           the frame; regroup lifts it back out */
+        if (ph.black > 0.004) {
+          bctx.fillStyle = `rgba(4, 7, 5, ${(ph.black * 0.92).toFixed(3)})`;
+          bctx.fillRect(0, 0, W, H);
+        }
+      }
+
+      /* ---- particles (foreground canvas, every frame) ---- */
       ctx.clearRect(0, 0, W, H);
-      const treeAlpha = (1 - ph.rootsFade) * (1 - ph.black * 0.55);
-      if (treeAlpha > 0.004) {
-        ctx.globalAlpha = treeAlpha;
-        ctx.drawImage(tree, offX, offY, imgW * scale, imgH * scale);
-      }
-      if (rootsReady && ph.rootsFade > 0.004) {
-        /* the roots close-up gets its own gentle framing drift */
-        const rs = Math.max(W / roots.naturalWidth, H / roots.naturalHeight) * (1.04 + rest * 0.05);
-        const rx = (W - roots.naturalWidth * rs) * 0.5;
-        const ry = (H - roots.naturalHeight * rs) * lerp(0.7, 0.52, rest);
-        ctx.globalAlpha = ph.rootsFade;
-        ctx.drawImage(roots, rx, ry, roots.naturalWidth * rs, roots.naturalHeight * rs);
-      }
-      ctx.globalAlpha = 1;
-      /* the thesis dwell sinks everything toward black so the helix owns
-         the frame; regroup lifts it back out */
-      if (ph.black > 0.004) {
-        ctx.fillStyle = `rgba(4, 7, 5, ${(ph.black * 0.92).toFixed(3)})`;
-        ctx.fillRect(0, 0, W, H);
-      }
 
       /* ---- population ---- */
       const calm = smooth01((des - 0.04) / 0.5); // the big orb takes the stage
@@ -585,15 +624,16 @@ export default function WorldTreeCanvas({
     return () => {
       disposed = true;
       tickRef.current = null;
+      treeBmp?.close();
+      rootsBmp?.close();
       window.removeEventListener("resize", fit);
     };
   }, [phasesRef, tickRef]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="v2-stage__canvas"
-      aria-hidden
-    />
+    <>
+      <canvas ref={bgRef} className="v2-stage__canvas" aria-hidden />
+      <canvas ref={fgRef} className="v2-stage__canvas" aria-hidden />
+    </>
   );
 }

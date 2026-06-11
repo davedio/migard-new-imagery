@@ -205,6 +205,13 @@ export default function DescentFlow() {
     let last = performance.now();
     let running = false;
     const lastOpacity = new Map<BandId, number>();
+    /* per-frame write caches — a skipped write is a skipped style recalc */
+    let lastStageOpacity = "";
+    let lastProg = -1;
+    /* while the entry splash covers the page, the whole stage is invisible —
+       skip everything except the scroll lerp. Re-checked ~1x/second. */
+    let splashEl: Element | null = null;
+    let splashCheckAt = 0;
 
     const onScroll = () => {
       target = window.scrollY;
@@ -221,6 +228,12 @@ export default function DescentFlow() {
       smooth += (target - smooth) * Math.min(1, 1 - Math.pow(1 - EASE, dt * 60));
       if (Math.abs(target - smooth) < 0.04) smooth = target;
       const s = smooth;
+
+      if (now > splashCheckAt) {
+        splashCheckAt = now + 1000;
+        splashEl = document.querySelector(".splash--overlay");
+      }
+      if (splashEl?.isConnected) return; // covered — draw nothing
 
       const bp = BANDS.map((_, i) => bandP(i, s));
       const [pHero, pCanopy, pTrunk, pRoots, pProofs, pProv, pBedrock, pClose] = bp;
@@ -264,8 +277,12 @@ export default function DescentFlow() {
       ph.zoom = zoom;
 
       /* ---- stage fade at the very end (the footer takes over) ---- */
-      stage.style.opacity = String(1 - stageFade);
-      stage.style.visibility = stageFade >= 1 ? "hidden" : "visible";
+      const stageOpacity = (1 - stageFade).toFixed(3);
+      if (stageOpacity !== lastStageOpacity) {
+        lastStageOpacity = stageOpacity;
+        stage.style.opacity = stageOpacity;
+        stage.style.visibility = stageFade >= 1 ? "hidden" : "visible";
+      }
 
       /* ---- overlay envelopes (opacity only — corn never translates) ---- */
       const env: Record<BandId, number> = {
@@ -290,11 +307,11 @@ export default function DescentFlow() {
         }
       }
       /* thesis word-brighten rides the canopy dwell */
-      const canopyEl = overlayEls.current.get("canopy");
-      canopyEl?.style.setProperty(
-        "--prog",
-        clamp01((pCanopy - 0.22) / 0.42).toFixed(4),
-      );
+      const prog = clamp01((pCanopy - 0.22) / 0.42);
+      if (Math.abs(prog - lastProg) > 0.002) {
+        lastProg = prog;
+        overlayEls.current.get("canopy")?.style.setProperty("--prog", prog.toFixed(4));
+      }
 
       /* ---- rail active state ---- */
       const rail = railRef.current;

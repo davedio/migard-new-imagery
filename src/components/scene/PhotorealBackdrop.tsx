@@ -339,6 +339,11 @@ export default function PhotorealBackdrop({
   // overlay can project image-space anchors through the same transform —
   // this is what keeps the fx ON the tree at any zoom (V2 round-5 fix).
   const camRef = useRef({ y: 42, s: 1.06 });
+  /* natural plate dimensions, published by the overlay effect's image load —
+     the pan loop needs them to express the camera as a pure transform.
+     `ready` flips once the box geometry below has been applied. */
+  const imgDimsRef = useRef({ w: 0, h: 0, ready: false });
+  const dofImgRef = useRef<HTMLDivElement>(null);
   const model = useMemo(() => buildModel(wide), [wide]);
 
   // ---- plate parallax pan + PER-STAGE ZOOM (rAF, ref-driven) ----
@@ -363,10 +368,7 @@ export default function PhotorealBackdrop({
       camRef.current.y = cam.focY;
       camRef.current.s = 1.04;
       stage?.style.setProperty("--plate-settle", "0");
-      if (dof) {
-        dof.style.setProperty("--focus-y", "46%");
-        dof.style.setProperty("--dof", "0");
-      }
+      if (dof) dof.style.opacity = "0";
       return;
     }
 
@@ -378,6 +380,11 @@ export default function PhotorealBackdrop({
     // stages instead of snapping at thresholds (buttery, never jerky).
     let camY = focals[0].focY;
     let camS = focals[0].scale;
+    /* write caches — every skipped style write is a skipped style recalc */
+    let lastWroteY = -1;
+    let lastWroteS = -1;
+    let lastSettle = -1;
+    let lastDof = -1;
     let lastT = performance.now();
     const tick = (now: number) => {
       const dt = Math.min((now - lastT) / 1000, 0.05);
@@ -408,22 +415,59 @@ export default function PhotorealBackdrop({
       camY += (cam.focY - camY) * follow;
       camS += (cam.scale - camS) * follow;
 
-      el.style.setProperty("--plate-y", `${camY.toFixed(3)}%`);
-      el.style.setProperty("--plate-scale", camS.toFixed(4));
+      /* The camera as a PURE transform (perf pass 2026-06-11): animating
+         background-position repainted the 4K plate every frame, and the
+         animated backdrop-filter re-blurred the whole frame on top — the
+         two together were the page's 148ms frames. The plate now keeps a
+         STATIC background-position (50% vertical) and pans/zooms via
+         transform only; mathematically identical to the old
+         `background-position-y: camY%` + scale-about-center (the overlay's
+         tX/tY projection is unchanged):
+           ty = (H - imgH·s0)·(camY/100 − ½), screen = scale(S)·(paint+ty) */
+      if (Math.abs(camY - lastWroteY) > 0.004 || Math.abs(camS - lastWroteS) > 0.0004) {
+        lastWroteY = camY;
+        lastWroteS = camS;
+        const dims = imgDimsRef.current;
+        if (dims.ready) {
+          /* box geometry (oversize + fixed px background-size) is applied by
+             the overlay effect; here the pan is transform-only. The formula
+             reproduces `background-position-y: camY%` exactly: the image is
+             centered in the oversized box, so its viewport-space top is
+             (H − imgH·s0)/2, and ty shifts it to (H − imgH·s0)·camY/100. */
+          const s0 = Math.max(window.innerWidth / dims.w, window.innerHeight / dims.h);
+          const ty = (window.innerHeight - dims.h * s0) * (camY / 100 - 0.5);
+          const tf = `scale(${camS.toFixed(4)}) translate3d(0, ${ty.toFixed(2)}px, 0)`;
+          el.style.transform = tf;
+          /* the blurred DOF copy is the same plate — it must ride the same
+             camera or the periphery ghosts against the sharp plate */
+          if (dofImgRef.current) dofImgRef.current.style.transform = tf;
+        } else {
+          /* image not measured yet — fall back to the var-driven CSS */
+          el.style.setProperty("--plate-y", `${camY.toFixed(3)}%`);
+          el.style.setProperty("--plate-scale", camS.toFixed(4));
+        }
+      }
       // publish the live camera for the overlay's image->screen projection
       camRef.current.y = camY;
       camRef.current.s = camS;
       // settle 0..1 drives the cobalt grade on the post layer at the roots
       const settle = smooth(clamp((cur - 0.66) / 0.34));
-      stage?.style.setProperty("--plate-settle", settle.toFixed(3));
+      if (Math.abs(settle - lastSettle) > 0.004) {
+        lastSettle = settle;
+        stage?.style.setProperty("--plate-settle", settle.toFixed(3));
+      }
 
-      // DEPTH OF FIELD strength (focus-y itself is written by the overlay
-      // loop from the packet's REAL projected screen position).
+      // DEPTH OF FIELD strength — now a compositor-only opacity on the
+      // pre-blurred plate copy (the old animated backdrop-filter re-blurred
+      // the entire frame every frame).
       if (dof) {
         const dofAmt =
           lerp(0.45, 1, smooth(clamp(cur / 0.5))) *
           lerp(1, 0.7, smooth(clamp((cur - 0.85) / 0.15)));
-        dof.style.setProperty("--dof", dofAmt.toFixed(3));
+        if (Math.abs(dofAmt - lastDof) > 0.006) {
+          lastDof = dofAmt;
+          dof.style.opacity = dofAmt.toFixed(3);
+        }
       }
       raf = requestAnimationFrame(tick);
     };
@@ -441,8 +485,33 @@ export default function PhotorealBackdrop({
     let W = 0;
     let H = 0;
     let dpr = 1;
+    /* The plate box, oversized so the transform pan never drags its edge
+       into view (background paint clips to the box — the reason the pan
+       can't just translate a viewport-sized element). background-size is
+       pinned in px to the VIEWPORT cover scale so the framing and the
+       tX/tY projection stay exactly as before. */
+    const applyBoxGeometry = () => {
+      const dims = imgDimsRef.current;
+      const plate = plateRef.current;
+      /* motion-off keeps the simple CSS cover + var framing — no pan runs */
+      if (!motionOn || !dims.h || !plate) return;
+      const s0 = Math.max(W / dims.w, H / dims.h);
+      const pad = Math.max(0, (dims.h * s0 - H) / 2) + 12;
+      const size = `${(dims.w * s0).toFixed(2)}px ${(dims.h * s0).toFixed(2)}px`;
+      const pos = wide ? "68% 50%" : "50% 50%";
+      for (const node of [plate, dofImgRef.current]) {
+        if (!node) continue;
+        node.style.top = `${-pad}px`;
+        node.style.bottom = `${-pad}px`;
+        node.style.backgroundSize = size;
+        node.style.backgroundPosition = pos;
+      }
+      dims.ready = true;
+    };
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      /* Corn lesson: the fx are glows and lines — 1.5 is visually clean at
+         half the fill cost of 2.0 */
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       W = window.innerWidth;
       H = window.innerHeight;
       canvas.width = Math.floor(W * dpr);
@@ -450,11 +519,57 @@ export default function PhotorealBackdrop({
       canvas.style.width = `${W}px`;
       canvas.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      applyBoxGeometry();
     };
     resize();
     window.addEventListener("resize", resize);
 
     const { nodes, edges, motes, glints } = model;
+
+    /* ---- glow sprites (perf pass 2026-06-11) ----
+       createRadialGradient + shadowBlur per entity per frame was the fx
+       canvas' whole budget. Gradients are now pre-rendered ONCE per
+       quantized tint and stamped with drawImage. spriteFor() quantizes a
+       palette mix to quarter steps — 9 sprites cover every hue the scene
+       uses; the eye can't tell at glow sizes. */
+    const SPR = 64;
+    const makeSprite = (col: string) => {
+      const c = document.createElement("canvas");
+      c.width = SPR;
+      c.height = SPR;
+      const x = c.getContext("2d")!;
+      const g = x.createRadialGradient(SPR / 2, SPR / 2, 0, SPR / 2, SPR / 2, SPR / 2);
+      g.addColorStop(0, `rgba(${col}, 1)`);
+      g.addColorStop(0.4, `rgba(${col}, 0.42)`);
+      g.addColorStop(1, `rgba(${col}, 0)`);
+      x.fillStyle = g;
+      x.fillRect(0, 0, SPR, SPR);
+      return c;
+    };
+    const sprGold: HTMLCanvasElement[] = [];
+    const sprCobalt: HTMLCanvasElement[] = [];
+    for (let q = 0; q <= 4; q++) {
+      sprGold.push(makeSprite(mixRGB(GREEN, GOLD, q / 4)));
+      sprCobalt.push(makeSprite(mixRGB(GREEN, COBALT, q / 4)));
+    }
+    const sprWhite = makeSprite("255, 255, 255");
+    const spriteFor = (palette: "gold" | "cobalt", f: number) =>
+      (palette === "gold" ? sprGold : sprCobalt)[
+        Math.max(0, Math.min(4, Math.round(f * 4)))
+      ];
+    /** stamp a radial glow: center, radius, alpha */
+    const stamp = (
+      spr: HTMLCanvasElement,
+      x: number,
+      y: number,
+      r: number,
+      a: number,
+    ) => {
+      if (a <= 0.004 || r <= 0.1) return;
+      ctx.globalAlpha = Math.min(1, a);
+      ctx.drawImage(spr, x - r, y - r, r * 2, r * 2);
+      ctx.globalAlpha = 1;
+    };
 
     /* ================================================================
        IMAGE-ANCHORED ANATOMY (V2 round-5). The overlay used to live in
@@ -586,6 +701,8 @@ export default function PhotorealBackdrop({
     plateImg.onload = () => {
       imgW = plateImg.naturalWidth;
       imgH = plateImg.naturalHeight;
+      imgDimsRef.current = { w: imgW, h: imgH, ready: false };
+      applyBoxGeometry();
       const gw = 144;
       const gh = Math.max(2, Math.round((imgH / imgW) * gw));
       const off = document.createElement("canvas");
@@ -712,13 +829,11 @@ export default function PhotorealBackdrop({
         // toward the packet hue.
         const baseA = 0.05 * glow;
         const fireA = 0.55 * fire;
-        const a0 = baseA + fireA * 0.6;
-        const a1 = baseA + fireA;
+        /* flat stroke at the gradient's mean alpha — visually identical at
+           these lengths, no per-edge gradient allocation */
+        const a01 = baseA + fireA * 0.8;
         const col = mixRGB(GREEN, settle > 0.5 ? COBALT : GREEN, settle);
-        const g = ctx.createLinearGradient(ax, ay, bx, by);
-        g.addColorStop(0, `rgba(${col}, ${a0})`);
-        g.addColorStop(1, `rgba(${col}, ${a1})`);
-        ctx.strokeStyle = g;
+        ctx.strokeStyle = `rgba(${col}, ${a01})`;
         ctx.lineWidth = 1 + fire * 1.4;
         ctx.beginPath();
         ctx.moveTo(ax, ay);
@@ -739,6 +854,10 @@ export default function PhotorealBackdrop({
           eye = watchT * Math.pow(blink, 3) * 0.85;
           fire = Math.max(fire, eye);
         }
+        const spr =
+          eye > 0.02
+            ? spriteFor("gold", clamp(eye / 0.85))
+            : spriteFor("cobalt", isRoot ? settle : settle * 0.4);
         const col =
           eye > 0.02
             ? mixRGB(GREEN, GOLD, clamp(eye / 0.85))
@@ -747,23 +866,14 @@ export default function PhotorealBackdrop({
         const baseA = 0.28 * glow;
         const a = clamp(baseA + fire * 0.7, 0, 1);
         const r = n.r * (1 + fire * 0.9);
-        if (fire > 0.04) {
-          const halo = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
-          halo.addColorStop(0, `rgba(${col}, ${0.5 * fire})`);
-          halo.addColorStop(1, `rgba(${col}, 0)`);
-          ctx.fillStyle = halo;
-          ctx.beginPath();
-          ctx.arc(x, y, r * 5, 0, Math.PI * 2);
-          ctx.fill();
-        }
+        if (fire > 0.04) stamp(spr, x, y, r * 5, 0.55 * fire);
+        /* the soft aura the old per-node shadowBlur supplied */
+        stamp(spr, x, y, r * 2.4, a * 0.55);
         ctx.fillStyle = `rgba(${col}, ${a})`;
-        ctx.shadowColor = `rgba(${col}, ${a})`;
-        ctx.shadowBlur = 6 + fire * 12;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.shadowBlur = 0;
     };
 
     /* ---- STATIC path (reduced motion / motion-off / mobile) ---- */
@@ -919,13 +1029,7 @@ export default function PhotorealBackdrop({
           const r = gl.r * lerp(1.4, 0.5, converge);
           const gx = tX(hx);
           const gy = tY(hy);
-          const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, r * 4);
-          g.addColorStop(0, `rgba(${GREEN}, ${a})`);
-          g.addColorStop(1, `rgba(${GREEN}, 0)`);
-          ctx.fillStyle = g;
-          ctx.beginPath();
-          ctx.arc(gx, gy, r * 4, 0, Math.PI * 2);
-          ctx.fill();
+          stamp(spriteFor("gold", 0), gx, gy, r * 4, a);
           // a faint inward thread as they collapse (only mid-converge)
           if (converge > 0.15 && converge < 0.95) {
             ctx.strokeStyle = `rgba(${GREEN}, ${a * 0.5})`;
@@ -981,13 +1085,7 @@ export default function PhotorealBackdrop({
           ctx.lineTo(x + half, y);
           ctx.stroke();
           // a tiny index node at the slot
-          const dotG = ctx.createRadialGradient(x, y, 0, x, y, 5);
-          dotG.addColorStop(0, `rgba(${col}, ${a})`);
-          dotG.addColorStop(1, `rgba(${col}, 0)`);
-          ctx.fillStyle = dotG;
-          ctx.beginPath();
-          ctx.arc(x, y, 5, 0, Math.PI * 2);
-          ctx.fill();
+          stamp(spriteFor("gold", commitT > 0.3 ? 0.4 : 0), x, y, 5, a);
         }
         ctx.lineCap = "butt";
       }
@@ -1156,9 +1254,10 @@ export default function PhotorealBackdrop({
       ctx.stroke();
       ctx.lineCap = "butt";
 
-      // (d) molten core — morph round -> square BLOCK via blended draws
-      ctx.shadowColor = `rgba(${pkCol}, 1)`;
-      ctx.shadowBlur = 22 + block * 12;
+      // (d) molten core — morph round -> square BLOCK via blended draws.
+      // The old shadowBlur(22-34) around these fills cost more than the
+      // rest of the canvas combined; a white sprite stamp reads the same.
+      stamp(sprWhite, px, py, coreR * (3 + block), 0.85);
       if (block > 0.04) {
         // square block face (the committed batch), rounded corners
         const s = coreR * lerp(1.0, 1.7, block);
@@ -1177,7 +1276,6 @@ export default function PhotorealBackdrop({
       ctx.beginPath();
       ctx.arc(px, py, coreR * (1 - block * 0.35), 0, Math.PI * 2);
       ctx.fill();
-      ctx.shadowBlur = 0;
 
       /* ============================================================
          STAGE 5 · SETTLE — a SLOW, satisfying confirmation BLOOM + eased
@@ -1283,17 +1381,15 @@ export default function PhotorealBackdrop({
         const lit = clamp(1 - d / 0.18, 0, 1);
         const tw = 0.18 + 0.16 * (0.5 + 0.5 * Math.sin(m.sway * m.twk));
         const a = tw + lit * 0.55;
-        const col = lit > 0.2 ? pkCol : GREEN;
         const r = m.s * (1 + lit * 1.2);
-        const mx = tX(m.x);
-        const my = tY(m.y);
-        const g = ctx.createRadialGradient(mx, my, 0, mx, my, r * 3);
-        g.addColorStop(0, `rgba(${col}, ${a})`);
-        g.addColorStop(1, `rgba(${col}, 0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(mx, my, r * 3, 0, Math.PI * 2);
-        ctx.fill();
+        /* lit motes ride the packet's light (white-hot); dormant stay green */
+        stamp(
+          lit > 0.2 ? sprWhite : spriteFor("gold", 0),
+          tX(m.x),
+          tY(m.y),
+          r * 3,
+          a * (lit > 0.2 ? 0.8 : 1),
+        );
       }
 
       ctx.globalCompositeOperation = "source-over";
@@ -1344,7 +1440,15 @@ export default function PhotorealBackdrop({
           settlement bloom */}
       <canvas ref={canvasRef} className="plate-stage__fx" />
       {/* ---- CINEMATIC POST STACK ---- */}
-      <div ref={dofRef} className="plate-stage__dof" />
+      {/* DOF = a pre-blurred copy of the plate, masked to the periphery and
+          riding the exact same camera transform; only its OPACITY animates
+          (the old animated backdrop-filter re-blurred the frame each frame) */}
+      <div ref={dofRef} className="plate-stage__dof">
+        <div
+          ref={dofImgRef}
+          className={`plate-stage__dof-img${wide ? " plate-stage__dof-img--wide" : ""}`}
+        />
+      </div>
       <div className="plate-stage__ca" />
       <div className="plate-stage__vignette" />
       <div className="plate-stage__grain" />

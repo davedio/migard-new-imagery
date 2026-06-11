@@ -753,6 +753,11 @@ h2 em,
   width: max-content;
   animation: v2-marquee 46s linear infinite;
 }
+/* the marquee lives inside a pinned overlay — don't burn compositor work
+   while its band is faded out */
+.v2-ov:not([data-active="true"]) .v2-marquee__track {
+  animation-play-state: paused;
+}
 .v2-marquee:hover .v2-marquee__track {
   animation-play-state: paused;
 }

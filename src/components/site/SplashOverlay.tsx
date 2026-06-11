@@ -28,6 +28,21 @@ export function SplashOverlay() {
   const timer = useRef<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { motionOn } = useMotionPref();
+  /* hold the 12MB flyover back until the page itself has loaded — the
+     static plate carries the first paint, the video fades in when ready */
+  const [videoArmed, setVideoArmed] = useState(false);
+  useEffect(() => {
+    let raf = 0;
+    const arm = () => {
+      raf = requestAnimationFrame(() => setVideoArmed(true));
+    };
+    if (document.readyState === "complete") arm();
+    else window.addEventListener("load", arm, { once: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("load", arm);
+    };
+  }, []);
 
   /* The forest flyover: fades in over the static plate once it can play,
      and breathes down just before each loop point so the restart cut reads
@@ -100,7 +115,7 @@ export function SplashOverlay() {
       }}
     >
       <div className="splash__bg" aria-hidden />
-      {motionOn ? (
+      {motionOn && videoArmed ? (
         <video
           ref={videoRef}
           className="splash__video"

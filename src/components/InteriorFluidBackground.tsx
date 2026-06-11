@@ -2,10 +2,13 @@
 
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
-import SecurityPageBackdrop from "./SecurityPageBackdrop";
 
-// AmbientDepth carries an R3F canvas; keep it out of SSR.
+// Both backdrops carry canvases; keep them out of SSR AND out of the shared
+// layout chunk (the static import shipped the security backdrop everywhere).
 const AmbientDepth = dynamic(() => import("./scene/AmbientDepth"), {
+  ssr: false,
+});
+const SecurityPageBackdrop = dynamic(() => import("./SecurityPageBackdrop"), {
   ssr: false,
 });
 
