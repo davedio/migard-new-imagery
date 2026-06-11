@@ -58,20 +58,29 @@ export default function ShatterHeading({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { motionOn } = useMotionPref();
 
-  /* split lines into letters, tagging accent runs */
+  /* split lines into WORDS of letters (wrapping happens at word boundaries,
+     so a single-line heading can still break gracefully on small screens),
+     tagging accent runs */
   const split = useMemo(() => {
     return lines.map((line) => {
-      const runs: { ch: string; accent?: Accent }[] = [];
       const marks: { start: number; end: number; accent: Accent }[] = [];
       for (const [needle, accent] of Object.entries(accents ?? {})) {
         const at = line.indexOf(needle);
         if (at >= 0) marks.push({ start: at, end: at + needle.length, accent });
       }
+      const words: { ch: string; accent?: Accent }[][] = [];
+      let word: { ch: string; accent?: Accent }[] = [];
       for (let i = 0; i < line.length; i++) {
+        if (line[i] === " ") {
+          if (word.length) words.push(word);
+          word = [];
+          continue;
+        }
         const m = marks.find((mk) => i >= mk.start && i < mk.end);
-        runs.push({ ch: line[i], accent: m?.accent });
+        word.push({ ch: line[i], accent: m?.accent });
       }
-      return runs;
+      if (word.length) words.push(word);
+      return words;
     });
   }, [lines, accents]);
 
@@ -381,16 +390,23 @@ export default function ShatterHeading({
   return (
     <div ref={rootRef} className="v2-shx" style={style}>
       <Tag className={className} aria-label={lines.join(" ")}>
-        {split.map((runs, li) => (
+        {split.map((words, li) => (
           <span className="shx-line" key={li} aria-hidden>
-            {runs.map((r, ci) => (
-              <span
-                key={ci}
-                className="shx-ch"
-                data-ch={r.ch}
-                data-accent={r.accent}
-              >
-                {r.ch === " " ? " " : r.ch}
+            {words.map((word, wi) => (
+              <span key={wi}>
+                {wi > 0 ? " " : null}
+                <span className="shx-w">
+                  {word.map((r, ci) => (
+                    <span
+                      key={ci}
+                      className="shx-ch"
+                      data-ch={r.ch}
+                      data-accent={r.accent}
+                    >
+                      {r.ch}
+                    </span>
+                  ))}
+                </span>
               </span>
             ))}
           </span>

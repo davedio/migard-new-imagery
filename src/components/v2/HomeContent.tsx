@@ -191,17 +191,38 @@ export function Statement({
       }
     >
       {paragraphs.out.map((words, pi) => (
-        <p key={pi}>
-          {words.map(({ w, cls, i }) => (
-            <span
-              key={i}
-              className={`w${cls ? ` ${cls}` : ""}`}
-              style={{ ["--i" as string]: (i / paragraphs.total).toFixed(4) }}
-            >
-              {w}{" "}
-            </span>
-          ))}
-        </p>
+        /* each paragraph CLIPS into place — snaps up out of a masked row,
+           quick and decisive (review 2026-06-11: "clip into place").
+           The viewport observer lives on the UNCLIPPED mask wrapper — a
+           fully-translated child inside overflow:hidden has an empty
+           intersection rect and would never report "in view". */
+        <motion.span
+          className="v2-mask"
+          key={pi}
+          initial={motionOn ? "hidden" : false}
+          whileInView="show"
+          viewport={{ once: true, margin: "0px 0px -10% 0px" }}
+        >
+          <motion.p
+            variants={{
+              hidden: { y: "104%" },
+              show: {
+                y: "0%",
+                transition: { duration: 0.55, ease: EASE_EXPO, delay: pi * 0.14 },
+              },
+            }}
+          >
+            {words.map(({ w, cls, i }) => (
+              <span
+                key={i}
+                className={`w${cls ? ` ${cls}` : ""}`}
+                style={{ ["--i" as string]: (i / paragraphs.total).toFixed(4) }}
+              >
+                {w}{" "}
+              </span>
+            ))}
+          </motion.p>
+        </motion.span>
       ))}
     </div>
   );

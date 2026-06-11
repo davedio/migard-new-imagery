@@ -325,7 +325,8 @@ export default function DescentFlow() {
                 <span className="stratum">Canopy — the thesis</span>
               </div>
             </Rise>
-            <ShatterHeading as="h2" lines={["Scale that stays", "on Cardano."]} />
+            {/* one line on desktop; the word grouping wraps it on phones */}
+            <ShatterHeading as="h2" lines={["Scale that stays on Cardano."]} />
           </div>
           <Statement />
         </section>

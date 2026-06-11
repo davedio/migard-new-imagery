@@ -36,11 +36,15 @@ const TARGETS = [
 const RUNES = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ";
 const rune = () => RUNES[(Math.random() * RUNES.length) | 0];
 
-const HOLD_MS = 300; // the page opens fully runed for a readable beat
-const STAGGER_MS = 55; // per-element domino delay
-const STAGGER_CAP_MS = 2100; // the tail of a long page still opens promptly
-const DECODE_MS = 420; // per-element reveal sweep
-const SHUFFLE_MS = 48; // rune re-shuffle cadence while encoded
+/* The page WAITS in runes until the cursor first touches any runed text
+   (review 2026-06-11) — then the dominoes fall, top to bottom, unhurried.
+   Touch devices have no cursor: the first touch or scroll starts it, and a
+   generous timer backstops both. */
+const STAGGER_MS = 130; // per-element domino delay (slower, deliberate)
+const STAGGER_CAP_MS = 3400; // the page tail still decodes promptly
+const DECODE_MS = 700; // per-element reveal sweep
+const SHUFFLE_MS = 105; // rune re-shuffle cadence — a flicker, not a spin
+const TOUCH_FALLBACK_MS = 2500; // no cursor ever arrives → start anyway
 
 export default function RuneDecode() {
   const { motionOn } = useMotionPref();
@@ -64,7 +68,7 @@ export default function RuneDecode() {
     els.forEach((el, i) => {
       if (el.closest("[data-no-rune]")) return;
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-      const start = HOLD_MS + Math.min(i * STAGGER_MS, STAGGER_CAP_MS);
+      const start = Math.min(i * STAGGER_MS, STAGGER_CAP_MS);
       for (let n = walker.nextNode(); n; n = walker.nextNode()) {
         const t = n as Text;
         if (!t.data.trim()) continue;
@@ -82,11 +86,42 @@ export default function RuneDecode() {
       return out;
     };
 
-    /* strike the page into runes in one pass (before first paint of the
-       effect — the rAF below begins decoding immediately) */
+    /* strike the page into runes in one pass — it now WAITS, flickering
+       gently, until the cursor touches any runed text */
     for (const j of jobs) j.node.data = encode(j.original);
 
-    const t0 = performance.now();
+    let t0 = 0; // set when the wave is released
+    let released = false;
+
+    /* a soft idle flicker while waiting (slow, so the letters don't "spin") */
+    let idleTimer = 0;
+    const idleFlicker = () => {
+      for (const j of jobs) j.node.data = encode(j.original);
+      idleTimer = window.setTimeout(idleFlicker, SHUFFLE_MS * 3);
+    };
+    idleTimer = window.setTimeout(idleFlicker, SHUFFLE_MS * 3);
+
+    const release = () => {
+      if (released || disposed) return;
+      released = true;
+      window.clearTimeout(idleTimer);
+      document.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("scroll", onTouch);
+      t0 = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+    /* the cursor must HIT runed text — not merely enter the page */
+    const onPointer = (e: PointerEvent) => {
+      const hit = (e.target as Element | null)?.closest?.(TARGETS);
+      if (hit && !hit.closest("[data-no-rune]")) release();
+    };
+    const onTouch = () => release();
+    document.addEventListener("pointermove", onPointer, { passive: true });
+    window.addEventListener("touchstart", onTouch, { passive: true });
+    window.addEventListener("scroll", onTouch, { passive: true });
+    timers.push(window.setTimeout(release, TOUCH_FALLBACK_MS));
+
     let lastShuffle = 0;
     const tick = (now: number) => {
       const t = now - t0;
@@ -111,12 +146,16 @@ export default function RuneDecode() {
       if (live && !disposed) raf = requestAnimationFrame(tick);
       else for (const j of jobs) j.node.data = j.original; // belt & braces
     };
-    raf = requestAnimationFrame(tick);
+    /* the wave starts in release(), not here */
 
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      window.clearTimeout(idleTimer);
       timers.forEach(clearTimeout);
+      document.removeEventListener("pointermove", onPointer);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("scroll", onTouch);
       /* never leave the page struck mid-incantation */
       for (const j of jobs) j.node.data = j.original;
     };

@@ -31,11 +31,11 @@
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* V2 display scale — Syne is wide, so big but not gigantic, near-flat tracking */
-  --h1-size: clamp(42px, 6vw, 92px);
+  --h1-size: clamp(40px, 5.4vw, 86px);
   --h1-line: 1.02;
   --h1-weight: 500;
   --h1-spacing: -0.012em;
-  --h2-size: clamp(26px, 3.1vw, 47px);
+  --h2-size: clamp(25px, 2.8vw, 44px);
   --h2-line: 1.08;
   --h2-weight: 500;
   --h3-weight: 500;
@@ -334,7 +334,7 @@ h2 em,
   max-width: 1000px;
 }
 .page-hero .sub {
-  font-size: clamp(17px, 1.7vw, 23px);
+  font-size: clamp(16px, 1.5vw, 21px);
   line-height: 1.45;
   color: var(--text);
   max-width: 640px;
@@ -486,7 +486,7 @@ h2 em,
 }
 .v2-hero__title {
   margin: 22px 0 0;
-  font-size: clamp(40px, 6.6vw, 112px);
+  font-size: clamp(38px, 5.9vw, 104px);
   line-height: 1.0;
   font-weight: 500;
   letter-spacing: -0.014em;
@@ -510,6 +510,11 @@ h2 em,
 }
 .v2-shx .shx-line {
   display: block;
+}
+.v2-shx .shx-w {
+  /* wrap at WORD boundaries — single-line headings still break gracefully */
+  display: inline-block;
+  white-space: nowrap;
 }
 .v2-shx .shx-ch {
   display: inline-block;
@@ -535,8 +540,8 @@ h2 em,
 }
 .v2-band--thesis .v2-shx h2 {
   margin: 0;
-  max-width: 10.5em;
-  font-size: clamp(30px, 4.3vw, 70px);
+  max-width: none;
+  font-size: clamp(28px, 3.6vw, 58px);
   line-height: 1.04;
   font-weight: 500;
   color: var(--bone);
@@ -546,7 +551,7 @@ h2 em,
 /* ---- provenance, compact (its own pinned beat) ---- */
 .v2-prov__title {
   margin: 22px 0 0;
-  font-size: clamp(27px, 3.2vw, 50px);
+  font-size: clamp(25px, 2.9vw, 46px);
   line-height: 1.08;
   letter-spacing: -0.01em;
   color: var(--bone);
@@ -608,7 +613,7 @@ h2 em,
 .v2-hero__lead {
   margin-top: clamp(18px, 2.6vh, 30px);
   max-width: 560px;
-  font-size: clamp(16px, 1.55vw, 20px);
+  font-size: clamp(15.5px, 1.4vw, 19px);
   line-height: 1.6;
   color: var(--text);
 }
@@ -762,7 +767,7 @@ h2 em,
 }
 .v2-ch h2 {
   margin: 26px 0 0;
-  font-size: clamp(28px, 3.9vw, 60px);
+  font-size: clamp(27px, 3.5vw, 56px);
   line-height: 1.06;
   font-weight: 500;
   letter-spacing: -0.012em;
@@ -773,7 +778,7 @@ h2 em,
 .v2-ch__lead {
   margin-top: 22px;
   max-width: 600px;
-  font-size: clamp(15.5px, 1.5vw, 19px);
+  font-size: clamp(15px, 1.35vw, 18px);
   line-height: 1.65;
   color: var(--text);
 }
@@ -786,11 +791,11 @@ h2 em,
 .v2-statement {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 var(--gut) clamp(80px, 14vh, 180px);
+  padding: 0 var(--gut) clamp(40px, 7vh, 90px);
 }
 .v2-statement p {
   font-family: var(--font-display);
-  font-size: clamp(24px, 3.1vw, 48px);
+  font-size: clamp(19px, 2.1vw, 32px);
   line-height: 1.22;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -798,8 +803,8 @@ h2 em,
   max-width: 18em;
   margin: 0;
 }
-.v2-statement p + p {
-  margin-top: 1.2em;
+.v2-statement .v2-mask + .v2-mask {
+  margin-top: 1em;
 }
 .v2-statement .hi {
   color: var(--bone);
