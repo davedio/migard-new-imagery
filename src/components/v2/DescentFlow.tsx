@@ -340,14 +340,14 @@ export default function DescentFlow() {
               <h2 className="v2-thesis__h2">Scale that stays on Cardano.</h2>
             </Rise>
           </div>
-          <Statement />
-          <Rise delay={0.1}>
-            <div className="v2-thesis__cta">
+          <div className="v2-thesis__row">
+            <Statement />
+            <Rise delay={0.1} className="v2-thesis__cta">
               <Link className="btn btn--ghost" href="/how-it-works">
                 Overview of Flow
               </Link>
-            </div>
-          </Rise>
+            </Rise>
+          </div>
         </section>
 
         {/* ---------- 02 roots / ledger (the helix collapses to ONE orb) -- */}

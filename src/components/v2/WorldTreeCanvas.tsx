@@ -330,7 +330,14 @@ export default function WorldTreeCanvas({
 
       /* ---- shared cover mapping for THIS frame ---- */
       const scale = Math.max(W / imgW, H / imgH) * ph.zoom;
-      const offX = (W - imgW * scale) * ph.camX;
+      let offX = (W - imgW * scale) * ph.camX;
+      /* portrait crop shows only a narrow slice of the wide plate — panning
+         with camX throws the whole tree off-frame (mobile review
+         2026-06-11). Pin the trunk to the centerline instead; camY and zoom
+         still breathe. */
+      if (W < H * 0.9) {
+        offX = Math.min(0, Math.max(W - imgW * scale, W * 0.5 - trunkX * scale));
+      }
       const offY = (H - imgH * scale) * ph.camY;
       const px = (ix: number) => ix * scale + offX;
       const py = (iy: number) => iy * scale + offY;

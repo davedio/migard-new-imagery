@@ -80,6 +80,16 @@
   --mono-spacing: 0.04em;
 }
 
+/* ultra-wide monitors: a fixed 1480px centered column drifts far right of
+   the gut-aligned nav wordmark and opens a black void at the left of the
+   stage (review 2026-06-11). Let the column track the viewport instead —
+   every maxw consumer (home bands, child heroes, footer) stays aligned. */
+@media (min-width: 1760px) {
+  :root {
+    --maxw: min(1880px, calc(100vw - 2 * var(--gut) - 84px));
+  }
+}
+
 /* expose a few tokens as Tailwind theme colors for utility use */
 @theme inline {
   --color-ink: var(--deep-ink);

@@ -477,6 +477,16 @@ h2 em,
   margin: 0 auto;
   padding: clamp(120px, 16vh, 190px) var(--gut) clamp(28px, 5vh, 64px);
 }
+/* tall monitors: bottom-anchoring opened a void above the headline
+   (review 2026-06-11) — once there's runway, center the hero block */
+@media (min-height: 1000px) {
+  .v2-band--hero {
+    align-items: center;
+  }
+  .v2-band__hero {
+    padding-top: clamp(96px, 10vh, 150px);
+  }
+}
 /* the thesis band carries extra runway below the words — the helix earns a
    beat of stage time before the next chapter arrives */
 .v2-band--thesis {
@@ -819,6 +829,33 @@ h2 em,
 }
 .v2-statement .hi-green {
   color: var(--green-bright);
+}
+
+/* the thesis CTA rides BESIDE the statement — vertically centered against
+   the text block, never stranded at the viewport edge (review 2026-06-11) */
+.v2-thesis__row {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--gut) clamp(24px, 4vh, 50px);
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, 6vw, 110px);
+}
+.v2-thesis__row .v2-statement {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  flex: 0 1 auto;
+}
+.v2-thesis__cta {
+  flex: 0 0 auto;
+}
+@media (max-width: 900px) {
+  .v2-thesis__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 36px;
+  }
 }
 
 
