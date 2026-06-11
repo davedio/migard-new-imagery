@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import MidgardWordmark from "@/components/MidgardWordmark";
+import { useMotionPref } from "@/lib/motion";
 
 const COOKIE = "midgard_entered";
 /** ~180 days, in seconds. */
@@ -25,6 +26,29 @@ const FADE_MS = 700;
 export function SplashOverlay() {
   const [phase, setPhase] = useState<"visible" | "leaving" | "gone">("visible");
   const timer = useRef<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { motionOn } = useMotionPref();
+
+  /* The forest flyover: fades in over the static plate once it can play,
+     and breathes down just before each loop point so the restart cut reads
+     as a slow exhale instead of a jump. */
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const onReady = () => {
+      v.dataset.ready = "true";
+    };
+    const onTime = () => {
+      const left = v.duration - v.currentTime;
+      v.dataset.dim = String(Number.isFinite(left) && left < 0.6);
+    };
+    v.addEventListener("canplay", onReady);
+    v.addEventListener("timeupdate", onTime);
+    return () => {
+      v.removeEventListener("canplay", onReady);
+      v.removeEventListener("timeupdate", onTime);
+    };
+  }, [motionOn, phase]);
 
   // Lock body scroll while the overlay is up.
   useEffect(() => {
@@ -76,6 +100,19 @@ export function SplashOverlay() {
       }}
     >
       <div className="splash__bg" aria-hidden />
+      {motionOn ? (
+        <video
+          ref={videoRef}
+          className="splash__video"
+          aria-hidden
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          src="/v2/splash-forest.mp4"
+        />
+      ) : null}
       <div className="splash__veil" aria-hidden />
 
       <div className="splash__content">
