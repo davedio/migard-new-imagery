@@ -30,21 +30,21 @@
 import { useEffect, useRef } from "react";
 
 export type DescentPhases = {
-  helix: number; //   tree → helix
-  regroup: number; // helix → tree again
-  descend: number; // big-orb travel down the trunk
-  rest: number; //    settle in the blue
-  bottom: number; //  raw progress through the final band — fires the burst
-  black: number; //   how far the tree recedes into black (thesis dwell)
+  helix: number; //    tree → helix, OVER the always-visible tree
+  collapse: number; // the helix slowly winds down into ONE settlement orb
+  descend: number; //  that orb's slow ride down the trunk
+  rest: number; //     settle in the blue
+  bottom: number; //   raw progress through the final band — fires the burst
+  black: number; //    a gentle dim under the helix (never full black)
   rootsFade: number; // crossfade to the roots close-up (final band)
-  camX: number; //    plate pos-x 0..1 (0.88 hero → 1.0 turned-in)
-  camY: number; //    plate pos-y 0..1 (0.38 canopy → ~0.8 bedrock)
-  zoom: number; //    plate zoom 1..~1.14
+  camX: number; //     plate pos-x 0..1 (0.88 hero → 1.0 turned-in)
+  camY: number; //     plate pos-y 0..1 (0.38 canopy → ~0.8 bedrock)
+  zoom: number; //     plate zoom 1..~1.14
 };
 
 export const PHASES_REST: DescentPhases = {
   helix: 0,
-  regroup: 0,
+  collapse: 0,
   descend: 0,
   rest: 0,
   bottom: 0,
@@ -335,8 +335,9 @@ export default function WorldTreeCanvas({
       if (disposed || !treeReady || W === 0 || !field) return;
       const ph = phasesRef.current ?? PHASES_REST;
 
-      /* effective helix after the regroup pulls it back into the tree */
-      const hx = ph.helix * (1 - ph.regroup);
+      /* the helix unwinds as it collapses into the settlement orb */
+      const col = ph.collapse;
+      const hx = ph.helix * (1 - col);
       const des = ph.descend;
       const rest = ph.rest;
 
@@ -385,8 +386,8 @@ export default function WorldTreeCanvas({
       /* ---- particles (foreground canvas, every frame) ---- */
       ctx.clearRect(0, 0, W, H);
 
-      /* ---- population ---- */
-      const calm = smooth01((des - 0.04) / 0.5); // the big orb takes the stage
+      /* ---- population: the swarm thins as it pours into the orb ---- */
+      const calm = Math.max(smooth01((des - 0.04) / 0.5), col * 0.75);
       const want = Math.round(orbBase() * (1 + hx * 1.05) * (1 - calm * 0.62) * (1 - rest * 0.5));
       while (orbs.length < want) {
         const o = spawn();
@@ -404,9 +405,13 @@ export default function WorldTreeCanvas({
       surge = Math.max(0, surge - dt * 0.55);
       helixT += dt;
 
-      /* ---- the settlement orb ---- */
-      const ignite = smooth01(des / 0.07);
-      const travel = smooth01((des - 0.07) / 0.88);
+      /* ---- the settlement orb ----
+         It is BORN of the collapse: as the helix winds down, the orb takes
+         its light; the descend then carries it down the trunk on a long,
+         nearly-linear ride (review: it shot down too fast — no smoothstep
+         mid-rush, and the flow gives the ride four sections of runway). */
+      const ignite = Math.max(smooth01((col - 0.25) / 0.6), smooth01(des / 0.07));
+      const travel = clamp01((des - 0.03) / 0.94);
       const bigT = Math.min(path.length - 1.001, travel * (path.length - 1));
       const bi = Math.floor(bigT);
       const bf = bigT - bi;
@@ -484,15 +489,17 @@ export default function WorldTreeCanvas({
           o.rise = 0;
         }
 
-        /* the pour: while the big orb ignites, nearby lights fall into it */
-        if (ignite > 0 && travel < 0.22) {
+        /* the pour: as the helix collapses, every light spirals into the
+           orb — the collapse widens the pull until it takes the whole swarm */
+        if ((col > 0.02 || ignite > 0) && travel < 0.22) {
           const dxp = bigIx - ix;
           const dyp = bigIy - iy;
           const dd = Math.hypot(dxp, dyp);
-          const pull = ignite * smooth01(1 - dd / (imgW * 0.2));
+          const reach = imgW * (0.2 + col * 0.5);
+          const pull = Math.max(ignite, col) * smooth01(1 - dd / reach);
           if (pull > 0.01) {
-            ix += dxp * pull * dt * 3.2;
-            iy += dyp * pull * dt * 3.2;
+            ix += dxp * pull * dt * (2.2 + col * 1.6);
+            iy += dyp * pull * dt * (2.2 + col * 1.6);
             if (dd < imgW * 0.012) {
               o.dying = true;
               bigPulse += 0.05;

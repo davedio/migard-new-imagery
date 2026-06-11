@@ -16,18 +16,17 @@ type NavLink = {
   href: string;
 };
 
+/* Trimmed 2026-06-11: Security lives at the bottom of /contracts now;
+   Official Links is reachable from the footer site index only; Brand and
+   Changelog are gone. */
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
   { label: "How It Works", href: "/how-it-works" },
-  { label: "Security", href: "/security" },
   { label: "Contracts", href: "/contracts" },
   { label: "Get Started", href: "/get-started" },
   { label: "Roadmap", href: "/roadmap" },
   { label: "About", href: "/about" },
   { label: "FAQ", href: "/faq" },
-  { label: "Official Links", href: "/official-links" },
-  { label: "Brand", href: "/brand" },
-  { label: "Changelog", href: "/changelog" },
 ] as const;
 
 /* ------------------------------------------------------------------ */

@@ -196,15 +196,22 @@ export default function ShatterHeading({
     let raf = 0;
     let running = false;
     let lastT = 0;
-    /* the canvas lives in the FIXED stage — its viewport rect only changes
-       on resize, never on scroll. Cached: reading getBoundingClientRect on
-       every pointermove forced a style/layout pass per heading per event
-       (the documented cause of the first cursor effect's stickiness). */
+    /* The viewport rect is CACHED — reading getBoundingClientRect on every
+       pointermove forced a style/layout pass per heading per event (the
+       documented cause of the first cursor effect's stickiness). Headings
+       scroll with the page now, so a scroll marks the cache dirty and the
+       next pointermove refreshes it once. */
     let canvasRect = { left: 0, top: 0 };
+    let rectDirty = true;
     const cacheRect = () => {
       const r = canvas.getBoundingClientRect();
       canvasRect = { left: r.left, top: r.top };
+      rectDirty = false;
     };
+    const markDirty = () => {
+      rectDirty = true;
+    };
+    window.addEventListener("scroll", markDirty, { passive: true });
 
     const visible = () => {
       /* skip work while our overlay band is faded out */
@@ -223,6 +230,7 @@ export default function ShatterHeading({
       const firstSeen = lastCX < -8e4;
       lastCX = e.clientX;
       lastCY = e.clientY;
+      if (rectDirty) cacheRect();
       mx = e.clientX - canvasRect.left;
       my = e.clientY - canvasRect.top;
       if (firstSeen || moved < 2) return;
@@ -364,6 +372,7 @@ export default function ShatterHeading({
       stop();
       window.clearTimeout(sampleTimer);
       ro.disconnect();
+      window.removeEventListener("scroll", markDirty);
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);
     };

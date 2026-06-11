@@ -183,7 +183,7 @@ export default function GetStartedPage() {
           {
             label: "Read the security model",
             sub: "Challenges, watchers, and the proof path",
-            href: "/security",
+            href: "/contracts#security-model",
           },
           {
             label: "Verify the contracts",

@@ -122,7 +122,7 @@ export default function HowItWorksPage() {
           {
             label: "Read the security model",
             sub: "The challenge and proof design that keeps operators honest",
-            href: "/security",
+            href: "/contracts#security-model",
           },
           {
             label: "Inspect the contracts",

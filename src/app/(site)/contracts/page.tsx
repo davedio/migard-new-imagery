@@ -1,5 +1,12 @@
 import type { Metadata } from "next";
-import { PageHero, Section, Prose, CtaBand } from "@/components/site/ui";
+import {
+  PageHero,
+  Section,
+  Prose,
+  CtaBand,
+  Layers,
+  Actions,
+} from "@/components/site/ui";
 import { NextSteps } from "@/components/site/NextSteps";
 import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
@@ -22,7 +29,7 @@ import styles from "@/components/site/contracts.module.css";
 export const metadata: Metadata = {
   title: "Midgard Contracts & Testnet Status",
   description:
-    "Midgard testnet status plus every validator, state anchor, reference script, and bootstrap transaction on Cardano preprod — live network status, verifiable addresses, and the full genesis deployment history.",
+    "Midgard testnet status plus every validator, state anchor, reference script, and bootstrap transaction on Cardano preprod — live network status, verifiable addresses, the genesis deployment history, and the security model that keeps it honest.",
   openGraph: {
     title: "Midgard Contracts & Testnet Status",
     images: [{ url: "/og/contracts.jpg", width: 1200, height: 630 }],
@@ -48,9 +55,10 @@ export default function ContractsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <PageHero
+        tone="ember"
         label="Protocol contracts"
         title="Inspect the on-chain path"
-        sub="Every Midgard validator, state anchor, and bootstrap transaction on Cardano preprod — addresses you can open on an explorer and verify yourself."
+        sub="Every Midgard validator, state anchor, and bootstrap transaction on Cardano preprod — addresses you can open on an explorer and verify yourself, and the security model that keeps them honest."
         chips={
           <>
             <span className="chip chip--testnet">
@@ -78,6 +86,7 @@ export default function ContractsPage() {
         <a href="#anchors">State anchors</a>
         <a href="#refs">Reference scripts</a>
         <a href="#history">Genesis history</a>
+        <a href="#security-model">Security</a>
       </nav>
 
       {/* Live network status (moved from the testnet page) */}
@@ -273,6 +282,50 @@ export default function ContractsPage() {
         </div>
       </Section>
 
+      {/* 06 — Security model (moved here from the former /security page —
+          the contracts and the model that keeps them honest live together) */}
+      <Section
+        id="security-model"
+        eyebrow="06 · Security model"
+        title="Secured by Cardano. Provable by anyone"
+        lead="Midgard is designed to anchor Layer 2 state transitions to Cardano and use Cardano smart contracts for verification: operators commit blocks to the addresses above, anyone can challenge an invalid block during the challenge window, and Cardano contracts settle the result."
+        glow="gold"
+      >
+        <Layers
+          items={[
+            {
+              n: "01",
+              name: "Finality",
+              desc: "Midgard separates fast soft confirmation from later L1-anchored settlement after the challenge or maturity period.",
+            },
+            {
+              n: "02",
+              name: "Censorship resistance",
+              desc: "Cardano deadlines and challenge paths enforce ordering and inclusion rules.",
+            },
+            {
+              n: "03",
+              name: "Liveness",
+              desc: "If an operator stalls, Cardano-enforced escape paths let users exit and the network recover.",
+            },
+            {
+              n: "04",
+              name: "L1 anchoring",
+              desc: "State transitions are designed to route through Cardano L1 verification and settlement surfaces.",
+            },
+          ]}
+        />
+        <Actions
+          items={[
+            {
+              label: "Watch the challenge window in motion",
+              href: "/how-it-works#step-watch",
+              variant: "ghost",
+            },
+          ]}
+        />
+      </Section>
+
       {/* Query it yourself */}
       <Section
         eyebrow="Build"
@@ -334,14 +387,14 @@ export default function ContractsPage() {
       <NextSteps
         items={[
           {
-            label: "Read the security model",
-            sub: "How challenges and fraud proofs keep these contracts honest",
-            href: "/security",
-          },
-          {
             label: "Watch a transaction travel",
             sub: "The journey these addresses anchor, step by step",
             href: "/how-it-works",
+          },
+          {
+            label: "See the road to mainnet",
+            sub: "Four phases, paced by the work, not by dates",
+            href: "/roadmap",
           },
           {
             label: "Start building",

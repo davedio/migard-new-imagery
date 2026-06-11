@@ -20,8 +20,8 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Protocol",
     links: [
       { label: "How It Works", href: "/how-it-works" },
-      { label: "Security", href: "/security" },
       { label: "Contracts", href: "/contracts" },
+      { label: "Security model", href: "/contracts#security-model" },
       { label: "Network status", href: "/contracts#network-status" },
     ],
   },
@@ -40,8 +40,6 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "FAQ", href: "/faq" },
       { label: "Official links", href: "/official-links" },
       { label: "Roadmap", href: "/roadmap" },
-      { label: "Changelog", href: "/changelog" },
-      { label: "Brand kit", href: "/brand" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
     ],
   },
@@ -49,7 +47,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Company",
     links: [
       { label: "About", href: "/about" },
-      { label: "Security contact", href: "/security#contact" },
+      { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy, external: true },
       { label: "X", href: OFFICIAL_LINKS.x, external: true },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
     ],

@@ -450,57 +450,39 @@ h2 em,
     linear-gradient(90deg, rgba(4, 7, 5, 0.3), rgba(4, 7, 5, 0.08) 38%, transparent 58%);
 }
 
-/* ---- pinned overlays ---- */
-.v2-ov {
-  position: absolute;
-  inset: 0;
+/* ---- flowing bands (round 2: text scrolls like a document; only the
+   background is choreographed) ---- */
+.v2-home {
+  /* the whole content tree paints ABOVE the fixed z-5 stage */
+  position: relative;
+  z-index: 6;
+}
+.v2-band {
+  position: relative;
+}
+.v2-band--hero {
+  min-height: 100svh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: clamp(76px, 9vh, 116px) var(--gut) clamp(34px, 5vh, 72px);
-  opacity: 0;
-  pointer-events: none;
+  align-items: flex-end;
 }
-.v2-ov[data-active="true"] {
-  pointer-events: auto;
-}
-.v2-ov[data-align="end"] {
-  justify-content: flex-end;
-}
-.v2-ov__inner {
+.v2-band__hero {
   width: 100%;
   max-width: var(--maxw);
   margin: 0 auto;
-  max-height: 100%;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
+  padding: clamp(120px, 16vh, 190px) var(--gut) clamp(28px, 5vh, 64px);
 }
-.v2-ov__inner::-webkit-scrollbar {
-  display: none;
+/* the thesis band carries extra runway below the words — the helix earns a
+   beat of stage time before the next chapter arrives */
+.v2-band--thesis {
+  padding-bottom: clamp(220px, 48svh, 560px);
 }
-
-/* content blocks lose their stacked-page breathing room inside a pinned
-   100svh overlay — the overlay supplies the frame */
-.v2-ov .v2-ch {
-  max-width: none;
-  margin: 0;
-  padding: 0 0 clamp(20px, 3.6vh, 40px);
+.v2-band--close {
+  min-height: 145svh;
+  display: flex;
+  align-items: center;
 }
-.v2-ov .v2-explore,
-.v2-ov .v2-ledger,
-.v2-ov .v2-duel,
-.v2-ov .v2-prov,
-.v2-ov .v2-road,
-.v2-ov .v2-statement {
-  max-width: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* ---- hero overlay ---- */
-.v2-ov--hero .v2-ov__inner {
-  overflow: visible;
+.v2-band--close .v2-close__inner {
+  padding-top: clamp(40px, 8vh, 90px);
 }
 .v2-hero__title {
   margin: 22px 0 0;
@@ -547,11 +529,11 @@ h2 em,
   margin: 0;
 }
 
-/* ---- thesis overlay ---- */
-.v2-ov--thesis .v2-shx {
+/* ---- thesis band type ---- */
+.v2-band--thesis .v2-shx {
   margin-top: 24px;
 }
-.v2-ov--thesis .v2-shx h2 {
+.v2-band--thesis .v2-shx h2 {
   margin: 0;
   max-width: 10.5em;
   font-size: clamp(32px, 4.6vw, 76px);
@@ -560,27 +542,12 @@ h2 em,
   color: var(--bone);
   text-wrap: balance;
 }
-.v2-ov--thesis .v2-statement {
-  margin-top: clamp(22px, 4.4vh, 48px);
-}
-.v2-ov--thesis .v2-statement p {
-  max-width: 23em;
-  font-size: clamp(18px, 2vw, 30px);
-  line-height: 1.3;
-  color: rgba(232, 238, 229, 0.82);
-}
-.v2-ov__marquee {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
 
-/* ---- close overlay ---- */
-.v2-ov--close .v2-shx {
+/* ---- close band type ---- */
+.v2-band--close .v2-shx {
   margin-top: 26px;
 }
-.v2-ov--close .v2-shx h2 {
+.v2-band--close .v2-shx h2 {
   margin: 0;
   font-size: clamp(38px, 5.6vw, 96px);
   line-height: 1.02;
@@ -752,11 +719,6 @@ h2 em,
   gap: 0;
   width: max-content;
   animation: v2-marquee 46s linear infinite;
-}
-/* the marquee lives inside a pinned overlay — don't burn compositor work
-   while its band is faded out */
-.v2-ov:not([data-active="true"]) .v2-marquee__track {
-  animation-play-state: paused;
 }
 .v2-marquee:hover .v2-marquee__track {
   animation-play-state: paused;
@@ -1387,32 +1349,19 @@ h2 em,
     font-size: clamp(32px, 9.6vw, 58px);
     line-height: 1.04;
   }
-  .v2-ov {
-    padding: 76px var(--gut) 30px;
+  .v2-band--thesis {
+    padding-bottom: clamp(160px, 34svh, 320px);
   }
-  .v2-ov--thesis .v2-ch__index {
+  .v2-band--thesis .v2-ch__index {
     gap: 12px;
     font-size: 9.5px;
     letter-spacing: 0.22em;
   }
-  .v2-ov--thesis .v2-ch__index .rule {
+  .v2-band--thesis .v2-ch__index .rule {
     flex-basis: 30px;
   }
-  .v2-ov--thesis .v2-shx h2 {
+  .v2-band--thesis .v2-shx h2 {
     font-size: clamp(30px, 9vw, 44px);
-  }
-  .v2-ov--thesis .v2-statement {
-    margin-top: 20px;
-  }
-  .v2-ov--thesis .v2-statement p {
-    font-size: clamp(16px, 4.6vw, 20px);
-    line-height: 1.32;
-  }
-  .v2-ov--thesis .v2-statement p + p {
-    margin-top: 1em;
-  }
-  .v2-ov__marquee {
-    display: none;
   }
   .v2-hero__meta {
     flex-direction: column;

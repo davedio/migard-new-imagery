@@ -7,22 +7,19 @@ const SITE_URL = "https://midgard-gateway.vercel.app";
 const ROUTES = [
   "",
   "/how-it-works",
-  "/security",
   "/contracts",
   "/get-started",
   "/about",
   "/faq",
   "/official-links",
   "/roadmap",
-  "/changelog",
-  "/brand",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.map((route) => ({
     url: `${SITE_URL}${route}`,
-    lastModified: new Date("2026-06-10"),
+    lastModified: new Date("2026-06-11"),
     changeFrequency: route === "" ? "weekly" : "monthly",
-    priority: route === "" ? 1 : route === "/changelog" ? 0.5 : 0.7,
+    priority: route === "" ? 1 : 0.7,
   }));
 }

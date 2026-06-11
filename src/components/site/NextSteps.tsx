@@ -12,7 +12,7 @@ export type NextStepItem = {
  * brand panel style. Server component, presentational only — styles live in
  * globals.css under "NEXT STEPS".
  *
- *   <NextSteps items={[{ label: "Read the security model", href: "/security" }]} />
+ *   <NextSteps items={[{ label: "Read the security model", href: "/contracts#security-model" }]} />
  */
 export function NextSteps({
   title = "Next steps",

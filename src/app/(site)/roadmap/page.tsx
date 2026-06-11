@@ -19,10 +19,10 @@ export default function RoadmapPage() {
     <main className="page-main">
       <PageHero
         compact
-        tone="cobalt"
+        tone="moss"
         label="Roadmap"
         title="The road to mainnet"
-        sub="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases, paced by the work, not by dates."
+        sub="Where the work stands today — and what has to hold up to inspection before mainnet weight is placed on Midgard."
         actions={[
           { label: "What's live right now", href: "/contracts#network-status", variant: "primary" },
           { label: "Follow on GitHub", href: "https://github.com/Anastasia-Labs/midgard", variant: "ghost" },
@@ -35,7 +35,7 @@ export default function RoadmapPage() {
         <Prose
           items={[
             {
-              text: "Each phase ships when its exit criteria hold up to inspection, not when a quarter ends. The contracts page shows what is live versus simulated at any moment, and the changelog records what actually shipped.",
+              text: "Each phase ships when its exit criteria hold up to inspection, not when a quarter ends. The contracts page shows what is live versus simulated at any moment.",
               variant: "dim",
             },
           ]}
@@ -45,9 +45,9 @@ export default function RoadmapPage() {
       <NextSteps
         items={[
           {
-            label: "Read the changelog",
-            sub: "What actually shipped, in order",
-            href: "/changelog",
+            label: "Inspect the contracts",
+            sub: "Every validator and state anchor on Cardano preprod",
+            href: "/contracts",
           },
           {
             label: "Check network status",
