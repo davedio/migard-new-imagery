@@ -12,6 +12,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
 import { CopyField } from "@/components/site/CopyField";
+import { Term } from "@/components/site/Term";
 import RuneDecode from "@/components/site/RuneDecode";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
@@ -37,6 +38,79 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/og/contracts.jpg"] },
 };
 
+
+/* The five lifecycle beats, in plain text — relocated from /how-it-works:
+   this page holds the validators that ENFORCE them, so the recap lives
+   beside the addresses. */
+const STEPS = [
+  {
+    id: "step-submit",
+    num: "01",
+    tag: "Off-chain · L2",
+    title: "Submit",
+    body: (
+      <>
+        A transaction enters Midgard and is validated against{" "}
+        <Term k="eutxo">eUTXO</Term> rules immediately. You get a soft
+        confirmation in moments, with no Cardano block wait.
+      </>
+    ),
+  },
+  {
+    id: "step-sequence",
+    num: "02",
+    tag: "L2 operator",
+    title: "Sequence",
+    body: (
+      <>
+        The <Term k="operator">operator</Term> orders incoming transactions
+        and assembles them into a Layer 2 block, fixing the order the chain
+        will execute.
+      </>
+    ),
+  },
+  {
+    id: "step-commit",
+    num: "03",
+    tag: "L1 state queue",
+    title: "Commit",
+    body: (
+      <>
+        The <Term k="batcher">batcher</Term> posts a compact{" "}
+        <Term k="state-commitment">state commitment</Term> for the block to
+        Cardano, where it enters the on-chain state queue for anyone to
+        inspect.
+      </>
+    ),
+  },
+  {
+    id: "step-watch",
+    num: "04",
+    tag: "Challenge window",
+    title: "Watch",
+    body: (
+      <>
+        Independent <Term k="watcher">watchers</Term> re-execute the block
+        during the <Term k="challenge-window">challenge window</Term>. An
+        invalid commitment can be removed by a single{" "}
+        <Term k="fraud-proof">fraud proof</Term>.
+      </>
+    ),
+  },
+  {
+    id: "step-settle",
+    num: "05",
+    tag: "L1 confirmed",
+    title: "Settle",
+    body: (
+      <>
+        No fraud and maturity ends: the block merges into confirmed state.{" "}
+        <Term k="settlement">Settlement</Term> makes it as final as Cardano
+        itself.
+      </>
+    ),
+  },
+];
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
@@ -82,6 +156,7 @@ export default function ContractsPage() {
       {/* Sticky in-page TOC — the page is long and reference-heavy */}
       <nav className="page-sticky-toc" aria-label="On this page">
         <a href="#network-status">Status</a>
+        <a href="#lifecycle">Lifecycle</a>
         <a href="#topology">Topology</a>
         <a href="#addresses">Validators</a>
         <a href="#anchors">State anchors</a>
@@ -104,6 +179,32 @@ export default function ContractsPage() {
           ]}
         />
         <NetworkStatusWidget />
+      </Section>
+
+      {/* The protocol lifecycle, in plain text (relocated from /how-it-works:
+          these are the beats the validators below enforce) */}
+      <Section
+        id="lifecycle"
+        eyebrow="The five steps"
+        title="The lifecycle these contracts enforce"
+        tight
+      >
+        <p className="body" style={{ maxWidth: "62ch" }}>
+          Midgard is a Cardano-native{" "}
+          <Term k="optimistic-rollup">optimistic rollup</Term>: execution
+          happens on a fast Layer 2, and every result settles back to Cardano
+          — through the validators listed on this page.
+        </p>
+        <div className="hiw-steps" style={{ marginTop: 26 }}>
+          {STEPS.map((s) => (
+            <article className="hiw-step-card" id={s.id} key={s.id}>
+              <span className="hiw-step-card__num">{s.num}</span>
+              <span className="hiw-step-card__tag">{s.tag}</span>
+              <h3 className="hiw-step-card__title">{s.title}</h3>
+              <p className="hiw-step-card__body">{s.body}</p>
+            </article>
+          ))}
+        </div>
       </Section>
 
       {/* 01 — Topology (the state-queue animation now lives on /how-it-works,
@@ -310,7 +411,7 @@ export default function ContractsPage() {
           items={[
             {
               label: "Watch the challenge window in motion",
-              href: "/how-it-works#step-watch",
+              href: "/how-it-works",
               variant: "ghost",
             },
           ]}

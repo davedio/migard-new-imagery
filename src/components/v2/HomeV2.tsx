@@ -148,19 +148,9 @@ function StaticHome() {
         </div>
       </section>
 
-      <StaticScene id="trunk" plate={PLATES.strata} position="50% 32%">
-        <StaticChapter
-          n="02"
-          stratum="Trunk — three ways in"
-          title="Choose your path."
-          lead="These roles overlap. Pick the one that fits what you're here to do."
-        />
-        <Paths />
-      </StaticScene>
-
       <StaticScene id="roots" plate={PLATES.roots} position="68% 64%">
         <StaticChapter
-          n="03"
+          n="02"
           stratum="Roots — protocol at a glance"
           title={
             <>
@@ -182,7 +172,7 @@ function StaticHome() {
 
       <StaticScene id="proofs" plate={PLATES.roots} position="50% 52%">
         <StaticChapter
-          n="04"
+          n="03"
           stratum="Proofs — why eUTXO"
           title={
             <>
@@ -204,7 +194,7 @@ function StaticHome() {
 
       <StaticScene id="bedrock" plate={PLATES.strata} position="50% 96%">
         <StaticChapter
-          n="05"
+          n="04"
           stratum="Bedrock — the path to mainnet"
           title={
             <>
@@ -216,6 +206,16 @@ function StaticHome() {
           lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases."
         />
         <Road />
+      </StaticScene>
+
+      <StaticScene id="trunk" plate={PLATES.strata} position="50% 32%">
+        <StaticChapter
+          n="05"
+          stratum="Trunk — three ways in"
+          title="Choose your path."
+          lead="These roles overlap. Pick the one that fits what you're here to do."
+        />
+        <Paths />
       </StaticScene>
     </>
   );

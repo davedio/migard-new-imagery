@@ -102,20 +102,20 @@ function Chapter({
 const RAIL = [
   { id: "top", label: "Surface", stratum: "surface" },
   { id: "canopy", label: "Canopy · L2", stratum: "canopy" },
-  { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
   { id: "roots", label: "Roots · Ledger", stratum: "roots" },
   { id: "proofs", label: "Proofs · eUTXO", stratum: "proofs" },
   { id: "bedrock", label: "Bedrock · L1", stratum: "bedrock" },
+  { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
 ] as const;
 
 const BAND_IDS = [
   "top",
   "canopy",
-  "trunk",
   "roots",
   "proofs",
   "prov",
   "bedrock",
+  "trunk",
 ] as const;
 
 const subscribeNoop = () => () => {};
@@ -186,20 +186,21 @@ export default function DescentFlow() {
       }
       if (splashEl?.isConnected) return; // covered — draw nothing
 
-      const [, canopyT, trunkT, rootsT, , , bedrockT] = tops;
-      const [, canopyH, trunkH, , , , bedrockH] = heights;
-      const bedrockEnd = bedrockT + bedrockH;
+      const [, canopyT, rootsT, proofsT, , , trunkT] = tops;
+      const [, canopyH, rootsH, , , , trunkH] = heights;
+      const trunkEnd = trunkT + trunkH;
 
       /* ---- narrative phases (each owns ONE beat — calmer per scroll) ----
          helix    forms over the visible tree while the thesis is read
-         collapse the strands wind down into ONE bright orb (paths chapter)
-         descend  the orb rides the trunk SLOWLY from roots to bedrock
-         rest     it seats into THIS tree's roots; burst at the bottom   */
+         collapse the strands wind down into ONE bright orb (ledger chapter)
+         descend  the orb rides the trunk SLOWLY from proofs to the close
+         rest     it seats into THIS tree's roots under the paths cards;
+                  burst at the bottom                                     */
       const helix = smooth01(ramp(s, canopyT - vh * 0.55, canopyT + canopyH * 0.45));
-      const collapse = smooth01(ramp(s, trunkT - vh * 0.45, trunkT + trunkH * 0.6));
-      const descend = ramp(s, rootsT - vh * 0.35, bedrockEnd - vh * 1.1);
-      const rest = smooth01(ramp(s, bedrockEnd - vh * 1.7, bedrockEnd - vh * 0.7));
-      const bottom = ramp(s, bedrockEnd - vh * 1.1, bedrockEnd - vh * 0.2);
+      const collapse = smooth01(ramp(s, rootsT - vh * 0.45, rootsT + rootsH * 0.6));
+      const descend = ramp(s, proofsT - vh * 0.35, trunkEnd - vh * 1.1);
+      const rest = smooth01(ramp(s, trunkEnd - vh * 1.7, trunkEnd - vh * 0.7));
+      const bottom = ramp(s, trunkEnd - vh * 1.1, trunkEnd - vh * 0.2);
 
       /* the tree NEVER goes dark — just a gentle dim under the helix so the
          strands read, lifting as they collapse into the orb */
@@ -344,21 +345,10 @@ export default function DescentFlow() {
           <Statement />
         </section>
 
-        {/* ---------- 02 trunk / paths (the helix collapses to ONE orb) --- */}
-        <section id="trunk" className="v2-band">
-          <Chapter
-            n="02"
-            stratum="Trunk — three ways in"
-            title={["Choose your path."]}
-            lead="These roles overlap. Pick the one that fits what you're here to do."
-          />
-          <Paths />
-        </section>
-
-        {/* ---------- 03 roots / ledger (the orb starts its slow ride) ---- */}
+        {/* ---------- 02 roots / ledger (the helix collapses to ONE orb) -- */}
         <section id="roots" className="v2-band">
           <Chapter
-            n="03"
+            n="02"
             stratum="Roots — protocol at a glance"
             title={["Fast confirmations now,", "final settlement on Cardano."]}
             lead={
@@ -372,10 +362,10 @@ export default function DescentFlow() {
           <Ledger />
         </section>
 
-        {/* ---------- 04 proofs ---------- */}
+        {/* ---------- 03 proofs (the orb starts its slow ride) ---------- */}
         <section id="proofs" className="v2-band">
           <Chapter
-            n="04"
+            n="03"
             stratum="Proofs — why eUTXO"
             title={["Why eUTXO builds", "a better rollup."]}
             lead={
@@ -394,18 +384,27 @@ export default function DescentFlow() {
           <Provenance />
         </section>
 
-        {/* ---------- 05 bedrock / roadmap — the last word belongs to the
-            tree: the orb seats into its roots and detonates blue right
-            here, no closing copy (review 2026-06-11: "we don't have to
-            list it in plain text") ---------- */}
-        <section id="bedrock" className="v2-band v2-band--last">
+        {/* ---------- 04 bedrock / roadmap ---------- */}
+        <section id="bedrock" className="v2-band">
           <Chapter
-            n="05"
+            n="04"
             stratum="Bedrock — the path to mainnet"
             title={["Paced by the work,", "not by dates."]}
             lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases."
           />
           <Road />
+        </section>
+
+        {/* ---------- 05 trunk / paths — the closing: choose your path while
+            the settlement orb rests in the roots below ---------- */}
+        <section id="trunk" className="v2-band v2-band--last">
+          <Chapter
+            n="05"
+            stratum="Trunk — three ways in"
+            title={["Choose your path."]}
+            lead="These roles overlap. Pick the one that fits what you're here to do."
+          />
+          <Paths />
         </section>
       </div>
 
