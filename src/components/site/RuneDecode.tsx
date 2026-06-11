@@ -43,7 +43,6 @@ const rune = () => RUNES[(Math.random() * RUNES.length) | 0];
 const STAGGER_MS = 130; // per-element domino delay (slower, deliberate)
 const STAGGER_CAP_MS = 3400; // the page tail still decodes promptly
 const DECODE_MS = 700; // per-element reveal sweep
-const SHUFFLE_MS = 105; // rune re-shuffle cadence — a flicker, not a spin
 const TOUCH_FALLBACK_MS = 2500; // no cursor ever arrives → start anyway
 
 export default function RuneDecode() {
@@ -56,7 +55,11 @@ export default function RuneDecode() {
     type Job = {
       node: Text;
       original: string;
+      /** the ONE fixed rune strike for this load — never re-rolled
+          (review 2026-06-11: static runes, fresh per refresh) */
+      runed: string;
       start: number; // reveal start, ms from t0
+      lastCut: number;
     };
     const jobs: Job[] = [];
     const timers: number[] = [];
@@ -72,39 +75,31 @@ export default function RuneDecode() {
       for (let n = walker.nextNode(); n; n = walker.nextNode()) {
         const t = n as Text;
         if (!t.data.trim()) continue;
-        jobs.push({ node: t, original: t.data, start });
+        jobs.push({ node: t, original: t.data, runed: "", start, lastCut: -1 });
       }
     });
     if (jobs.length === 0) return;
 
-    const encode = (s: string, from = 0) => {
-      let out = s.slice(0, from);
-      for (let i = from; i < s.length; i++) {
-        const c = s[i];
-        out += /[A-Za-z0-9]/.test(c) ? rune() : c;
-      }
+    const encode = (s: string) => {
+      let out = "";
+      for (const c of s) out += /[A-Za-z0-9]/.test(c) ? rune() : c;
       return out;
     };
 
-    /* strike the page into runes in one pass — it now WAITS, flickering
-       gently, until the cursor touches any runed text */
-    for (const j of jobs) j.node.data = encode(j.original);
+    /* strike the page into runes in ONE roll — a different combination
+       every load, but STATIC on screen until each element's domino flips
+       it to English (no flicker, no re-shuffle) */
+    for (const j of jobs) {
+      j.runed = encode(j.original);
+      j.node.data = j.runed;
+    }
 
     let t0 = 0; // set when the wave is released
     let released = false;
 
-    /* a soft idle flicker while waiting (slow, so the letters don't "spin") */
-    let idleTimer = 0;
-    const idleFlicker = () => {
-      for (const j of jobs) j.node.data = encode(j.original);
-      idleTimer = window.setTimeout(idleFlicker, SHUFFLE_MS * 3);
-    };
-    idleTimer = window.setTimeout(idleFlicker, SHUFFLE_MS * 3);
-
     const release = () => {
       if (released || disposed) return;
       released = true;
-      window.clearTimeout(idleTimer);
       document.removeEventListener("pointermove", onPointer);
       window.removeEventListener("touchstart", onTouch);
       window.removeEventListener("scroll", onTouch);
@@ -122,16 +117,12 @@ export default function RuneDecode() {
     window.addEventListener("scroll", onTouch, { passive: true });
     timers.push(window.setTimeout(release, TOUCH_FALLBACK_MS));
 
-    let lastShuffle = 0;
     const tick = (now: number) => {
       const t = now - t0;
       let live = false;
-      const shuffle = now - lastShuffle > SHUFFLE_MS;
-      if (shuffle) lastShuffle = now;
       for (const j of jobs) {
         if (j.start > t) {
-          live = true;
-          if (shuffle) j.node.data = encode(j.original);
+          live = true; // waiting its turn — untouched, perfectly still
           continue;
         }
         const p = (t - j.start) / DECODE_MS;
@@ -140,8 +131,12 @@ export default function RuneDecode() {
           continue;
         }
         live = true;
+        /* the flip: English sweeps left to right over the FIXED runes */
         const cut = Math.floor(j.original.length * p);
-        if (shuffle || cut > 0) j.node.data = encode(j.original, cut);
+        if (cut !== j.lastCut) {
+          j.lastCut = cut;
+          j.node.data = j.original.slice(0, cut) + j.runed.slice(cut);
+        }
       }
       if (live && !disposed) raf = requestAnimationFrame(tick);
       else for (const j of jobs) j.node.data = j.original; // belt & braces
@@ -151,7 +146,6 @@ export default function RuneDecode() {
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
-      window.clearTimeout(idleTimer);
       timers.forEach(clearTimeout);
       document.removeEventListener("pointermove", onPointer);
       window.removeEventListener("touchstart", onTouch);

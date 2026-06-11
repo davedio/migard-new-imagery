@@ -115,10 +115,8 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
         <div className="hiw-act__intro">
           <div className="eyebrow">How it works</div>
           <h1 className="hiw-act__title">
-            Watch a transaction
-            <br />
-            travel to{" "}
-            <span style={{ color: "var(--green-bright)" }}>Cardano</span>
+            Flow of a{" "}
+            <span style={{ color: "var(--green-bright)" }}>transaction</span>
           </h1>
           <p className="hiw-act__lead">
             Midgard is a Cardano-native optimistic rollup. Scroll to ride one

@@ -9,7 +9,7 @@
    ========================================================================== */
 
 import Link from "next/link";
-import { animate, motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
+import { animate, motion } from "motion/react";
 import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
@@ -140,32 +140,12 @@ const THESIS: Phrase[][] = [
 ];
 
 /**
- * Word-by-word brighten. mode="self": progress comes from the element's own
- * viewport rect (the stacked fallback path). mode="external": the parent owns
- * the `--prog` CSS variable — DescentFlow writes it onto the overlay root
- * each frame so the brighten tracks the pinned dwell, with zero React work.
+ * The thesis statement. Each paragraph clips into place once and then sits
+ * FULLY readable — the old word-by-word scroll brighten left readers staring
+ * at half-dimmed copy (review 2026-06-11: "no rolling fade").
  */
-export function Statement({
-  reveal = true,
-  mode = "self",
-}: {
-  reveal?: boolean;
-  mode?: "self" | "external";
-}) {
-  const ref = useRef<HTMLDivElement>(null);
+export function Statement() {
   const { motionOn } = useMotionPref();
-  const { scrollYProgress } = useScroll();
-  const prog = useTransform(scrollYProgress, () => {
-    const el = ref.current;
-    if (el == null || typeof window === "undefined") return 0;
-    const r = el.getBoundingClientRect();
-    const vh = window.innerHeight;
-    return clamp01((vh * 0.86 - r.top) / (vh * 0.36 + r.height));
-  });
-  useMotionValueEvent(prog, "change", (v) => {
-    if (!reveal || mode !== "self") return;
-    ref.current?.style.setProperty("--prog", v.toFixed(4));
-  });
 
   // pre-split words with stable indices across both paragraphs
   const paragraphs = useMemo(() => {
@@ -179,17 +159,7 @@ export function Statement({
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className="v2-statement"
-      /* external mode: --prog cascades from the overlay root, so no inline
-         value here may shadow it */
-      style={
-        mode === "external"
-          ? undefined
-          : { ["--prog" as string]: motionOn && reveal ? 0 : 2 }
-      }
-    >
+    <div className="v2-statement">
       {paragraphs.out.map((words, pi) => (
         /* each paragraph CLIPS into place — snaps up out of a masked row,
            quick and decisive (review 2026-06-11: "clip into place").

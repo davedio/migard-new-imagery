@@ -144,7 +144,7 @@ function StaticHome() {
               </>
             }
           />
-          <Statement reveal={false} />
+          <Statement />
         </div>
       </section>
 

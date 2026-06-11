@@ -359,7 +359,8 @@ h2 em,
    ------------------------------------------------------------------------- */
 .site-footer {
   border-top: 1px solid var(--hairline);
-  background: linear-gradient(180deg, transparent, rgba(4, 8, 5, 0.85));
+  /* its own scrim: link contrast holds even with the lighter stage veil */
+  background: linear-gradient(180deg, rgba(4, 8, 5, 0.25), rgba(4, 8, 5, 0.92) 55%);
   padding-top: 0;
 }
 .v2-footer-statement {
@@ -445,8 +446,10 @@ h2 em,
 .v2-stage__veil {
   position: absolute;
   inset: 0;
+  /* bottom feather kept LIGHT so the settled blue orb reads through it
+     (review 2026-06-11); the footer carries its own scrim for link contrast */
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.5), transparent 14%, transparent 80%, rgba(4, 7, 5, 0.55)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.5), transparent 14%, transparent 86%, rgba(4, 7, 5, 0.28)),
     linear-gradient(90deg, rgba(4, 7, 5, 0.3), rgba(4, 7, 5, 0.08) 38%, transparent 58%);
 }
 
@@ -811,11 +814,7 @@ h2 em,
   color: var(--green-bright);
 }
 
-/* word-by-word scroll brighten — container exposes --prog (0→1), each word
-   carries --i (its position in the text); words light as --prog passes them */
-.v2-statement .w {
-  opacity: clamp(0.13, calc((var(--prog, 0) - var(--i, 0)) * 6 + 0.13), 1);
-}
+
 
 /* ---- paths (trunk chapter) — the original glass card grid, original scale.
    The #explore id re-activates the approved globals.css treatment:
