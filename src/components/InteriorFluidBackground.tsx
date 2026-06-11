@@ -16,7 +16,7 @@ const AmbientDepth = dynamic(() => import("./scene/AmbientDepth"), {
  * component portals its own fixed 3D stage), so the ambient canvas would be
  * a redundant second R3F canvas there. AmbientDepth is the single persistent
  * ambient canvas (drifting motes + fbm mist + scroll parallax) on the rest;
- * /security keeps its dedicated root backdrop.
+ * /security keeps its dedicated stone backdrop.
  * Drop <InteriorFluidBackground /> into the (site) layout.
  */
 export default function InteriorFluidBackground() {

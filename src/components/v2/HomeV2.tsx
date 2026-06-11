@@ -8,7 +8,7 @@
      01 CANOPY   the thesis — L2 execution     (black helix phase)
      02 TRUNK    choose your path              (strata-tall plate, trunk crop)
      03 ROOTS    the ledger — protocol facts   (roots-bedrock plate)
-     04 STONE    why eUTXO + who builds it     (stone-rune plate)
+     04 PROOFS   why eUTXO + who builds it     (roots-bedrock crop)
      05 BEDROCK  the path to mainnet           (strata-tall plate, bedrock crop)
      CLOSE       the gateway is open           (hero-wide plate, roots crop)
 
@@ -43,7 +43,6 @@ import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { StackChips } from "@/components/site/StackChips";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { WaveText } from "./CursorWave";
 
 const HeroSapOrbs = dynamic(() => import("./HeroSapOrbs"), { ssr: false });
 
@@ -55,7 +54,6 @@ const PLATES = {
   hero: "/v2/hero-wide.avif",
   strata: "/v2/strata-tall.avif",
   roots: "/v2/roots-bedrock.avif",
-  stone: "/v2/stone-rune.avif",
 } as const;
 
 /* ---------------------------------------------------------------------- */
@@ -106,15 +104,12 @@ function Lines({
   as: Tag = "div",
   className,
   delay = 0,
-  wave = false,
   ...rest
 }: {
   lines: ReactNode[];
   as?: "h1" | "h2" | "div" | "p";
   className?: string;
   delay?: number;
-  /** Corn-Revolution cursor wave: letters near the pointer lift + magnify. */
-  wave?: boolean;
 } & Record<string, unknown>) {
   const { motionOn } = useMotionPref();
   return (
@@ -140,7 +135,7 @@ function Lines({
               },
             }}
           >
-            {wave ? <WaveText>{line}</WaveText> : line}
+            {line}
           </motion.span>
         </motion.span>
       ))}
@@ -239,7 +234,7 @@ function Chapter({
           <span className="stratum">{stratum}</span>
         </div>
       </Rise>
-      <Lines as="h2" lines={title} delay={0.08} wave />
+      <Lines as="h2" lines={title} delay={0.08} />
       {lead ? (
         <Rise delay={0.18}>
           <p className="v2-ch__lead">{lead}</p>
@@ -252,122 +247,6 @@ function Chapter({
 /* ---------------------------------------------------------------------- */
 /*  hero                                                                   */
 /* ---------------------------------------------------------------------- */
-
-/** Drifting bioluminescent motes — cheap 2D canvas, stops when unseen. */
-function Motes({ heroRef }: { heroRef: RefObject<HTMLElement | null> }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { motionOn } = useMotionPref();
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const hero = heroRef.current;
-    if (!canvas || !hero || !motionOn) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let raf = 0;
-    let running = false;
-    let W = 0;
-    let H = 0;
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
-
-    const fit = () => {
-      W = hero.clientWidth;
-      H = hero.clientHeight;
-      canvas.width = W * DPR;
-      canvas.height = H * DPR;
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    };
-    fit();
-
-    type Mote = {
-      x: number;
-      y: number;
-      r: number;
-      vy: number;
-      sway: number;
-      phase: number;
-      tw: number;
-    };
-    const motes: Mote[] = Array.from({ length: 26 }, (_, i) => ({
-      // bias toward the tree on the right
-      x: (0.42 + 0.58 * Math.pow((i * 0.617) % 1, 0.6)) * W,
-      y: ((i * 0.387) % 1) * H,
-      r: 0.8 + ((i * 0.731) % 1) * 2.1,
-      vy: 6 + ((i * 0.519) % 1) * 12,
-      sway: 8 + ((i * 0.823) % 1) * 18,
-      phase: ((i * 0.293) % 1) * Math.PI * 2,
-      tw: 0.5 + ((i * 0.477) % 1) * 1.4,
-    }));
-
-    let last = performance.now();
-    let visible = false;
-    const syncRunState = () => (visible && !document.hidden ? start() : stop());
-    const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      ctx.clearRect(0, 0, W, H);
-      const t = now / 1000;
-      for (const m of motes) {
-        m.y -= m.vy * dt;
-        if (m.y < -8) {
-          m.y = H + 8;
-          m.x = (0.42 + 0.58 * Math.random()) * W;
-        }
-        const x = m.x + Math.sin(t * 0.6 + m.phase) * m.sway;
-        const a = 0.22 + 0.5 * (0.5 + 0.5 * Math.sin(t * m.tw + m.phase));
-        ctx.beginPath();
-        ctx.arc(x, m.y, m.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(110, 255, 160, ${a.toFixed(3)})`;
-        ctx.shadowColor = "rgba(78, 243, 131, 0.8)";
-        ctx.shadowBlur = 8;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-
-    const start = () => {
-      if (running) return;
-      running = true;
-      last = performance.now();
-      raf = requestAnimationFrame(tick);
-    };
-    const stop = () => {
-      running = false;
-      cancelAnimationFrame(raf);
-    };
-
-    // run only while the hero is on screen and the tab is visible
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        syncRunState();
-      },
-      { threshold: 0.02 },
-    );
-    io.observe(hero);
-    const onVis = syncRunState;
-    document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("resize", fit);
-
-    return () => {
-      stop();
-      io.disconnect();
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("resize", fit);
-    };
-  }, [heroRef, motionOn]);
-
-  if (!motionOn) return null;
-  return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-    />
-  );
-}
 
 function format(n: number) {
   return new Intl.NumberFormat("en-US").format(n);
@@ -403,7 +282,6 @@ function HeroHud() {
 
 function Hero() {
   const heroRef = useRef<HTMLElement>(null);
-  const plateOuter = useRef<HTMLDivElement>(null);
   const { motionOn } = useMotionPref();
 
   /* The Corn-Revolution grammar: the stage stays sticky, while the text and
@@ -431,59 +309,6 @@ function Hero() {
   const thesisOpacity = useTransform(heroProgress, [0.48, 0.58, 0.82, 0.94], [0, 1, 1, 0]);
   const thesisY = useTransform(heroProgress, [0.48, 0.68, 0.94], ["34vh", "0vh", "-22vh"]);
 
-  /* mouse parallax — lerped, fine pointers only, on its own wrapper so the
-     transform never fights the scroll/intro layers */
-  useEffect(() => {
-    const el = plateOuter.current;
-    const hero = heroRef.current;
-    if (!el || !hero || !motionOn) return;
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-    let raf = 0;
-    let running = false;
-    let visible = false;
-    let tx = 0;
-    let ty = 0;
-    let cx = 0;
-    let cy = 0;
-    const onMove = (e: PointerEvent) => {
-      tx = (e.clientX / window.innerWidth - 0.5) * -14;
-      ty = (e.clientY / window.innerHeight - 0.5) * -10;
-    };
-    const tick = () => {
-      cx += (tx - cx) * 0.045;
-      cy += (ty - cy) * 0.045;
-      el.style.transform = `translate3d(${cx.toFixed(2)}px, ${cy.toFixed(2)}px, 0) scale(1.02)`;
-      raf = requestAnimationFrame(tick);
-    };
-    const start = () => {
-      if (running) return;
-      running = true;
-      raf = requestAnimationFrame(tick);
-    };
-    const stop = () => {
-      running = false;
-      cancelAnimationFrame(raf);
-    };
-    const syncRunState = () => (visible && !document.hidden ? start() : stop());
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        syncRunState();
-      },
-      { threshold: 0.02 },
-    );
-    io.observe(hero);
-    const onVis = syncRunState;
-    window.addEventListener("pointermove", onMove, { passive: true });
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      stop();
-      io.disconnect();
-      window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, [motionOn]);
-
   return (
     <section
       ref={heroRef}
@@ -492,7 +317,7 @@ function Hero() {
       data-scene="hero"
     >
       <div className="v2-scene__stage">
-        <div ref={plateOuter} style={{ position: "absolute", inset: 0 }} aria-hidden>
+        <div style={{ position: "absolute", inset: 0 }} aria-hidden>
           <motion.div
             style={{ position: "absolute", inset: 0 }}
             initial={motionOn ? { opacity: 0, scale: 1.09 } : false}
@@ -525,7 +350,6 @@ function Hero() {
             </motion.div>
           </motion.div>
         </div>
-        <Motes heroRef={heroRef} />
         <div className="v2-scene__veil" data-variant="hero" aria-hidden />
 
         {/* copy lives inside the sticky stage but moves vertically with scroll */}
@@ -543,7 +367,6 @@ function Hero() {
           <Lines
             as="h1"
             delay={0.12}
-            wave
             lines={[
               <>Built to scale.</>,
               <>
@@ -837,7 +660,7 @@ function Ledger() {
 }
 
 /* ---------------------------------------------------------------------- */
-/*  04 — stone / eUTXO duel + provenance                                   */
+/*  04 — proofs / eUTXO duel + provenance                                  */
 /* ---------------------------------------------------------------------- */
 
 const DUEL = {
@@ -913,7 +736,6 @@ function Provenance() {
         <Lines
           as="h2"
           delay={0.06}
-          wave
           className="v2-prov__title"
           lines={[<>Built by</>, <>Anastasia Labs.</>]}
           style={{
@@ -1039,7 +861,6 @@ function Closing() {
         <Lines
           as="h2"
           delay={0.08}
-          wave
           lines={[
             <>Scale Cardano.</>,
             <>
@@ -1078,7 +899,7 @@ const STRATA = [
   { id: "canopy", label: "Canopy · L2", stratum: "canopy" },
   { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
   { id: "roots", label: "Roots · Ledger", stratum: "roots" },
-  { id: "stone", label: "Stone · eUTXO", stratum: "stone" },
+  { id: "proofs", label: "Proofs · eUTXO", stratum: "proofs" },
   { id: "bedrock", label: "Bedrock · L1", stratum: "bedrock" },
 ] as const;
 
@@ -1194,10 +1015,15 @@ export default function HomeV2() {
         <Ledger />
       </Scene>
 
-      <Scene id="stone" plate={PLATES.stone} position="56% 48%">
+      <Scene
+        id="proofs"
+        plate={PLATES.roots}
+        position="50% 52%"
+        mobilePosition="64% 54%"
+      >
         <Chapter
           n="04"
-          stratum="Stone — why eUTXO"
+          stratum="Proofs — why eUTXO"
           title={[<>Why eUTXO builds</>, <>a better rollup.</>]}
           lead={
             <>

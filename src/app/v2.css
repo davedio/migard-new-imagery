@@ -249,9 +249,6 @@ h2 em,
   background: var(--green-bright);
   box-shadow: 0 0 10px var(--green-bright);
 }
-.site-nav__drop {
-  border-radius: var(--r);
-}
 /* scroll progress hairline under the nav */
 .v2-progress {
   position: fixed;
@@ -871,7 +868,7 @@ h2 em,
   color: var(--text-dim);
 }
 
-/* ---- eUTXO duel (stone chapter) ---- */
+/* ---- eUTXO duel (proofs chapter) ---- */
 .v2-duel {
   max-width: var(--maxw);
   margin: 0 auto;
@@ -1220,8 +1217,7 @@ h2 em,
 .stage-graphic__readout[data-tone="l1"] dd {
   color: #6fe0ff;
 }
-/* larger badge on desktop only — the small-screen rules in globals.css
-   must keep winning below 941px */
+/* Larger badge on desktop only. */
 @media (min-width: 941px) {
   .stage-graphic {
     max-width: 480px;
@@ -1268,55 +1264,16 @@ h2 em,
   }
 }
 
-/* ---- v2 cursor ---- */
-.v2-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 200;
-  pointer-events: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--bone);
-  mix-blend-mode: difference;
-  transition: transform 0.18s var(--ease-expo), opacity 0.3s var(--ease);
-}
-.v2-cursor[data-mode="link"] {
-  transform: scale(3.2);
-  opacity: 0.9;
-}
-.v2-cursor[data-hidden="true"] {
-  opacity: 0;
-}
-
 /* ---- line-mask reveal primitives (driven by motion variants in TSX) ---- */
 .v2-mask {
   display: block;
   overflow: hidden;
-  /* breathing room so cursor-lifted letters don't clip against the mask */
   padding-top: 0.18em;
   margin-top: -0.18em;
 }
 .v2-mask > span {
   display: block;
   will-change: transform;
-}
-
-/* ---- cursor-shatter headers (CursorWave.tsx) ---- */
-.cw-w {
-  display: inline-block;
-  white-space: pre;
-}
-.cw-ch {
-  display: inline-block;
-  will-change: transform, opacity;
-  transform-origin: 50% 50%;
-}
-.cw-canvas {
-  position: absolute;
-  pointer-events: none;
-  z-index: 2;
 }
 
 /* ===========================================================================
@@ -1403,9 +1360,6 @@ h2 em,
   }
   .page-hero::before {
     animation: none;
-  }
-  .v2-cursor {
-    display: none;
   }
   .v2-scene__plate {
     transform: none !important;

@@ -8,7 +8,6 @@ import {
   Actions,
 } from "@/components/site/ui";
 import { NextSteps } from "@/components/site/NextSteps";
-import { PartOf } from "@/components/site/PartOf";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -27,7 +26,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "How it works", item: "https://midgard-gateway.vercel.app/how-it-works" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://midgard-gateway.vercel.app/" },
     { "@type": "ListItem", position: 2, name: "Security", item: "https://midgard-gateway.vercel.app/security" },
   ],
 };
@@ -40,7 +39,8 @@ export default function SecurityPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <PageHero
-        top={<PartOf parentHref="/how-it-works" parentLabel="How it works" />}
+        tone="ember"
+        label="Security"
         title="Secured by Cardano. Provable by anyone"
         sub="Midgard's security rests on Cardano Layer 1. Anyone can inspect the commitments, challenge invalid blocks, and verify how settlement works."
         actions={[

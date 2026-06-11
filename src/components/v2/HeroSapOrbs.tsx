@@ -4,9 +4,9 @@
    HeroSapOrbs — the luminous sap, back on the hero.
 
    A 2D canvas that draws ONLY orbs, mounted INSIDE the plate's transform
-   tree (same box as the background-image div), so every scroll/mouse
-   parallax transform applies to plate and orbs identically — alignment for
-   free. The engine samples the plate's green veins (the proven approach:
+   tree (same box as the background-image div), so every scroll transform
+   applies to plate and orbs identically — alignment for free. The engine
+   samples the plate's green veins (the proven approach:
    orbs must ride continuous samplable veins, never a generic band):
 
      · the plate image is downsampled offscreen → a green-dominance grid
@@ -14,7 +14,7 @@
        five downward directions — so they visibly track the painted veins
        from leaves → trunk → roots (the canonical downward sap flow)
      · comet rendering: white-hot head + green trailing tail (#00ff66 family)
-     · small = fast, big = slow; orbs near the cursor speed up
+     · small = fast, big = slow
      · rare gentle surges (event-based), never a constant arcade pulse
 
    Runs only while visible, the tab is foreground, and motion is on.
@@ -36,8 +36,6 @@ const GRID_W = 384; // downsample width for the vein field
 const SPAWN_BAND: [number, number] = [0.02, 0.58]; // canopy-to-trunk band (image-y fraction)
 const GREEN_MIN = 34; // vein threshold in the 0-255 dominance score
 const TAIL = 11; // comet tail samples
-const CURSOR_R = 110; // px (canvas space) — orbs near the pointer hurry
-const CURSOR_BOOST = 2.1;
 
 type Orb = {
   x: number; // image-space px
@@ -184,18 +182,8 @@ export default function HeroSapOrbs({
       offX = (W - imgW * scale) * (mobile ? POS_MOBILE.x : posXAt(0));
     };
 
-    /* ---- cursor (canvas space) ---- */
-    const cursor = { x: -9999, y: -9999 };
-    const onMove = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      /* getBoundingClientRect includes ancestor transforms — map into the
-         canvas' untransformed coordinate space */
-      cursor.x = ((e.clientX - r.left) / r.width) * W;
-      cursor.y = ((e.clientY - r.top) / r.height) * H;
-    };
-
     /* ---- orbs ---- */
-    const orbCount = () => (window.innerWidth <= 760 ? 68 : 128);
+    const orbCount = () => (window.innerWidth <= 760 ? 56 : 104);
     const orbs: Orb[] = [];
 
     const spawn = (o?: Orb): Orb | null => {
@@ -246,7 +234,7 @@ export default function HeroSapOrbs({
       if (!mobile) offX = (W - imgW * scale) * posXAt(p);
 
       /* population control — the burst thickens the helix */
-      const want = Math.round(orbCount() * (1 + d * 1.15));
+      const want = Math.round(orbCount() * (1 + d * 0.75));
       while (orbs.length < want) {
         const o = spawn();
         if (!o) break;
@@ -293,14 +281,7 @@ export default function HeroSapOrbs({
           o.dying = true;
         }
 
-        /* cursor proximity boost (canvas space, against the drawn position) */
-        const pcx = o.x * scale + offX;
-        const pcy = o.y * scale + offY;
-        const cdst = Math.hypot(pcx - cursor.x, pcy - cursor.y);
-        const boost =
-          cdst < CURSOR_R ? CURSOR_BOOST - (cdst / CURSOR_R) * (CURSOR_BOOST - 1) : 1;
-
-        const sp = o.speed * boost * (1 + surge * 0.9);
+        const sp = o.speed * (1 + surge * 0.9);
         o.x += Math.sin(bestA) * sp * dt;
         o.y = Math.min(o.y + Math.cos(bestA) * sp * dt, imgH * 1.02);
         if (o.y > imgH * 0.985 && d * o.mix < 0.4) o.dying = true;
@@ -406,7 +387,6 @@ export default function HeroSapOrbs({
     const ro = new ResizeObserver(fit);
     ro.observe(host);
     document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("pointermove", onMove, { passive: true });
     img.src = PLATE_SRC;
 
     return () => {
@@ -415,7 +395,6 @@ export default function HeroSapOrbs({
       io.disconnect();
       ro.disconnect();
       document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("pointermove", onMove);
     };
   }, [motionOn, progressRef]);
 
