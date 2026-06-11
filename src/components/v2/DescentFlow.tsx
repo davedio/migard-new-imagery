@@ -33,7 +33,6 @@ import WorldTreeCanvas, { PHASES_REST, type DescentPhases } from "./WorldTreeCan
 import ShatterHeading from "./ShatterHeading";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
-  Duel,
   HeroHud,
   Ledger,
   Marquee,
@@ -103,7 +102,6 @@ const RAIL = [
   { id: "top", label: "Surface", stratum: "surface" },
   { id: "canopy", label: "Canopy · L2", stratum: "canopy" },
   { id: "roots", label: "Roots · Ledger", stratum: "roots" },
-  { id: "proofs", label: "Proofs · eUTXO", stratum: "proofs" },
   { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
 ] as const;
 
@@ -112,7 +110,6 @@ const BAND_IDS = [
   "canopy",
   "roots",
   "queue",
-  "proofs",
   "prov",
   "trunk",
 ] as const;
@@ -187,18 +184,18 @@ export default function DescentFlow() {
       }
       if (splashEl?.isConnected) return; // covered — draw nothing
 
-      const [, canopyT, rootsT, , proofsT] = tops;
+      const [, canopyT, rootsT, , provT] = tops;
       const [, canopyH, rootsH] = heights;
 
       /* ---- narrative phases (each owns ONE beat — calmer per scroll) ----
          helix    forms over the visible tree while the thesis is read
          collapse the strands wind down into ONE bright orb (ledger chapter)
-         descend  the orb rides the trunk SLOWLY from proofs to the close
+         descend  the orb rides the trunk SLOWLY from provenance down
          rest     it CONNECTS at the very bottom of the scroll, just before
                   the footer's fade and the rooted tagline                 */
       const helix = smooth01(ramp(s, canopyT - vh * 0.55, canopyT + canopyH * 0.45));
       const collapse = smooth01(ramp(s, rootsT - vh * 0.45, rootsT + rootsH * 0.6));
-      const descend = ramp(s, proofsT - vh * 0.35, maxS - vh * 0.55);
+      const descend = ramp(s, provT - vh * 0.35, maxS - vh * 0.55);
       const rest = smooth01(ramp(s, maxS - vh * 1.05, maxS - vh * 0.3));
       const bottom = ramp(s, maxS - vh * 0.55, maxS - vh * 0.06);
 
@@ -228,7 +225,7 @@ export default function DescentFlow() {
           if (s >= tops[i] - vh * 0.45) active = BAND_IDS[i];
         }
         if (active === "queue") active = "roots";
-        if (active === "prov") active = "proofs";
+        if (active === "prov") active = "roots";
         if (rail.dataset.current !== active) {
           rail.dataset.current = active;
           for (const item of rail.querySelectorAll<HTMLElement>("[data-band]")) {
@@ -399,33 +396,16 @@ export default function DescentFlow() {
           </Rise>
         </section>
 
-        {/* ---------- 03 proofs (the orb starts its slow ride) ---------- */}
-        <section id="proofs" className="v2-band">
-          <Chapter
-            n="03"
-            stratum="Proofs — why eUTXO"
-            title={["Why eUTXO builds", "a better rollup."]}
-            lead={
-              <>
-                Cardano&apos;s eUTXO model makes fraud proofs surgical: Midgard
-                re-executes only the inputs of a bad transaction —{" "}
-                <strong>no global state scan</strong>.
-              </>
-            }
-          />
-          <Duel />
-        </section>
-
-        {/* ---------- 04b provenance ---------- */}
+        {/* ---------- provenance (the descent begins here) ---------- */}
         <section id="prov" className="v2-band v2-band--tight">
           <Provenance />
         </section>
 
-        {/* ---------- 04 trunk / paths — the closing: choose your path while
+        {/* ---------- 03 trunk / paths — the closing: choose your path while
             the settlement orb rests in the roots below ---------- */}
         <section id="trunk" className="v2-band v2-band--last">
           <Chapter
-            n="04"
+            n="03"
             stratum="Trunk — three ways in"
             title={["Choose your path."]}
             lead="These roles overlap. Pick the one that fits what you're here to do."

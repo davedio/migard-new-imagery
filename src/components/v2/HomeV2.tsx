@@ -23,7 +23,6 @@ import { useMotionPref } from "@/lib/motion";
 import DescentFlow from "./DescentFlow";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
-  Duel,
   HeroHud,
   Ledger,
   Marquee,
@@ -180,31 +179,13 @@ function StaticHome() {
         </div>
       </StaticScene>
 
-      <StaticScene id="proofs" plate={PLATES.roots} position="50% 52%">
-        <StaticChapter
-          n="03"
-          stratum="Proofs — why eUTXO"
-          title={
-            <>
-              Why eUTXO builds
-              <br />a better rollup.
-            </>
-          }
-          lead={
-            <>
-              Cardano&apos;s eUTXO model makes fraud proofs surgical: Midgard
-              re-executes only the inputs of a bad transaction —{" "}
-              <strong>no global state scan</strong>.
-            </>
-          }
-        />
-        <Duel />
+      <StaticScene id="prov" plate={PLATES.roots} position="50% 52%">
         <Provenance />
       </StaticScene>
 
       <StaticScene id="trunk" plate={PLATES.strata} position="50% 32%">
         <StaticChapter
-          n="04"
+          n="03"
           stratum="Trunk — three ways in"
           title="Choose your path."
           lead="These roles overlap. Pick the one that fits what you're here to do."

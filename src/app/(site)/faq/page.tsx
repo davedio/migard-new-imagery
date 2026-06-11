@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero, Section, Faq, faqGroupId } from "@/components/site/ui";
+import { EutxoDuel } from "@/components/site/EutxoDuel";
 import { GLOSSARY } from "@/lib/glossary";
 
 export const metadata: Metadata = {
@@ -135,6 +136,9 @@ export default function FaqPage() {
                 {g.title}
               </a>
             ))}
+            <a className="chip" href="#why-eutxo">
+              Why eUTXO
+            </a>
             <a className="chip" href="#glossary">
               Glossary
             </a>
@@ -152,7 +156,23 @@ export default function FaqPage() {
       />
 
       <Section>
-        <Faq groups={FAQ_GROUPS} />
+        <Faq groups={FAQ_GROUPS.slice(0, 4)} />
+      </Section>
+
+      {/* relocated from the home proofs chapter — inline with the security
+          questions it answers */}
+      <Section
+        id="why-eutxo"
+        eyebrow="Why eUTXO"
+        title="Why eUTXO builds a better rollup"
+        lead="Cardano's eUTXO model makes fraud proofs surgical: Midgard re-executes only the inputs of a bad transaction — no global state scan."
+        tight
+      >
+        <EutxoDuel />
+      </Section>
+
+      <Section>
+        <Faq groups={FAQ_GROUPS.slice(4)} />
       </Section>
 
       <Section

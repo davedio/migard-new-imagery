@@ -1,0 +1,69 @@
+import { Reveal } from "@/components/site/Reveal";
+
+/* ============================================================
+   EutxoDuel — the side-by-side fraud-proof comparison (Midgard's
+   eUTXO surgery vs account-model global replay). Relocated from the
+   home proofs chapter to the FAQ (2026-06-11), inline with the
+   security questions it answers. Styling rides the shared .v2-duel
+   rules in v2.css.
+   ============================================================ */
+
+const DUEL = {
+  us: {
+    tag: "Midgard · eUTXO",
+    title: "Surgical fraud proofs",
+    thesis:
+      "Deterministic eUTXO execution means a fraud proof re-runs only the specific inputs of a bad transaction — the referenced inputs, the validator, and the transaction hash. Verification is fast, cheap, and conclusive on Cardano L1.",
+    points: [
+      "Minimal data to verify a proof",
+      "Cheap, conclusive L1 verification",
+      "Lower bar to run a Watcher",
+      "No global state scan",
+    ],
+  },
+  them: {
+    tag: "Account-model rollups",
+    title: "Global state replay",
+    thesis:
+      "Account-based rollups replay transactions against shared global state across many contracts to prove fraud — heavier data, more computation, and higher operating cost to verify on L1.",
+    points: [
+      "Large data footprint",
+      "Expensive L1 verification",
+      "Heavier hardware for watchers",
+      "Fewer independent watchers",
+    ],
+  },
+};
+
+export function EutxoDuel() {
+  return (
+    <Reveal>
+      <div className="v2-duel">
+        {(["us", "them"] as const).map((side) => {
+          const d = DUEL[side];
+          return (
+            <div className="v2-duel__side" data-side={side} key={side}>
+              <span className="tag">{d.tag}</span>
+              <h3>{d.title}</h3>
+              <p
+                style={{
+                  marginTop: 16,
+                  fontSize: 14.5,
+                  lineHeight: 1.6,
+                  color: "var(--text-dim)",
+                }}
+              >
+                {d.thesis}
+              </p>
+              <ul>
+                {d.points.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </Reveal>
+  );
+}
