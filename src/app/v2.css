@@ -197,7 +197,7 @@ h2 em,
    ------------------------------------------------------------------------- */
 .panel {
   background: linear-gradient(180deg, rgba(244, 241, 230, 0.03), transparent 45%),
-    rgba(8, 13, 9, 0.76);
+    rgba(8, 13, 9, 0.84);
   border: 1px solid var(--panel-edge-strong);
   border-radius: var(--r);
 }
@@ -800,7 +800,7 @@ h2 em,
 }
 #explore .panel.v2-explore__card {
   background: linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
-    rgba(5, 11, 8, 0.72);
+    rgba(5, 11, 8, 0.82);
 }
 .v2-explore__num {
   font-family: var(--font-mono);
@@ -839,7 +839,7 @@ h2 em,
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
   background: linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
-    rgba(5, 11, 8, 0.72);
+    rgba(5, 11, 8, 0.82);
 }
 .v2-tile .k {
   font-family: var(--font-mono);
@@ -993,7 +993,7 @@ h2 em,
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
   background: linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
-    rgba(5, 11, 8, 0.72);
+    rgba(5, 11, 8, 0.82);
 }
 .v2-phase[data-state="later"] {
   --accent: var(--gold-bright);

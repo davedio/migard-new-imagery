@@ -27,9 +27,9 @@ import {
 } from "react";
 import { useMotionPref } from "@/lib/motion";
 
-const RADIUS = 100; // px influence radius around the pointer — a tight disc
-const SCATTER = 20; // max displacement: letters break apart IN PLACE, not spray
-const LINK_F = 4.8; // link reach = sample stride × this
+const RADIUS = 150; // px influence radius around the pointer
+const SCATTER = 22; // max displacement: letters fracture in place, not into a trail
+const LINK_F = 7.5; // link reach = sample stride x this
 
 function splitChars(node: ReactNode, k: { n: number }): ReactNode {
   if (typeof node === "string") {
@@ -101,8 +101,8 @@ export function WaveText({
     let particles: Particle[] = [];
     let charPos: { x: number; y: number }[] = []; // char centers, root-relative
     let stride = 7;
-    /* prominence scales with the type: a 100px hero glyph sheds bigger,
-       farther-flying orbs than a 30px one */
+    /* prominence scales with the type, but the effect should read as a
+       fine connected mesh, not a big green particle spray. */
     let radiusEff = RADIUS;
     let scatterEff = SCATTER;
     let sizeBoost = 1;
@@ -160,10 +160,10 @@ export function WaveText({
 
       /* sample the ink on a grid → particle homes (denser = clearer
          letter-shaped constellations) */
-      stride = Math.max(4, Math.round(fontPx / 11));
-      radiusEff = Math.max(RADIUS, fontPx * 1.15);
-      scatterEff = Math.max(SCATTER, fontPx * 0.26);
-      sizeBoost = Math.min(2.1, Math.max(0.9, fontPx / 52));
+      stride = Math.max(4, Math.round(fontPx / 15));
+      radiusEff = Math.max(RADIUS, fontPx * 1.25);
+      scatterEff = Math.max(SCATTER, fontPx * 0.2);
+      sizeBoost = Math.min(1.9, Math.max(0.9, fontPx / 58));
       const data = octx.getImageData(0, 0, off.width, off.height).data;
       particles = [];
       for (let gy = 0; gy < off.height; gy += stride) {
@@ -175,9 +175,9 @@ export function WaveText({
               x: gx,
               y: gy,
               a: 0,
-              size: 0.9 + Math.random() * 1.3,
+              size: 0.65 + Math.random() * 0.95,
               seed: Math.random() * Math.PI * 2,
-              gold: Math.random() < 0.11,
+              gold: Math.random() < 0.08,
             });
           }
         }
@@ -226,13 +226,13 @@ export function WaveText({
       }
 
       /* particles: activate near the cursor, breaking the glyphs apart in
-         place. Near-instant attack, brisk reform. */
+         place. Hover-only attack, brisk reform; no click trail state. */
       const act: Particle[] = [];
       let energy = 0;
       for (const p of particles) {
         const d = Math.hypot(p.hx - px, p.hy - py);
         const target = pin ? fall(d, radiusEff) : 0;
-        p.a += (target - p.a) * (target > p.a ? 0.7 : 0.3);
+        p.a += (target - p.a) * (target > p.a ? 0.78 : 0.28);
         if (p.a < 0.02) continue;
         energy = Math.max(energy, p.a);
         const dd = Math.max(8, d);
@@ -241,7 +241,7 @@ export function WaveText({
         const wob = Math.sin(t * 2.1 + p.seed) * 0.22 + 0.88;
         const mag = p.a * scatterEff * wob;
         /* a whisper of swirl keeps it organic without smearing the form */
-        const sw = Math.sin(t * 1.4 + p.seed * 2) * p.a * 3.5;
+        const sw = Math.sin(t * 1.4 + p.seed * 2) * p.a * 2.2;
         p.x = p.hx + ux * mag - uy * sw;
         p.y = p.hy + uy * mag + ux * sw;
         act.push(p);
@@ -250,21 +250,25 @@ export function WaveText({
       /* filaments between close, active orbs — the connected constellation.
          Hard cap on the pair pass so dense headings can never jank a frame. */
       const reach = stride * LINK_F;
-      ctx.lineWidth = 1.25;
-      const linkN = Math.min(act.length, 280);
+      ctx.lineWidth = 0.82;
+      act.sort((a, b) => a.x - b.x);
+      const linkN = Math.min(act.length, 520);
       for (let i = 0; i < linkN; i++) {
         const a = act[i];
         for (let j = i + 1; j < linkN; j++) {
           const b = act[j];
-          const dx = a.x - b.x;
-          if (dx > reach || dx < -reach) continue;
+          const dx = b.x - a.x;
+          if (dx > reach) break;
           const dy = a.y - b.y;
           if (dy > reach || dy < -reach) continue;
           const dist = Math.hypot(dx, dy);
           if (dist > reach) continue;
-          const al = Math.min(a.a, b.a) * (1 - dist / reach) * 0.56;
-          if (al < 0.012) continue;
-          ctx.strokeStyle = `rgba(78, 243, 131, ${al.toFixed(3)})`;
+          const al = Math.min(a.a, b.a) * (1 - dist / reach) * 0.94;
+          if (al < 0.014) continue;
+          ctx.strokeStyle =
+            a.gold || b.gold
+              ? `rgba(224, 163, 60, ${Math.min(0.4, al * 0.72).toFixed(3)})`
+              : `rgba(218, 255, 231, ${Math.min(0.52, al).toFixed(3)})`;
           ctx.beginPath();
           ctx.moveTo(a.x + PAD, a.y + PAD);
           ctx.lineTo(b.x + PAD, b.y + PAD);
@@ -272,27 +276,27 @@ export function WaveText({
         }
       }
 
-      /* the orbs — sap-green beads, white-hot hearts, the odd gold one */
+      /* fine nodes — green/gold halos with bone-white cores */
       ctx.globalCompositeOperation = "lighter";
       for (const p of act) {
-        const r = p.size * sizeBoost * (0.7 + p.a * 0.9);
+        const r = p.size * sizeBoost * (0.68 + p.a * 0.74);
         const gx = p.x + PAD;
         const gy = p.y + PAD;
         ctx.beginPath();
-        ctx.arc(gx, gy, r * 2.6, 0, Math.PI * 2);
+        ctx.arc(gx, gy, r * 2.7, 0, Math.PI * 2);
         ctx.fillStyle = p.gold
-          ? `rgba(224, 163, 60, ${(p.a * 0.3).toFixed(3)})`
-          : `rgba(0, 255, 102, ${(p.a * 0.28).toFixed(3)})`;
+          ? `rgba(224, 163, 60, ${(p.a * 0.26).toFixed(3)})`
+          : `rgba(78, 243, 131, ${(p.a * 0.24).toFixed(3)})`;
         ctx.fill();
         ctx.beginPath();
-        ctx.arc(gx, gy, r * 0.95, 0, Math.PI * 2);
+        ctx.arc(gx, gy, r * 0.86, 0, Math.PI * 2);
         ctx.fillStyle = p.gold
           ? `rgba(255, 233, 188, ${(p.a * 0.98).toFixed(3)})`
-          : `rgba(232, 255, 242, ${(p.a * 0.95).toFixed(3)})`;
+          : `rgba(244, 255, 248, ${(p.a * 0.96).toFixed(3)})`;
         ctx.shadowColor = p.gold
-          ? "rgba(224, 163, 60, 0.95)"
-          : "rgba(0, 255, 102, 0.95)";
-        ctx.shadowBlur = 12;
+          ? "rgba(224, 163, 60, 0.78)"
+          : "rgba(78, 243, 131, 0.72)";
+        ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
       }

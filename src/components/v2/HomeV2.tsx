@@ -816,7 +816,7 @@ const LEDGER: {
 ];
 
 function Ledger() {
-  /* Compact stat tiles at the original StatTiles scale. */
+  /* Compact stat tiles at the original site-card scale. */
   return (
     <div className="v2-ledger">
       <div className="v2-tiles">

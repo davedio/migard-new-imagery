@@ -23,9 +23,8 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
    (beams, network pulses, leaves, ADA diamonds) layered over it, and a
    HUD chapter rail whose labels are aligned to the
    page's protocol-lifecycle language (Submit · L2 -> Sequence ->
-   Commit -> Watch -> Settle · L1). The detailed textual sections —
-   ProtocolLifecycle, the Layers reference, the eUTXO comparison —
-   flow in beneath the act and reinforce what the 3D just showed.
+   Commit -> Watch -> Settle · L1). The detailed textual sections below
+   the act reinforce what the 3D just showed.
 
    This component owns the two RESN-class interaction systems, all
    desktop + fine-pointer + motion-on only and fully bypassed under
@@ -72,46 +71,6 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
       <span className="motion-toggle__glyph" data-on={on} aria-hidden />
     </button>
   );
-}
-
-/* ----------------------------------------------------------------
-   Lightweight 3D-tilt for cards (data-tilt). Pointer-position drives
-   a small rotateX/rotateY via CSS vars; resets on leave. Desktop +
-   motion-on only (gated by the parent). Composes with the magnetic
-   translate (different vars) and the card's own hover styles.
-   (Verbatim from the old Gateway wiring — re-homed here.)
-   ---------------------------------------------------------------- */
-function useCardTilt(active: boolean) {
-  useEffect(() => {
-    if (!active || typeof window === "undefined") return;
-    if (!window.matchMedia("(pointer: fine)").matches) return;
-    const cards = Array.from(
-      document.querySelectorAll<HTMLElement>("[data-tilt]"),
-    );
-    const handlers: Array<() => void> = [];
-    cards.forEach((card) => {
-      const onMove = (e: PointerEvent) => {
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        card.style.setProperty("--tilt-x", `${(-py * 7).toFixed(2)}deg`);
-        card.style.setProperty("--tilt-y", `${(px * 9).toFixed(2)}deg`);
-        card.style.setProperty("--sheen-x", `${((px + 0.5) * 100).toFixed(1)}%`);
-        card.style.setProperty("--sheen-y", `${((py + 0.5) * 100).toFixed(1)}%`);
-      };
-      const onLeave = () => {
-        card.style.setProperty("--tilt-x", "0deg");
-        card.style.setProperty("--tilt-y", "0deg");
-      };
-      card.addEventListener("pointermove", onMove);
-      card.addEventListener("pointerleave", onLeave);
-      handlers.push(() => {
-        card.removeEventListener("pointermove", onMove);
-        card.removeEventListener("pointerleave", onLeave);
-      });
-    });
-    return () => handlers.forEach((h) => h());
-  }, [active]);
 }
 
 /* Render fixed overlay layers into <body>, OUTSIDE the smooth-scroll
@@ -273,8 +232,6 @@ export default function HowItWorksExperience({
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [springProgress]);
-
-  useCardTilt(advanced);
 
   return (
     <>

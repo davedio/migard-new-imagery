@@ -3,9 +3,7 @@
 /* ============================================================
    sceneTokens — shared building blocks for the R3F scenes.
 
-   Consolidates helpers that were duplicated verbatim across
-   WorldTreeScene / RootworkScene / MonolithScene / GrowthTreeScene /
-   JourneyScene:
+   Consolidates helpers shared by the active R3F journey scene:
      - mulberry32   deterministic PRNG (re-exported from ./prng, which is
                     three-free so Canvas2D backdrops can share it too)
      - useGlowTexture  soft radial glow sprite
@@ -79,10 +77,7 @@ function configureBarkTexture(
 }
 
 /**
- * Shared bark textures (1K WebP, ~1.3MB total) — moved verbatim from the
- * identical copies in GrowthTreeScene / JourneyScene so the loading +
- * colour-space setup lives once. (RootworkScene / WorldTreeScene use
- * different map subsets/wrapping and keep their own paths.)
+ * Shared bark textures (1K WebP, ~1.3MB total) for the active journey scene.
  */
 export function useBarkMaps(): BarkMaps {
   const [diff, nor, rough, ao] = useLoader(THREE.TextureLoader, [
