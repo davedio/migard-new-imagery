@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
 import { NextSteps } from "@/components/site/NextSteps";
-import { StateQueueViz } from "@/components/site/StateQueueViz";
-import { Section } from "@/components/site/ui";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -16,24 +14,11 @@ export const metadata: Metadata = {
 };
 
 export default function HowItWorksPage() {
-  // The flagship 3D transaction journey IS the page; the state-queue
-  // animation below shows its Commit -> Settle half on Cardano itself.
-  // (The plain-text five-step recap lives on /contracts#lifecycle now.)
+  // The flagship 3D transaction journey IS the page. (The state-queue
+  // animation lives on the home ledger chapter; the five-step recap on
+  // /contracts#lifecycle.)
   return (
     <HowItWorksExperience>
-      {/* The on-chain state queue, animated — relocated from /contracts:
-          it IS the Commit -> Settle half of the journey above, so it lives
-          where that story is told. */}
-      <Section
-        id="queue"
-        eyebrow="On-chain state queue"
-        title="Blocks commit. Root confirms"
-        lead="What Commit and Settle look like on Cardano itself: operators append committed blocks to a singly-linked queue, and when a block's fraud-proof window closes it folds into the confirmed state — oldest first, one L1 transaction at a time."
-        glow="green"
-      >
-        <StateQueueViz />
-      </Section>
-
       <NextSteps
         items={[
           {

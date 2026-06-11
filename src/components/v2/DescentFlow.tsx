@@ -31,6 +31,7 @@ import {
 import { useMotionPref } from "@/lib/motion";
 import WorldTreeCanvas, { PHASES_REST, type DescentPhases } from "./WorldTreeCanvas";
 import ShatterHeading from "./ShatterHeading";
+import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
   Duel,
   HeroHud,
@@ -110,6 +111,7 @@ const BAND_IDS = [
   "top",
   "canopy",
   "roots",
+  "queue",
   "proofs",
   "prov",
   "trunk",
@@ -185,7 +187,7 @@ export default function DescentFlow() {
       }
       if (splashEl?.isConnected) return; // covered — draw nothing
 
-      const [, canopyT, rootsT, proofsT] = tops;
+      const [, canopyT, rootsT, , proofsT] = tops;
       const [, canopyH, rootsH] = heights;
 
       /* ---- narrative phases (each owns ONE beat — calmer per scroll) ----
@@ -225,6 +227,7 @@ export default function DescentFlow() {
         for (let i = 0; i < BAND_IDS.length; i++) {
           if (s >= tops[i] - vh * 0.45) active = BAND_IDS[i];
         }
+        if (active === "queue") active = "roots";
         if (active === "prov") active = "proofs";
         if (rail.dataset.current !== active) {
           rail.dataset.current = active;
@@ -365,6 +368,35 @@ export default function DescentFlow() {
             }
           />
           <Ledger />
+        </section>
+
+        {/* ---------- the state queue, in motion (moved from /how-it-works:
+            it shows exactly what the ledger numbers above promise) ------- */}
+        <section id="queue" className="v2-band v2-band--tight">
+          <div className="v2-ch">
+            <Rise>
+              <div className="v2-ch__index">
+                <span className="rule" style={{ flexBasis: 30 }} />
+                <span className="stratum">On-chain state queue</span>
+              </div>
+            </Rise>
+            <Rise delay={0.08}>
+              <h2>Blocks commit. Root confirms.</h2>
+            </Rise>
+            <Rise delay={0.14}>
+              <p className="v2-ch__lead">
+                Operators append committed blocks to a singly-linked queue.
+                When a block&apos;s fraud-proof window closes, it folds into
+                the confirmed state — oldest first, one L1 transaction at a
+                time.
+              </p>
+            </Rise>
+          </div>
+          <Rise delay={0.18}>
+            <div className="v2-queue">
+              <StateQueueViz />
+            </div>
+          </Rise>
         </section>
 
         {/* ---------- 03 proofs (the orb starts its slow ride) ---------- */}

@@ -549,6 +549,13 @@ h2 em,
   color: var(--bone);
 }
 
+/* ---- the state-queue animation, on the home flow ---- */
+.v2-queue {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--gut) clamp(48px, 8vh, 100px);
+}
+
 /* ---- provenance, compact (its own pinned beat) ---- */
 .v2-prov__title {
   margin: 22px 0 0;

@@ -21,6 +21,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import DescentFlow from "./DescentFlow";
+import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
   Duel,
   HeroHud,
@@ -167,6 +168,16 @@ function StaticHome() {
           }
         />
         <Ledger />
+        <div className="v2-ch" style={{ paddingTop: 24 }}>
+          <div className="v2-ch__index">
+            <span className="rule" style={{ flexBasis: 30 }} />
+            <span className="stratum">On-chain state queue</span>
+          </div>
+          <h2>Blocks commit. Root confirms.</h2>
+        </div>
+        <div className="v2-queue">
+          <StateQueueViz />
+        </div>
       </StaticScene>
 
       <StaticScene id="proofs" plate={PLATES.roots} position="50% 52%">
