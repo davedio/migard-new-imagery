@@ -2291,7 +2291,8 @@ button.panel:hover {
   height: 100%;
   object-fit: cover;
   object-position: 50% 42%;
-  filter: brightness(0.62) saturate(0.95);
+  /* the render's teal veins ride a small hue nudge onto the brand green */
+  filter: brightness(0.62) saturate(1.02) hue-rotate(14deg);
   opacity: 0;
   transition: opacity 1.4s var(--ease);
 }
