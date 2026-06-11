@@ -14,6 +14,7 @@ import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
 import { CopyField } from "@/components/site/CopyField";
 import { Term } from "@/components/site/Term";
 import RuneDecode from "@/components/site/RuneDecode";
+import { StackChips } from "@/components/site/StackChips";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import {
@@ -472,6 +473,12 @@ export default function ContractsPage() {
                 {"console.log(`${utxos.length} live entries in the queue`);"}
               </code>
             </pre>
+          </div>
+        </Reveal>
+        {/* the stack, relocated from the home provenance section */}
+        <Reveal delay={80}>
+          <div style={{ marginTop: 28 }}>
+            <StackChips />
           </div>
         </Reveal>
       </Section>

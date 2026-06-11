@@ -28,7 +28,6 @@ import {
   Marquee,
   Paths,
   Provenance,
-  Road,
   Statement,
   MotionToggle,
 } from "./HomeContent";
@@ -192,25 +191,9 @@ function StaticHome() {
         <Provenance />
       </StaticScene>
 
-      <StaticScene id="bedrock" plate={PLATES.strata} position="50% 96%">
-        <StaticChapter
-          n="04"
-          stratum="Bedrock — the path to mainnet"
-          title={
-            <>
-              Paced by the work,
-              <br />
-              not by dates.
-            </>
-          }
-          lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases."
-        />
-        <Road />
-      </StaticScene>
-
       <StaticScene id="trunk" plate={PLATES.strata} position="50% 32%">
         <StaticChapter
-          n="05"
+          n="04"
           stratum="Trunk — three ways in"
           title="Choose your path."
           lead="These roles overlap. Pick the one that fits what you're here to do."

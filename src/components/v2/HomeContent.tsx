@@ -13,7 +13,6 @@ import { animate, motion } from "motion/react";
 import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
-import { StackChips } from "@/components/site/StackChips";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -410,8 +409,8 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
         </Rise>
         <Rise delay={0.1}>
           <div className="v2-prov__actions">
-            <Link className="btn btn--ghost" href="/about">
-              Read the full story
+            <Link className="btn btn--ghost" href="/contracts">
+              See the contracts
             </Link>
             <a
               className="btn btn--ghost"
@@ -423,75 +422,10 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
             </a>
           </div>
         </Rise>
-        <Rise delay={0.16}>
-          <div className="v2-prov__chips">
-            <StackChips />
-          </div>
-        </Rise>
       </div>
     </div>
   );
 }
-
-/* ---------------------------------------------------------------------- */
-/*  bedrock / roadmap                                                      */
-/* ---------------------------------------------------------------------- */
-
-const PHASES = [
-  {
-    n: "01",
-    name: "Pre-alpha testnet",
-    desc: "Where Midgard is today: running on the Cardano preprod testnet so the rollup model can be exercised end to end. Expect rough edges — nothing here carries production weight yet.",
-    state: "current",
-    stat: "Current phase",
-  },
-  {
-    n: "02",
-    name: "Public testnet",
-    desc: "Wider participation opens up. Operators and watchers onboard to sequence blocks and submit fraud proofs, and builders bring real application flows onto the network.",
-    state: "next",
-    stat: "Next",
-  },
-  {
-    n: "03",
-    name: "Audit & hardening",
-    desc: "External security review of contracts and protocol, alongside the benchmarks that turn target throughput into measured throughput. Findings are addressed before mainnet weight is placed on Midgard.",
-    state: "later",
-    stat: "Planned",
-  },
-  {
-    n: "04",
-    name: "Mainnet",
-    desc: "Settlement on Cardano mainnet, with L1 as the root of trust. Timing follows the work — testnet maturity, audit outcomes, and benchmarks — not a fixed calendar date.",
-    state: "mainnet",
-    stat: "Settles on L1",
-  },
-] as const;
-
-export function Road() {
-  return (
-    <div className="v2-road">
-      <div className="v2-road__grid">
-        {PHASES.map((p, i) => (
-          <Rise key={p.n} delay={i * 0.07} style={{ display: "flex" }}>
-            <div className="panel v2-phase" data-state={p.state}>
-              {p.state === "current" ? (
-                <span className="v2-phase__badge">Current phase</span>
-              ) : null}
-              <div className="v2-phase__num">{p.n}</div>
-              <h3>{p.name}</h3>
-              <p>{p.desc}</p>
-              <div className="v2-phase__bar" aria-hidden />
-            </div>
-          </Rise>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------------------------------------------------- */
-/*  closing CTA block                                                      */
 
 /* ---------------------------------------------------------------------- */
 /*  depth rail + motion toggle                                             */

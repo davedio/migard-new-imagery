@@ -480,7 +480,7 @@ h2 em,
 /* the thesis band carries extra runway below the words — the helix earns a
    beat of stage time before the next chapter arrives */
 .v2-band--thesis {
-  padding-bottom: clamp(220px, 48svh, 560px);
+  padding-bottom: clamp(150px, 32svh, 380px);
 }
 /* the last band carries the settle + burst dwell below its content — the
    tree itself gets the final word, no closing copy */
@@ -743,7 +743,7 @@ h2 em,
 .v2-ch {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: clamp(72px, 13vh, 160px) var(--gut) clamp(40px, 7vh, 90px);
+  padding: clamp(48px, 8vh, 100px) var(--gut) clamp(28px, 5vh, 60px);
 }
 .v2-ch__index {
   display: flex;
@@ -792,7 +792,7 @@ h2 em,
 .v2-statement {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 var(--gut) clamp(40px, 7vh, 90px);
+  padding: 0 var(--gut) clamp(24px, 4vh, 50px);
 }
 .v2-statement p {
   font-family: var(--font-display);
@@ -822,7 +822,7 @@ h2 em,
 .v2-explore {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 var(--gut) clamp(80px, 13vh, 170px);
+  padding: 0 var(--gut) clamp(48px, 8vh, 100px);
 }
 .v2-explore__grid {
   display: grid;
@@ -865,7 +865,7 @@ h2 em,
 .v2-ledger {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 var(--gut) clamp(90px, 15vh, 190px);
+  padding: 0 var(--gut) clamp(48px, 8vh, 100px);
 }
 .v2-tiles {
   display: grid;
@@ -915,7 +915,7 @@ h2 em,
 .v2-duel {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 var(--gut) clamp(80px, 13vh, 170px);
+  padding: 0 var(--gut) clamp(44px, 7vh, 90px);
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1px;
@@ -985,7 +985,7 @@ h2 em,
 .v2-prov {
   max-width: var(--maxw);
   margin: 0 auto;
-  padding: 0 var(--gut) clamp(80px, 13vh, 160px);
+  padding: 0 var(--gut) clamp(44px, 7vh, 90px);
   display: grid;
   grid-template-columns: minmax(280px, 5fr) 7fr;
   gap: clamp(28px, 5vw, 90px);

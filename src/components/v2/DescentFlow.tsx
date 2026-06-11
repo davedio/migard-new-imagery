@@ -38,7 +38,6 @@ import {
   Marquee,
   Paths,
   Provenance,
-  Road,
   Statement,
   Rise,
   clamp01,
@@ -104,7 +103,6 @@ const RAIL = [
   { id: "canopy", label: "Canopy · L2", stratum: "canopy" },
   { id: "roots", label: "Roots · Ledger", stratum: "roots" },
   { id: "proofs", label: "Proofs · eUTXO", stratum: "proofs" },
-  { id: "bedrock", label: "Bedrock · L1", stratum: "bedrock" },
   { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
 ] as const;
 
@@ -114,7 +112,6 @@ const BAND_IDS = [
   "roots",
   "proofs",
   "prov",
-  "bedrock",
   "trunk",
 ] as const;
 
@@ -143,8 +140,10 @@ export default function DescentFlow() {
     const tops: number[] = [];
     const heights: number[] = [];
     let vh = window.innerHeight;
+    let maxS = 1; // the true scroll end — the connect is keyed to IT
     const measure = () => {
       vh = window.innerHeight;
+      maxS = Math.max(1, document.documentElement.scrollHeight - vh);
       BAND_IDS.forEach((id, i) => {
         const el = document.getElementById(id);
         tops[i] = el ? el.offsetTop + (flow.offsetTop || 0) : 0;
@@ -186,21 +185,20 @@ export default function DescentFlow() {
       }
       if (splashEl?.isConnected) return; // covered — draw nothing
 
-      const [, canopyT, rootsT, proofsT, , , trunkT] = tops;
-      const [, canopyH, rootsH, , , , trunkH] = heights;
-      const trunkEnd = trunkT + trunkH;
+      const [, canopyT, rootsT, proofsT] = tops;
+      const [, canopyH, rootsH] = heights;
 
       /* ---- narrative phases (each owns ONE beat — calmer per scroll) ----
          helix    forms over the visible tree while the thesis is read
          collapse the strands wind down into ONE bright orb (ledger chapter)
          descend  the orb rides the trunk SLOWLY from proofs to the close
-         rest     it seats into THIS tree's roots under the paths cards;
-                  burst at the bottom                                     */
+         rest     it CONNECTS at the very bottom of the scroll, just before
+                  the footer's fade and the rooted tagline                 */
       const helix = smooth01(ramp(s, canopyT - vh * 0.55, canopyT + canopyH * 0.45));
       const collapse = smooth01(ramp(s, rootsT - vh * 0.45, rootsT + rootsH * 0.6));
-      const descend = ramp(s, proofsT - vh * 0.35, trunkEnd - vh * 1.1);
-      const rest = smooth01(ramp(s, trunkEnd - vh * 1.7, trunkEnd - vh * 0.7));
-      const bottom = ramp(s, trunkEnd - vh * 1.1, trunkEnd - vh * 0.2);
+      const descend = ramp(s, proofsT - vh * 0.35, maxS - vh * 0.55);
+      const rest = smooth01(ramp(s, maxS - vh * 1.05, maxS - vh * 0.3));
+      const bottom = ramp(s, maxS - vh * 0.55, maxS - vh * 0.06);
 
       /* the tree NEVER goes dark — just a gentle dim under the helix so the
          strands read, lifting as they collapse into the orb */
@@ -343,6 +341,13 @@ export default function DescentFlow() {
             </Rise>
           </div>
           <Statement />
+          <Rise delay={0.1}>
+            <div className="v2-thesis__cta">
+              <Link className="btn btn--ghost" href="/how-it-works">
+                Overview of Flow
+              </Link>
+            </div>
+          </Rise>
         </section>
 
         {/* ---------- 02 roots / ledger (the helix collapses to ONE orb) -- */}
@@ -384,22 +389,11 @@ export default function DescentFlow() {
           <Provenance />
         </section>
 
-        {/* ---------- 04 bedrock / roadmap ---------- */}
-        <section id="bedrock" className="v2-band">
-          <Chapter
-            n="04"
-            stratum="Bedrock — the path to mainnet"
-            title={["Paced by the work,", "not by dates."]}
-            lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases."
-          />
-          <Road />
-        </section>
-
-        {/* ---------- 05 trunk / paths — the closing: choose your path while
+        {/* ---------- 04 trunk / paths — the closing: choose your path while
             the settlement orb rests in the roots below ---------- */}
         <section id="trunk" className="v2-band v2-band--last">
           <Chapter
-            n="05"
+            n="04"
             stratum="Trunk — three ways in"
             title={["Choose your path."]}
             lead="These roles overlap. Pick the one that fits what you're here to do."
