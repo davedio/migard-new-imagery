@@ -535,17 +535,13 @@ h2 em,
 }
 
 /* ---- thesis band type ---- */
-.v2-band--thesis .v2-shx {
-  margin-top: 24px;
-}
-.v2-band--thesis .v2-shx h2 {
-  margin: 0;
+.v2-thesis__h2 {
+  margin: 24px 0 0;
   max-width: none;
   font-size: clamp(28px, 3.6vw, 58px);
   line-height: 1.04;
   font-weight: 500;
   color: var(--bone);
-  text-wrap: balance;
 }
 
 /* ---- provenance, compact (its own pinned beat) ---- */
@@ -1351,7 +1347,7 @@ h2 em,
   .v2-band--thesis .v2-ch__index .rule {
     flex-basis: 30px;
   }
-  .v2-band--thesis .v2-shx h2 {
+  .v2-thesis__h2 {
     font-size: clamp(30px, 9vw, 44px);
   }
   .v2-hero__meta {

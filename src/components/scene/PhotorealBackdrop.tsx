@@ -343,6 +343,10 @@ export default function PhotorealBackdrop({
      the pan loop needs them to express the camera as a pure transform.
      `ready` flips once the box geometry below has been applied. */
   const imgDimsRef = useRef({ w: 0, h: 0, ready: false });
+  /* the packet's live image-space v (0..1), published by the overlay loop —
+     the camera TRACKS this continuously instead of dwelling on per-stage
+     focals (review 2026-06-11: "the camera is either ahead or behind") */
+  const packetVRef = useRef(-1);
   const dofImgRef = useRef<HTMLDivElement>(null);
   const model = useMemo(() => buildModel(wide), [wide]);
 
@@ -412,7 +416,30 @@ export default function PhotorealBackdrop({
       // deliberate). A larger base = the focal trails its eased target with
       // more weight, so even the in-stage settle feels calm, never snappy.
       const follow = 1 - Math.pow(0.06, dt);
-      camY += (cam.focY - camY) * follow;
+
+      /* CONTINUOUS TRACKING SHOT (2026-06-11): the old camera dwelt on each
+         stage's focal for 70% of the stage then rushed the travel — reading
+         as ahead/behind the packet. Now the pan target is SOLVED each frame
+         so the packet sits at a fixed screen fraction, and the soft damped
+         follow supplies the natural trailing. The per-stage ZOOM dwell stays
+         (cameraAt) — intentional framing, not tracking. The opening keeps
+         the wide establish push-in, handing off to tracking as Submit begins. */
+      let focYTarget = cam.focY;
+      const dims = imgDimsRef.current;
+      const pv = packetVRef.current;
+      if (dims.ready && pv >= 0) {
+        const H = window.innerHeight;
+        const s0 = Math.max(window.innerWidth / dims.w, H / dims.h);
+        const denom = H - dims.h * s0; // negative under cover fit
+        if (denom < -1) {
+          const F = 0.45; // the packet rides ~45% down the frame
+          const syPre = H / 2 + (F * H - H / 2) / Math.max(0.2, camS);
+          const track = (100 * (syPre - pv * dims.h * s0)) / denom;
+          const handoff = smooth(clamp(cur / 0.08));
+          focYTarget = lerp(cam.focY, clamp(track, -4, 102), handoff);
+        }
+      }
+      camY += (focYTarget - camY) * follow;
       camS += (cam.scale - camS) * follow;
 
       /* The camera as a PURE transform (perf pass 2026-06-11): animating
@@ -881,6 +908,7 @@ export default function PhotorealBackdrop({
       const renderStatic = () => {
         const pStat = 0.42;
         const pk = packetUV(pStat, 0);
+        packetVRef.current = pk.y;
         // publish the resting packet screen position so a static badge can
         // anchor to it (the StageGraphic static fallback reads this).
         if (packetRef?.current) {
@@ -982,6 +1010,7 @@ export default function PhotorealBackdrop({
       // packet position: image-space along the measured centerline,
       // projected to screen through the live camera
       const pk = packetUV(p, t);
+      packetVRef.current = pk.y; // the camera tracks this continuously
       const px = tX(pk.x);
       const py = tY(pk.y);
       // publish the live packet screen position so the floating StageGraphic

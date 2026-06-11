@@ -65,6 +65,8 @@ function Chapter({
   title: string[];
   lead?: ReactNode;
 }) {
+  /* plain headings here — the shatter cursor effect belongs to the hero H1
+     alone (review 2026-06-11) */
   return (
     <div className="v2-ch">
       <Rise>
@@ -74,7 +76,16 @@ function Chapter({
           <span className="stratum">{stratum}</span>
         </div>
       </Rise>
-      <ShatterHeading as="h2" lines={title} />
+      <Rise delay={0.08}>
+        <h2>
+          {title.map((t, i) => (
+            <span key={i}>
+              {i > 0 ? <br /> : null}
+              {t}
+            </span>
+          ))}
+        </h2>
+      </Rise>
       {lead ? (
         <Rise delay={0.14}>
           <p className="v2-ch__lead">{lead}</p>
@@ -325,8 +336,10 @@ export default function DescentFlow() {
                 <span className="stratum">Canopy — the thesis</span>
               </div>
             </Rise>
-            {/* one line on desktop; the word grouping wraps it on phones */}
-            <ShatterHeading as="h2" lines={["Scale that stays on Cardano."]} />
+            {/* one line on desktop, wraps naturally on phones */}
+            <Rise delay={0.06}>
+              <h2 className="v2-thesis__h2">Scale that stays on Cardano.</h2>
+            </Rise>
           </div>
           <Statement />
         </section>
