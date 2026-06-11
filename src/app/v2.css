@@ -519,7 +519,9 @@ h2 em,
 .v2-shx .shx-ch {
   display: inline-block;
   white-space: pre;
-  transition: opacity 0.1s linear;
+  /* the RETURN fade — reassembled glyphs ease back in under the dissolving
+     dust (waking letters hide fast via an inline transition override) */
+  transition: opacity 0.5s var(--ease);
 }
 .v2-shx .shx-ch[data-accent="green"] {
   color: var(--green-bright);

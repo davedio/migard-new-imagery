@@ -36,9 +36,14 @@ type Letter = {
   cx: number; // center, canvas space
   cy: number;
   active: boolean;
+  /** crossfade after reassembly: 1 → 0 while the dust dissolves over the
+      returning DOM glyph (review 2026-06-11: fade back, don't pop) */
+  fade: number;
   p0: number; // particle range [p0, p1)
   p1: number;
 };
+
+const RESTORE_FADE_S = 0.5; // dust dissolve / glyph fade-in duration
 
 export default function ShatterHeading({
   as: Tag = "h2",
@@ -181,6 +186,7 @@ export default function ShatterHeading({
           cx: baseX + r.width / 2,
           cy: baseY + r.height / 2,
           active: false,
+          fade: 0,
           p0,
           p1: homesX.length,
         });
@@ -248,6 +254,9 @@ export default function ShatterHeading({
         if (L.active) continue;
         if (Math.hypot(L.cx - mx, L.cy - my) < FIELD_R * 1.15) {
           L.active = true;
+          L.fade = 0;
+          /* hide FAST on wake; the slow CSS transition is for the return */
+          L.el.style.transition = "opacity 0.07s linear";
           L.el.style.opacity = "0";
           if (!running) start();
         }
@@ -267,6 +276,25 @@ export default function ShatterHeading({
       let anyActive = false;
 
       for (const L of letters) {
+        /* post-reassembly crossfade: the dust dissolves at home while the
+           DOM glyph fades in beneath it — no pop */
+        if (!L.active && L.fade > 0) {
+          L.fade = Math.max(0, L.fade - dt / RESTORE_FADE_S);
+          if (L.fade > 0.004) {
+            anyActive = true;
+            ctx.globalAlpha = L.fade;
+            for (let g = 0; g < 3; g++) {
+              ctx.fillStyle = COLORS[g];
+              for (let i = L.p0; i < L.p1; i++) {
+                if (CG[i] !== g) continue;
+                const s = SZ[i];
+                ctx.fillRect(X[i] - s / 2, Y[i] - s / 2, s, s);
+              }
+            }
+            ctx.globalAlpha = 1;
+          }
+          continue;
+        }
         if (!L.active) continue;
         let settled = true;
         const far = Math.hypot(L.cx - mx, L.cy - my) > FIELD_R * 1.3;
@@ -305,7 +333,8 @@ export default function ShatterHeading({
         }
 
         if (settled && far) {
-          /* freeze exactly at home, hand the glyph back to the DOM */
+          /* freeze exactly at home and begin the crossfade: glyph fades in
+             on the slow CSS transition while the dust dissolves above it */
           for (let i = L.p0; i < L.p1; i++) {
             X[i] = HX[i];
             Y[i] = HY[i];
@@ -313,7 +342,10 @@ export default function ShatterHeading({
             VY[i] = 0;
           }
           L.active = false;
+          L.fade = 1;
+          L.el.style.transition = "";
           L.el.style.opacity = "";
+          anyActive = true;
           continue;
         }
         anyActive = true;
