@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -11,34 +11,24 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 /*  Nav model                                                           */
 /* ------------------------------------------------------------------ */
 
-type DropChild = {
+type NavLink = {
   label: string;
   href: string;
-  /** One-line mono subtext shown under the label in the dropdown. */
-  sub: string;
 };
 
-/** Protocol group — How It Works is the parent, Security/Contracts children. */
-const PROTOCOL: readonly DropChild[] = [
-  {
-    label: "Overview",
-    href: "/how-it-works",
-    sub: "Ride a transaction from Layer 2 down to Cardano",
-  },
-  {
-    label: "Security",
-    href: "/security",
-    sub: "Challenge and proof model",
-  },
-  {
-    label: "Contracts",
-    href: "/contracts",
-    sub: "On-chain addresses you can verify",
-  },
+const NAV_LINKS: readonly NavLink[] = [
+  { label: "Home", href: "/" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Security", href: "/security" },
+  { label: "Contracts", href: "/contracts" },
+  { label: "Get Started", href: "/get-started" },
+  { label: "Roadmap", href: "/roadmap" },
+  { label: "About", href: "/about" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Official Links", href: "/official-links" },
+  { label: "Brand", href: "/brand" },
+  { label: "Changelog", href: "/changelog" },
 ] as const;
-
-/** Routes that light the How It Works parent as active. */
-const PROTOCOL_ROUTES = ["/how-it-works", "/security", "/contracts"];
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                           */
@@ -47,25 +37,18 @@ const PROTOCOL_ROUTES = ["/how-it-works", "/security", "/contracts"];
 /**
  * Fixed top navigation shared across every page in the (site) route group.
  *
- * Desktop: Home · How It Works (dropdown: Overview / Security / Contracts,
- * two-line HUD-style items) · About · FAQ · GitHub ↗ · Get Started CTA.
- * The dropdown opens on hover and focus-within, toggles on click, closes on
- * Escape and outside click. The parent shows active state on any protocol
- * route. A scrim fades in once the page is scrolled (data-scrolled).
+ * Desktop: the real first-level pages are all exposed as plain links so the
+ * site map can be reviewed directly. A scrim fades in once the page is
+ * scrolled (data-scrolled).
  *
- * Mobile (≤940px): burger menu grouped under mono section labels
- * (Protocol / Company / Resources) instead of one flat list.
+ * Mobile: burger menu with the same page list.
  */
 export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
-  const [dropMenu, setDropMenu] = useState({ pathname: "", open: false });
   const [scrolled, setScrolled] = useState(false);
-  const dropRef = useRef<HTMLDivElement | null>(null);
-  const closeTimer = useRef<number | null>(null);
 
   const open = menu.open && menu.pathname === pathname;
-  const drop = dropMenu.open && dropMenu.pathname === pathname;
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */
   useEffect(() => {
@@ -87,43 +70,6 @@ export function SiteNav() {
     };
   }, []);
 
-  const closeDrop = useCallback(() => setDropMenu({ pathname, open: false }), [pathname]);
-
-  /* Dropdown closes on Escape and outside click. */
-  useEffect(() => {
-    if (!drop) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeDrop();
-    };
-    const onDown = (e: PointerEvent) => {
-      if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
-        closeDrop();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    window.addEventListener("pointerdown", onDown);
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      window.removeEventListener("pointerdown", onDown);
-    };
-  }, [closeDrop, drop]);
-
-  useEffect(
-    () => () => {
-      if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-    },
-    [],
-  );
-
-  const hoverOpen = () => {
-    if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-    setDropMenu({ pathname, open: true });
-  };
-  const hoverClose = () => {
-    if (closeTimer.current !== null) window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(closeDrop, 140);
-  };
-
   const closeMenu = () => setMenu({ pathname, open: false });
   const toggleMenu = () =>
     setMenu((state) => ({
@@ -134,7 +80,6 @@ export function SiteNav() {
   /* Home is active only on exactly "/" — every route starts with "/". */
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
-  const protocolActive = PROTOCOL_ROUTES.some((r) => isActive(r));
 
   const linkClass = (href: string) => ({
     className: "site-nav__link",
@@ -150,63 +95,11 @@ export function SiteNav() {
         </Link>
 
         <div className="site-nav__links">
-          <Link href="/" {...linkClass("/")}>
-            Home
-          </Link>
-
-          {/* How It Works — parent link + rich dropdown */}
-          <div
-            ref={dropRef}
-            className="site-nav__group"
-            onPointerEnter={hoverOpen}
-            onPointerLeave={hoverClose}
-            onFocus={hoverOpen}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node)) closeDrop();
-            }}
-          >
-            <button
-              type="button"
-              className="site-nav__link site-nav__group-trigger"
-              data-active={protocolActive}
-              aria-expanded={drop}
-              aria-haspopup="true"
-              onClick={() =>
-                setDropMenu((state) => ({
-                  pathname,
-                  open: state.pathname === pathname ? !state.open : true,
-                }))
-              }
-            >
-              How It Works
-              <span className="site-nav__chevron" data-open={drop} aria-hidden>
-                ▾
-              </span>
-            </button>
-
-            <div className="site-nav__drop" data-open={drop} role="menu" aria-label="How It Works">
-              {PROTOCOL.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  role="menuitem"
-                  className="site-nav__drop-item"
-                  data-active={isActive(item.href)}
-                  onClick={closeDrop}
-                >
-                  <span className="site-nav__drop-label">{item.label}</span>
-                  <span className="site-nav__drop-sub">{item.sub}</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <Link href="/about" {...linkClass("/about")}>
-            About
-          </Link>
-          <Link href="/faq" {...linkClass("/faq")}>
-            FAQ
-          </Link>
+          {NAV_LINKS.map((item) => (
+            <Link key={item.href} href={item.href} {...linkClass(item.href)}>
+              {item.label}
+            </Link>
+          ))}
           <a
             href={OFFICIAL_LINKS.github}
             target="_blank"
@@ -219,9 +112,6 @@ export function SiteNav() {
         </div>
 
         <div className="site-nav__right">
-          <Link href="/get-started" className="btn btn--primary site-nav__cta-desktop">
-            Get Started
-          </Link>
           <button
             type="button"
             className="site-nav__burger"
@@ -234,59 +124,18 @@ export function SiteNav() {
         </div>
       </nav>
 
-      {/* Mobile menu — grouped under mono section labels, not one flat list. */}
+      {/* Mobile menu — same page list as desktop. */}
       <div className="site-nav__mobile" data-open={open}>
-        <Link href="/" data-active={isActive("/")} onClick={closeMenu}>
-          Home
-        </Link>
-
-        <span className="site-nav__mobile-label" aria-hidden>
-          Protocol
-        </span>
-        <Link
-          href="/how-it-works"
-          data-active={isActive("/how-it-works")}
-          onClick={closeMenu}
-        >
-          How It Works
-        </Link>
-        <Link
-          href="/security"
-          className="site-nav__mobile-child"
-          data-active={isActive("/security")}
-          onClick={closeMenu}
-        >
-          Security
-        </Link>
-        <Link
-          href="/contracts"
-          className="site-nav__mobile-child"
-          data-active={isActive("/contracts")}
-          onClick={closeMenu}
-        >
-          Contracts
-        </Link>
-
-        <span className="site-nav__mobile-label" aria-hidden>
-          Company
-        </span>
-        <Link href="/about" data-active={isActive("/about")} onClick={closeMenu}>
-          About
-        </Link>
-
-        <span className="site-nav__mobile-label" aria-hidden>
-          Resources
-        </span>
-        <Link href="/faq" data-active={isActive("/faq")} onClick={closeMenu}>
-          FAQ
-        </Link>
-        <Link
-          href="/official-links"
-          data-active={isActive("/official-links")}
-          onClick={closeMenu}
-        >
-          Official links
-        </Link>
+        {NAV_LINKS.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            data-active={isActive(item.href)}
+            onClick={closeMenu}
+          >
+            {item.label}
+          </Link>
+        ))}
         <a
           href={OFFICIAL_LINKS.github}
           target="_blank"
@@ -297,10 +146,6 @@ export function SiteNav() {
           GitHub
           <GitHubIcon size={16} aria-hidden />
         </a>
-
-        <Link href="/get-started" className="btn btn--primary" onClick={closeMenu}>
-          Get Started
-        </Link>
       </div>
     </>
   );

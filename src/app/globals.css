@@ -1458,43 +1458,19 @@ button.panel:hover {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: #040905;
-}
-
-.security-backdrop__wash,
-.security-backdrop__image,
-.security-backdrop__veil {
-  position: absolute;
-  inset: 0;
-}
-
-.security-backdrop__wash {
-  background-image: url("/backdrops/security-tree-roots.avif");
-  background-size: cover;
-  background-position: center;
-  filter: blur(12px) brightness(0.96) saturate(1.04);
-  transform: scale(1.02);
-  opacity: 0.22;
-}
-
-.security-backdrop__image {
-  background-image: url("/backdrops/security-tree-roots.avif");
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 4, 0.82) 0%, rgba(3, 7, 4, 0.56) 42%, rgba(3, 7, 4, 0.9) 100%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.28) 0%, #030704 94%),
+    url("/v2/stone-rune.avif");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: center;
-  filter: brightness(0.62) saturate(1) contrast(1.03);
-  opacity: 1;
-}
-
-.security-backdrop__veil {
-  background: none;
+  background-position: 58% center;
+  filter: brightness(0.72) saturate(0.96) contrast(1.04);
 }
 
 @media (max-width: 760px) {
-  .security-backdrop__image {
-    background-size: cover;
-    background-position: 72% center;
-    opacity: 1;
+  .security-backdrop {
+    background-position: 63% center;
   }
 }
 
@@ -1535,11 +1511,11 @@ button.panel:hover {
 .site-nav__links {
   display: flex;
   align-items: center;
-  gap: clamp(12px, 1.6vw, 22px);
+  gap: clamp(8px, 1vw, 15px);
 }
 .site-nav__link {
   font-family: var(--font-mono);
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0;
   color: var(--text);
@@ -1603,11 +1579,11 @@ button.panel:hover {
   }
 
   .site-nav__links {
-    gap: 32px;
+    gap: 20px;
   }
 
   .site-nav__link {
-    font-size: 16px;
+    font-size: 13.5px;
   }
 }
 
@@ -1625,17 +1601,16 @@ button.panel:hover {
   }
 
   .site-nav__links {
-    gap: 42px;
+    gap: 28px;
   }
 
   .site-nav__link {
-    font-size: 18px;
+    font-size: 16px;
   }
 }
 
-@media (max-width: 940px) {
+@media (max-width: 1180px) {
   .site-nav__links,
-  .site-nav__cta-desktop,
   .site-nav__status {
     display: none;
   }
@@ -2306,6 +2281,28 @@ button.panel:hover {
   filter: brightness(0.42) saturate(0.85) contrast(1.02);
   animation: splash-drift 26s var(--ease) infinite alternate;
 }
+/* the 4K forest flyover — slots between the static plate (its poster) and
+   the veil; fades in once playable, breathes down at the loop seam */
+.splash__video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 42%;
+  /* the render's teal veins ride a small hue nudge onto the brand green */
+  filter: brightness(0.62) saturate(1.02) hue-rotate(14deg);
+  opacity: 0;
+  transition: opacity 1.4s var(--ease);
+}
+.splash__video[data-ready="true"] {
+  opacity: 1;
+}
+.splash__video[data-ready="true"][data-dim="true"] {
+  opacity: 0.35;
+  transition: opacity 0.55s var(--ease);
+}
 .splash__veil {
   position: absolute;
   inset: 0;
@@ -2878,8 +2875,8 @@ button.panel:hover {
   border-bottom: 1px solid var(--panel-edge);
 }
 
-/* ---- nav: robustness at mid widths (CTA must never clip) ---- */
-@media (min-width: 941px) and (max-width: 1320px) {
+/* ---- nav: robustness at mid widths (links must never clip) ---- */
+@media (min-width: 1181px) and (max-width: 1320px) {
   .site-nav {
     gap: 14px;
   }
@@ -2887,112 +2884,7 @@ button.panel:hover {
     gap: clamp(8px, 1.1vw, 16px);
   }
   .site-nav__link {
-    font-size: 12.5px;
-  }
-}
-
-/* ---- nav: How It Works group + dropdown ---- */
-.site-nav__group {
-  position: relative;
-  display: inline-flex;
-}
-.site-nav__group-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.site-nav__chevron {
-  font-size: 9px;
-  line-height: 1;
-  color: var(--text-dim);
-  transition: transform 0.22s var(--ease);
-}
-.site-nav__chevron[data-open="true"] {
-  transform: rotate(180deg);
-}
-.site-nav__drop {
-  position: absolute;
-  top: calc(100% + 14px);
-  left: 50%;
-  transform: translate(-50%, -6px);
-  min-width: 320px;
-  padding: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: linear-gradient(180deg, rgba(10, 20, 14, 0.97), rgba(7, 15, 10, 0.97));
-  border: 1px solid var(--panel-edge-strong);
-  border-radius: 12px;
-  box-shadow: 0 18px 50px -18px rgba(0, 0, 0, 0.85), 0 0 24px -12px var(--green-glow);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity 0.18s var(--ease), transform 0.18s var(--ease), visibility 0.18s;
-}
-/* Hover bridge so the pointer can travel from trigger to panel. */
-.site-nav__drop::before {
-  content: "";
-  position: absolute;
-  top: -14px;
-  left: 0;
-  right: 0;
-  height: 14px;
-}
-.site-nav__drop[data-open="true"] {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translate(-50%, 0);
-}
-.site-nav__drop-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 10px 12px;
-  border-radius: 9px;
-  border: 1px solid transparent;
-  transition: background 0.16s var(--ease), border-color 0.16s var(--ease);
-}
-.site-nav__drop-item:hover,
-.site-nav__drop-item:focus-visible {
-  background: rgba(32, 190, 67, 0.07);
-  border-color: var(--panel-edge);
-}
-.site-nav__drop-item[data-active="true"] .site-nav__drop-label {
-  color: var(--green-bright);
-}
-.site-nav__drop-label {
-  font-family: var(--font-mono);
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--text-hi);
-}
-.site-nav__drop-sub {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.01em;
-  color: var(--text-dim);
-}
-
-/* ---- nav: mobile group labels + children ---- */
-@media (max-width: 940px) {
-  .site-nav__mobile-label {
-    font-family: var(--font-mono);
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    padding: 16px 4px 4px;
-  }
-  .site-nav__mobile-child {
-    padding-left: 18px !important;
+    font-size: 11.5px;
   }
 }
 

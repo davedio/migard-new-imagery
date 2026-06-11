@@ -249,9 +249,6 @@ h2 em,
   background: var(--green-bright);
   box-shadow: 0 0 10px var(--green-bright);
 }
-.site-nav__drop {
-  border-radius: var(--r);
-}
 /* scroll progress hairline under the nav */
 .v2-progress {
   position: fixed;
@@ -421,67 +418,221 @@ h2 em,
   color: var(--text);
 }
 
-/* ---- chapter scaffold ---- */
-.v2-scene {
+/* ---- the one-flow stage (motion on) ----
+   ONE fixed surface behind the whole page: the canvas draws the tree, the
+   particles and the plate crossfades; chapter overlays sit on top and FADE
+   in place (they never translate with scroll — the Corn grammar). The page
+   flow itself is just invisible runway sections. */
+.v2-flow {
   position: relative;
-  /* never shorter than the pinned stage — short chapters earn a bare-plate
-     breathing beat at their end instead of clipping the backdrop */
-  min-height: 100svh;
 }
-.v2-scene__stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  overflow: clip;
-  z-index: 0;
+.v2-flow > section {
+  position: relative;
 }
-.v2-scene__plate {
-  position: absolute;
-  inset: -6% 0;
-  background-size: cover;
-  background-position: center;
-  will-change: transform;
+.v2-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none; /* overlays opt back in when active */
+  will-change: opacity;
 }
-
-.v2-scene__veil {
+.v2-stage__canvas {
   position: absolute;
   inset: 0;
-  /* light touch: thin feathers at the chapter seams + a soft text-side wash.
-     The plates are the show — they must read clearly (review 2026-06-10). */
+  width: 100%;
+  height: 100%;
+}
+.v2-stage__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.5), transparent 14%, transparent 80%, rgba(4, 7, 5, 0.55)),
+    linear-gradient(90deg, rgba(4, 7, 5, 0.3), rgba(4, 7, 5, 0.08) 38%, transparent 58%);
+}
+
+/* ---- pinned overlays ---- */
+.v2-ov {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(76px, 9vh, 116px) var(--gut) clamp(34px, 5vh, 72px);
+  opacity: 0;
+  pointer-events: none;
+}
+.v2-ov[data-active="true"] {
+  pointer-events: auto;
+}
+.v2-ov[data-align="end"] {
+  justify-content: flex-end;
+}
+.v2-ov__inner {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+.v2-ov__inner::-webkit-scrollbar {
+  display: none;
+}
+
+/* content blocks lose their stacked-page breathing room inside a pinned
+   100svh overlay — the overlay supplies the frame */
+.v2-ov .v2-ch {
+  max-width: none;
+  margin: 0;
+  padding: 0 0 clamp(20px, 3.6vh, 40px);
+}
+.v2-ov .v2-explore,
+.v2-ov .v2-ledger,
+.v2-ov .v2-duel,
+.v2-ov .v2-prov,
+.v2-ov .v2-road,
+.v2-ov .v2-statement {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- hero overlay ---- */
+.v2-ov--hero .v2-ov__inner {
+  overflow: visible;
+}
+.v2-hero__title {
+  margin: 22px 0 0;
+  font-size: clamp(42px, 7vw, 122px);
+  line-height: 1.0;
+  font-weight: 500;
+  letter-spacing: -0.014em;
+  color: var(--bone);
+  max-width: 11em;
+}
+.v2-hero__title .ital {
+  font-style: normal;
+  color: var(--green-bright);
+}
+
+/* ---- shatter headings (the Corn cursor effect) ---- */
+.v2-shx {
+  position: relative;
+  display: block;
+}
+.v2-shx__canvas {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+.v2-shx .shx-line {
+  display: block;
+}
+.v2-shx .shx-ch {
+  display: inline-block;
+  white-space: pre;
+  transition: opacity 0.1s linear;
+}
+.v2-shx .shx-ch[data-accent="green"] {
+  color: var(--green-bright);
+}
+.v2-shx .shx-ch[data-accent="gold"] {
+  color: var(--gold-bright);
+}
+.v2-ch .v2-shx {
+  margin-top: 26px;
+}
+.v2-ch .v2-shx h2 {
+  margin: 0;
+}
+
+/* ---- thesis overlay ---- */
+.v2-ov--thesis .v2-shx {
+  margin-top: 24px;
+}
+.v2-ov--thesis .v2-shx h2 {
+  margin: 0;
+  max-width: 10.5em;
+  font-size: clamp(32px, 4.6vw, 76px);
+  line-height: 1.04;
+  font-weight: 500;
+  color: var(--bone);
+  text-wrap: balance;
+}
+.v2-ov--thesis .v2-statement {
+  margin-top: clamp(22px, 4.4vh, 48px);
+}
+.v2-ov--thesis .v2-statement p {
+  max-width: 23em;
+  font-size: clamp(18px, 2vw, 30px);
+  line-height: 1.3;
+  color: rgba(232, 238, 229, 0.82);
+}
+.v2-ov__marquee {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* ---- close overlay ---- */
+.v2-ov--close .v2-shx {
+  margin-top: 26px;
+}
+.v2-ov--close .v2-shx h2 {
+  margin: 0;
+  font-size: clamp(38px, 5.6vw, 96px);
+  line-height: 1.02;
+  font-weight: 500;
+  letter-spacing: -0.014em;
+  color: var(--bone);
+  max-width: 10em;
+}
+
+/* ---- provenance, compact (its own pinned beat) ---- */
+.v2-prov__title {
+  margin: 22px 0 0;
+  font-size: clamp(27px, 3.2vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--bone);
+  font-weight: 500;
+}
+
+/* ---- motion-off fallback: plain stacked scenes ---- */
+.v2-static {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+}
+.v2-static__plate {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.v2-static__veil {
+  position: absolute;
+  inset: 0;
   background:
     linear-gradient(180deg, rgba(4, 7, 5, 0.5), transparent 14%, transparent 78%, rgba(4, 7, 5, 0.62)),
     linear-gradient(90deg, rgba(4, 7, 5, 0.34), rgba(4, 7, 5, 0.1) 38%, transparent 58%);
 }
-.v2-scene__body {
+.v2-static__body {
   position: relative;
   z-index: 1;
-  margin-top: -100svh; /* content rides on top of the sticky stage */
+  width: 100%;
+  padding: clamp(86px, 12vh, 140px) 0;
 }
-
-/* ---- hero ---- */
-/* 380svh runway: the stage (plate + orbs + copy) pins for all of it.
-   Scroll only moves the BACKGROUND; the words fade in place. The extra
-   length is the helix dwell — the transformation unfolds SLOWLY with
-   scroll so the spin can actually be watched (review 2026-06-10 pm). */
-.v2-scene--hero {
-  height: 380svh;
+.v2-static--dark {
+  background: #040705;
 }
-.v2-home[data-motion="off"] .v2-scene--hero {
-  height: auto; /* reduced motion: a plain one-viewport hero */
-}
-.v2-hero {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 0 var(--gut) clamp(28px, 5vh, 64px);
-}
-.v2-hero__inner {
+.v2-static__hero {
   max-width: var(--maxw);
   margin: 0 auto;
-  width: 100%;
+  padding: 0 var(--gut);
 }
 .v2-hero__eyebrow {
   display: inline-flex;
@@ -500,19 +651,6 @@ h2 em,
   background: var(--green-bright);
   box-shadow: 0 0 14px var(--green-bright);
   animation: live-pulse 2.6s var(--ease) infinite;
-}
-.v2-hero h1 {
-  margin: 22px 0 0;
-  font-size: clamp(42px, 7vw, 122px);
-  line-height: 1.0;
-  font-weight: 500;
-  letter-spacing: -0.014em;
-  color: var(--bone);
-  max-width: 11em;
-}
-.v2-hero h1 .ital {
-  font-style: normal;
-  color: var(--green-bright);
 }
 .v2-hero__lead {
   margin-top: clamp(18px, 2.6vh, 30px);
@@ -578,59 +716,6 @@ h2 em,
   height: 34px;
   background: linear-gradient(180deg, var(--green-bright), transparent);
   animation: v2-cue 2.2s var(--ease) infinite;
-}
-.v2-hero-thesis {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  padding: clamp(86px, 12vh, 132px) var(--gut) clamp(54px, 9vh, 96px);
-  pointer-events: none;
-}
-.v2-hero-thesis::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(90deg, rgba(4, 7, 5, 0.92), rgba(4, 7, 5, 0.76) 43%, rgba(4, 7, 5, 0.18) 72%, transparent);
-}
-.v2-hero-thesis__inner {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: var(--maxw);
-  margin: 0 auto;
-}
-.v2-hero-thesis h2 {
-  margin: 24px 0 0;
-  max-width: 10.5em;
-  font-size: clamp(32px, 5vw, 82px);
-  line-height: 1.04;
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--bone);
-  text-wrap: balance;
-}
-.v2-hero-thesis .v2-statement {
-  max-width: none;
-  margin: clamp(24px, 4.8vh, 54px) 0 0;
-  padding: 0;
-}
-.v2-hero-thesis .v2-statement p {
-  max-width: 21em;
-  font-size: clamp(19px, 2.2vw, 34px);
-  line-height: 1.28;
-  color: rgba(232, 238, 229, 0.82);
-}
-.v2-hero-thesis .v2-statement .w {
-  opacity: 1;
-}
-.v2-hero-thesis .v2-statement .hi {
-  color: var(--bone);
-}
-.v2-hero-thesis .v2-statement .hi-green {
-  color: var(--green-bright);
 }
 @keyframes v2-cue {
   0% {
@@ -871,7 +956,7 @@ h2 em,
   color: var(--text-dim);
 }
 
-/* ---- eUTXO duel (stone chapter) ---- */
+/* ---- eUTXO duel (proofs chapter) ---- */
 .v2-duel {
   max-width: var(--maxw);
   margin: 0 auto;
@@ -1220,8 +1305,7 @@ h2 em,
 .stage-graphic__readout[data-tone="l1"] dd {
   color: #6fe0ff;
 }
-/* larger badge on desktop only — the small-screen rules in globals.css
-   must keep winning below 941px */
+/* Larger badge on desktop only. */
 @media (min-width: 941px) {
   .stage-graphic {
     max-width: 480px;
@@ -1268,55 +1352,16 @@ h2 em,
   }
 }
 
-/* ---- v2 cursor ---- */
-.v2-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 200;
-  pointer-events: none;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--bone);
-  mix-blend-mode: difference;
-  transition: transform 0.18s var(--ease-expo), opacity 0.3s var(--ease);
-}
-.v2-cursor[data-mode="link"] {
-  transform: scale(3.2);
-  opacity: 0.9;
-}
-.v2-cursor[data-hidden="true"] {
-  opacity: 0;
-}
-
 /* ---- line-mask reveal primitives (driven by motion variants in TSX) ---- */
 .v2-mask {
   display: block;
   overflow: hidden;
-  /* breathing room so cursor-lifted letters don't clip against the mask */
   padding-top: 0.18em;
   margin-top: -0.18em;
 }
 .v2-mask > span {
   display: block;
   will-change: transform;
-}
-
-/* ---- cursor-shatter headers (CursorWave.tsx) ---- */
-.cw-w {
-  display: inline-block;
-  white-space: pre;
-}
-.cw-ch {
-  display: inline-block;
-  will-change: transform, opacity;
-  transform-origin: 50% 50%;
-}
-.cw-canvas {
-  position: absolute;
-  pointer-events: none;
-  z-index: 2;
 }
 
 /* ===========================================================================
@@ -1333,42 +1378,36 @@ h2 em,
 }
 
 @media (max-width: 760px) {
-  /* per-scene art direction: plates re-crop for portrait screens */
-  .v2-scene__plate {
-    background-position: var(--pos-mobile, center) !important;
-  }
-  .v2-hero h1 {
+  .v2-hero__title {
     font-size: clamp(32px, 9.6vw, 58px);
     line-height: 1.04;
   }
-  .v2-hero-thesis {
-    align-items: center;
-    padding: 86px var(--gut) 42px;
+  .v2-ov {
+    padding: 76px var(--gut) 30px;
   }
-  .v2-hero-thesis::before {
-    background: linear-gradient(180deg, transparent 0%, rgba(4, 7, 5, 0.78) 35%, rgba(4, 7, 5, 0.95) 100%);
-  }
-  .v2-hero-thesis .v2-ch__index {
+  .v2-ov--thesis .v2-ch__index {
     gap: 12px;
     font-size: 9.5px;
     letter-spacing: 0.22em;
   }
-  .v2-hero-thesis .v2-ch__index .rule {
+  .v2-ov--thesis .v2-ch__index .rule {
     flex-basis: 30px;
   }
-  .v2-hero-thesis h2 {
-    margin-top: 18px;
+  .v2-ov--thesis .v2-shx h2 {
     font-size: clamp(30px, 9vw, 44px);
   }
-  .v2-hero-thesis .v2-statement {
+  .v2-ov--thesis .v2-statement {
     margin-top: 20px;
   }
-  .v2-hero-thesis .v2-statement p {
+  .v2-ov--thesis .v2-statement p {
     font-size: clamp(16px, 4.6vw, 20px);
     line-height: 1.32;
   }
-  .v2-hero-thesis .v2-statement p + p {
+  .v2-ov--thesis .v2-statement p + p {
     margin-top: 1em;
+  }
+  .v2-ov__marquee {
+    display: none;
   }
   .v2-hero__meta {
     flex-direction: column;
@@ -1404,18 +1443,9 @@ h2 em,
   .page-hero::before {
     animation: none;
   }
-  .v2-cursor {
-    display: none;
-  }
-  .v2-scene__plate {
-    transform: none !important;
-  }
 }
 .v2-home[data-motion="off"] .v2-marquee__track,
 .v2-home[data-motion="off"] .v2-hero__scrollcue .line,
 .v2-home[data-motion="off"] .v2-hero__eyebrow .tick {
   animation: none;
-}
-.v2-home[data-motion="off"] .v2-hero-thesis {
-  display: none;
 }

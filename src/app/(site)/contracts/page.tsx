@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero, Section, Prose, CtaBand } from "@/components/site/ui";
 import { NextSteps } from "@/components/site/NextSteps";
-import { PartOf } from "@/components/site/PartOf";
 import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
@@ -36,7 +35,7 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "How it works", item: "https://midgard-gateway.vercel.app/how-it-works" },
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://midgard-gateway.vercel.app/" },
     { "@type": "ListItem", position: 2, name: "Contracts", item: "https://midgard-gateway.vercel.app/contracts" },
   ],
 };
@@ -49,7 +48,6 @@ export default function ContractsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <PageHero
-        top={<PartOf parentHref="/how-it-works" parentLabel="How it works" />}
         label="Protocol contracts"
         title="Inspect the on-chain path"
         sub="Every Midgard validator, state anchor, and bootstrap transaction on Cardano preprod — addresses you can open on an explorer and verify yourself."
