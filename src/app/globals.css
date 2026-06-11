@@ -66,7 +66,7 @@
   --h1-line: 1.04;
   --h1-weight: 500;
   --h1-spacing: -0.01em;
-  --h2-size: clamp(25px, 3.1vw, 46px);
+  --h2-size: clamp(24px, 2.85vw, 42px);
   --h2-line: 1.12;
   --h2-weight: 500;
   --h3-size: 19px;
@@ -74,7 +74,7 @@
   --lead-size: clamp(16px, 1.5vw, 20px);
   --body-size: 16px;
   --body-line: 1.55;
-  --eyebrow-size: 12px;
+  --eyebrow-size: 13px;
   --eyebrow-spacing: 0.28em;
   --mono-size: 12.5px;
   --mono-spacing: 0.04em;
@@ -1100,9 +1100,9 @@ button.panel:hover {
 }
 
 .lifecycle-rail text {
-  fill: rgba(59, 232, 99, 0.68);
+  fill: rgba(59, 232, 99, 0.82);
   font-family: var(--font-mono);
-  font-size: 7px;
+  font-size: 8.5px;
 }
 
 .lifecycle-rail text.is-muted {
@@ -2991,7 +2991,7 @@ button.panel:hover {
   color: var(--text-dim);
 }
 .network-chip__sim {
-  font-size: 9px;
+  font-size: 10.5px;
   letter-spacing: 0.12em;
   padding: 2px 5px;
   border: 1px solid var(--panel-edge);
@@ -3119,7 +3119,7 @@ button.panel:hover {
 }
 .term__tip-term {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -3184,7 +3184,7 @@ button.panel:hover {
 }
 .page-toc__title {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -3260,7 +3260,7 @@ button.panel:hover {
 .hiw-step-card__tag {
   align-self: flex-start;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 3px 7px;
@@ -3319,7 +3319,7 @@ button.panel:hover {
 }
 .page-sticky-toc a {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 13px;
   letter-spacing: 0.04em;
   color: var(--text-dim);
   padding: 6px 12px;

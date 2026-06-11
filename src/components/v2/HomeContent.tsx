@@ -501,31 +501,6 @@ export function Road() {
 
 /* ---------------------------------------------------------------------- */
 /*  closing CTA block                                                      */
-/* ---------------------------------------------------------------------- */
-
-export function ClosingActions() {
-  return (
-    <>
-      <Rise delay={0.2}>
-        <p className="v2-close__lead">
-          Midgard is running on a pre-alpha testnet. Read the architecture,
-          inspect the source, and bring an app that needs more speed and lower
-          fees.
-        </p>
-      </Rise>
-      <Rise delay={0.3}>
-        <div className="v2-close__actions">
-          <Link className="btn btn--primary" href="/get-started">
-            Start with a use case
-          </Link>
-          <Link className="btn btn--ghost" href="/contracts">
-            Testnet status
-          </Link>
-        </div>
-      </Rise>
-    </>
-  );
-}
 
 /* ---------------------------------------------------------------------- */
 /*  depth rail + motion toggle                                             */

@@ -32,7 +32,6 @@ import { useMotionPref } from "@/lib/motion";
 import WorldTreeCanvas, { PHASES_REST, type DescentPhases } from "./WorldTreeCanvas";
 import ShatterHeading from "./ShatterHeading";
 import {
-  ClosingActions,
   Duel,
   HeroHud,
   Ledger,
@@ -106,7 +105,6 @@ const BAND_IDS = [
   "proofs",
   "prov",
   "bedrock",
-  "close",
 ] as const;
 
 const subscribeNoop = () => () => {};
@@ -177,19 +175,20 @@ export default function DescentFlow() {
       }
       if (splashEl?.isConnected) return; // covered — draw nothing
 
-      const [, canopyT, trunkT, rootsT, , , , closeT] = tops;
-      const [, canopyH, trunkH, , , , , closeH] = heights;
+      const [, canopyT, trunkT, rootsT, , , bedrockT] = tops;
+      const [, canopyH, trunkH, , , , bedrockH] = heights;
+      const bedrockEnd = bedrockT + bedrockH;
 
       /* ---- narrative phases (each owns ONE beat — calmer per scroll) ----
          helix    forms over the visible tree while the thesis is read
          collapse the strands wind down into ONE bright orb (paths chapter)
-         descend  the orb rides the trunk SLOWLY from roots to the close
-         rest     it seats into bedrock blue; burst at the very bottom   */
+         descend  the orb rides the trunk SLOWLY from roots to bedrock
+         rest     it seats into THIS tree's roots; burst at the bottom   */
       const helix = smooth01(ramp(s, canopyT - vh * 0.55, canopyT + canopyH * 0.45));
       const collapse = smooth01(ramp(s, trunkT - vh * 0.45, trunkT + trunkH * 0.6));
-      const descend = ramp(s, rootsT - vh * 0.35, closeT + closeH * 0.3);
-      const rest = smooth01(ramp(s, closeT - vh * 0.45, closeT + closeH * 0.45));
-      const bottom = clamp01((s - closeT) / Math.max(1, closeH - vh * 0.9));
+      const descend = ramp(s, rootsT - vh * 0.35, bedrockEnd - vh * 1.1);
+      const rest = smooth01(ramp(s, bedrockEnd - vh * 1.7, bedrockEnd - vh * 0.7));
+      const bottom = ramp(s, bedrockEnd - vh * 1.1, bedrockEnd - vh * 0.2);
 
       /* the tree NEVER goes dark — just a gentle dim under the helix so the
          strands read, lifting as they collapse into the orb */
@@ -202,7 +201,6 @@ export default function DescentFlow() {
       ph.rest = rest;
       ph.bottom = bottom;
       ph.black = black;
-      ph.rootsFade = smooth01(ramp(s, closeT - vh * 0.3, closeT + closeH * 0.35));
       ph.camX = 0.88 + 0.12 * smooth01(ramp(s, canopyT - vh * 0.6, canopyT + canopyH * 0.4));
       ph.camY = lerp(0.38, 0.8, smooth01((descend - 0.04) / 0.92));
       ph.zoom =
@@ -218,7 +216,6 @@ export default function DescentFlow() {
           if (s >= tops[i] - vh * 0.45) active = BAND_IDS[i];
         }
         if (active === "prov") active = "proofs";
-        if (active === "close") active = "bedrock";
         if (rail.dataset.current !== active) {
           rail.dataset.current = active;
           for (const item of rail.querySelectorAll<HTMLElement>("[data-band]")) {
@@ -383,8 +380,11 @@ export default function DescentFlow() {
           <Provenance />
         </section>
 
-        {/* ---------- 05 bedrock / roadmap ---------- */}
-        <section id="bedrock" className="v2-band">
+        {/* ---------- 05 bedrock / roadmap — the last word belongs to the
+            tree: the orb seats into its roots and detonates blue right
+            here, no closing copy (review 2026-06-11: "we don't have to
+            list it in plain text") ---------- */}
+        <section id="bedrock" className="v2-band v2-band--last">
           <Chapter
             n="05"
             stratum="Bedrock — the path to mainnet"
@@ -392,20 +392,6 @@ export default function DescentFlow() {
             lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases."
           />
           <Road />
-        </section>
-
-        {/* ---------- close (the orb rests; blue burst at the bottom) ----- */}
-        <section id="close" className="v2-band v2-band--close">
-          <div className="v2-close__inner">
-            <Rise>
-              <div className="v2-ch__index">
-                <span className="rule" style={{ flexBasis: 30 }} />
-                <span className="stratum">The gateway is open</span>
-              </div>
-            </Rise>
-            <ShatterHeading as="h2" lines={["Scale Cardano.", "Settle on Cardano."]} />
-            <ClosingActions />
-          </div>
         </section>
       </div>
 

@@ -69,7 +69,7 @@ const STAGES: Stage[] = [
     id: "submit",
     tag: "Off-chain · L2",
     name: "Submit",
-    line: "Validated against eUTXO rules — a soft confirmation, no L1 block wait.",
+    line: "A transaction enters Midgard and is validated against eUTXO rules immediately — you get a soft confirmation in moments, with no Cardano block wait.",
     readouts: [
       { k: "Action", v: "Validate transaction" },
       { k: "Trust", v: "eUTXO rules" },
@@ -81,7 +81,7 @@ const STAGES: Stage[] = [
     id: "sequence",
     tag: "L2 Operator",
     name: "Sequence",
-    line: "The operator orders transactions and assembles a block.",
+    line: "The operator orders incoming transactions and assembles them into a Layer 2 block, fixing the order the chain will execute.",
     readouts: [
       { k: "Action", v: "Order transactions" },
       { k: "Output", v: "Layer 2 block" },
@@ -93,7 +93,7 @@ const STAGES: Stage[] = [
     id: "commit",
     tag: "L1 State Queue",
     name: "Commit",
-    line: "The block header enters Cardano's on-chain state queue, operator bond locked.",
+    line: "The batcher posts a compact state commitment to Cardano, where it enters the on-chain state queue for anyone to inspect — the operator's bond locked behind it.",
     readouts: [
       { k: "Action", v: "Post commitment", tone: "bridge" },
       { k: "Anchor", v: "Cardano queue", tone: "bridge" },
@@ -105,7 +105,7 @@ const STAGES: Stage[] = [
     id: "watch",
     tag: "Challenge Window",
     name: "Watch",
-    line: "Watchers replay every transaction and check validity against Cardano.",
+    line: "Independent watchers re-execute every transaction during the challenge window — a single fraud proof removes an invalid commitment.",
     readouts: [
       { k: "Action", v: "Replay block", tone: "bridge" },
       { k: "Check", v: "Fraud proof ready", tone: "bridge" },
@@ -117,7 +117,7 @@ const STAGES: Stage[] = [
     id: "settle",
     tag: "L1 Confirmed",
     name: "Settle",
-    line: "No fraud, maturity ends — merged into state, as final as Cardano itself.",
+    line: "No fraud and the maturity period ends: the block merges into confirmed state — settlement makes it as final as Cardano itself.",
     readouts: [
       { k: "Action", v: "Merge state", tone: "l1" },
       { k: "Root", v: "Cardano L1", tone: "l1" },
@@ -261,10 +261,12 @@ export default function StageGraphic({
         top = clamp(top, m + 56, H - bh - m);
         el.style.transform = `translate3d(${left.toFixed(1)}px, ${top.toFixed(1)}px, 0)`;
         el.dataset.side = "right";
-        // reveal as soon as the packet position is real. The HUD is part of
-        // the opening read, so it stays visible from the first frame.
         positioned = true;
-        el.style.setProperty("--sg-fade", "1");
+        // The badge holds back during the opening read and arrives just
+        // after the ride begins (review 2026-06-11: "appear just after
+        // beginning to scroll on the first card").
+        const reveal = clamp((progress.get() - 0.012) / 0.03);
+        el.style.setProperty("--sg-fade", reveal.toFixed(3));
       } else if (!positioned) {
         el.style.setProperty("--sg-fade", "0");
       }

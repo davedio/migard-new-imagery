@@ -22,7 +22,6 @@ import { type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import DescentFlow from "./DescentFlow";
 import {
-  ClosingActions,
   Duel,
   HeroHud,
   Ledger,
@@ -217,18 +216,6 @@ function StaticHome() {
           lead="Midgard is pre-alpha. The route from today's testnet to settlement on Cardano mainnet runs through four phases."
         />
         <Road />
-        <div className="v2-close__inner">
-          <div className="v2-ch__index">
-            <span className="rule" style={{ flexBasis: 30 }} />
-            <span className="stratum">The gateway is open</span>
-          </div>
-          <h2>
-            Scale Cardano.
-            <br />
-            <em>Settle</em> on Cardano.
-          </h2>
-          <ClosingActions />
-        </div>
       </StaticScene>
     </>
   );

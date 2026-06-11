@@ -3,21 +3,21 @@
 /* ============================================================================
    WorldTreeCanvas — the ONE drawing surface behind the whole home page.
 
-   Corn-Revolution lesson applied: a single canvas draws BOTH the plates
-   (tree / roots close-up) and every particle, so image and orbs share one
-   cover mapping per frame — they can never drift apart (the old "double
-   vision" was tails cached in canvas space while the camera panned).
+   Corn-Revolution lesson applied: one camera mapping draws BOTH the tree
+   plate and every particle, so image and orbs can never drift apart (the
+   old "double vision" was tails cached in canvas space while the camera
+   panned).
 
    The descent narrative, driven by phase values (all 0..1) computed by
-   DescentFlow from the smoothed scroll:
+   DescentFlow from the smoothed scroll — the SAME tree carries the whole
+   story, start to finish:
 
      veins     orbs ride the painted green veins down the tree
-     helix     they detach into a double helix wrapping the trunk
-     regroup   the helix consolidates BACK into the tree
-     descend   one big settlement orb ignites and travels down the trunk,
-               absorbing nearby lights; the camera follows it down
-     rest      it comes to rest in the blue bedrock; at the very bottom a
-               soft blue detonation rings out — settled on L1
+     helix     they detach into a double helix OVER the visible tree
+     collapse  the helix slowly winds down into ONE settlement orb
+     descend   that orb rides the trunk veins down; the camera follows
+     rest      it seats into this tree's own roots; at the bottom a soft
+               blue detonation rings out — settled on L1
 
    Rendering rules learned the hard way (review 2026-06-10):
      · NO ctx.shadowBlur in the per-frame path — glows are pre-rendered
@@ -36,7 +36,6 @@ export type DescentPhases = {
   rest: number; //     settle in the blue
   bottom: number; //   raw progress through the final band — fires the burst
   black: number; //    a gentle dim under the helix (never full black)
-  rootsFade: number; // crossfade to the roots close-up (final band)
   camX: number; //     plate pos-x 0..1 (0.88 hero → 1.0 turned-in)
   camY: number; //     plate pos-y 0..1 (0.38 canopy → ~0.8 bedrock)
   zoom: number; //     plate zoom 1..~1.14
@@ -49,14 +48,12 @@ export const PHASES_REST: DescentPhases = {
   rest: 0,
   bottom: 0,
   black: 0,
-  rootsFade: 0,
   camX: 0.88,
   camY: 0.38,
   zoom: 1,
 };
 
 const TREE_SRC = "/v2/hero-wide.avif";
-const ROOTS_SRC = "/v2/roots-bedrock.avif";
 
 const GRID_W = 384;
 const SPAWN_BAND: [number, number] = [0.02, 0.58];
@@ -144,12 +141,9 @@ export default function WorldTreeCanvas({
 
     /* ---- images + vein field ---- */
     const tree = new Image();
-    const roots = new Image();
     let treeReady = false;
-    let rootsReady = false;
-    /* GPU-friendly pre-decoded bitmaps for the per-frame blits */
+    /* GPU-friendly pre-decoded bitmap for the per-frame blits */
     let treeBmp: ImageBitmap | null = null;
-    let rootsBmp: ImageBitmap | null = null;
     let lastSig = -1;
     let field: Uint8Array | null = null;
     let gw = 0;
@@ -262,14 +256,7 @@ export default function WorldTreeCanvas({
       }
       treeReady = true;
     };
-    roots.onload = () => {
-      rootsReady = true;
-      createImageBitmap(roots).then((b) => {
-        if (!disposed) rootsBmp = b;
-      }).catch(() => {});
-    };
     tree.src = TREE_SRC;
-    roots.src = ROOTS_SRC;
 
     /* ---- viewport ---- */
     let W = 0;
@@ -353,27 +340,13 @@ export default function WorldTreeCanvas({
         Math.round(offX * 4) * 31 +
         Math.round(offY * 4) * 7 +
         Math.round(scale * imgW * 4) +
-        Math.round(ph.black * 250) * 131 +
-        Math.round(ph.rootsFade * 250) * 257 +
-        (ph.rootsFade > 0.004 ? Math.round(rest * 250) * 521 : 0);
+        Math.round(ph.black * 250) * 131;
       if (bgDirty || sig !== lastSig) {
         lastSig = sig;
         bgDirty = false;
         bctx.clearRect(0, 0, W, H);
-        const treeAlpha = (1 - ph.rootsFade) * (1 - ph.black * 0.55);
-        if (treeAlpha > 0.004) {
-          bctx.globalAlpha = treeAlpha;
-          bctx.drawImage(treeBmp ?? tree, offX, offY, imgW * scale, imgH * scale);
-        }
-        if (rootsReady && ph.rootsFade > 0.004) {
-          /* the roots close-up gets its own gentle framing drift */
-          const rs =
-            Math.max(W / roots.naturalWidth, H / roots.naturalHeight) * (1.04 + rest * 0.05);
-          const rx = (W - roots.naturalWidth * rs) * 0.5;
-          const ry = (H - roots.naturalHeight * rs) * lerp(0.7, 0.52, rest);
-          bctx.globalAlpha = ph.rootsFade;
-          bctx.drawImage(rootsBmp ?? roots, rx, ry, roots.naturalWidth * rs, roots.naturalHeight * rs);
-        }
+        bctx.globalAlpha = 1 - ph.black * 0.55;
+        bctx.drawImage(treeBmp ?? tree, offX, offY, imgW * scale, imgH * scale);
         bctx.globalAlpha = 1;
         /* the thesis dwell sinks everything toward black so the helix owns
            the frame; regroup lifts it back out */
@@ -537,11 +510,9 @@ export default function WorldTreeCanvas({
 
       /* ---- the settlement orb itself ---- */
       if (ignite > 0.001) {
-        /* as it settles, the orb glides to a composed hollow in the frame —
-           the resting point must sit well regardless of plate framing */
-        const seat = smooth01(rest / 0.5);
-        const bx = lerp(px(bigIx), W * 0.5, seat);
-        const by = lerp(py(bigIy), H * 0.72, seat);
+        /* it rests where the vein path ends — in THIS tree's roots */
+        const bx = px(bigIx);
+        const by = py(bigIy);
         /* hue ride: green → cyan → blue as it sinks toward bedrock */
         const hue = smooth01((travel - 0.45) / 0.5);
         const breathe = 1 + 0.06 * Math.sin(bigPulse * 3.1) + surge * 0.1;
@@ -632,7 +603,6 @@ export default function WorldTreeCanvas({
       disposed = true;
       tickRef.current = null;
       treeBmp?.close();
-      rootsBmp?.close();
       window.removeEventListener("resize", fit);
     };
   }, [phasesRef, tickRef]);

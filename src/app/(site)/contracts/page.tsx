@@ -11,8 +11,8 @@ import { NextSteps } from "@/components/site/NextSteps";
 import { Reveal } from "@/components/site/Reveal";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { NetworkStatusWidget } from "@/components/site/NetworkStatusWidget";
-import { StateQueueViz } from "@/components/site/StateQueueViz";
 import { CopyField } from "@/components/site/CopyField";
+import RuneDecode from "@/components/site/RuneDecode";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import {
@@ -54,6 +54,8 @@ export default function ContractsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      {/* the opening incantation: runes decode into English down the page */}
+      <RuneDecode />
       <PageHero
         tone="ember"
         label="Protocol contracts"
@@ -80,7 +82,6 @@ export default function ContractsPage() {
       {/* Sticky in-page TOC — the page is long and reference-heavy */}
       <nav className="page-sticky-toc" aria-label="On this page">
         <a href="#network-status">Status</a>
-        <a href="#queue">State queue</a>
         <a href="#topology">Topology</a>
         <a href="#addresses">Validators</a>
         <a href="#anchors">State anchors</a>
@@ -105,18 +106,8 @@ export default function ContractsPage() {
         <NetworkStatusWidget />
       </Section>
 
-      {/* On-chain state queue animation (moved from the testnet page) */}
-      <Section
-        id="queue"
-        eyebrow="On-chain state queue"
-        title="Blocks commit. Root confirms"
-        lead="Operators append committed blocks to a singly-linked queue. When a block's fraud-proof window closes, it folds into the confirmed state — oldest first, one L1 transaction at a time."
-        glow="green"
-      >
-        <StateQueueViz />
-      </Section>
-
-      {/* 01 — Topology */}
+      {/* 01 — Topology (the state-queue animation now lives on /how-it-works,
+          inside the journey it illustrates) */}
       <Section
         id="topology"
         eyebrow="01 · Contract topology"
