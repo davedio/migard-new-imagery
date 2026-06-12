@@ -143,6 +143,11 @@ export function SplashOverlay() {
             Enter Midgard
           </span>
         </div>
+
+        {/* quiet skip affordance during the early beats */}
+        <span className="splash__hint" aria-hidden>
+          Click anywhere to enter
+        </span>
       </div>
     </div>
   );

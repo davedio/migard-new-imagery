@@ -204,7 +204,7 @@ a {
      --plate-settle on the .plate-stage parent (see above). */
   --plate-y: 42%;
   --plate-scale: 1.06;
-  background-image: url("/plates/worldtree-tall.avif");
+  background-image: url("/plates/worldtree-night-tall.avif");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% var(--plate-y);
@@ -317,7 +317,7 @@ a {
 .plate-stage__dof-img {
   position: absolute;
   inset: 0;
-  background-image: url("/plates/worldtree-tall.avif");
+  background-image: url("/plates/worldtree-night-tall.avif");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% var(--plate-y, 42%);
@@ -3698,6 +3698,11 @@ a.chip:hover {
    morning mist over the day plate.
    ============================================================ */
 :root[data-theme="light"] {
+  /* proof gold deepens to stay legible on the bright plate */
+  --gold: #8a6512;
+  --gold-bright: #7d5c10;
+  --gold-dim: rgba(125, 92, 16, 0.6);
+  --gold-line: rgba(125, 92, 16, 0.5);
   --deep-ink: #f1f4ec;
   --charcoal: #e6ebe1;
   --mist: #20301f;
@@ -3742,4 +3747,64 @@ a.chip:hover {
     radial-gradient(1100px 560px at 84% 112%, rgba(32, 190, 67, 0.07), transparent 70%),
     radial-gradient(820px 480px at 8% 86%, rgba(224, 163, 60, 0.08), transparent 72%),
     radial-gradient(720px 420px at 50% -6%, rgba(255, 244, 214, 0.3), transparent 75%);
+}
+
+/* ============================================================
+   POLISH PASS (2026-06-12)
+   ============================================================ */
+
+/* theme flip rides a View Transition (see src/lib/theme.tsx) — a touch
+   slower than the browser default so the dawn/night swap reads as light
+   changing, not a cut */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.55s;
+}
+
+/* the intro's early beats carry a quiet affordance; it bows out once the
+   real Enter control arrives */
+.splash__hint {
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(244, 241, 230, 0.55);
+  opacity: 0;
+  transition: opacity 1s var(--ease) 1.2s;
+}
+.splash--cinema[data-phase="tree"] .splash__hint,
+.splash--cinema[data-phase="logo"] .splash__hint {
+  opacity: 1;
+}
+.splash--cinema[data-phase="title"] .splash__hint,
+.splash--cinema[data-phase="leaving"] .splash__hint {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+/* light mode: the live fx canvas screen-blends to nothing over the bright
+   dawn sky — composite it normally so the green signal stays luminous */
+[data-theme="light"] .plate-stage__fx {
+  mix-blend-mode: normal;
+}
+
+/* light mode: display type gets a soft mist halo so it holds over the
+   bright trunk and sky without heavier veils */
+[data-theme="light"] .v2-hero__title,
+[data-theme="light"] .v2-thesis__h2,
+[data-theme="light"] .v2-ch h2,
+[data-theme="light"] .hiw-act__title {
+  text-shadow:
+    0 1px 26px rgba(241, 246, 238, 0.9),
+    0 0 64px rgba(241, 246, 238, 0.65);
+}
+[data-theme="light"] .v2-hero__lead,
+[data-theme="light"] .v2-ch__lead,
+[data-theme="light"] .hiw-act__lead {
+  text-shadow: 0 1px 18px rgba(241, 246, 238, 0.85);
 }

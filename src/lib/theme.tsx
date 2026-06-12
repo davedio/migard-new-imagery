@@ -20,6 +20,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { flushSync } from "react-dom";
 
 export type Theme = "dark" | "light";
 
@@ -57,7 +58,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const setTheme = useCallback((t: Theme) => {
+  const apply = useCallback((t: Theme) => {
     setThemeState(t);
     try {
       window.localStorage.setItem(STORAGE_KEY, t);
@@ -67,6 +68,35 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (t === "light") document.documentElement.dataset.theme = "light";
     else delete document.documentElement.dataset.theme;
   }, []);
+
+  /* Flip inside a View Transition where supported so night<->day reads
+     as one crossfade instead of a hard swap (flushSync makes the React
+     commit land inside the transition's snapshot window). */
+  const setTheme = useCallback(
+    (t: Theme) => {
+      const doc = document as Document & {
+        startViewTransition?: (cb: () => void) => unknown;
+      };
+      if (typeof doc.startViewTransition === "function") {
+        doc.startViewTransition(() => {
+          flushSync(() => apply(t));
+        });
+      } else {
+        apply(t);
+      }
+    },
+    [apply],
+  );
+
+  /* Warm the OTHER plate once the page has settled, so the first theme
+     flip crossfades into an already-decoded image instead of a blank. */
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      const img = new window.Image();
+      img.src = TREE_PLATES[theme === "dark" ? "light" : "dark"];
+    }, 2500);
+    return () => window.clearTimeout(id);
+  }, [theme]);
 
   const toggle = useCallback(
     () => setTheme(theme === "dark" ? "light" : "dark"),

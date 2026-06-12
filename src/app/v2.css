@@ -1236,7 +1236,7 @@ h2 em,
    · the stage HUD badge is LARGER (client request: right of tree + bigger)
    ------------------------------------------------------------------------- */
 .plate-stage__img {
-  background-image: url("/plates/worldtree-tall-4k.avif");
+  background-image: url("/plates/worldtree-night-tall.avif");
 }
 .stage-graphic__card {
   align-items: flex-start;
@@ -1484,4 +1484,37 @@ h2 em,
 }
 [data-theme="light"] .site-nav__burger {
   background: rgba(241, 246, 238, 0.72);
+}
+
+/* light mode: the footer's own scrim becomes morning paper */
+[data-theme="light"] .site-footer {
+  background: linear-gradient(180deg, rgba(241, 246, 238, 0.3), rgba(241, 246, 238, 0.95) 55%);
+}
+
+/* light mode: a localized pool of mist directly behind the hero copy —
+   the stacking context (z-index: 0) keeps the ::before above the fixed
+   canvas stage but under the text */
+[data-theme="light"] .v2-band__hero {
+  position: relative;
+  z-index: 0;
+}
+[data-theme="light"] .v2-band__hero::before {
+  content: "";
+  position: absolute;
+  inset: -12% -16%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    72% 68% at 42% 48%,
+    rgba(241, 246, 238, 0.62),
+    rgba(241, 246, 238, 0.28) 58%,
+    transparent 78%
+  );
+}
+
+/* light mode: the network chip flips to a paper capsule */
+[data-theme="light"] .network-chip {
+  background: rgba(241, 246, 238, 0.85);
+  border-color: rgba(20, 39, 28, 0.2);
+  color: var(--text);
 }
