@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { useMotionPref } from "@/lib/motion";
+import { useTheme, TREE_PLATES } from "@/lib/theme";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 
 /* ============================================================
@@ -149,6 +150,10 @@ export default function HowItWorksExperience({
   children: ReactNode;
 }) {
   const { motionOn, toggle } = useMotionPref();
+  /* the SAME tree as home, at the theme's time of day — keyed below so a
+     theme flip re-measures the plate anatomy (centerline, canopy, vault) */
+  const { theme } = useTheme();
+  const plateSrc = TREE_PLATES[theme];
 
   // desktop + motion-on gate for the heavy interaction systems
   const [finePointer, setFinePointer] = useState(false);
@@ -238,6 +243,8 @@ export default function HowItWorksExperience({
       <BodyPortal>
         <div className="scene-stage">
           <PhotorealBackdrop
+            key={plateSrc}
+            plateSrc={plateSrc}
             progressRef={journeyProgressRef}
             packetRef={packetRef}
             motionOn={journeyOn}

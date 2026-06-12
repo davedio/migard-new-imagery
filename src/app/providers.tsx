@@ -6,6 +6,7 @@ import { useState } from "react";
 // motion preference (OS reduced-motion + manual toggle) AND the global
 // MOTION_SPEED multiplier every scene applies at its frame boundary.
 import { MotionProvider } from "@/lib/motionConfig";
+import { ThemeProvider } from "@/lib/theme";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [client] = useState(
@@ -21,7 +22,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
   return (
     <QueryClientProvider client={client}>
-      <MotionProvider>{children}</MotionProvider>
+      <ThemeProvider>
+        <MotionProvider>{children}</MotionProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

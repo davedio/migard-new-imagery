@@ -1,69 +1,72 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import MidgardWordmark from "@/components/MidgardWordmark";
 import { useMotionPref } from "@/lib/motion";
 
-const COOKIE = "midgard_entered";
-/** ~180 days, in seconds. */
-const COOKIE_MAX_AGE = 15552000;
 /** Matches the .splash--overlay CSS transition in globals.css. */
-const FADE_MS = 700;
+const FADE_MS = 900;
+/* The cinematic beats, ms from mount. The branch pattern of the world
+   tree was drawn FROM the Midgard logo, so the sequence makes that
+   lineage explicit: tree alone -> the sigil surfaces out of the canopy ->
+   the full MIDGARD lockup + Enter. */
+const BEAT_LOGO = 2400;
+const BEAT_TITLE = 4800;
+/** Gentle auto-advance for visitors who just watch. */
+const AUTO_ENTER = 13000;
+
+type Phase = "tree" | "logo" | "title" | "leaving" | "gone";
 
 /**
- * One-time cinematic entry overlay for the home page.
+ * Cinematic entry overlay for the home page (two-page preview build:
+ * shown on EVERY load so the intro itself can be reviewed — the old
+ * `midgard_entered` cookie gate is intentionally off on this branch).
  *
- * Reproduces the old `/` splash (static green world-tree + veil + wordmark)
- * as a fixed full-viewport layer above the nav. The whole surface is one big
- * "Enter Midgard" control: clicking anywhere (or Enter/Space) sets the
- * `midgard_entered` cookie, fades the overlay out (~700ms, instant under
- * reduced motion) and unmounts it. Body scroll is locked while visible.
- *
- * The server decides whether to render this at all — see src/app/(site)/page.tsx,
- * which reads cookies() so returning visitors never see a flash.
+ * Beats: the night world tree fades up from black; the Midgard sigil
+ * materializes over the trunk (the silhouette echo); the wordmark +
+ * tagline + Enter arrive. Clicking anywhere (or Enter/Space) enters
+ * immediately at any beat; if nobody clicks, it eases in on its own.
+ * Reduced motion jumps straight to the complete title card and never
+ * auto-advances. Body scroll is locked while visible.
  */
 export function SplashOverlay() {
-  const [phase, setPhase] = useState<"visible" | "leaving" | "gone">("visible");
-  const timer = useRef<number | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const { motionOn } = useMotionPref();
-  /* hold the 12MB flyover back until the page itself has loaded — the
-     static plate carries the first paint, the video fades in when ready */
-  const [videoArmed, setVideoArmed] = useState(false);
-  useEffect(() => {
-    let raf = 0;
-    const arm = () => {
-      raf = requestAnimationFrame(() => setVideoArmed(true));
-    };
-    if (document.readyState === "complete") arm();
-    else window.addEventListener("load", arm, { once: true });
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("load", arm);
-    };
+  const [phase, setPhase] = useState<Phase>("tree");
+  const timers = useRef<number[]>([]);
+
+  /* enter at any beat — the state updater guards re-entry, so this is
+     stable and safe to share with the auto-advance timer */
+  const enter = useCallback(() => {
+    setPhase((p) => {
+      if (p === "leaving" || p === "gone") return p;
+      const reduced =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduced) return "gone";
+      window.setTimeout(() => setPhase("gone"), FADE_MS + 20);
+      return "leaving";
+    });
   }, []);
 
-  /* The forest flyover: fades in over the static plate once it can play,
-     and breathes down just before each loop point so the restart cut reads
-     as a slow exhale instead of a jump. */
+  /* the beat timeline — motion-off skips it (and never auto-advances) */
   useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const onReady = () => {
-      v.dataset.ready = "true";
-    };
-    const onTime = () => {
-      const left = v.duration - v.currentTime;
-      v.dataset.dim = String(Number.isFinite(left) && left < 0.6);
-    };
-    v.addEventListener("canplay", onReady);
-    v.addEventListener("timeupdate", onTime);
+    if (!motionOn) return;
+    const t1 = window.setTimeout(
+      () => setPhase((p) => (p === "tree" ? "logo" : p)),
+      BEAT_LOGO,
+    );
+    const t2 = window.setTimeout(
+      () => setPhase((p) => (p === "tree" || p === "logo" ? "title" : p)),
+      BEAT_TITLE,
+    );
+    const t3 = window.setTimeout(enter, AUTO_ENTER);
+    timers.current.push(t1, t2, t3);
     return () => {
-      v.removeEventListener("canplay", onReady);
-      v.removeEventListener("timeupdate", onTime);
+      for (const t of timers.current) window.clearTimeout(t);
+      timers.current = [];
     };
-  }, [motionOn, phase]);
+  }, [motionOn, enter]);
 
   // Lock body scroll while the overlay is up.
   useEffect(() => {
@@ -76,32 +79,17 @@ export function SplashOverlay() {
     };
   }, [phase]);
 
-  useEffect(
-    () => () => {
-      if (timer.current !== null) window.clearTimeout(timer.current);
-    },
-    [],
-  );
-
-  const enter = () => {
-    if (phase !== "visible") return;
-    document.cookie = `${COOKIE}=1; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax`;
-    const reduced =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      setPhase("gone");
-      return;
-    }
-    setPhase("leaving");
-    timer.current = window.setTimeout(() => setPhase("gone"), FADE_MS + 20);
-  };
-
   if (phase === "gone") return null;
+
+  /* motion-off shows the finished title card immediately — the early
+     beats are display-only, so this is derived, not state */
+  const shownPhase =
+    !motionOn && (phase === "tree" || phase === "logo") ? "title" : phase;
 
   return (
     <div
-      className="splash splash--overlay"
+      className="splash splash--overlay splash--cinema"
+      data-phase={shownPhase}
       data-leaving={phase === "leaving"}
       role="button"
       tabIndex={0}
@@ -114,36 +102,47 @@ export function SplashOverlay() {
         }
       }}
     >
-      <div className="splash__bg" aria-hidden />
-      {motionOn && videoArmed ? (
-        <video
-          ref={videoRef}
-          className="splash__video"
-          aria-hidden
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          src="/v2/splash-forest.mp4"
-        />
-      ) : null}
-      <div className="splash__veil" aria-hidden />
+      {/* the night world tree — the same plate the home descent rides */}
+      <div className="splash__tree" aria-hidden />
+      <div className="splash__veil splash__veil--cinema" aria-hidden />
 
-      <div className="splash__content">
-        <div className="splash__lock" aria-hidden>
-          <Image src="/midgard-icon.png" alt="" aria-hidden width={64} height={64} priority />
-          <span className="wm">
-            <MidgardWordmark radius={165} />
+      <div className="splash__content splash__content--cinema">
+        {/* beat 2: the sigil surfaces over the trunk — the tree's branch
+            pattern came from this mark, and here it shows */}
+        <div className="splash__sigil" aria-hidden>
+          <Image
+            src="/midgard-icon.png"
+            alt=""
+            aria-hidden
+            width={148}
+            height={148}
+            priority
+          />
+        </div>
+
+        {/* beat 3: the full lockup */}
+        <div className="splash__reveal">
+          <div className="splash__lock" aria-hidden>
+            <Image
+              src="/midgard-icon.png"
+              alt=""
+              aria-hidden
+              width={64}
+              height={64}
+              priority
+            />
+            <span className="wm">
+              <MidgardWordmark radius={165} />
+            </span>
+          </div>
+          <p className="splash__tagline" aria-hidden>
+            A Cardano-native optimistic rollup
+          </p>
+          {/* Affordance only — the whole overlay is the actual control. */}
+          <span className="splash__enter" aria-hidden>
+            Enter Midgard
           </span>
         </div>
-        <p className="splash__tagline" aria-hidden>
-          A Cardano-native optimistic rollup
-        </p>
-        {/* Affordance only — the whole overlay is the actual control. */}
-        <span className="splash__enter" aria-hidden>
-          Enter Midgard
-        </span>
       </div>
     </div>
   );

@@ -3,17 +3,9 @@ import type { MetadataRoute } from "next";
 const SITE_URL = "https://midgard-gateway.vercel.app";
 
 /* Canonical, indexable routes only — /home now permanently redirects to /,
-   and /access is intentionally excluded (robots disallows it). */
-const ROUTES = [
-  "",
-  "/how-it-works",
-  "/contracts",
-  "/get-started",
-  "/about",
-  "/faq",
-  "/official-links",
-  "/roadmap",
-];
+   and /access is intentionally excluded (robots disallows it).
+   Two-page preview build: just the new-tree home + How It Works. */
+const ROUTES = ["", "/how-it-works"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.map((route) => ({

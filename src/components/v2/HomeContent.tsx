@@ -8,7 +8,6 @@
    Copy here is the finalized site language; presentation lives elsewhere.
    ========================================================================== */
 
-import Link from "next/link";
 import { animate, motion } from "motion/react";
 import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
@@ -201,27 +200,29 @@ export function Statement() {
 /*  trunk / paths                                                          */
 /* ---------------------------------------------------------------------- */
 
+/* Two-page preview branch: the /get-started destinations are not part of
+   this build, so the path cards route to the live community surfaces. */
 const PATHS = [
   {
     n: "01",
     title: "Users",
     line: "Use Cardano apps that run on Midgard — same wallet, same ADA.",
     cta: "Start as a user",
-    href: "/get-started#users",
+    href: OFFICIAL_LINKS.discord,
   },
   {
     n: "02",
     title: "Builders",
     line: "For wallets and dApps, including DEXs, lending protocols, and any other applications.",
     cta: "Start building",
-    href: "/get-started#builder-quickstart",
+    href: OFFICIAL_LINKS.github,
   },
   {
     n: "03",
     title: "Operators & Watchers",
     line: "For Midgard operators, batchers, and watchers.",
     cta: "Run the protocol",
-    href: "/get-started#network-roles",
+    href: OFFICIAL_LINKS.github,
   },
 ] as const;
 
@@ -231,12 +232,17 @@ export function Paths() {
       <div className="v2-explore__grid">
         {PATHS.map((p, i) => (
           <Rise key={p.n} delay={i * 0.07} style={{ display: "flex" }}>
-            <Link href={p.href} className="panel panel--select-glow v2-explore__card">
+            <a
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="panel panel--select-glow v2-explore__card"
+            >
               <div className="v2-explore__num">{p.n}</div>
               <h3>{p.title}</h3>
               <p>{p.line}</p>
               <span className="panel-cta-glow">{p.cta} →</span>
-            </Link>
+            </a>
           </Rise>
         ))}
       </div>
@@ -349,9 +355,14 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
         </Rise>
         <Rise delay={0.1}>
           <div className="v2-prov__actions">
-            <Link className="btn btn--ghost" href="/contracts">
-              See the contracts
-            </Link>
+            <a
+              className="btn btn--ghost"
+              href="https://anastasia-labs.github.io/midgard/midgard.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Read the whitepaper
+            </a>
             <a
               className="btn btn--ghost"
               href={OFFICIAL_LINKS.github}

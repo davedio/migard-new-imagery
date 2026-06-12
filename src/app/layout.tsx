@@ -3,6 +3,7 @@ import { Poppins, Inter, JetBrains_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import "./v2.css";
 import { Providers } from "./providers";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 /* Original Midgard type system: Syne/Poppins display, Inter body,
    JetBrains Mono data — the V2 layout keeps its scale and choreography
@@ -100,8 +101,11 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${display.variable} ${body.variable} ${mono.variable} ${syne.variable}`}
+      suppressHydrationWarning
     >
       <body>
+        {/* applies the stored theme before first paint — no dark->light flash */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}

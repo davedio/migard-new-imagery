@@ -53,9 +53,10 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        /* two-page preview build: /contracts is not on this branch */
         source: "/security",
-        destination: "/contracts#security-model",
-        permanent: true,
+        destination: "/",
+        permanent: false,
       },
     ];
   },

@@ -12,44 +12,28 @@ type FooterLink = {
   github?: boolean;
 };
 
-/* Full sitemap — every kept page is reachable from here without crowding
-   the top nav. Anchors (#users, #builder-quickstart, #operators,
-   #network-status, #contact) are owned by their pages. */
+/* Two-page preview build: only the routes on this branch plus the live
+   external surfaces. The full sitemap returns with the full site. */
 const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = [
   {
-    title: "Protocol",
+    title: "Explore",
     links: [
+      { label: "Home", href: "/" },
       { label: "How It Works", href: "/how-it-works" },
-      { label: "Contracts", href: "/contracts" },
-      { label: "Security model", href: "/contracts#security-model" },
-      { label: "Network status", href: "/contracts#network-status" },
+      {
+        label: "Whitepaper",
+        href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+        external: true,
+      },
     ],
   },
   {
-    title: "Get started",
+    title: "Community",
     links: [
-      { label: "Start as a user", href: "/get-started#users" },
-      { label: "Start building", href: "/get-started#builder-quickstart" },
-      { label: "Run the protocol", href: "/get-started#network-roles" },
-      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { label: "FAQ", href: "/faq" },
-      { label: "Official links", href: "/official-links" },
-      { label: "Roadmap", href: "/roadmap" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About", href: "/about" },
-      { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy, external: true },
       { label: "X", href: OFFICIAL_LINKS.x, external: true },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
+      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
 ];

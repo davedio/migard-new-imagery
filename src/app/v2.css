@@ -1435,3 +1435,53 @@ h2 em,
 .v2-home[data-motion="off"] .v2-hero__eyebrow .tick {
   animation: none;
 }
+
+/* ============================================================
+   LIGHT THEME — v2 presentation tokens. Bone-on-ink inverts to
+   ink-on-bone; the living-green signal deepens for contrast on the
+   dawn plate; veils become morning haze instead of night air.
+   ============================================================ */
+:root[data-theme="light"] {
+  --bone: #16271c;
+  --text-hi: #16271c;
+  --text: #30463a;
+  --text-dim: #54695c;
+  --text-faint: #71857a;
+  --green-bright: #0f8f3c;
+  --cobalt: #2f55c9;
+  --cobalt-dim: rgba(47, 85, 201, 0.55);
+  --hairline: rgba(20, 39, 28, 0.16);
+  --hairline-strong: rgba(20, 39, 28, 0.3);
+  --panel-edge: rgba(20, 39, 28, 0.13);
+  --panel-edge-strong: rgba(20, 39, 28, 0.22);
+}
+[data-theme="light"] .v2-stage__veil {
+  background:
+    linear-gradient(180deg, rgba(241, 246, 238, 0.55), transparent 16%, transparent 84%, rgba(241, 246, 238, 0.35)),
+    linear-gradient(90deg, rgba(241, 246, 238, 0.6), rgba(241, 246, 238, 0.22) 42%, transparent 64%);
+}
+[data-theme="light"] .v2-static__veil {
+  background:
+    linear-gradient(180deg, rgba(241, 246, 238, 0.52), transparent 14%, transparent 78%, rgba(241, 246, 238, 0.64)),
+    linear-gradient(90deg, rgba(241, 246, 238, 0.38), rgba(241, 246, 238, 0.12) 38%, transparent 58%);
+}
+[data-theme="light"] .v2-static--dark {
+  background: #e9eee3;
+}
+[data-theme="light"] .site-nav {
+  background: linear-gradient(180deg, rgba(241, 246, 238, 0.82), rgba(241, 246, 238, 0.16) 80%, transparent);
+}
+[data-theme="light"] .site-nav[data-scrolled="true"] {
+  background: rgba(241, 246, 238, 0.9);
+}
+/* light mode: the primary button stays the dark-ink slab, so its label
+   flips to bone; chrome buttons pick up the morning surface */
+[data-theme="light"] .btn--primary {
+  color: #f1f4ec;
+}
+[data-theme="light"] .btn--primary:hover {
+  color: #ffffff;
+}
+[data-theme="light"] .site-nav__burger {
+  background: rgba(241, 246, 238, 0.72);
+}

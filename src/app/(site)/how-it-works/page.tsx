@@ -19,22 +19,25 @@ export default function HowItWorksPage() {
   // /contracts#lifecycle.)
   return (
     <HowItWorksExperience>
+      {/* Two-page preview build: /contracts and /get-started are not on
+          this branch, so the cards route to the whitepaper, the code and
+          the home paths section. */}
       <NextSteps
         items={[
           {
-            label: "Read the security model",
+            label: "Read the whitepaper",
             sub: "The challenge and proof design that keeps operators honest",
-            href: "/contracts#security-model",
+            href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
           },
           {
-            label: "Inspect the contracts",
-            sub: "Verify the on-chain addresses yourself",
-            href: "/contracts",
+            label: "Inspect the code",
+            sub: "The protocol is open — verify it yourself on GitHub",
+            href: "https://github.com/Anastasia-Labs/midgard",
           },
           {
             label: "Choose your path",
             sub: "Start as a user, start building, or run the protocol",
-            href: "/get-started",
+            href: "/#explore",
           },
         ]}
       />

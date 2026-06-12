@@ -53,7 +53,11 @@ export const PHASES_REST: DescentPhases = {
   zoom: 1,
 };
 
-const TREE_SRC = "/v2/hero-wide.avif";
+/* The ONE world tree — the same tall night/day plate every surface uses
+   (hero, descent, how-it-works). Which time of day arrives via the `src`
+   prop from the theme; the vein field below is re-read from whichever
+   plate loads, so the orbs always ride THIS tree's painted veins. */
+const TREE_SRC = "/plates/worldtree-night-tall.avif";
 
 const GRID_W = 384;
 const SPAWN_BAND: [number, number] = [0.02, 0.58];
@@ -110,10 +114,13 @@ function makeSprite(r: number, g: number, b: number): HTMLCanvasElement {
 export default function WorldTreeCanvas({
   phasesRef,
   tickRef,
+  src = TREE_SRC,
 }: {
   phasesRef: React.RefObject<DescentPhases>;
   /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
   tickRef: React.RefObject<((dt: number) => void) | null>;
+  /** Tree plate to draw + read veins from (theme picks night or day). */
+  src?: string;
 }) {
   /* TWO stacked canvases (perf pass 2026-06-11): the PLATE layer redraws
      only when the camera/fades actually move (during a dwell it costs
@@ -207,7 +214,8 @@ export default function WorldTreeCanvas({
           }
         }
       }
-      trunkX = wsum > 0 ? xsum / wsum : imgW * 0.78;
+      /* tall plate: the tree is centred, so centre is the honest fallback */
+      trunkX = wsum > 0 ? xsum / wsum : imgW * 0.5;
       createImageBitmap(tree).then((b) => {
         if (!disposed) treeBmp = b;
       }).catch(() => {});
@@ -256,7 +264,7 @@ export default function WorldTreeCanvas({
       }
       treeReady = true;
     };
-    tree.src = TREE_SRC;
+    tree.src = src;
 
     /* ---- viewport ---- */
     let W = 0;
@@ -612,7 +620,7 @@ export default function WorldTreeCanvas({
       treeBmp?.close();
       window.removeEventListener("resize", fit);
     };
-  }, [phasesRef, tickRef]);
+  }, [phasesRef, tickRef, src]);
 
   return (
     <>

@@ -5,17 +5,9 @@ import { usePathname } from "next/navigation";
 
 /* The footer statement is a TOUR step (review 2026-06-11): from any page it
    carries you to the NEXT page in the nav order, so reading the site end to
-   end is just "scroll, take root, repeat". Unknown routes fall back to the
-   start of the journey. */
-const TOUR = [
-  "/",
-  "/how-it-works",
-  "/contracts",
-  "/get-started",
-  "/roadmap",
-  "/about",
-  "/faq",
-] as const;
+   end is just "scroll, take root, repeat". Two-page preview build: the tour
+   is just home <-> how-it-works. */
+const TOUR = ["/", "/how-it-works"] as const;
 
 export function FooterStatement() {
   const pathname = usePathname();

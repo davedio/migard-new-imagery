@@ -116,7 +116,7 @@ const BAND_IDS = [
 
 const subscribeNoop = () => () => {};
 
-export default function DescentFlow() {
+export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
   const { motionOn } = useMotionPref();
   const mounted = useSyncExternalStore(
     subscribeNoop,
@@ -298,8 +298,8 @@ export default function DescentFlow() {
             </Rise>
             <Rise delay={0.3}>
               <div className="v2-hero__actions">
-                <Link className="btn btn--primary" href="/get-started">
-                  Get Started
+                <Link className="btn btn--primary" href="/how-it-works">
+                  See How It Works
                 </Link>
                 <a
                   className="btn-link--gold"
@@ -417,7 +417,13 @@ export default function DescentFlow() {
       {mounted
         ? createPortal(
             <div ref={stageRef} className="v2-stage" data-stage>
-              <WorldTreeCanvas phasesRef={phasesRef} tickRef={tickRef} />
+              {/* keyed by plate so a theme flip re-reads the vein field */}
+              <WorldTreeCanvas
+                key={treeSrc}
+                src={treeSrc}
+                phasesRef={phasesRef}
+                tickRef={tickRef}
+              />
               <div className="v2-stage__veil" aria-hidden />
               <nav ref={railRef} className="v2-rail" aria-label="Page strata">
                 {RAIL.map((r) => (

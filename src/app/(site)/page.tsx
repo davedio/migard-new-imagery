@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import HomeV2 from "@/components/v2/HomeV2";
 import { SplashOverlay } from "@/components/site/SplashOverlay";
 
@@ -17,20 +16,14 @@ export const metadata: Metadata = {
 /**
  * Canonical home at `/`, inside the (site) group so it shares nav + footer.
  *
- * First-time visitors get the one-time SplashOverlay (the old `/` title card,
- * now a fixed layer above the chrome). Entering sets the `midgard_entered`
- * cookie; because this is an async server component that reads cookies(),
- * returning visitors never render the overlay at all — no flash, no client
- * check. The old standalone splash route (src/app/page.tsx) is gone and
- * /home permanently redirects here.
+ * Two-page preview build: the cinematic SplashOverlay (tree -> sigil ->
+ * MIDGARD -> Enter) plays on EVERY visit so the intro itself can be
+ * reviewed. The cookie gate from main is intentionally dropped here.
  */
-export default async function HomePage() {
-  const cookieStore = await cookies();
-  const entered = cookieStore.has("midgard_entered");
-
+export default function HomePage() {
   return (
     <>
-      {!entered ? <SplashOverlay /> : null}
+      <SplashOverlay />
       <HomeV2 />
     </>
   );

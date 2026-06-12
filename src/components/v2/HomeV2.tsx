@@ -20,6 +20,7 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
+import { useTheme, TREE_PLATES } from "@/lib/theme";
 import DescentFlow from "./DescentFlow";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
@@ -32,10 +33,14 @@ import {
   MotionToggle,
 } from "./HomeContent";
 
-const PLATES = {
-  hero: "/v2/hero-wide.avif",
-  strata: "/v2/strata-tall.avif",
-  roots: "/v2/roots-bedrock.avif",
+/* ONE tree, every scene (client direction 2026-06-12): the static
+   fallback frames different bands of the SAME tall plate instead of
+   loading three different renders. The theme decides night or day. */
+const STATIC_BANDS = {
+  hero: "50% 20%", //  canopy
+  roots: "50% 86%", // bedrock boulders + glow
+  prov: "50% 60%", //  root flare
+  strata: "50% 42%", // trunk
 } as const;
 
 /* ---------------------------------------------------------------------- */
@@ -90,10 +95,10 @@ function StaticChapter({
   );
 }
 
-function StaticHome() {
+function StaticHome({ plate }: { plate: string }) {
   return (
     <>
-      <StaticScene id="top" plate={PLATES.hero} position="88% 38%">
+      <StaticScene id="top" plate={plate} position={STATIC_BANDS.hero}>
         <div className="v2-static__hero">
           <span className="v2-hero__eyebrow">
             <span className="tick" aria-hidden />
@@ -110,8 +115,8 @@ function StaticHome() {
             root of trust.
           </p>
           <div className="v2-hero__actions">
-            <Link className="btn btn--primary" href="/get-started">
-              Get Started
+            <Link className="btn btn--primary" href="/how-it-works">
+              See How It Works
             </Link>
             <a
               className="btn-link--gold"
@@ -147,7 +152,7 @@ function StaticHome() {
         </div>
       </section>
 
-      <StaticScene id="roots" plate={PLATES.roots} position="68% 64%">
+      <StaticScene id="roots" plate={plate} position={STATIC_BANDS.roots}>
         <StaticChapter
           n="02"
           stratum="Roots — protocol at a glance"
@@ -179,11 +184,11 @@ function StaticHome() {
         </div>
       </StaticScene>
 
-      <StaticScene id="prov" plate={PLATES.roots} position="50% 52%">
+      <StaticScene id="prov" plate={plate} position={STATIC_BANDS.prov}>
         <Provenance />
       </StaticScene>
 
-      <StaticScene id="trunk" plate={PLATES.strata} position="50% 32%">
+      <StaticScene id="trunk" plate={plate} position={STATIC_BANDS.strata}>
         <StaticChapter
           n="03"
           stratum="Trunk — three ways in"
@@ -202,12 +207,14 @@ function StaticHome() {
 
 export default function HomeV2() {
   const { motionOn } = useMotionPref();
+  const { theme } = useTheme();
+  const plate = TREE_PLATES[theme];
 
   return (
     <main className="v2-home" data-motion={motionOn ? "on" : "off"}>
       {/* React hoists these to <head> — the tree plate is the LCP image */}
-      <link rel="preload" as="image" href={PLATES.hero} />
-      {motionOn ? <DescentFlow /> : <StaticHome />}
+      <link rel="preload" as="image" href={plate} />
+      {motionOn ? <DescentFlow treeSrc={plate} /> : <StaticHome plate={plate} />}
       <MotionToggle />
     </main>
   );

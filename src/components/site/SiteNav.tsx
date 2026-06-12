@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { useTheme } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
 /*  Nav model                                                           */
@@ -16,18 +17,51 @@ type NavLink = {
   href: string;
 };
 
-/* Trimmed 2026-06-11: Security lives at the bottom of /contracts now;
-   Official Links is reachable from the footer site index only; Brand and
-   Changelog are gone. */
+/* Two-page preview build (2026-06-12): only the routes that exist on
+   this branch — the new-tree home and the How It Works descent. */
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
   { label: "How It Works", href: "/how-it-works" },
-  { label: "Contracts", href: "/contracts" },
-  { label: "Get Started", href: "/get-started" },
-  { label: "Roadmap", href: "/roadmap" },
-  { label: "About", href: "/about" },
-  { label: "FAQ", href: "/faq" },
 ] as const;
+
+/* Sun/moon toggle — flips between the night tree and the dawn tree. */
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const dark = theme === "dark";
+  return (
+    <button
+      type="button"
+      className="theme-toggle"
+      onClick={toggle}
+      aria-pressed={!dark}
+      aria-label={dark ? "Switch to day mode" : "Switch to night mode"}
+      title={dark ? "Switch to day mode" : "Switch to night mode"}
+    >
+      {dark ? (
+        /* moon — night is active, clicking brings the dawn */
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path
+            d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ) : (
+        /* sun — day is active, clicking brings back the night */
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.7" />
+          <path
+            d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6M18.6 5.4l-1.6 1.6M7 17l-1.6 1.6M18.6 18.6 17 17M7 7 5.4 5.4"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
+        </svg>
+      )}
+    </button>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  Component                                                           */
@@ -111,6 +145,7 @@ export function SiteNav() {
         </div>
 
         <div className="site-nav__right">
+          <ThemeToggle />
           <button
             type="button"
             className="site-nav__burger"

@@ -318,6 +318,7 @@ export default function PhotorealBackdrop({
   packetRef,
   motionOn,
   wide,
+  plateSrc = "/plates/worldtree-night-tall.avif",
 }: {
   /** smoothed 0..1 journey progress (same ref the scene used) */
   progressRef: RefObject<number>;
@@ -327,6 +328,9 @@ export default function PhotorealBackdrop({
   motionOn: boolean;
   /** true when the wide plate / gentler pan should be used */
   wide: boolean;
+  /** the world-tree plate — night or day, chosen by the theme. The host
+      keys this component on it so a flip re-measures the tree anatomy. */
+  plateSrc?: string;
 }) {
   const plateRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -722,9 +726,7 @@ export default function PhotorealBackdrop({
     let repaint: (() => void) | null = null;
 
     const plateImg = new Image();
-    plateImg.src = wide
-      ? "/plates/worldtree-wide.avif"
-      : "/plates/worldtree-tall-4k.avif";
+    plateImg.src = plateSrc;
     plateImg.onload = () => {
       imgW = plateImg.naturalWidth;
       imgH = plateImg.naturalHeight;
@@ -1444,7 +1446,7 @@ export default function PhotorealBackdrop({
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [model, motionOn, packetRef, progressRef, wide]);
+  }, [model, motionOn, packetRef, progressRef, wide, plateSrc]);
 
   return (
     <div
@@ -1455,6 +1457,7 @@ export default function PhotorealBackdrop({
       <div
         ref={plateRef}
         className={`plate-stage__img${wide ? " plate-stage__img--wide" : ""}`}
+        style={{ backgroundImage: `url(${plateSrc})` }}
       />
       {/* ACES-ish filmic GRADE: a static, screen/overlay colour wash that
           sits over the plate but UNDER the live fx — gives the highlight
@@ -1476,6 +1479,7 @@ export default function PhotorealBackdrop({
         <div
           ref={dofImgRef}
           className={`plate-stage__dof-img${wide ? " plate-stage__dof-img--wide" : ""}`}
+          style={{ backgroundImage: `url(${plateSrc})` }}
         />
       </div>
       <div className="plate-stage__ca" />
