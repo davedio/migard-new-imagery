@@ -116,7 +116,13 @@ export default function ShatterHeading({
     let ch = 0;
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    const COLORS = ["rgba(232, 238, 229, 0.96)", "rgba(74, 222, 128, 0.95)", "rgba(255, 200, 64, 0.95)"];
+    /* dust matches the theme's ink — bone dust on the night plate is
+       invisible white-on-white over the dawn plate (read once per mount;
+       a theme flip re-keys the page surfaces anyway) */
+    const lightTheme = document.documentElement.dataset.theme === "light";
+    const COLORS = lightTheme
+      ? ["rgba(14, 27, 19, 0.92)", "rgba(12, 125, 54, 0.95)", "rgba(125, 92, 16, 0.95)"]
+      : ["rgba(232, 238, 229, 0.96)", "rgba(74, 222, 128, 0.95)", "rgba(255, 200, 64, 0.95)"];
 
     /* ---- sample glyph pixels into particles ---- */
     const sample = () => {
@@ -360,7 +366,9 @@ export default function ShatterHeading({
           }
         }
         /* faint constellation links between displaced row-neighbours */
-        ctx.strokeStyle = "rgba(220, 240, 228, 0.14)";
+        ctx.strokeStyle = lightTheme
+          ? "rgba(14, 27, 19, 0.16)"
+          : "rgba(220, 240, 228, 0.14)";
         ctx.lineWidth = 1;
         ctx.beginPath();
         let seg = 0;

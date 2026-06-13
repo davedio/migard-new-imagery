@@ -371,10 +371,14 @@ export default function WorldTreeCanvas({
         bctx.globalAlpha = 1 - ph.black * 0.55;
         bctx.drawImage(treeBmp ?? tree, offX, offY, imgW * scale, imgH * scale);
         bctx.globalAlpha = 1;
-        /* the thesis dwell sinks everything toward black so the helix owns
-           the frame; regroup lifts it back out */
+        /* the thesis dwell pulls the plate back so the helix owns the
+           frame — toward NIGHT on the dark plate, into MIST on the dawn
+           plate (a black wash over daylight read as murk; client review
+           2026-06-12) */
         if (ph.black > 0.004) {
-          bctx.fillStyle = `rgba(4, 7, 5, ${(ph.black * 0.92).toFixed(3)})`;
+          bctx.fillStyle = /day/.test(src)
+            ? `rgba(238, 243, 233, ${(ph.black * 0.8).toFixed(3)})`
+            : `rgba(4, 7, 5, ${(ph.black * 0.92).toFixed(3)})`;
           bctx.fillRect(0, 0, W, H);
         }
       }

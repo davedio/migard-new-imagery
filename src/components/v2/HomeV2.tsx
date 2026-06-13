@@ -214,7 +214,14 @@ export default function HomeV2() {
     <main className="v2-home" data-motion={motionOn ? "on" : "off"}>
       {/* React hoists these to <head> — the tree plate is the LCP image */}
       <link rel="preload" as="image" href={plate} />
-      {motionOn ? <DescentFlow treeSrc={plate} /> : <StaticHome plate={plate} />}
+      {/* keyed by plate: a theme flip remounts the whole flow so every
+          theme-derived value (canvas wash, shatter dust, vein field)
+          re-reads together under the view-transition crossfade */}
+      {motionOn ? (
+        <DescentFlow key={plate} treeSrc={plate} />
+      ) : (
+        <StaticHome plate={plate} />
+      )}
       <MotionToggle />
     </main>
   );

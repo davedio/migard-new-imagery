@@ -1442,28 +1442,32 @@ h2 em,
    dawn plate; veils become morning haze instead of night air.
    ============================================================ */
 :root[data-theme="light"] {
-  --bone: #16271c;
-  --text-hi: #16271c;
-  --text: #30463a;
-  --text-dim: #54695c;
-  --text-faint: #71857a;
-  --green-bright: #0f8f3c;
-  --cobalt: #2f55c9;
-  --cobalt-dim: rgba(47, 85, 201, 0.55);
-  --hairline: rgba(20, 39, 28, 0.16);
-  --hairline-strong: rgba(20, 39, 28, 0.3);
-  --panel-edge: rgba(20, 39, 28, 0.13);
-  --panel-edge-strong: rgba(20, 39, 28, 0.22);
+  /* near-black forest ink — photographic backgrounds need editorial-dark
+     text, not midtones (client review 2026-06-12: "white on white") */
+  --bone: #0e1b13;
+  --text-hi: #0e1b13;
+  --text: #1f3327;
+  --text-dim: #2e4436;
+  --text-faint: #46594c;
+  --green-bright: #0c7d36;
+  --cobalt: #2447b8;
+  --cobalt-dim: rgba(36, 71, 184, 0.6);
+  --hairline: rgba(14, 27, 19, 0.2);
+  --hairline-strong: rgba(14, 27, 19, 0.36);
+  --panel-edge: rgba(14, 27, 19, 0.16);
+  --panel-edge-strong: rgba(14, 27, 19, 0.26);
 }
 [data-theme="light"] .v2-stage__veil {
+  /* whisper of mist only — the near-black ink carries the contrast;
+     heavy white gradients read as a washed-out slab (client review) */
   background:
-    linear-gradient(180deg, rgba(241, 246, 238, 0.55), transparent 16%, transparent 84%, rgba(241, 246, 238, 0.35)),
-    linear-gradient(90deg, rgba(241, 246, 238, 0.6), rgba(241, 246, 238, 0.22) 42%, transparent 64%);
+    linear-gradient(180deg, rgba(241, 246, 238, 0.28), transparent 14%, transparent 86%, rgba(241, 246, 238, 0.22)),
+    linear-gradient(90deg, rgba(241, 246, 238, 0.3), rgba(241, 246, 238, 0.1) 45%, transparent 78%);
 }
 [data-theme="light"] .v2-static__veil {
   background:
-    linear-gradient(180deg, rgba(241, 246, 238, 0.52), transparent 14%, transparent 78%, rgba(241, 246, 238, 0.64)),
-    linear-gradient(90deg, rgba(241, 246, 238, 0.38), rgba(241, 246, 238, 0.12) 38%, transparent 58%);
+    linear-gradient(180deg, rgba(241, 246, 238, 0.3), transparent 14%, transparent 80%, rgba(241, 246, 238, 0.38)),
+    linear-gradient(90deg, rgba(241, 246, 238, 0.26), rgba(241, 246, 238, 0.08) 42%, transparent 74%);
 }
 [data-theme="light"] .v2-static--dark {
   background: #e9eee3;
@@ -1491,30 +1495,58 @@ h2 em,
   background: linear-gradient(180deg, rgba(241, 246, 238, 0.3), rgba(241, 246, 238, 0.95) 55%);
 }
 
-/* light mode: a localized pool of mist directly behind the hero copy —
-   the stacking context (z-index: 0) keeps the ::before above the fixed
-   canvas stage but under the text */
-[data-theme="light"] .v2-band__hero {
-  position: relative;
-  z-index: 0;
-}
-[data-theme="light"] .v2-band__hero::before {
-  content: "";
-  position: absolute;
-  inset: -12% -16%;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(
-    72% 68% at 42% 48%,
-    rgba(241, 246, 238, 0.62),
-    rgba(241, 246, 238, 0.28) 58%,
-    transparent 78%
-  );
-}
+/* (the old light-mode hero "mist pool" ::before is gone — it read as a
+   washed-out rectangle over the plate; the near-black ink needs no
+   backing. Client review 2026-06-12.) */
 
 /* light mode: the network chip flips to a paper capsule */
 [data-theme="light"] .network-chip {
   background: rgba(241, 246, 238, 0.85);
   border-color: rgba(20, 39, 28, 0.2);
   color: var(--text);
+}
+
+/* light mode: the marquee band flips to frosted paper */
+[data-theme="light"] .v2-marquee {
+  background: rgba(241, 246, 238, 0.72);
+}
+
+/* light mode: ghost buttons trade bone glass for ink glass */
+[data-theme="light"] .btn--ghost::after {
+  background: rgba(14, 27, 19, 0.06);
+}
+[data-theme="light"] .btn--ghost:hover {
+  border-color: rgba(14, 27, 19, 0.5);
+}
+
+/* light mode: panels become frosted paper glass — readable over ANY band
+   of the photo (bright sky or dark bark) without painting the image */
+[data-theme="light"] .panel {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 45%),
+    rgba(241, 246, 238, 0.66);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+}
+
+/* light mode: the provenance body rides the dark trunk — give it the
+   same deliberate glass card treatment (a designed panel, not a wash) */
+[data-theme="light"] .v2-prov__body {
+  background: rgba(241, 246, 238, 0.6);
+  backdrop-filter: blur(14px) saturate(1.05);
+  -webkit-backdrop-filter: blur(14px) saturate(1.05);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  padding: clamp(20px, 2.6vw, 34px);
+}
+
+/* light mode: every dark glass surface flips to the same frosted paper —
+   including the ID-scoped explore cards (the #explore selector otherwise
+   out-specifies the .panel override) and the ledger tiles/phases */
+[data-theme="light"] #explore .panel.v2-explore__card,
+[data-theme="light"] .v2-tile,
+[data-theme="light"] .v2-phase {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 42%),
+    rgba(241, 246, 238, 0.66);
 }
