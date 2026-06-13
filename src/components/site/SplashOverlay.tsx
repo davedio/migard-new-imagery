@@ -20,8 +20,8 @@ type Phase = "tree" | "logo" | "title" | "leaving" | "gone";
 
 /**
  * Cinematic entry overlay for the home page (two-page preview build:
- * shown on EVERY load so the intro itself can be reviewed — the old
- * `midgard_entered` cookie gate is intentionally off on this branch).
+ * shown on EVERY visit, no exceptions — no cookie gate, and a bfcache
+ * restore replays it; see the pageshow listener below).
  *
  * Beats: the night world tree fades up from black; the Midgard sigil
  * materializes over the trunk (the silhouette echo); the wordmark +
@@ -33,6 +33,8 @@ type Phase = "tree" | "logo" | "title" | "leaving" | "gone";
 export function SplashOverlay() {
   const { motionOn } = useMotionPref();
   const [phase, setPhase] = useState<Phase>("tree");
+  /* bumped on a bfcache replay so the beat timeline rearms */
+  const [run, setRun] = useState(0);
   const timers = useRef<number[]>([]);
 
   /* enter at any beat — the state updater guards re-entry, so this is
@@ -66,7 +68,20 @@ export function SplashOverlay() {
       for (const t of timers.current) window.clearTimeout(t);
       timers.current = [];
     };
-  }, [motionOn, enter]);
+  }, [motionOn, enter, run]);
+
+  /* Back/forward-cache restores resurrect the page with the intro already
+     dismissed — the ONLY way past the no-cookie gate. Replay from the
+     first beat instead: the intro shows on every visit, every time. */
+  useEffect(() => {
+    const onShow = (e: PageTransitionEvent) => {
+      if (!e.persisted) return;
+      setPhase("tree");
+      setRun((n) => n + 1);
+    };
+    window.addEventListener("pageshow", onShow);
+    return () => window.removeEventListener("pageshow", onShow);
+  }, []);
 
   // Lock body scroll while the overlay is up.
   useEffect(() => {
