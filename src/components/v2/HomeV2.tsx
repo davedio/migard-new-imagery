@@ -208,21 +208,19 @@ function StaticHome({ plate }: { plate: string }) {
 export default function HomeV2() {
   const { motionOn } = useMotionPref();
   const { theme } = useTheme();
-  const plates = TREE_PLATES[theme];
+  const plate = TREE_PLATES[theme];
 
   return (
     <main className="v2-home" data-motion={motionOn ? "on" : "off"}>
-      {/* React hoists these to <head> — the wide plate is the desktop LCP */}
-      <link rel="preload" as="image" href={plates.wide} />
+      {/* React hoists these to <head> — the tree plate is the LCP image */}
+      <link rel="preload" as="image" href={plate} />
       {/* keyed by plate: a theme flip remounts the whole flow so every
           theme-derived value (canvas wash, shatter dust, vein field)
           re-reads together under the view-transition crossfade */}
       {motionOn ? (
-        <DescentFlow key={theme} wideSrc={plates.wide} tallSrc={plates.tall} />
+        <DescentFlow key={plate} treeSrc={plate} />
       ) : (
-        /* the static fallback slices the TALL plate vertically (canopy →
-           roots), so it keeps the full descent without the canvas */
-        <StaticHome plate={plates.tall} />
+        <StaticHome plate={plate} />
       )}
       <MotionToggle />
     </main>

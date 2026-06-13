@@ -902,8 +902,8 @@ button.panel:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 46px;
-  height: 46px;
+  width: 42px;
+  height: 42px;
   border: 1px solid rgba(32, 190, 67, 0.32);
   border-radius: var(--r);
   background: rgba(7, 18, 11, 0.62);
@@ -3670,8 +3670,8 @@ a.chip:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
   border: 1px solid var(--panel-edge-strong);
   background: transparent;

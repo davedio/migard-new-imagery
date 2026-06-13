@@ -153,8 +153,7 @@ export default function HowItWorksExperience({
   /* the SAME tree as home, at the theme's time of day — keyed below so a
      theme flip re-measures the plate anatomy (centerline, canopy, vault) */
   const { theme } = useTheme();
-  /* the How It Works descent is a vertical journey — always the tall plate */
-  const plateSrc = TREE_PLATES[theme].tall;
+  const plateSrc = TREE_PLATES[theme];
 
   // desktop + motion-on gate for the heavy interaction systems
   const [finePointer, setFinePointer] = useState(false);

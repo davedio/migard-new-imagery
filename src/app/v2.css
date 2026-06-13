@@ -452,45 +452,6 @@ h2 em,
     linear-gradient(180deg, rgba(4, 7, 5, 0.5), transparent 14%, transparent 86%, rgba(4, 7, 5, 0.28)),
     linear-gradient(90deg, rgba(4, 7, 5, 0.3), rgba(4, 7, 5, 0.08) 38%, transparent 58%);
 }
-/* DAY MIST (client: "a little mist back on the day tree for mystery") —
-   a subtle morning haze that hugs the base/roots and a whisper across the
-   far field. Screen-blended so it glows the photo rather than greying it;
-   kept to the lower third so it never washes the copy (the earlier
-   washed-out lesson). Light theme only. */
-[data-theme="light"] .v2-stage__mist {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0.9;
-  background:
-    linear-gradient(0deg, rgba(236, 243, 240, 0.62) 0%, rgba(236, 243, 240, 0.24) 14%, transparent 32%),
-    radial-gradient(130% 46% at 50% 102%, rgba(214, 230, 233, 0.5), transparent 62%),
-    radial-gradient(80% 30% at 22% 96%, rgba(224, 236, 236, 0.28), transparent 70%),
-    radial-gradient(80% 30% at 80% 98%, rgba(224, 236, 236, 0.24), transparent 70%);
-  animation: v2-mist-drift 18s ease-in-out infinite alternate;
-}
-.v2-stage__mist {
-  display: none;
-}
-[data-theme="light"] .v2-stage__mist {
-  display: block;
-}
-@keyframes v2-mist-drift {
-  from {
-    transform: translate3d(-1.5%, 0.5%, 0) scale(1.02);
-    opacity: 0.78;
-  }
-  to {
-    transform: translate3d(1.5%, -0.5%, 0) scale(1.05);
-    opacity: 0.95;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-theme="light"] .v2-stage__mist {
-    animation: none;
-  }
-}
 
 /* ---- flowing bands (round 2: text scrolls like a document; only the
    background is choreographed) ---- */
@@ -1441,28 +1402,6 @@ h2 em,
   }
   .v2-hero__scrollcue {
     display: none;
-  }
-  /* CTAs stack full-width and ease their padding so two buttons never
-     collide on a phone (audit 1.6 / 4.1) */
-  .v2-hero__actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-  .v2-hero__actions .btn {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-    padding: 15px 18px;
-  }
-  .v2-hero__actions .btn-link--gold {
-    align-self: flex-start;
-    margin-top: 4px;
-  }
-  /* nav links get real 44px tap targets on touch (audit 7.3) */
-  .site-nav__link,
-  .site-nav__mobile a {
-    padding: 12px 4px;
   }
   .v2-duel {
     grid-template-columns: 1fr;

@@ -116,14 +116,7 @@ const BAND_IDS = [
 
 const subscribeNoop = () => () => {};
 
-export default function DescentFlow({
-  wideSrc,
-  tallSrc,
-}: {
-  /** landscape + portrait plates (theme picks night/day) */
-  wideSrc?: string;
-  tallSrc?: string;
-}) {
+export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
   const { motionOn } = useMotionPref();
   const mounted = useSyncExternalStore(
     subscribeNoop,
@@ -427,14 +420,12 @@ export default function DescentFlow({
             <div ref={stageRef} className="v2-stage" data-stage>
               {/* keyed by plate so a theme flip re-reads the vein field */}
               <WorldTreeCanvas
-                key={wideSrc}
-                wideSrc={wideSrc}
-                tallSrc={tallSrc}
+                key={treeSrc}
+                src={treeSrc}
                 phasesRef={phasesRef}
                 tickRef={tickRef}
               />
               <div className="v2-stage__veil" aria-hidden />
-              <div className="v2-stage__mist" aria-hidden />
               <nav ref={railRef} className="v2-rail" aria-label="Page strata">
                 {RAIL.map((r) => (
                   <button
