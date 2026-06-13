@@ -191,13 +191,14 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
          helix    forms over the visible tree while the thesis is read
          collapse the strands wind down into ONE bright orb (ledger chapter)
          descend  the orb rides the trunk SLOWLY from provenance down
-         rest     it CONNECTS at the very bottom of the scroll, just before
-                  the footer's fade and the rooted tagline                 */
+         rest     it CONNECTS into the blue cave WELL BEFORE the footer's
+                  rooted tagline (client review 2026-06-12) — the whole
+                  settle beat plays out about a viewport above the end   */
       const helix = smooth01(ramp(s, canopyT - vh * 0.55, canopyT + canopyH * 0.45));
       const collapse = smooth01(ramp(s, rootsT - vh * 0.45, rootsT + rootsH * 0.6));
-      const descend = ramp(s, provT - vh * 0.35, maxS - vh * 0.55);
-      const rest = smooth01(ramp(s, maxS - vh * 1.05, maxS - vh * 0.3));
-      const bottom = ramp(s, maxS - vh * 0.55, maxS - vh * 0.06);
+      const descend = ramp(s, provT - vh * 0.35, maxS - vh * 1.45);
+      const rest = smooth01(ramp(s, maxS - vh * 1.85, maxS - vh * 1.15));
+      const bottom = ramp(s, maxS - vh * 1.45, maxS - vh * 0.9);
 
       /* the tree NEVER goes dark — just a gentle dim under the helix so the
          strands read, lifting as they collapse into the orb */

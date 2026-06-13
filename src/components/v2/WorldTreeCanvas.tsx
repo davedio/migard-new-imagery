@@ -191,6 +191,65 @@ export default function WorldTreeCanvas({
         const score = Math.max(0, Math.min(255, g - Math.max(r, b) + (g > 120 ? 40 : 0)));
         field[i] = score;
       }
+
+      /* ---- trunk corridor (client review 2026-06-12: "orbs must track
+         the tree exactly") — the new plates' bark veins are too faint for
+         the raw green walk, so measure the row-wise green centroid +
+         spread (the same anatomy the HtW backdrop rides) and BAKE that
+         corridor into the field. The walk then hugs the trunk even where
+         the paint is quiet, on the night and the day plate alike. ---- */
+      const ROWS = 96;
+      const cRow = new Float32Array(ROWS);
+      const wRow = new Float32Array(ROWS);
+      const mRow = new Float32Array(ROWS); // row green mass — 0 in open sky
+      let pc = 0.5;
+      let pw = 0.16;
+      for (let r = 0; r < ROWS; r++) {
+        const gy = Math.min(gh - 1, Math.round((r / (ROWS - 1)) * (gh - 1)));
+        let sum = 0;
+        let sx = 0;
+        let sxx = 0;
+        for (let gx = 0; gx < gw; gx++) {
+          const v = field[gy * gw + gx];
+          if (v > 26) {
+            sum += v;
+            sx += v * gx;
+            sxx += v * gx * gx;
+          }
+        }
+        if (sum > 0) {
+          const mean = sx / sum;
+          const std = Math.sqrt(Math.max(0, sxx / sum - mean * mean));
+          pc = mean / gw;
+          pw = Math.min(0.3, Math.max(0.03, (std * 1.7) / gw));
+        }
+        cRow[r] = pc;
+        wRow[r] = pw;
+        mRow[r] = sum;
+      }
+      for (let pass = 0; pass < 2; pass++) {
+        for (let r = 1; r < ROWS - 1; r++) {
+          cRow[r] = (cRow[r - 1] + cRow[r] * 2 + cRow[r + 1]) / 4;
+          wRow[r] = (wRow[r - 1] + wRow[r] * 2 + wRow[r + 1]) / 4;
+          mRow[r] = (mRow[r - 1] + mRow[r] * 2 + mRow[r + 1]) / 4;
+        }
+      }
+      for (let gy = 0; gy < gh; gy++) {
+        const r = Math.min(ROWS - 1, Math.round((gy / Math.max(1, gh - 1)) * (ROWS - 1)));
+        /* no tree in this row (open sky above the crown, bare bedrock) —
+           no corridor: synthetic veins through the sky put orbs in thin
+           air (day-plate review 2026-06-12) */
+        const rowOk = Math.min(1, mRow[r] / 2600);
+        if (rowOk < 0.08) continue;
+        const c = cRow[r] * gw;
+        const halfW = Math.max(2, wRow[r] * gw * 0.55);
+        for (let gx = 0; gx < gw; gx++) {
+          const d = (gx - c) / halfW;
+          const i = gy * gw + gx;
+          field[i] = Math.min(255, field[i] + Math.exp(-d * d) * 70 * rowOk);
+        }
+      }
+
       const y0 = Math.floor(SPAWN_BAND[0] * gh);
       const y1 = Math.floor(SPAWN_BAND[1] * gh);
       for (let gy = y0; gy < y1; gy++) {
@@ -200,22 +259,42 @@ export default function WorldTreeCanvas({
           }
         }
       }
-      /* trunk centroid (mid band) — the helix axis */
-      let wsum = 0;
-      let xsum = 0;
-      const t0 = Math.floor(0.42 * gh);
-      const t1 = Math.floor(0.82 * gh);
-      for (let gy = t0; gy < t1; gy++) {
-        for (let gx = 0; gx < gw; gx++) {
-          const v = field[gy * gw + gx];
-          if (v > GREEN_MIN) {
-            wsum += v;
-            xsum += v * (gx / gw) * imgW;
+      /* the helix axis: the measured centerline through the TRUNK band —
+         weighted by row mass so empty bedrock rows don't drag it */
+      {
+        let cx = 0;
+        let n = 0;
+        for (let r = Math.floor(ROWS * 0.42); r < Math.floor(ROWS * 0.66); r++) {
+          cx += cRow[r] * mRow[r];
+          n += mRow[r];
+        }
+        trunkX = n > 0 ? (cx / n) * imgW : imgW * 0.5;
+      }
+
+      /* ---- the cobalt vault: blue centroid of the bedrock band — the
+         "blue cave" the settlement orb must seat into ---- */
+      let vaultX = trunkX;
+      let vaultY = imgH * 0.9;
+      {
+        let bsum = 0;
+        let bu = 0;
+        let bv = 0;
+        for (let gy = Math.floor(gh * 0.72); gy < gh; gy++) {
+          for (let gx = 0; gx < gw; gx++) {
+            const i = (gy * gw + gx) * 4;
+            const s = Math.max(0, data[i + 2] - Math.max(data[i], data[i + 1]));
+            if (s > 26) {
+              bsum += s;
+              bu += s * gx;
+              bv += s * gy;
+            }
           }
         }
+        if (bsum > 0) {
+          vaultX = (bu / bsum / gw) * imgW;
+          vaultY = (bv / bsum / gh) * imgH;
+        }
       }
-      /* tall plate: the tree is centred, so centre is the honest fallback */
-      trunkX = wsum > 0 ? xsum / wsum : imgW * 0.5;
       createImageBitmap(tree).then((b) => {
         if (!disposed) treeBmp = b;
       }).catch(() => {});
@@ -236,7 +315,8 @@ export default function WorldTreeCanvas({
         let heading = 0; // straight down
         const step = imgH * 0.012;
         path.push({ x: px, y: py });
-        while (py < imgH * 0.875) {
+        /* ride the veins down the trunk, then hand over to the vault */
+        while (py < imgH * 0.78) {
           let bestA = heading;
           let bestV = -1;
           for (const a of [-0.7, -0.35, 0, 0.35, 0.7]) {
@@ -253,6 +333,18 @@ export default function WorldTreeCanvas({
           px += Math.sin(heading) * step;
           py += Math.cos(heading) * step;
           path.push({ x: px, y: py });
+        }
+        /* the last reach: a measured glide INTO the blue cave (the
+           vault centroid), so the orb visibly seats in the glowing
+           bedrock — client review 2026-06-12 */
+        {
+          const fromX = px;
+          const fromY = py;
+          const STEPS = 16;
+          for (let i = 1; i <= STEPS; i++) {
+            const t = smooth01(i / STEPS);
+            path.push({ x: lerp(fromX, vaultX, t), y: lerp(fromY, vaultY, t) });
+          }
         }
         /* two smoothing passes so the ride is silk */
         for (let pass = 0; pass < 2; pass++) {
@@ -347,11 +439,11 @@ export default function WorldTreeCanvas({
          the same cinematic crop the old plate had. */
       const portrait = W < H * 0.9;
       const cover = Math.max(W / imgW, H / imgH);
-      const anchor = (portrait ? 0.62 : 0.7) - 0.14 * smooth01(des);
+      const anchor = (portrait ? 0.6 : 0.66) - 0.12 * smooth01(des);
       let scale = cover * ph.zoom;
       if (!portrait) {
         const reach = (W * anchor) / Math.max(1, trunkX);
-        scale = Math.max(scale, Math.min(reach, cover * 1.6));
+        scale = Math.max(scale, Math.min(reach, cover * 1.45));
       }
       const offX = Math.min(0, Math.max(W - imgW * scale, W * anchor - trunkX * scale));
       const offY = (H - imgH * scale) * ph.camY;
