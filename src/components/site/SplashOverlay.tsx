@@ -13,8 +13,6 @@ const FADE_MS = 900;
    the full MIDGARD lockup + Enter. */
 const BEAT_LOGO = 2400;
 const BEAT_TITLE = 4800;
-/** Gentle auto-advance for visitors who just watch. */
-const AUTO_ENTER = 13000;
 
 type Phase = "tree" | "logo" | "title" | "leaving" | "gone";
 
@@ -25,10 +23,11 @@ type Phase = "tree" | "logo" | "title" | "leaving" | "gone";
  *
  * Beats: the night world tree fades up from black; the Midgard sigil
  * materializes over the trunk (the silhouette echo); the wordmark +
- * tagline + Enter arrive. Clicking anywhere (or Enter/Space) enters
- * immediately at any beat; if nobody clicks, it eases in on its own.
- * Reduced motion jumps straight to the complete title card and never
- * auto-advances. Body scroll is locked while visible.
+ * tagline + the Enter Midgard button arrive. The BUTTON is the only way
+ * in (client direction 2026-06-12) — clicking elsewhere does nothing
+ * and there is no auto-advance; it receives focus when it appears so
+ * Enter/Space work. Reduced motion jumps straight to the complete title
+ * card. Body scroll is locked while visible.
  */
 export function SplashOverlay() {
   const { motionOn } = useMotionPref();
@@ -36,6 +35,7 @@ export function SplashOverlay() {
   /* bumped on a bfcache replay so the beat timeline rearms */
   const [run, setRun] = useState(0);
   const timers = useRef<number[]>([]);
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   /* enter at any beat — the state updater guards re-entry, so this is
      stable and safe to share with the auto-advance timer */
@@ -62,13 +62,12 @@ export function SplashOverlay() {
       () => setPhase((p) => (p === "tree" || p === "logo" ? "title" : p)),
       BEAT_TITLE,
     );
-    const t3 = window.setTimeout(enter, AUTO_ENTER);
-    timers.current.push(t1, t2, t3);
+    timers.current.push(t1, t2);
     return () => {
       for (const t of timers.current) window.clearTimeout(t);
       timers.current = [];
     };
-  }, [motionOn, enter, run]);
+  }, [motionOn, run]);
 
   /* Back/forward-cache restores resurrect the page with the intro already
      dismissed — the ONLY way past the no-cookie gate. Replay from the
@@ -82,6 +81,14 @@ export function SplashOverlay() {
     window.addEventListener("pageshow", onShow);
     return () => window.removeEventListener("pageshow", onShow);
   }, []);
+
+  /* the Enter button is the only control — hand it focus when it appears
+     so keyboard users can confirm with Enter/Space */
+  useEffect(() => {
+    const titleShown =
+      phase === "title" || (!motionOn && (phase === "tree" || phase === "logo"));
+    if (titleShown) btnRef.current?.focus({ preventScroll: true });
+  }, [phase, motionOn]);
 
   // Lock body scroll while the overlay is up.
   useEffect(() => {
@@ -106,16 +113,6 @@ export function SplashOverlay() {
       className="splash splash--overlay splash--cinema"
       data-phase={shownPhase}
       data-leaving={phase === "leaving"}
-      role="button"
-      tabIndex={0}
-      aria-label="Enter Midgard"
-      onClick={enter}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          enter();
-        }
-      }}
     >
       {/* the night world tree — the same plate the home descent rides */}
       <div className="splash__tree" aria-hidden />
@@ -153,16 +150,16 @@ export function SplashOverlay() {
           <p className="splash__tagline" aria-hidden>
             A Cardano-native optimistic rollup
           </p>
-          {/* Affordance only — the whole overlay is the actual control. */}
-          <span className="splash__enter" aria-hidden>
+          {/* THE way in — the only interactive element on the overlay */}
+          <button
+            ref={btnRef}
+            type="button"
+            className="splash__enter"
+            onClick={enter}
+          >
             Enter Midgard
-          </span>
+          </button>
         </div>
-
-        {/* quiet skip affordance during the early beats */}
-        <span className="splash__hint" aria-hidden>
-          Click anywhere to enter
-        </span>
       </div>
     </div>
   );

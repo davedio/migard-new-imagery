@@ -3761,30 +3761,19 @@ a.chip:hover {
   animation-duration: 0.55s;
 }
 
-/* the intro's early beats carry a quiet affordance; it bows out once the
-   real Enter control arrives */
-.splash__hint {
-  position: absolute;
-  left: 50%;
-  bottom: 30px;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: rgba(244, 241, 230, 0.55);
-  opacity: 0;
-  transition: opacity 1s var(--ease) 1.2s;
+/* the overlay itself is NOT a control (client direction 2026-06-12:
+   only the Enter Midgard button enters) — so no pointer cursor; the
+   button is a real <button> and keeps its own */
+.splash--cinema {
+  cursor: default;
 }
-.splash--cinema[data-phase="tree"] .splash__hint,
-.splash--cinema[data-phase="logo"] .splash__hint {
-  opacity: 1;
+button.splash__enter {
+  appearance: none;
+  cursor: pointer;
 }
-.splash--cinema[data-phase="title"] .splash__hint,
-.splash--cinema[data-phase="leaving"] .splash__hint {
-  opacity: 0;
-  transition-delay: 0s;
+button.splash__enter:focus-visible {
+  outline: 2px solid var(--green-bright);
+  outline-offset: 3px;
 }
 
 /* light mode: the live fx canvas screen-blends to nothing over the bright

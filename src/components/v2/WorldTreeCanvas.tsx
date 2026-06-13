@@ -336,16 +336,24 @@ export default function WorldTreeCanvas({
       const des = ph.descend;
       const rest = ph.rest;
 
-      /* ---- shared cover mapping for THIS frame ---- */
-      const scale = Math.max(W / imgW, H / imgH) * ph.zoom;
-      let offX = (W - imgW * scale) * ph.camX;
-      /* portrait crop shows only a narrow slice of the wide plate — panning
-         with camX throws the whole tree off-frame (mobile review
-         2026-06-11). Pin the trunk to the centerline instead; camY and zoom
-         still breathe. */
-      if (W < H * 0.9) {
-        offX = Math.min(0, Math.max(W - imgW * scale, W * 0.5 - trunkX * scale));
+      /* ---- shared cover mapping for THIS frame ----
+         The tree sits RIGHT of the copy like the old wide hero (client
+         review 2026-06-12): the MEASURED trunk is anchored to a viewport
+         fraction — right of centre everywhere, slightly less so on
+         portrait — and eases back toward centre through the descent so
+         the bedrock finale is centred. The tall plate has no horizontal
+         slack at cover scale on landscape, so the camera zooms in until
+         the anchor is reachable; the right canopy bleeding off-frame is
+         the same cinematic crop the old plate had. */
+      const portrait = W < H * 0.9;
+      const cover = Math.max(W / imgW, H / imgH);
+      const anchor = (portrait ? 0.62 : 0.7) - 0.14 * smooth01(des);
+      let scale = cover * ph.zoom;
+      if (!portrait) {
+        const reach = (W * anchor) / Math.max(1, trunkX);
+        scale = Math.max(scale, Math.min(reach, cover * 1.6));
       }
+      const offX = Math.min(0, Math.max(W - imgW * scale, W * anchor - trunkX * scale));
       const offY = (H - imgH * scale) * ph.camY;
       const px = (ix: number) => ix * scale + offX;
       const py = (iy: number) => iy * scale + offY;
