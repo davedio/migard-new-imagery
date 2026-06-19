@@ -1,7 +1,7 @@
 "use client";
 
 /* ============================================================================
-   Shared home-page content blocks — copy, cards, tiles, roadmap, closing.
+   Shared home-page content blocks — copy, cards, tiles, and closing.
    Used by BOTH presentation paths:
      · DescentFlow (motion on)  — pinned overlays over the one-flow stage
      · HomeV2 fallback (motion off) — plain stacked sections

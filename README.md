@@ -65,7 +65,6 @@ Use status language consistently:
 - `Demo`
 - `Simulated`
 - `Pending`
-- `Roadmap`
 - `Approval-dependent`
 
 Do not present simulated L2 activity as live protocol data.
