@@ -27,6 +27,7 @@ import {
   HeroHud,
   Ledger,
   Marquee,
+  PartnerMarquee,
   Paths,
   Provenance,
   Statement,
@@ -133,6 +134,7 @@ function StaticHome({ plate }: { plate: string }) {
         </div>
       </StaticScene>
 
+      <PartnerMarquee />
       <Marquee />
 
       <section id="canopy" className="v2-static v2-static--dark">

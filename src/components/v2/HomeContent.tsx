@@ -9,6 +9,7 @@
    ========================================================================== */
 
 import { animate, motion } from "motion/react";
+import Image from "next/image";
 import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
@@ -114,6 +115,94 @@ export function Marquee() {
         {seq(true)}
       </div>
     </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/*  ecosystem partners                                                     */
+/* ---------------------------------------------------------------------- */
+
+const PARTNERS = [
+  {
+    name: "Liqwid",
+    logo: "/ecosystem/liqwid.svg",
+    width: 190,
+    height: 60,
+    tone: "dark",
+  },
+  {
+    name: "Sundae Labs",
+    logo: "/ecosystem/sundae-labs.png",
+    width: 210,
+    height: 36,
+    tone: "light",
+  },
+  {
+    name: "Input Output",
+    logo: "/ecosystem/input-output.svg",
+    width: 210,
+    height: 27,
+    tone: "dark",
+  },
+  {
+    name: "Lace",
+    logo: "/ecosystem/lace-wordmark.svg",
+    width: 150,
+    height: 50,
+    tone: "dark",
+  },
+  {
+    name: "Artifi Labs",
+    logo: "/ecosystem/artifi-labs.png",
+    width: 230,
+    height: 43,
+    tone: "dark",
+  },
+] as const;
+
+function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
+  return (
+    <ul className="v2-partners__seq" aria-hidden={hidden || undefined}>
+      {PARTNERS.map((partner) => (
+        <li key={partner.name}>
+          <div
+            className="v2-partner"
+            data-tone={partner.tone}
+            role="img"
+            aria-label={partner.name}
+          >
+            <span className="v2-partner__plate">
+              <Image
+                src={partner.logo}
+                alt=""
+                width={partner.width}
+                height={partner.height}
+                loading="eager"
+                unoptimized={partner.logo.endsWith(".svg")}
+              />
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function PartnerMarquee() {
+  return (
+    <section className="v2-partners" aria-labelledby="ecosystem-partners-title">
+      <div className="v2-partners__head">
+        <p className="v2-partners__kicker">Network</p>
+        <h2 id="ecosystem-partners-title">Ecosystem Partners</h2>
+        <p className="v2-partners__sub">Cardano-native teams around Midgard.</p>
+      </div>
+      <div className="v2-partners__rail" aria-label="Ecosystem partner logos">
+        <div className="v2-partners__track">
+          <PartnerSequence />
+          <PartnerSequence hidden />
+        </div>
+      </div>
+    </section>
   );
 }
 

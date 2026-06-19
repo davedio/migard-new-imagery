@@ -36,6 +36,7 @@ import {
   HeroHud,
   Ledger,
   Marquee,
+  PartnerMarquee,
   Paths,
   Provenance,
   Statement,
@@ -331,6 +332,7 @@ export default function DescentFlow({
           </div>
         </section>
 
+        <PartnerMarquee />
         <Marquee />
 
         {/* ---------- 01 canopy / thesis (the helix forms here) ---------- */}
