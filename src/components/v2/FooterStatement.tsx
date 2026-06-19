@@ -4,9 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 /* The footer statement is a TOUR step (review 2026-06-11): from any page it
-   carries you to the NEXT page in the nav order, so reading the site end to
-   end is just "scroll, take root, repeat". Two-page preview build: the tour
-   is just home <-> how-it-works. */
+   carries you to the NEXT page in the nav order. Two-page preview build:
+   the tour is just home <-> how-it-works. */
 const TOUR = ["/", "/how-it-works"] as const;
 
 export function FooterStatement() {
@@ -17,7 +16,7 @@ export function FooterStatement() {
   return (
     <Link href={next} className="v2-footer-statement">
       <span>
-        Take <em>root</em> on Cardano.
+        Scale <em>on</em> Cardano.
       </span>
       <span className="arrow" aria-hidden>
         ↗

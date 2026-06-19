@@ -120,10 +120,9 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
             <span style={{ color: "var(--green-bright)" }}>transaction</span>
           </h1>
           <p className="hiw-act__lead">
-            Midgard is a Cardano-native optimistic rollup. Scroll to ride one
-            transaction down the world&nbsp;tree — born in the canopy on L2,
-            sequenced and committed, watched through the challenge window, and
-            settled into the cobalt bedrock of Cardano&nbsp;L1.
+            Midgard is a Cardano-native optimistic rollup. Scroll to follow one
+            transaction from L2 activity through sequencing, commitment, the
+            challenge window, and final settlement on Cardano&nbsp;L1.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (

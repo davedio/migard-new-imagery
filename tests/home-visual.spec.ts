@@ -13,6 +13,19 @@ test("home hero and ecosystem partners render cleanly", async ({ page }, testInf
   }
 
   await expect(page.getByRole("heading", { name: /Built to scale/i })).toBeVisible();
+  const bodyText = await page.locator("body").innerText();
+  for (const hiddenLabel of [
+    "Surface",
+    "Canopy",
+    "Roots",
+    "Trunk",
+    "Bedrock",
+    "Root confirms",
+    "Confirmed root",
+    "Take root",
+  ]) {
+    expect(bodyText).not.toContain(hiddenLabel);
+  }
   await page.waitForTimeout(1_500);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 

@@ -145,7 +145,7 @@ export function StateQueueViz() {
           )}
           <span className={css.rootGlyph} aria-hidden />
           <div>
-            <div className={css.rootLabel}>Confirmed root</div>
+            <div className={css.rootLabel}>Confirmed state</div>
             <div className={css.rootHash}>
               {state.root.hash.slice(0, 8)}…{state.root.hash.slice(-4)}
             </div>
@@ -185,7 +185,7 @@ export function StateQueueViz() {
 
       <div className={css.legend} aria-hidden>
         <span className={css.legendItem}>
-          <span className={css.legendDot} data-kind="root" /> Confirmed root · live L1 UTxO
+          <span className={css.legendDot} data-kind="root" /> Confirmed state · live L1 UTxO
         </span>
         <span className={css.legendItem}>
           <span className={css.legendDot} data-kind="maturing" /> Maturing · fraud-proof window

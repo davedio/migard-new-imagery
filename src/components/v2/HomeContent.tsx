@@ -472,12 +472,12 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
 /* ---------------------------------------------------------------------- */
 
 export const STRATA = [
-  { id: "top", label: "Surface", stratum: "surface" },
-  { id: "canopy", label: "Canopy · L2", stratum: "canopy" },
-  { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
-  { id: "roots", label: "Roots · Ledger", stratum: "roots" },
+  { id: "top", label: "Intro", stratum: "surface" },
+  { id: "canopy", label: "Thesis", stratum: "canopy" },
+  { id: "trunk", label: "Paths", stratum: "trunk" },
+  { id: "roots", label: "Metrics", stratum: "roots" },
   { id: "proofs", label: "Proofs · eUTXO", stratum: "proofs" },
-  { id: "bedrock", label: "Bedrock · L1", stratum: "bedrock" },
+  { id: "bedrock", label: "Settlement · L1", stratum: "bedrock" },
 ] as const;
 
 export function MotionToggle() {

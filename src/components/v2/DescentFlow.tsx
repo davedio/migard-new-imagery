@@ -56,12 +56,10 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 function Chapter({
   n,
-  stratum,
   title,
   lead,
 }: {
   n: string;
-  stratum: string;
   title: string[];
   lead?: ReactNode;
 }) {
@@ -73,7 +71,6 @@ function Chapter({
         <div className="v2-ch__index">
           <span className="n">{n}</span>
           <span className="rule" />
-          <span className="stratum">{stratum}</span>
         </div>
       </Rise>
       <Rise delay={0.08}>
@@ -100,10 +97,10 @@ function Chapter({
 /* ---------------------------------------------------------------------- */
 
 const RAIL = [
-  { id: "top", label: "Surface", stratum: "surface" },
-  { id: "canopy", label: "Canopy · L2", stratum: "canopy" },
-  { id: "roots", label: "Roots · Ledger", stratum: "roots" },
-  { id: "trunk", label: "Trunk · Paths", stratum: "trunk" },
+  { id: "top", label: "Intro", stratum: "surface" },
+  { id: "canopy", label: "Thesis", stratum: "canopy" },
+  { id: "roots", label: "Metrics", stratum: "roots" },
+  { id: "trunk", label: "Paths", stratum: "trunk" },
 ] as const;
 
 const BAND_IDS = [
@@ -342,7 +339,6 @@ export default function DescentFlow({
               <div className="v2-ch__index">
                 <span className="n">01</span>
                 <span className="rule" />
-                <span className="stratum">Canopy — the thesis</span>
               </div>
             </Rise>
             {/* one line on desktop, wraps naturally on phones */}
@@ -364,7 +360,6 @@ export default function DescentFlow({
         <section id="roots" className="v2-band">
           <Chapter
             n="02"
-            stratum="Roots — protocol at a glance"
             title={["Fast confirmations now,", "final settlement on Cardano."]}
             lead={
               <>
@@ -388,7 +383,7 @@ export default function DescentFlow({
               </div>
             </Rise>
             <Rise delay={0.08}>
-              <h2>Blocks commit. Root confirms.</h2>
+              <h2>Blocks commit. State confirms.</h2>
             </Rise>
             <Rise delay={0.14}>
               <p className="v2-ch__lead">
@@ -416,7 +411,6 @@ export default function DescentFlow({
         <section id="trunk" className="v2-band v2-band--last">
           <Chapter
             n="03"
-            stratum="Trunk — three ways in"
             title={["Choose your path."]}
             lead="These roles overlap. Pick the one that fits what you're here to do."
           />
@@ -437,7 +431,7 @@ export default function DescentFlow({
               />
               <div className="v2-stage__veil" aria-hidden />
               <div className="v2-stage__mist" aria-hidden />
-              <nav ref={railRef} className="v2-rail" aria-label="Page strata">
+              <nav ref={railRef} className="v2-rail" aria-label="Page progress">
                 {RAIL.map((r) => (
                   <button
                     key={r.id}

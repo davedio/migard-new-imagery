@@ -74,12 +74,10 @@ function StaticScene({
 
 function StaticChapter({
   n,
-  stratum,
   title,
   lead,
 }: {
   n: string;
-  stratum: string;
   title: ReactNode;
   lead?: ReactNode;
 }) {
@@ -88,7 +86,6 @@ function StaticChapter({
       <div className="v2-ch__index">
         <span className="n">{n}</span>
         <span className="rule" />
-        <span className="stratum">{stratum}</span>
       </div>
       <h2>{title}</h2>
       {lead ? <p className="v2-ch__lead">{lead}</p> : null}
@@ -141,7 +138,6 @@ function StaticHome({ plate }: { plate: string }) {
         <div className="v2-static__body">
           <StaticChapter
             n="01"
-            stratum="Canopy — the thesis"
             title={
               <>
                 Scale that stays
@@ -157,7 +153,6 @@ function StaticHome({ plate }: { plate: string }) {
       <StaticScene id="roots" plate={plate} position={STATIC_BANDS.roots}>
         <StaticChapter
           n="02"
-          stratum="Roots — protocol at a glance"
           title={
             <>
               Fast confirmations now,
@@ -179,7 +174,7 @@ function StaticHome({ plate }: { plate: string }) {
             <span className="rule" style={{ flexBasis: 30 }} />
             <span className="stratum">On-chain state queue</span>
           </div>
-          <h2>Blocks commit. Root confirms.</h2>
+          <h2>Blocks commit. State confirms.</h2>
         </div>
         <div className="v2-queue">
           <StateQueueViz />
@@ -193,7 +188,6 @@ function StaticHome({ plate }: { plate: string }) {
       <StaticScene id="trunk" plate={plate} position={STATIC_BANDS.strata}>
         <StaticChapter
           n="03"
-          stratum="Trunk — three ways in"
           title="Choose your path."
           lead="These roles overlap. Pick the one that fits what you're here to do."
         />
