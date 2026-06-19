@@ -50,7 +50,7 @@ export const metadata: Metadata = {
         url: "/og/home.jpg",
         width: 1200,
         height: 630,
-        alt: "Midgard — built to scale, rooted in Cardano",
+        alt: "Midgard — built to scale, secured by Cardano",
       },
     ],
     type: "website",

@@ -23,6 +23,8 @@ test("home hero and ecosystem partners render cleanly", async ({ page }, testInf
     "Root confirms",
     "Confirmed root",
     "Take root",
+    "Rooted in Cardano",
+    "root of trust",
   ]) {
     expect(bodyText).not.toContain(hiddenLabel);
   }

@@ -101,7 +101,7 @@ export const CONTRACTS: readonly Contract[] = [
     accent: "gold",
     address:
       "addr_test1wquqs7cl5zajrura775a50zzwyuglqy95et3a6c8ajsz7xc2rdhyg",
-    desc: "Finalises L1 fund distribution when a merged block carries non-empty transaction, deposit, or withdrawal roots.",
+    desc: "Finalises L1 fund distribution when a merged block carries non-empty transaction, deposit, or withdrawal commitments.",
   },
 ];
 
@@ -125,7 +125,7 @@ export const STATE_ANCHORS: readonly StateAnchor[] = [
   },
   {
     name: "Confirmed State",
-    role: "current L2 root",
+    role: "current L2 state",
     utxo: "5ed6cfefadce4de06974217dc70719df752dd445eedd58f6a4e9580cb7d4d7c7#0",
   },
   {
@@ -170,7 +170,7 @@ export type TimelineEvent = {
 
 /** Bootstrap sequence: genesis → first confirmed state, all on preprod. */
 export const GENESIS_TIMELINE: readonly TimelineEvent[] = [
-  { action: "Protocol init / root deployment", tx: "47d17f1b0f93b61bdfccbe6623166ed6132077d7222f7afcb9144c70048be41a", time: "17:27Z", genesis: true },
+  { action: "Protocol init / state deployment", tx: "47d17f1b0f93b61bdfccbe6623166ed6132077d7222f7afcb9144c70048be41a", time: "17:27Z", genesis: true },
   { action: "Operator registration", tx: "288e1a15e1145a91d35ba3729c0f5c7c73cd5535061830632ef2c30c2b5769ea", time: "17:30Z", genesis: false },
   { action: "Operator activation", tx: "a83e282e09bf61019baa330ed7a63d37d4272281ccfcec864111f9879022197a", time: "17:32Z", genesis: false },
   { action: "Deposit", tx: "637291210692b6b00edf9f09acf11a8fdd25c75eca4115c0f0ec718676c5528a", time: "17:35Z", genesis: false },

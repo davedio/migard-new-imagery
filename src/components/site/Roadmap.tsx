@@ -43,7 +43,7 @@ const PHASES: Phase[] = [
   {
     n: "04",
     name: "Mainnet",
-    body: "Settlement on Cardano mainnet, with L1 as the root of trust. Timing follows the work — testnet maturity, audit outcomes, and benchmarks — not a fixed calendar date.",
+    body: "Settlement on Cardano mainnet, with L1 as the trust anchor. Timing follows the work — testnet maturity, audit outcomes, and benchmarks — not a fixed calendar date.",
     accent: "cobalt",
   },
 ];

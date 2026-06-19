@@ -120,7 +120,7 @@ const STAGES: Stage[] = [
     line: "No fraud and the maturity period ends: the block merges into confirmed state — settlement makes it as final as Cardano itself.",
     readouts: [
       { k: "Action", v: "Merge state", tone: "l1" },
-      { k: "Root", v: "Cardano L1", tone: "l1" },
+      { k: "Anchor", v: "Cardano L1", tone: "l1" },
       { k: "Status", v: "Confirmed", tone: "l1" },
     ],
     layer: "l1",

@@ -105,12 +105,12 @@ function StaticHome({ plate }: { plate: string }) {
           <h1 className="v2-hero__title">
             Built to scale.
             <br />
-            Rooted in <span className="ital">Cardano</span>.
+            Secured by <span className="ital">Cardano</span>.
           </h1>
           <p className="v2-hero__lead">
             Midgard is a Cardano-native optimistic rollup that gives
             applications a faster execution layer while keeping Cardano as the
-            root of trust.
+            trust anchor.
           </p>
           <div className="v2-hero__actions">
             <Link className="btn btn--primary" href="/how-it-works">

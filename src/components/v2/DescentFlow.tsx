@@ -292,14 +292,14 @@ export default function DescentFlow({
             <ShatterHeading
               as="h1"
               className="v2-hero__title"
-              lines={["Built to scale.", "Rooted in Cardano."]}
+              lines={["Built to scale.", "Secured by Cardano."]}
               accents={{ "Cardano.": "green" }}
             />
             <Rise delay={0.2}>
               <p className="v2-hero__lead">
                 Midgard is a Cardano-native optimistic rollup that gives
                 applications a faster execution layer while keeping Cardano as
-                the root of trust.
+                the trust anchor.
               </p>
             </Rise>
             <Rise delay={0.3}>
