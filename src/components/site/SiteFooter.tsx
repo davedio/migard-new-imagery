@@ -17,6 +17,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Explore",
     links: [
       { label: "Home", href: "/" },
+      { label: "Learn", href: "/learn" },
       { label: "How It Works", href: "/how-it-works" },
       { label: "Security", href: "/security" },
       { label: "FAQ", href: "/faq" },

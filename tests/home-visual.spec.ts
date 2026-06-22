@@ -54,10 +54,10 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.locator("#top").getByRole("link", { name: /Choose your path/i }).click();
   await page.waitForTimeout(1_000);
   await expect(page.getByRole("heading", { name: "Choose your path." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Users" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Builders" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Operators" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Watchers" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Operators", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Watchers", exact: true })).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
 });
@@ -71,6 +71,7 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
   await learn.click();
 
   const dropdown = page.locator(".site-nav__group", { has: learn }).locator(".site-nav__dropdown");
+  await expect(dropdown.getByRole("link", { name: /Learn overview/i })).toBeVisible();
   await expect(dropdown.getByRole("link", { name: /Security/i })).toBeVisible();
   await expect(dropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
   await expect(learn).toHaveAttribute("aria-expanded", "true");
@@ -79,6 +80,26 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
   await expect(dropdown.getByRole("link", { name: /Security/i })).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("nav-learn-open.png") });
+});
+
+test("learn overview page renders the agreed language map", async ({ page }, testInfo) => {
+  await page.goto("/learn");
+
+  await expect(page.getByRole("heading", { name: /Learn Midgard/i })).toBeVisible();
+  await expect(page.getByText(/The secure scaling layer for UTXO finance/i)).toBeVisible();
+  await expect(page.getByText(/Deposit, transact, withdraw/i)).toBeVisible();
+  await expect(page.getByText(/Submit, sequence, commit, DA attestation, watch, settle/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Operators", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Watchers", exact: true })).toBeVisible();
+
+  const bodyText = await page.locator("body").innerText();
+  expect(bodyText).toContain("fault-proof");
+  expect(bodyText).not.toContain("fraud-proof");
+  expect(bodyText).not.toContain("Bitcoin DeFi");
+
+  await page.screenshot({ path: testInfo.outputPath("learn.png") });
 });
 
 test("how it works lifecycle language renders cleanly", async ({ page }, testInfo) => {

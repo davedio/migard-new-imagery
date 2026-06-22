@@ -403,8 +403,8 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
           </p>
           <p>
             The protocol is open and the code can be inspected. As the testnet
-            matures, public claims should stay tied to live status, measured
-            benchmarks, and approved protocol parameters.
+            matures, public claims stay tied to live status, measured benchmarks,
+            and approved protocol parameters.
           </p>
         </Rise>
         <Rise delay={0.1}>

@@ -28,6 +28,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Learn",
     items: [
+      { label: "Learn overview", href: "/learn" },
       { label: "How it works", href: "/how-it-works" },
       { label: "Security", href: "/security" },
       { label: "FAQ", href: "/faq" },

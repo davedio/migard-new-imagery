@@ -155,9 +155,8 @@ function StaticHome({ plate }: { plate: string }) {
           }
           lead={
             <>
-              The homepage should advertise indicators the team can track and
-              defend: confirmation speed, settlement window, execution model,
-              verification, fees, and current status.
+              Track the indicators that matter: confirmation speed, settlement
+              window, execution model, verification, fees, and current status.
             </>
           }
         />
