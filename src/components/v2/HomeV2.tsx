@@ -97,13 +97,13 @@ function StaticHome({ plate }: { plate: string }) {
       <StaticScene id="top" plate={plate} position={STATIC_BANDS.hero}>
         <div className="v2-static__hero">
           <h1 className="v2-hero__title">
-            The execution layer
+            Scale UTXO finance.
             <br />
-            for <span className="ital">UTXO finance</span>.
+            Keep <span className="ital">L1 security</span>.
           </h1>
           <p className="v2-hero__lead">
-            Midgard is an optimistic rollup for UTXO finance, giving
-            applications faster execution with settlement rooted in Cardano.
+            Midgard is an optimistic rollup that gives UTXO applications faster
+            execution with settlement anchored to L1.
           </p>
           <div className="v2-hero__actions">
             <Link className="btn btn--primary" href="#trunk">

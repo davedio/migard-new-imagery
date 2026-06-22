@@ -276,14 +276,14 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
               <ShatterHeading
                 as="h1"
                 className="v2-hero__title"
-                lines={["The execution layer", "for UTXO finance."]}
-                accents={{ "UTXO finance.": "green" }}
+                lines={["Scale UTXO finance.", "Keep L1 security."]}
+                accents={{ "L1 security.": "green" }}
               />
             </Rise>
             <Rise delay={0.2}>
               <p className="v2-hero__lead">
-                Midgard is an optimistic rollup for UTXO finance, giving
-                applications faster execution with settlement rooted in Cardano.
+                Midgard is an optimistic rollup that gives UTXO applications
+                faster execution with settlement anchored to L1.
               </p>
             </Rise>
             <Rise delay={0.3}>

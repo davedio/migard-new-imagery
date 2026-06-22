@@ -5,8 +5,8 @@ import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 /**
  * Compact network status chip for the footer bottom bar: proof-state dot,
  * block height, and the SIMULATED honesty tag the full widget carries.
- * Two-page preview build: /contracts is not on this branch, so the chip
- * links to the protocol repo instead of the instrument readout.
+ * This links to the protocol repo until a dedicated public status route is
+ * ready.
  */
 export function NetworkChip() {
   const { data } = useNetworkSnapshot(8000);

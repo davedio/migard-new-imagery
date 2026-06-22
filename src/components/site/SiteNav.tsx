@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { useTheme } from "@/lib/theme";
@@ -15,14 +15,83 @@ import { useTheme } from "@/lib/theme";
 type NavLink = {
   label: string;
   href: string;
+  sub?: string;
+  external?: boolean;
+  github?: boolean;
 };
 
-/* Two-page preview build (2026-06-12): only the routes that exist on
-   this branch — the new-tree home and the How It Works descent. */
-const NAV_LINKS: readonly NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "Choose your path", href: "/#trunk" },
-  { label: "How It Works", href: "/how-it-works" },
+type NavGroup = {
+  label: string;
+  items: readonly NavLink[];
+};
+
+const NAV_GROUPS: readonly NavGroup[] = [
+  {
+    label: "Learn",
+    items: [
+      {
+        label: "How it works",
+        href: "/how-it-works",
+        sub: "Deposit, transact, withdraw",
+      },
+      {
+        label: "Security",
+        href: "/security",
+        sub: "L1-rooted settlement and fault proofs",
+      },
+      {
+        label: "FAQ",
+        href: "/faq",
+        sub: "Plain answers and comparison notes",
+      },
+    ],
+  },
+  {
+    label: "Build",
+    items: [
+      {
+        label: "GitHub",
+        href: OFFICIAL_LINKS.github,
+        sub: "Inspect the source",
+        external: true,
+        github: true,
+      },
+      {
+        label: "Whitepaper",
+        href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+        sub: "Read the protocol design",
+        external: true,
+      },
+      {
+        label: "Builder intake",
+        href: OFFICIAL_LINKS.intakeForm,
+        sub: "Bring a real UTXO flow",
+        external: true,
+      },
+    ],
+  },
+  {
+    label: "Join",
+    items: [
+      {
+        label: "Choose your path",
+        href: "/#trunk",
+        sub: "Users, builders, operators, watchers",
+      },
+      {
+        label: "Discord",
+        href: OFFICIAL_LINKS.discord,
+        sub: "Community and testnet discussion",
+        external: true,
+      },
+      {
+        label: "X",
+        href: OFFICIAL_LINKS.x,
+        sub: "Protocol updates",
+        external: true,
+      },
+    ],
+  },
 ] as const;
 
 /* Sun/moon toggle — flips between the night tree and the dawn tree. */
@@ -79,10 +148,14 @@ function ThemeToggle() {
  */
 export function SiteNav() {
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
   const [menu, setMenu] = useState({ pathname: "", open: false });
+  const [hoverGroup, setHoverGroup] = useState<string | null>(null);
+  const [pinnedGroup, setPinnedGroup] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
   const open = menu.open && menu.pathname === pathname;
+  const openGroup = pinnedGroup ?? hoverGroup;
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */
   useEffect(() => {
@@ -104,6 +177,26 @@ export function SiteNav() {
     };
   }, []);
 
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      if (navRef.current?.contains(event.target as Node)) return;
+      setPinnedGroup(null);
+      setHoverGroup(null);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setPinnedGroup(null);
+      setHoverGroup(null);
+      setMenu({ pathname, open: false });
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [pathname]);
+
   const closeMenu = () => setMenu({ pathname, open: false });
   const toggleMenu = () =>
     setMenu((state) => ({
@@ -112,37 +205,110 @@ export function SiteNav() {
     }));
 
   /* Home is active only on exactly "/" — every route starts with "/". */
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string) => {
+    if (!href.startsWith("/")) return false;
+    if (href.startsWith("/#")) return false;
+    return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   const linkClass = (href: string) => ({
     className: "site-nav__link",
     "data-active": isActive(href),
   });
 
+  const isGroupActive = (group: NavGroup) => group.items.some((item) => isActive(item.href));
+
+  const openPinnedGroup = (label: string) => {
+    setPinnedGroup((current) => (current === label ? null : label));
+    setHoverGroup(label);
+  };
+
+  const closeDropdown = () => {
+    setPinnedGroup(null);
+    setHoverGroup(null);
+  };
+
+  const renderDropdownLink = (item: NavLink, mobile = false) => {
+    const active = isActive(item.href);
+    const content = (
+      <>
+        <span className={mobile ? "site-nav__mobile-label" : "site-nav__dropdown-label"}>
+          {item.github ? <GitHubIcon size={14} aria-hidden /> : null}
+          {item.label}
+        </span>
+        {item.sub ? (
+          <span className={mobile ? "site-nav__mobile-sub" : "site-nav__dropdown-sub"}>
+            {item.sub}
+          </span>
+        ) : null}
+      </>
+    );
+    if (item.external) {
+      return (
+        <a
+          key={item.label}
+          href={item.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-active={active}
+          onClick={mobile ? closeMenu : closeDropdown}
+          className={mobile ? "site-nav__mobile-child" : "site-nav__dropdown-link"}
+        >
+          {content}
+        </a>
+      );
+    }
+    return (
+      <Link
+        key={item.label}
+        href={item.href}
+        data-active={active}
+        onClick={mobile ? closeMenu : closeDropdown}
+        className={mobile ? "site-nav__mobile-child" : "site-nav__dropdown-link"}
+      >
+        {content}
+      </Link>
+    );
+  };
+
   return (
     <>
-      <nav className="site-nav" data-scrolled={scrolled}>
+      <nav ref={navRef} className="site-nav" data-scrolled={scrolled}>
         <Link href="/" className="site-nav__logo" aria-label="Midgard home">
           <Image src="/midgard-icon.png" alt="" aria-hidden width={28} height={28} />
           <span className="wm">Midgard</span>
         </Link>
 
         <div className="site-nav__links">
-          {NAV_LINKS.map((item) => (
-            <Link key={item.href} href={item.href} {...linkClass(item.href)}>
-              {item.label}
-            </Link>
+          <Link href="/" {...linkClass("/")}>
+            Home
+          </Link>
+          {NAV_GROUPS.map((group) => (
+            <div
+              key={group.label}
+              className="site-nav__group"
+              data-open={openGroup === group.label}
+              onMouseEnter={() => setHoverGroup(group.label)}
+              onMouseLeave={() => setHoverGroup(null)}
+            >
+              <button
+                type="button"
+                className="site-nav__link site-nav__heading"
+                data-active={isGroupActive(group)}
+                aria-expanded={openGroup === group.label}
+                aria-haspopup="true"
+                onClick={() => openPinnedGroup(group.label)}
+              >
+                {group.label}
+                <span className="site-nav__chevron" aria-hidden>
+                  ↓
+                </span>
+              </button>
+              <div className="site-nav__dropdown" role="menu" aria-label={`${group.label} links`}>
+                {group.items.map((item) => renderDropdownLink(item))}
+              </div>
+            </div>
           ))}
-          <a
-            href={OFFICIAL_LINKS.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="site-nav__link site-nav__link--external"
-          >
-            GitHub
-            <GitHubIcon size={15} aria-hidden />
-          </a>
         </div>
 
         <div className="site-nav__right">
@@ -161,26 +327,15 @@ export function SiteNav() {
 
       {/* Mobile menu — same page list as desktop. */}
       <div className="site-nav__mobile" data-open={open}>
-        {NAV_LINKS.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            data-active={isActive(item.href)}
-            onClick={closeMenu}
-          >
-            {item.label}
-          </Link>
+        <Link href="/" data-active={isActive("/")} onClick={closeMenu}>
+          Home
+        </Link>
+        {NAV_GROUPS.map((group) => (
+          <div className="site-nav__mobile-group" key={group.label}>
+            <div className="site-nav__mobile-title">{group.label}</div>
+            {group.items.map((item) => renderDropdownLink(item, true))}
+          </div>
         ))}
-        <a
-          href={OFFICIAL_LINKS.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="site-nav__mobile-link--external"
-          onClick={closeMenu}
-        >
-          GitHub
-          <GitHubIcon size={16} aria-hidden />
-        </a>
       </div>
     </>
   );

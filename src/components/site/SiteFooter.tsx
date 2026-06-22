@@ -12,30 +12,35 @@ type FooterLink = {
   github?: boolean;
 };
 
-/* Two-page preview build: only the routes on this branch plus the live
-   external surfaces. The full sitemap returns with the full site. */
 const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = [
   {
     title: "Explore",
     links: [
       { label: "Home", href: "/" },
       { label: "How It Works", href: "/how-it-works" },
+      { label: "Security", href: "/security" },
+      { label: "FAQ", href: "/faq" },
       { label: "Choose your path", href: "/#trunk" },
+    ],
+  },
+  {
+    title: "Build",
+    links: [
+      { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       {
         label: "Whitepaper",
         href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
         external: true,
       },
+      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
   {
     title: "Official",
     links: [
-      { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "X", href: OFFICIAL_LINKS.x, external: true },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
       { label: "Security contact", href: OFFICIAL_LINKS.securityPolicy, external: true },
-      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
 ];
@@ -90,8 +95,8 @@ export function SiteFooter() {
             <span className="wm">Midgard</span>
           </div>
           <p>
-            Midgard is an optimistic rollup for UTXO finance, giving
-            applications faster execution with settlement rooted in Cardano.
+            Midgard is an optimistic rollup that gives UTXO applications faster
+            execution with settlement anchored to L1.
           </p>
 
           <div

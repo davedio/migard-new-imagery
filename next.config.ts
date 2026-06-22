@@ -44,19 +44,11 @@ const nextConfig: NextConfig = {
   },
   // The /docs page was removed; "Docs" now points at the source repo. Keep the
   // old route working by sending it straight to the GitHub repository.
-  // /security merged into the bottom of /contracts (2026-06-11) — old links
-  // and bookmarks land on the moved section.
   async redirects() {
     return [
       {
         source: "/docs",
         destination: "https://github.com/Anastasia-Labs/midgard",
-        permanent: false,
-      },
-      {
-        /* two-page preview build: /contracts is not on this branch */
-        source: "/security",
-        destination: "/",
         permanent: false,
       },
     ];

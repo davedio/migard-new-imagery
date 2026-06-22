@@ -15,15 +15,16 @@ export const metadata: Metadata = {
 
 export default function HowItWorksPage() {
   // The flagship 3D transaction journey IS the page. (The state-queue
-  // animation lives on the home ledger chapter; the five-step recap on
-  // /contracts#lifecycle.)
+  // animation lives on the home ledger chapter.)
   return (
     <HowItWorksExperience>
-      {/* Two-page preview build: /contracts and /get-started are not on
-          this branch, so the cards route to the whitepaper, the code and
-          the home paths section. */}
       <NextSteps
         items={[
+          {
+            label: "Read security",
+            sub: "The L1-rooted settlement, fault-proof, and watcher model",
+            href: "/security",
+          },
           {
             label: "Read the whitepaper",
             sub: "The challenge and fault-proof design that keeps operators honest",
@@ -33,11 +34,6 @@ export default function HowItWorksPage() {
             label: "Inspect the code",
             sub: "The protocol is open — verify it yourself on GitHub",
             href: "https://github.com/Anastasia-Labs/midgard",
-          },
-          {
-            label: "Choose your path",
-            sub: "Start as a user, builder, operator, or watcher",
-            href: "/#trunk",
           },
         ]}
       />

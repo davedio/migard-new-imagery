@@ -27,8 +27,7 @@ export default function InteriorFluidBackground() {
   if (pathname === "/" || pathname === "/home" || pathname === "/how-it-works") {
     return null;
   }
-  /* the carved-stone backdrop moved with the security content to /contracts */
-  if (pathname === "/contracts") {
+  if (pathname === "/security") {
     return <SecurityPageBackdrop />;
   }
   return <AmbientDepth />;

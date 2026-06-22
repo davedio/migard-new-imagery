@@ -11,7 +11,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.getByRole("button", { name: /enter/i })).toHaveCount(0);
 
   await expect(
-    page.getByRole("heading", { name: /The execution layer for UTXO finance/i }),
+    page.getByRole("heading", {
+      name: /Scale UTXO finance. Keep L1 security/i,
+    }),
   ).toBeVisible();
   await expect
     .poll(async () =>
@@ -60,6 +62,25 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
 });
 
+test("desktop nav opens persistent child page menu", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop dropdown behavior only");
+
+  await page.goto("/");
+
+  const learn = page.getByRole("button", { name: /Learn/i });
+  await learn.click();
+
+  const dropdown = page.locator(".site-nav__group", { has: learn }).locator(".site-nav__dropdown");
+  await expect(dropdown.getByRole("link", { name: /Security/i })).toBeVisible();
+  await expect(dropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
+  await expect(learn).toHaveAttribute("aria-expanded", "true");
+
+  await page.mouse.move(80, 820);
+  await expect(dropdown.getByRole("link", { name: /Security/i })).toBeVisible();
+
+  await page.screenshot({ path: testInfo.outputPath("nav-learn-open.png") });
+});
+
 test("how it works lifecycle language renders cleanly", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     window.localStorage.setItem("midgard:motion", "off");
@@ -69,13 +90,29 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
 
   await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
   await expect(page.locator(".hiw-act__beats").getByText("DA attestation")).toBeVisible();
-  await expect(page.getByText(/deposit, transact, withdraw/i)).toBeVisible();
-  await expect(page.getByText(/fault-proof design/i)).toBeVisible();
+  await expect(page.locator(".hiw-act__lead").getByText(/deposit, transact, withdraw/i)).toBeVisible();
 
   const bodyText = await page.locator("body").innerText();
   expect(bodyText).toContain("final settlement rooted in Cardano");
+  expect(bodyText).toContain("fault-proof");
   expect(bodyText).not.toContain("fraud-proof");
   expect(bodyText).not.toContain("fraud proof");
 
   await page.screenshot({ path: testInfo.outputPath("how-it-works.png") });
+});
+
+test("security and faq pages render", async ({ page }, testInfo) => {
+  await page.goto("/security");
+  await expect(page.getByRole("heading", { name: /Security you can inspect/i })).toBeVisible();
+  await expect(page.getByText(/mathematically verified smart contracts/i).first()).toBeVisible();
+  await expect(page.getByText(/fault-proof verification/i).first()).toBeVisible();
+  await page.waitForTimeout(700);
+  await page.screenshot({ path: testInfo.outputPath("security.png") });
+
+  await page.goto("/faq");
+  await expect(page.getByRole("heading", { name: /Questions, answered plainly/i })).toBeVisible();
+  await expect(page.getByText(/Compare the trust model/i)).toBeVisible();
+  await expect(page.getByText(/Often depends on a bridge/i)).toBeVisible();
+  await page.waitForTimeout(700);
+  await page.screenshot({ path: testInfo.outputPath("faq.png") });
 });
