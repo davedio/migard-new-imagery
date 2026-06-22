@@ -33,14 +33,14 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://midgard-gateway.vercel.app"),
-  title: "Midgard | Scale UTXO finance. Keep L1 security.",
+  title: "Midgard | The secure scaling layer for UTXO finance",
   description:
     "Midgard is an optimistic rollup that gives UTXO applications faster execution with settlement anchored to L1.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Midgard | Scale UTXO finance. Keep L1 security.",
+    title: "Midgard | The secure scaling layer for UTXO finance",
     description:
       "An optimistic rollup that gives UTXO applications faster execution with settlement anchored to L1.",
     url: "/",
@@ -50,14 +50,14 @@ export const metadata: Metadata = {
         url: "/og/home.jpg",
         width: 1200,
         height: 630,
-        alt: "Midgard — scale UTXO finance while keeping L1 security",
+        alt: "Midgard — the secure scaling layer for UTXO finance",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Midgard | Scale UTXO finance. Keep L1 security.",
+    title: "Midgard | The secure scaling layer for UTXO finance",
     description:
       "An optimistic rollup that gives UTXO applications faster execution with settlement anchored to L1.",
     images: ["/og/home.jpg"],

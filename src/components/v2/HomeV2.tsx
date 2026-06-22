@@ -97,9 +97,9 @@ function StaticHome({ plate }: { plate: string }) {
       <StaticScene id="top" plate={plate} position={STATIC_BANDS.hero}>
         <div className="v2-static__hero">
           <h1 className="v2-hero__title">
-            Scale UTXO finance.
+            The <span className="ital">secure scaling</span> layer
             <br />
-            Keep <span className="ital">L1 security</span>.
+            for UTXO finance
           </h1>
           <p className="v2-hero__lead">
             Midgard is an optimistic rollup that gives UTXO applications faster

@@ -276,8 +276,8 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
               <ShatterHeading
                 as="h1"
                 className="v2-hero__title"
-                lines={["Scale UTXO finance.", "Keep L1 security."]}
-                accents={{ "L1 security.": "green" }}
+                lines={["The secure scaling layer", "for UTXO finance"]}
+                accents={{ "secure scaling": "green" }}
               />
             </Rise>
             <Rise delay={0.2}>

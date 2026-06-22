@@ -12,7 +12,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
 
   await expect(
     page.getByRole("heading", {
-      name: /Scale UTXO finance. Keep L1 security/i,
+      name: /The secure scaling layer for UTXO finance/i,
     }),
   ).toBeVisible();
   await expect
