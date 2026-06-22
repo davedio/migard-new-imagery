@@ -14,8 +14,8 @@ const SecurityPageBackdrop = dynamic(() => import("./SecurityPageBackdrop"), {
 
 /**
  * Mounts the shared ambient background on Midgard CHILD pages only.
- * The home hero (/home) keeps its world-tree; the splash (/) has its own;
- * /how-it-works owns the full-screen flagship JourneyScene (its experience
+ * The home hero keeps its world-tree; /how-it-works owns the full-screen
+ * flagship JourneyScene (its experience
  * component portals its own fixed 3D stage), so the ambient canvas would be
  * a redundant second R3F canvas there. AmbientDepth is the single persistent
  * ambient canvas (drifting motes + fbm mist + scroll parallax) on the rest;

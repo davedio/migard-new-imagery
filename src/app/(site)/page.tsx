@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import HomeV2 from "@/components/v2/HomeV2";
-import { SplashOverlay } from "@/components/site/SplashOverlay";
 
 export const metadata: Metadata = {
   title: "Midgard",
@@ -15,16 +14,7 @@ export const metadata: Metadata = {
 
 /**
  * Canonical home at `/`, inside the (site) group so it shares nav + footer.
- *
- * Two-page preview build: the cinematic SplashOverlay (tree -> sigil ->
- * MIDGARD -> Enter) plays on EVERY visit so the intro itself can be
- * reviewed. The cookie gate from main is intentionally dropped here.
  */
 export default function HomePage() {
-  return (
-    <>
-      <SplashOverlay />
-      <HomeV2 />
-    </>
-  );
+  return <HomeV2 />;
 }

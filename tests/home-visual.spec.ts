@@ -7,10 +7,8 @@ test("home hero and ecosystem partners render cleanly", async ({ page }, testInf
 
   await page.goto("/");
 
-  const enter = page.getByRole("button", { name: /enter/i });
-  if ((await enter.count()) > 0) {
-    await enter.first().click();
-  }
+  await expect(page.locator(".splash--overlay")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /enter/i })).toHaveCount(0);
 
   await expect(page.getByRole("heading", { name: /Built to scale/i })).toBeVisible();
   const bodyText = await page.locator("body").innerText();

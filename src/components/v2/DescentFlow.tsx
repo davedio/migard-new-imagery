@@ -164,8 +164,6 @@ export default function DescentFlow() {
     let raf = 0;
     let last = performance.now();
     let running = false;
-    let splashEl: Element | null = null;
-    let splashCheckAt = 0;
 
     const onScroll = () => {
       target = window.scrollY;
@@ -178,12 +176,6 @@ export default function DescentFlow() {
       smooth += (target - smooth) * Math.min(1, 1 - Math.pow(1 - EASE, dt * 60));
       if (Math.abs(target - smooth) < 0.04) smooth = target;
       const s = smooth;
-
-      if (now > splashCheckAt) {
-        splashCheckAt = now + 1000;
-        splashEl = document.querySelector(".splash--overlay");
-      }
-      if (splashEl?.isConnected) return; // covered — draw nothing
 
       const [, canopyT, rootsT, , provT] = tops;
       const [, canopyH, rootsH] = heights;
