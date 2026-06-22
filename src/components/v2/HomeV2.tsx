@@ -20,6 +20,7 @@
 import Link from "next/link";
 import { type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
+import { useTheme, TREE_PLATES } from "@/lib/theme";
 import DescentFlow from "./DescentFlow";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
@@ -30,8 +31,6 @@ import {
   Statement,
   MotionToggle,
 } from "./HomeContent";
-
-const CLASSIC_TREE_PLATE = "/hero-tree-green.png";
 
 /* ONE tree, every scene (client direction 2026-06-12): the static
    fallback frames different bands of the SAME tall plate instead of
@@ -188,15 +187,17 @@ function StaticHome({ plate }: { plate: string }) {
 
 export default function HomeV2() {
   const { motionOn } = useMotionPref();
+  const { theme } = useTheme();
+  const plate = TREE_PLATES[theme];
 
   return (
     <main className="v2-home" data-motion={motionOn ? "on" : "off"}>
-      {/* React hoists this to <head> — the classic tree plate is the LCP image */}
-      <link rel="preload" as="image" href={CLASSIC_TREE_PLATE} />
+      {/* React hoists this to <head> — the active tree plate is the LCP image */}
+      <link rel="preload" as="image" href={plate} />
       {motionOn ? (
-        <DescentFlow key="classic-tree" />
+        <DescentFlow key={plate} treeSrc={plate} />
       ) : (
-        <StaticHome plate={CLASSIC_TREE_PLATE} />
+        <StaticHome plate={plate} />
       )}
       <MotionToggle />
     </main>
