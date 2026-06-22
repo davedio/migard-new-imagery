@@ -443,6 +443,10 @@ h2 em,
   width: 100%;
   height: 100%;
 }
+.v2-stage--classic-tree .static-tree-hero__bg {
+  --static-tree-bg-position: 50% 50%;
+  --static-tree-zoom: 1.06;
+}
 .v2-stage__veil {
   position: absolute;
   inset: 0;
@@ -451,6 +455,11 @@ h2 em,
   background:
     linear-gradient(180deg, rgba(4, 7, 5, 0.5), transparent 14%, transparent 86%, rgba(4, 7, 5, 0.28)),
     linear-gradient(90deg, rgba(4, 7, 5, 0.3), rgba(4, 7, 5, 0.08) 38%, transparent 58%);
+}
+.v2-stage--classic-tree .v2-stage__veil {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.2), transparent 20%, transparent 86%, rgba(4, 7, 5, 0.2)),
+    linear-gradient(90deg, rgba(4, 7, 5, 0.18), rgba(4, 7, 5, 0.04) 38%, transparent 58%);
 }
 /* DAY MIST (client: "a little mist back on the day tree for mystery") —
    a subtle morning haze that hugs the base/roots and a whisper across the
@@ -1455,6 +1464,10 @@ h2 em,
 }
 
 @media (max-width: 760px) {
+  .v2-stage--classic-tree .static-tree-hero__bg {
+    --static-tree-bg-position: 62% 50%;
+    --static-tree-zoom: 1;
+  }
   .v2-band__hero {
     padding-bottom: clamp(84px, 12svh, 118px);
   }

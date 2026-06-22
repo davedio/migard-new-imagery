@@ -29,7 +29,9 @@ import {
   type ReactNode,
 } from "react";
 import { useMotionPref } from "@/lib/motion";
-import WorldTreeCanvas, { PHASES_REST, type DescentPhases } from "./WorldTreeCanvas";
+import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
+import StaticTreeHero from "@/components/scene/StaticTreeHero";
+import { PHASES_REST, type DescentPhases } from "./WorldTreeCanvas";
 import ShatterHeading from "./ShatterHeading";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
@@ -114,8 +116,9 @@ const BAND_IDS = [
 
 const subscribeNoop = () => () => {};
 
-export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
+export default function DescentFlow() {
   const { motionOn } = useMotionPref();
+  const { data: snap } = useNetworkSnapshot();
   const mounted = useSyncExternalStore(
     subscribeNoop,
     () => true,
@@ -413,14 +416,8 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
 
       {mounted
         ? createPortal(
-            <div ref={stageRef} className="v2-stage" data-stage>
-              {/* keyed by plate so a theme flip re-reads the vein field */}
-              <WorldTreeCanvas
-                key={treeSrc}
-                src={treeSrc}
-                phasesRef={phasesRef}
-                tickRef={tickRef}
-              />
+            <div ref={stageRef} className="v2-stage v2-stage--classic-tree" data-stage>
+              <StaticTreeHero snap={snap} motionOn={motionOn} />
               <div className="v2-stage__veil" aria-hidden />
               <div className="v2-stage__mist" aria-hidden />
               <nav ref={railRef} className="v2-rail" aria-label="Page progress">
