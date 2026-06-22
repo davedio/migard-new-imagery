@@ -11,14 +11,14 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export function ThesisSection() {
   return (
-    <Section eyebrow="The thesis" title="Scale that stays on Cardano">
+    <Section eyebrow="The thesis" title="UTXO finance, starting with Cardano">
       <Prose
         items={[
           {
-            text: "The usual way to scale a blockchain is to leave it — move to a faster network, accept a weaker security model, learn a new stack, and split your liquidity on the way out.",
+            text: "UTXO finance should not have to choose between speed and security. Midgard gives UTXO applications a faster execution layer, starting with Cardano and designed for a broader bridged future.",
           },
           {
-            text: "Midgard keeps you on Cardano. Your apps run at Layer 2 speed, and every result settles back to Cardano L1.",
+            text: "Settlement is rooted in Cardano today. The trust story comes from mathematically verified smart contracts, fault-proof verification, and a smaller eUTXO attack surface.",
             variant: "emph",
           },
         ]}
@@ -32,14 +32,14 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
     <>
       {showThesis && <ThesisSection />}
 
-      <Section eyebrow="Who builds it" title="Built by Anastasia Labs">
+      <Section eyebrow="Who builds it" title="Built by Midgard Labs">
         <Prose
           items={[
             {
-              text: "Midgard is built by Anastasia Labs, a team that builds Cardano infrastructure and open-source developer tooling.",
+              text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution, starting with Cardano.",
             },
             {
-              text: "The protocol is open and the code can be inspected. The status page shows what's live, what's planned, and what's still simulated.",
+              text: "The protocol is open and the code can be inspected. Public claims should stay tied to live status, measured benchmarks, and approved protocol parameters.",
               variant: "dim",
             },
           ]}
@@ -61,7 +61,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
         />
       </Section>
 
-      <Section eyebrow="Built with" title="The Cardano stack, end to end">
+      <Section eyebrow="Built with" title="The starting stack">
         <StackChips />
       </Section>
     </>

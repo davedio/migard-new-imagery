@@ -20,6 +20,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Home", href: "/" },
       { label: "How It Works", href: "/how-it-works" },
+      { label: "Choose your path", href: "/#trunk" },
       {
         label: "Whitepaper",
         href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
@@ -28,11 +29,12 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     ],
   },
   {
-    title: "Community",
+    title: "Official",
     links: [
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "X", href: OFFICIAL_LINKS.x, external: true },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
+      { label: "Security contact", href: OFFICIAL_LINKS.securityPolicy, external: true },
       { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
@@ -88,8 +90,8 @@ export function SiteFooter() {
             <span className="wm">Midgard</span>
           </div>
           <p>
-            Midgard is a Cardano-native optimistic rollup: Layer 2 speed with
-            settlement anchored to Cardano. Built by Anastasia Labs.
+            Midgard is an optimistic rollup for UTXO finance, giving
+            applications faster execution with settlement rooted in Cardano.
           </p>
 
           <div
@@ -146,7 +148,7 @@ export function SiteFooter() {
           ))}
         </div>
         <NetworkChip />
-        <span className="meta">© 2026 Midgard · Always start from official links</span>
+        <span className="meta">© 2026 Midgard Labs · Always start from official links</span>
       </div>
     </footer>
   );

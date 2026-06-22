@@ -35,10 +35,8 @@ import { PHASES_REST, type DescentPhases } from "./WorldTreeCanvas";
 import ShatterHeading from "./ShatterHeading";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
-  HeroHud,
   Ledger,
   Marquee,
-  PartnerMarquee,
   Paths,
   Provenance,
   Statement,
@@ -100,18 +98,18 @@ function Chapter({
 
 const RAIL = [
   { id: "top", label: "Intro", stratum: "surface" },
+  { id: "trunk", label: "Paths", stratum: "trunk" },
   { id: "canopy", label: "Thesis", stratum: "canopy" },
   { id: "roots", label: "Metrics", stratum: "roots" },
-  { id: "trunk", label: "Paths", stratum: "trunk" },
 ] as const;
 
 const BAND_IDS = [
   "top",
+  "trunk",
   "canopy",
   "roots",
   "queue",
   "prov",
-  "trunk",
 ] as const;
 
 const subscribeNoop = () => () => {};
@@ -177,8 +175,14 @@ export default function DescentFlow() {
       if (Math.abs(target - smooth) < 0.04) smooth = target;
       const s = smooth;
 
-      const [, canopyT, rootsT, , provT] = tops;
-      const [, canopyH, rootsH] = heights;
+      const canopyIndex = BAND_IDS.indexOf("canopy");
+      const rootsIndex = BAND_IDS.indexOf("roots");
+      const provIndex = BAND_IDS.indexOf("prov");
+      const canopyT = tops[canopyIndex] ?? 0;
+      const rootsT = tops[rootsIndex] ?? 0;
+      const provT = tops[provIndex] ?? 0;
+      const canopyH = heights[canopyIndex] ?? 1;
+      const rootsH = heights[rootsIndex] ?? 1;
 
       /* ---- narrative phases (each owns ONE beat — calmer per scroll) ----
          helix    forms over the visible tree while the thesis is read
@@ -272,52 +276,50 @@ export default function DescentFlow() {
         <section id="top" className="v2-band v2-band--hero">
           <div className="v2-band__hero">
             <Rise>
-              <span className="v2-hero__eyebrow">
-                <span className="tick" aria-hidden />
-                Speed · Scale · Security
-              </span>
+              <ShatterHeading
+                as="h1"
+                className="v2-hero__title"
+                lines={["The execution layer", "for UTXO finance."]}
+                accents={{ "UTXO finance.": "green" }}
+              />
             </Rise>
-            <ShatterHeading
-              as="h1"
-              className="v2-hero__title"
-              lines={["Built to scale.", "Secured by Cardano."]}
-              accents={{ "Cardano.": "green" }}
-            />
             <Rise delay={0.2}>
               <p className="v2-hero__lead">
-                Midgard is a Cardano-native optimistic rollup that gives
-                applications a faster execution layer while keeping Cardano as
-                the trust anchor.
+                Midgard is an optimistic rollup for UTXO finance, giving
+                applications faster execution with settlement rooted in Cardano.
               </p>
             </Rise>
             <Rise delay={0.3}>
               <div className="v2-hero__actions">
-                <Link className="btn btn--primary" href="/how-it-works">
-                  See How It Works
+                <Link className="btn btn--primary" href="#trunk">
+                  Choose your path
                 </Link>
-                <a
-                  className="btn-link--gold"
-                  href="https://anastasia-labs.github.io/midgard/midgard.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Read the whitepaper
-                </a>
+                <Link className="btn-link--gold" href="/how-it-works">
+                  See how it works
+                </Link>
               </div>
             </Rise>
             <Rise delay={0.42}>
               <div className="v2-hero__meta">
-                <HeroHud />
                 <span className="v2-hero__scrollcue">
                   <span className="line" aria-hidden />
-                  Descend
+                  Pre-alpha testnet
                 </span>
               </div>
             </Rise>
           </div>
         </section>
 
-        <PartnerMarquee />
+        {/* ---------- 01 trunk / paths: immediate role routing ---------- */}
+        <section id="trunk" className="v2-band v2-band--tight">
+          <Chapter
+            n="01"
+            title={["Choose your path."]}
+            lead="Users, builders, operators, and watchers overlap. Start with the role that fits what you're here to do."
+          />
+          <Paths />
+        </section>
+
         <Marquee />
 
         {/* ---------- 01 canopy / thesis (the helix forms here) ---------- */}
@@ -325,13 +327,13 @@ export default function DescentFlow() {
           <div className="v2-ch">
             <Rise>
               <div className="v2-ch__index">
-                <span className="n">01</span>
+                <span className="n">02</span>
                 <span className="rule" />
               </div>
             </Rise>
             {/* one line on desktop, wraps naturally on phones */}
             <Rise delay={0.06}>
-              <h2 className="v2-thesis__h2">Scale that stays on Cardano.</h2>
+              <h2 className="v2-thesis__h2">UTXO finance, starting with Cardano.</h2>
             </Rise>
           </div>
           <div className="v2-thesis__row">
@@ -347,13 +349,13 @@ export default function DescentFlow() {
         {/* ---------- 02 roots / ledger (the helix collapses to ONE orb) -- */}
         <section id="roots" className="v2-band">
           <Chapter
-            n="02"
-            title={["Fast confirmations now,", "final settlement on Cardano."]}
+            n="03"
+            title={["Key metrics", "worth tracking."]}
             lead={
               <>
-                The numbers behind Midgard&apos;s pre-alpha testnet:{" "}
-                <strong>usable speed today</strong>, with final settlement on
-                Cardano.
+                The homepage should advertise indicators the team can track and
+                defend: confirmation speed, settlement window, execution model,
+                verification, fees, and current status.
               </>
             }
           />
@@ -376,7 +378,7 @@ export default function DescentFlow() {
             <Rise delay={0.14}>
               <p className="v2-ch__lead">
                 Operators append committed blocks to a singly-linked queue.
-                When a block&apos;s fraud-proof window closes, it folds into
+                When a block&apos;s fault-proof window closes, it folds into
                 the confirmed state — oldest first, one L1 transaction at a
                 time.
               </p>
@@ -394,16 +396,8 @@ export default function DescentFlow() {
           <Provenance />
         </section>
 
-        {/* ---------- 03 trunk / paths — the closing: choose your path while
-            the settlement orb rests in the roots below ---------- */}
-        <section id="trunk" className="v2-band v2-band--last">
-          <Chapter
-            n="03"
-            title={["Choose your path."]}
-            lead="These roles overlap. Pick the one that fits what you're here to do."
-          />
-          <Paths />
-        </section>
+        {/* ---------- provenance — closing credibility block ---------- */}
+        <section id="bedrock" className="v2-band v2-band--last" aria-hidden />
       </div>
 
       {mounted

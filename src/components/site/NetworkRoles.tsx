@@ -4,10 +4,9 @@ import { Reveal } from "./Reveal";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 /* =========================================================================
-   NetworkRoles — the "Three roles. One protocol." section ported verbatim
-   from the Anastasia reference site (#developers), restyled to the gateway
-   design system. The heading is reworded per request; all card copy, the
-   code snippet, the metrics, and the CTAs are reproduced as written.
+   NetworkRoles — reusable role cards. Keep this conservative: exact watcher
+   rewards and operator bond ranges belong in approved economics material, not
+   the public homepage copy.
    ========================================================================= */
 
 const cardStyle: CSSProperties = {
@@ -65,12 +64,11 @@ export function NetworkRoles() {
         {/* Card 1 — Become a Watcher */}
         <Reveal style={{ display: "flex" }}>
           <div className="panel panel--select-glow" style={{ ...cardStyle, width: "100%" }}>
-            <span style={eyebrowStyle}>Submit Fraud Proofs</span>
+            <span style={eyebrowStyle}>Verify fault proofs</span>
             <h3 style={titleStyle}>Become a Watcher</h3>
             <p style={bodyStyle}>
-              Catch fraudulent blocks, prove it on L1, and earn 30–50% of the
-              slashed bond. Anyone can run a Watcher. The protocol pays you to
-              keep operators honest.
+              Monitor committed blocks, re-execute protocol activity, and help
+              verify invalid commitments through the fault-proof path.
             </p>
             <a
               className="panel-cta-glow"
@@ -78,7 +76,7 @@ export function NetworkRoles() {
               target="_blank"
               rel="noreferrer"
             >
-              Earn: 30–50% of slashed bond →
+              Review watcher requirements →
             </a>
           </div>
         </Reveal>
@@ -89,10 +87,10 @@ export function NetworkRoles() {
             <span style={eyebrowStyle}>Institutional Infrastructure</span>
             <h3 style={titleStyle}>Become an Operator</h3>
             <p style={bodyStyle}>
-              Sequence and commit blocks in rotating 1-hour shifts. Earn fees
-              from every L2 transaction, deposit, and withdrawal.
+              Sequence and commit blocks as the network moves through staged
+              testnet and toward broader infrastructure participation.
             </p>
-            <div style={metricStyle}>Bond: 50K–200K ADA</div>
+            <div style={metricStyle}>Testnet parameters subject to approval</div>
             <a
               className="panel-cta-glow"
               href={OFFICIAL_LINKS.intakeForm}

@@ -9,6 +9,6 @@ export const OFFICIAL_LINKS = {
   /** Responsible-disclosure policy for this site (SECURITY.md in the gateway repo). */
   securityPolicy:
     "https://github.com/davedio/midgard-gateway/blob/main/SECURITY.md",
-  /** Anastasia Labs, the team building Midgard. */
+  /** Legacy Anastasia Labs URL retained for approved partner/background links. */
   anastasiaLabs: "https://anastasialabs.com",
 } as const;

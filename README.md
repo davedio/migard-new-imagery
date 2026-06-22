@@ -1,6 +1,6 @@
 # Midgard Gateway
 
-Midgard Gateway is the public website and status surface for Midgard, a Cardano-native optimistic rollup from Anastasia Labs.
+Midgard Gateway is the public website and status surface for Midgard, the execution layer for UTXO finance.
 
 The site explains Midgard for users, builders, and partners. It should stay plain-spoken: say what is live, what is pending, what can be checked in source, and where settlement returns to Cardano L1.
 

@@ -23,10 +23,8 @@ import { useMotionPref } from "@/lib/motion";
 import DescentFlow from "./DescentFlow";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
-  HeroHud,
   Ledger,
   Marquee,
-  PartnerMarquee,
   Paths,
   Provenance,
   Statement,
@@ -99,51 +97,46 @@ function StaticHome({ plate }: { plate: string }) {
     <>
       <StaticScene id="top" plate={plate} position={STATIC_BANDS.hero}>
         <div className="v2-static__hero">
-          <span className="v2-hero__eyebrow">
-            <span className="tick" aria-hidden />
-            Speed · Scale · Security
-          </span>
           <h1 className="v2-hero__title">
-            Built to scale.
+            The execution layer
             <br />
-            Secured by <span className="ital">Cardano</span>.
+            for <span className="ital">UTXO finance</span>.
           </h1>
           <p className="v2-hero__lead">
-            Midgard is a Cardano-native optimistic rollup that gives
-            applications a faster execution layer while keeping Cardano as the
-            trust anchor.
+            Midgard is an optimistic rollup for UTXO finance, giving
+            applications faster execution with settlement rooted in Cardano.
           </p>
           <div className="v2-hero__actions">
-            <Link className="btn btn--primary" href="/how-it-works">
-              See How It Works
+            <Link className="btn btn--primary" href="#trunk">
+              Choose your path
             </Link>
-            <a
-              className="btn-link--gold"
-              href="https://anastasia-labs.github.io/midgard/midgard.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Read the whitepaper
-            </a>
-          </div>
-          <div className="v2-hero__meta">
-            <HeroHud />
+            <Link className="btn-link--gold" href="/how-it-works">
+              See how it works
+            </Link>
           </div>
         </div>
       </StaticScene>
 
-      <PartnerMarquee />
+      <StaticScene id="trunk" plate={plate} position={STATIC_BANDS.strata}>
+        <StaticChapter
+          n="01"
+          title="Choose your path."
+          lead="Users, builders, operators, and watchers overlap. Start with the role that fits what you're here to do."
+        />
+        <Paths />
+      </StaticScene>
+
       <Marquee />
 
       <section id="canopy" className="v2-static v2-static--dark">
         <div className="v2-static__body">
           <StaticChapter
-            n="01"
+            n="02"
             title={
               <>
-                Scale that stays
+                UTXO finance,
                 <br />
-                on Cardano.
+                starting with Cardano.
               </>
             }
           />
@@ -153,19 +146,19 @@ function StaticHome({ plate }: { plate: string }) {
 
       <StaticScene id="roots" plate={plate} position={STATIC_BANDS.roots}>
         <StaticChapter
-          n="02"
+          n="03"
           title={
             <>
-              Fast confirmations now,
+              Key metrics
               <br />
-              final settlement on Cardano.
+              worth tracking.
             </>
           }
           lead={
             <>
-              The numbers behind Midgard&apos;s pre-alpha testnet:{" "}
-              <strong>usable speed today</strong>, with final settlement on
-              Cardano.
+              The homepage should advertise indicators the team can track and
+              defend: confirmation speed, settlement window, execution model,
+              verification, fees, and current status.
             </>
           }
         />
@@ -184,15 +177,6 @@ function StaticHome({ plate }: { plate: string }) {
 
       <StaticScene id="prov" plate={plate} position={STATIC_BANDS.prov}>
         <Provenance />
-      </StaticScene>
-
-      <StaticScene id="trunk" plate={plate} position={STATIC_BANDS.strata}>
-        <StaticChapter
-          n="03"
-          title="Choose your path."
-          lead="These roles overlap. Pick the one that fits what you're here to do."
-        />
-        <Paths />
       </StaticScene>
     </>
   );

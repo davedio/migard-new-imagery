@@ -513,6 +513,7 @@ h2 em,
 }
 .v2-band {
   position: relative;
+  scroll-margin-top: clamp(96px, 14svh, 150px);
 }
 .v2-band--hero {
   min-height: 100svh;

@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import HomeV2 from "@/components/v2/HomeV2";
 
 export const metadata: Metadata = {
-  title: "Midgard",
+  title: "Midgard | The execution layer for UTXO finance",
   description:
-    "Midgard is a Cardano-native optimistic rollup. High-throughput Layer 2 performance with a trust path that settles back to Cardano.",
+    "Midgard is an optimistic rollup for UTXO finance, giving applications faster execution with settlement rooted in Cardano.",
   openGraph: {
-    title: "Midgard",
+    title: "Midgard | The execution layer for UTXO finance",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", images: ["/og/home.jpg"] },

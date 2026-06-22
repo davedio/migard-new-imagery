@@ -1,7 +1,7 @@
 import { Reveal } from "@/components/site/Reveal";
 
 /* ============================================================
-   EutxoDuel — the side-by-side fraud-proof comparison (Midgard's
+   EutxoDuel — the side-by-side fault-proof comparison (Midgard's
    eUTXO surgery vs account-model global replay). Relocated from the
    home proofs chapter to the FAQ (2026-06-11), inline with the
    security questions it answers. Styling rides the shared .v2-duel
@@ -11,12 +11,12 @@ import { Reveal } from "@/components/site/Reveal";
 const DUEL = {
   us: {
     tag: "Midgard · eUTXO",
-    title: "Surgical fraud proofs",
+    title: "Targeted fault proofs",
     thesis:
-      "Deterministic eUTXO execution means a fraud proof re-runs only the specific inputs of a bad transaction — the referenced inputs, the validator, and the transaction hash. Verification is fast, cheap, and conclusive on Cardano L1.",
+      "Deterministic eUTXO execution means a fault proof re-runs only the specific inputs of a bad transaction — the referenced inputs, the validator, and the transaction hash. Verification is focused and less global than account-model replay.",
     points: [
       "Minimal data to verify a proof",
-      "Cheap, conclusive L1 verification",
+      "Focused L1 verification",
       "Lower bar to run a Watcher",
       "No global state scan",
     ],
@@ -25,7 +25,7 @@ const DUEL = {
     tag: "Account-model rollups",
     title: "Global state replay",
     thesis:
-      "Account-based rollups replay transactions against shared global state across many contracts to prove fraud — heavier data, more computation, and higher operating cost to verify on L1.",
+      "Account-based rollups replay transactions against shared global state across many contracts to prove invalid state — heavier data, more computation, and higher operating cost to verify on L1.",
     points: [
       "Large data footprint",
       "Expensive L1 verification",

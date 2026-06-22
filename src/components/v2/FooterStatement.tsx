@@ -16,7 +16,7 @@ export function FooterStatement() {
   return (
     <Link href={next} className="v2-footer-statement">
       <span>
-        Scale <em>on</em> Cardano.
+        Build <em>on</em> Cardano.
       </span>
       <span className="arrow" aria-hidden>
         ↗

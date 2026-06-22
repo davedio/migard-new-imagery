@@ -8,9 +8,9 @@
    Copy here is the finalized site language; presentation lives elsewhere.
    ========================================================================== */
 
-import { animate, motion } from "motion/react";
+import { motion } from "motion/react";
 import Image from "next/image";
-import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -18,11 +18,9 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const EASE_EXPO = [0.16, 1, 0.3, 1] as const;
 export const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 
-/** Soft fade-rise for body copy and blocks (used by the fallback path and
-    inside overlays, where it plays once the overlay becomes visible). */
+/** Shared wrapper for body copy and blocks across motion and fallback paths. */
 export function Rise({
   children,
-  delay = 0,
   className,
   style,
 }: {
@@ -31,18 +29,10 @@ export function Rise({
   className?: string;
   style?: CSSProperties;
 }) {
-  const { motionOn } = useMotionPref();
   return (
-    <motion.div
-      className={className}
-      style={style}
-      initial={motionOn ? { opacity: 0, y: 28 } : false}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "0px 0px -6% 0px" }}
-      transition={{ duration: 0.85, ease: EASE_EXPO, delay }}
-    >
+    <div className={className} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
@@ -117,11 +107,11 @@ export function HeroHud() {
 
 const TERMS = [
   "Optimistic rollup",
-  "Settles on Cardano L1",
-  "Fraud proofs",
+  "L1 settlement",
+  "Fault proofs",
   "eUTXO",
-  "Same wallet · Same ADA",
-  "24/7 watchers",
+  "Familiar wallets",
+  "Formal methods",
   "Open source",
   "Pre-alpha testnet",
 ];
@@ -180,7 +170,7 @@ export function PartnerMarquee() {
       <div className="v2-partners__head">
         <p className="v2-partners__kicker">Network</p>
         <h2 id="ecosystem-partners-title">Ecosystem Partners</h2>
-        <p className="v2-partners__sub">Cardano-native teams around Midgard.</p>
+        <p className="v2-partners__sub">UTXO-native teams around Midgard.</p>
       </div>
       <div className="v2-partners__rail" aria-label="Ecosystem partner logos">
         <div className="v2-partners__track">
@@ -200,15 +190,15 @@ type Phrase = { text: string; cls?: string };
 
 const THESIS: Phrase[][] = [
   [
-    { text: "The usual way to scale a blockchain is to leave it —" },
-    { text: "move to a faster network, accept a weaker security model," },
-    { text: "learn a new stack, and split your liquidity on the way out." },
+    { text: "UTXO finance should not have to choose between speed and security." },
+    { text: "Midgard gives UTXO applications a faster execution layer," },
+    { text: "starting with Cardano and designed for a broader bridged future." },
   ],
   [
-    { text: "Midgard keeps you on", cls: "hi" },
-    { text: "Cardano.", cls: "hi-green" },
-    { text: "Your apps run at Layer 2 speed, and every result", cls: "hi" },
-    { text: "settles back to Cardano L1.", cls: "hi-green" },
+    { text: "Settlement is rooted in", cls: "hi" },
+    { text: "Cardano today.", cls: "hi-green" },
+    { text: "The trust story comes from mathematically verified smart contracts," },
+    { text: "fault-proof verification, and a smaller eUTXO attack surface.", cls: "hi" },
   ],
 ];
 
@@ -281,27 +271,36 @@ const PATHS = [
   {
     n: "01",
     title: "Users",
-    line: "Use Cardano apps that run on Midgard — same wallet, same ADA.",
+    line: "Use UTXO finance applications with faster execution and familiar wallet flows.",
     cta: "Start as a user",
     href: OFFICIAL_LINKS.discord,
   },
   {
     n: "02",
     title: "Builders",
-    line: "For wallets and dApps, including DEXs, lending protocols, and any other applications.",
+    line: "Build UTXO applications that need more throughput without leaving the UTXO model.",
     cta: "Start building",
     href: OFFICIAL_LINKS.github,
   },
   {
     n: "03",
-    title: "Operators & Watchers",
-    line: "For Midgard operators, batchers, and watchers.",
-    cta: "Run the protocol",
+    title: "Operators",
+    line: "Run infrastructure for Midgard as the network moves through staged testnet and toward broader participation.",
+    cta: "Register interest",
+    href: OFFICIAL_LINKS.intakeForm,
+  },
+  {
+    n: "04",
+    title: "Watchers",
+    line: "Monitor the protocol and participate in fault-proof verification.",
+    cta: "Review the code",
     href: OFFICIAL_LINKS.github,
   },
 ] as const;
 
 export function Paths() {
+  const isGitHub = (href: string) => href === OFFICIAL_LINKS.github;
+
   return (
     <div className="v2-explore" id="explore">
       <div className="v2-explore__grid">
@@ -316,7 +315,10 @@ export function Paths() {
               <div className="v2-explore__num">{p.n}</div>
               <h3>{p.title}</h3>
               <p>{p.line}</p>
-              <span className="panel-cta-glow">{p.cta} →</span>
+              <span className="panel-cta-glow">
+                {isGitHub(p.href) ? <GitHubIcon size={14} aria-hidden /> : null}
+                {p.cta} →
+              </span>
             </a>
           </Rise>
         ))}
@@ -329,28 +331,6 @@ export function Paths() {
 /*  roots / ledger                                                         */
 /* ---------------------------------------------------------------------- */
 
-function ThroughputValue() {
-  const [n, setN] = useState(0);
-  const done = useRef(false);
-  return (
-    <motion.div
-      className="v2-ledger__cell-anim"
-      onViewportEnter={() => {
-        if (done.current) return;
-        done.current = true;
-        animate(0, 300, {
-          duration: 1.7,
-          ease: EASE_EXPO,
-          onUpdate: (v) => setN(Math.round(v)),
-        });
-      }}
-      viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-    >
-      Up to ~{n}×
-    </motion.div>
-  );
-}
-
 const LEDGER: {
   k: string;
   v: ReactNode;
@@ -358,19 +338,19 @@ const LEDGER: {
   accent?: "green" | "gold";
 }[] = [
   {
-    k: "Usable in seconds",
+    k: "Soft confirmations",
     v: "Seconds",
-    s: "instant, usable confirmation",
+    s: "usable pre-alpha confirmation",
     accent: "green",
   },
-  { k: "Fully settled", v: "3–7 days", s: "L1 challenge window", accent: "gold" },
+  { k: "Settlement window", v: "3–7 days", s: "challenge window before settlement", accent: "gold" },
+  { k: "Execution model", v: "eUTXO-native", s: "built for UTXO finance" },
   {
-    k: "Throughput",
-    v: <ThroughputValue />,
-    s: "target throughput · pre-benchmark",
+    k: "Verified contracts",
+    v: "Formal methods",
+    s: "mathematically verified smart contracts",
   },
-  { k: "Fraud proofs", v: "eUTXO-targeted", s: "surgical, not global" },
-  { k: "Fees", v: "ADA", s: "settled on Cardano L1" },
+  { k: "Fees", v: "ADA", s: "no separate gas token" },
   { k: "Status", v: "Pre-alpha", s: "Cardano preprod testnet", accent: "gold" },
 ];
 
@@ -412,20 +392,20 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
           <h2 className="v2-prov__title">
             Built by
             <br />
-            Anastasia Labs.
+            Midgard Labs.
           </h2>
         </Rise>
       </div>
       <div className="v2-prov__body">
         <Rise>
           <p>
-            Midgard is built by Anastasia Labs, a team that builds Cardano
-            infrastructure and open-source developer tooling.
+            Midgard is built by Midgard Labs for UTXO applications that need
+            faster execution, starting with Cardano.
           </p>
           <p>
-            The protocol is open and the code can be inspected. The status page
-            shows what&apos;s live, what&apos;s planned, and what&apos;s still
-            simulated.
+            The protocol is open and the code can be inspected. As the testnet
+            matures, public claims should stay tied to live status, measured
+            benchmarks, and approved protocol parameters.
           </p>
         </Rise>
         <Rise delay={0.1}>
@@ -462,7 +442,7 @@ export const STRATA = [
   { id: "canopy", label: "Thesis", stratum: "canopy" },
   { id: "trunk", label: "Paths", stratum: "trunk" },
   { id: "roots", label: "Metrics", stratum: "roots" },
-  { id: "proofs", label: "Proofs · eUTXO", stratum: "proofs" },
+  { id: "proofs", label: "Fault proofs · eUTXO", stratum: "proofs" },
   { id: "bedrock", label: "Settlement · L1", stratum: "bedrock" },
 ] as const;
 

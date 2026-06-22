@@ -21,6 +21,7 @@ type NavLink = {
    this branch — the new-tree home and the How It Works descent. */
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
+  { label: "Choose your path", href: "/#trunk" },
   { label: "How It Works", href: "/how-it-works" },
 ] as const;
 

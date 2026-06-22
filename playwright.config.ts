@@ -9,7 +9,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://localhost:3100",
     contextOptions: {
       reducedMotion: "no-preference",
     },
@@ -17,8 +17,8 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run dev",
-    url: "http://127.0.0.1:3000",
+    command: "npm run dev -- --hostname localhost --port 3100",
+    url: "http://localhost:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

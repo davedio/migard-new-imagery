@@ -935,6 +935,12 @@ button.panel:hover {
     0 0 14px rgba(32, 190, 67, 0.35);
 }
 
+@media (max-width: 760px) {
+  .motion-toggle {
+    display: none;
+  }
+}
+
 .metric-row {
   display: flex;
   justify-content: space-between;

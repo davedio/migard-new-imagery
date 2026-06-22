@@ -1,6 +1,6 @@
 /* =========================================================================
    StateQueueViz — a SIMULATED animation of the on-chain state queue:
-   blocks commit, mature through the fraud-proof window, then fold into the
+   blocks commit, mature through the fault-proof window, then fold into the
    confirmed root (oldest first). Self-driven and clearly labelled simulated;
    freezes to a static frame under reduced motion.
    ========================================================================= */

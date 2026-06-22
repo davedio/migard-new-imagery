@@ -33,16 +33,16 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://midgard-gateway.vercel.app"),
-  title: "Midgard | Cardano-Native L2 Scaling",
+  title: "Midgard | The execution layer for UTXO finance",
   description:
-    "Midgard is a Cardano-native optimistic rollup for applications that need faster L2 execution with settlement back to Cardano L1.",
+    "Midgard is an optimistic rollup for UTXO finance, giving applications faster execution with settlement rooted in Cardano.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Midgard | Cardano-Native L2 Scaling",
+    title: "Midgard | The execution layer for UTXO finance",
     description:
-      "A Cardano-native optimistic rollup for faster L2 execution with settlement back to Cardano L1.",
+      "An optimistic rollup for UTXO finance, giving applications faster execution with settlement rooted in Cardano.",
     url: "/",
     siteName: "Midgard",
     images: [
@@ -50,16 +50,16 @@ export const metadata: Metadata = {
         url: "/og/home.jpg",
         width: 1200,
         height: 630,
-        alt: "Midgard — built to scale, secured by Cardano",
+        alt: "Midgard — the execution layer for UTXO finance",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Midgard | Cardano-Native L2 Scaling",
+    title: "Midgard | The execution layer for UTXO finance",
     description:
-      "A Cardano-native optimistic rollup for faster L2 execution with settlement back to Cardano L1.",
+      "An optimistic rollup for UTXO finance, giving applications faster execution with settlement rooted in Cardano.",
     images: ["/og/home.jpg"],
   },
   icons: {
@@ -75,7 +75,7 @@ const ORG_JSONLD = {
     {
       "@type": "Organization",
       "@id": "https://midgard-gateway.vercel.app/#org",
-      name: "Midgard",
+      name: "Midgard Labs",
       url: "https://midgard-gateway.vercel.app",
       logo: "https://midgard-gateway.vercel.app/midgard-icon.png",
       sameAs: [
@@ -83,7 +83,6 @@ const ORG_JSONLD = {
         "https://x.com/midgardprotocol",
         "https://discord.gg/ZpjgHKWaZx",
       ],
-      parentOrganization: { "@type": "Organization", name: "Anastasia Labs" },
     },
     {
       "@type": "WebSite",

@@ -6,7 +6,7 @@ import styles from "./contracts.module.css";
 /**
  * The full Midgard contract topology — thirteen validators laid out as a
  * left-to-right pipeline (Hub Oracle → Scheduler → State Queue → Settlement)
- * with the Operator Directory below it and the fraud-proof system (gold) wired
+ * with the Operator Directory below it and the fault-proof system (gold) wired
  * back into the State Queue.
  *
  * Visuals only — the protocol facts live in the cards below the diagram.
@@ -89,7 +89,7 @@ export function ContractTopology() {
         viewBox="0 0 960 345"
         className={styles.topo}
         role="img"
-        aria-label="Full Midgard contract topology: a left-to-right pipeline Hub Oracle to Scheduler to State Queue to Settlement; the Operator Directory (Active, Registered, Retired) sits below the pipeline and is referenced by Scheduler, State Queue, and Settlement; Deposit, Tx Order, and Withdrawal feed up into Settlement; the fraud-proof system connects back to the State Queue via a Computation Thread and Fraud Proof."
+        aria-label="Full Midgard contract topology: a left-to-right pipeline Hub Oracle to Scheduler to State Queue to Settlement; the Operator Directory (Active, Registered, Retired) sits below the pipeline and is referenced by Scheduler, State Queue, and Settlement; Deposit, Tx Order, and Withdrawal feed up into Settlement; the fault-proof system connects back to the State Queue via a Computation Thread and Fault Proof."
       >
         <defs>
           <filter id="topo-glow" x="-40%" y="-40%" width="180%" height="180%">
@@ -110,10 +110,10 @@ export function ContractTopology() {
           </marker>
         </defs>
 
-        {/* Fraud-proof system zone */}
+        {/* Fault-proof system zone */}
         <g data-node="fpzone">
           <rect x="50" y="174" width="340" height="158" rx="8" fill="rgba(207,154,46,0.04)" stroke="rgba(207,154,46,0.2)" strokeWidth="1" strokeDasharray="4 3" className={styles.diagramNode} style={{ animationDelay: "200ms" }} />
-          <text x="62" y="189" fill="var(--gold)" opacity="0.5" fontSize="7" fontFamily={mono} fontWeight="600" letterSpacing="0.08em" className={styles.diagramNode} style={{ animationDelay: "200ms" }}>FRAUD PROOF SYSTEM</text>
+          <text x="62" y="189" fill="var(--gold)" opacity="0.5" fontSize="7" fontFamily={mono} fontWeight="600" letterSpacing="0.08em" className={styles.diagramNode} style={{ animationDelay: "200ms" }}>FAULT PROOF SYSTEM</text>
         </g>
 
         {/* Pipeline edges */}
@@ -131,7 +131,7 @@ export function ContractTopology() {
         <line data-edge="statequeue opdir" x1="520" y1="108" x2="490" y2="130" pathLength={1} stroke="currentColor" strokeWidth="1" opacity="0.22" markerEnd="url(#topo-ah)" className={styles.diagramLine} style={{ animationDelay: "580ms" }} />
         <line data-edge="settlement opdir" x1="700" y1="105" x2="556" y2="145" pathLength={1} stroke="currentColor" strokeWidth="1" opacity="0.18" markerEnd="url(#topo-ah)" className={styles.diagramLine} style={{ animationDelay: "700ms" }} />
 
-        {/* Fraud system internal edges (gold) */}
+        {/* Fault system internal edges (gold) */}
         <line data-edge="fpcat compthread" x1="200" y1="210" x2="224" y2="210" pathLength={1} stroke="var(--gold)" strokeWidth="1" opacity="0.5" markerEnd="url(#topo-ah-a)" className={styles.diagramLine} style={{ animationDelay: "520ms" }} />
         <line data-edge="compthread fraudproof" x1="300" y1="224" x2="300" y2="300" pathLength={1} stroke="var(--gold)" strokeWidth="1" opacity="0.5" markerEnd="url(#topo-ah-a)" className={styles.diagramLine} style={{ animationDelay: "680ms" }} />
         <path data-edge="compthread statequeue" d="M 376,210 L 586,210 L 586,90 L 585,90" pathLength={1} stroke="var(--gold)" strokeWidth="1" opacity="0.45" fill="none" markerEnd="url(#topo-ah-a)" className={styles.diagramLine} style={{ animationDelay: "820ms" }} />
@@ -145,7 +145,7 @@ export function ContractTopology() {
         {/* Edge labels */}
         <text data-edge="statequeue settlement" x="635" y="67" textAnchor="middle" fill="currentColor" opacity="0.28" fontSize="8" fontFamily={mono}>on maturation</text>
         <text data-edge="compthread statequeue" x="481" y="205" textAnchor="middle" fill="var(--gold)" opacity="0.5" fontSize="8" fontFamily={mono}>challenges</text>
-        <text data-edge="fraudproof statequeue" x="465" y="325" textAnchor="middle" fill="var(--gold)" opacity="0.4" fontSize="8" fontFamily={mono}>fraud removal</text>
+        <text data-edge="fraudproof statequeue" x="465" y="325" textAnchor="middle" fill="var(--gold)" opacity="0.4" fontSize="8" fontFamily={mono}>fault removal</text>
 
         {/* Operator Directory */}
         <text data-node="opdir" x="413" y="126" textAnchor="middle" fill="currentColor" opacity="0.22" fontSize="7" fontFamily={mono} fontWeight="600" letterSpacing="0.07em" className={styles.diagramNode} style={{ animationDelay: "260ms" }}>OPERATOR DIRECTORY</text>
@@ -177,7 +177,7 @@ export function ContractTopology() {
           <text x="867" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Withdrawal</text>
         </g>
 
-        {/* Fraud system nodes (gold) */}
+        {/* Fault system nodes (gold) */}
         <g data-node="fpcat" className={styles.diagramNode} style={{ animationDelay: "400ms" }}>
           <rect x="62" y="196" width="138" height="28" rx="4" fill="rgba(207,154,46,0.08)" stroke="var(--gold-dim)" strokeWidth="1" />
           <text x="131" y="214" textAnchor="middle" fill="var(--gold-bright)" opacity="0.85" fontSize="10" fontFamily={mono}>FP Catalogue</text>
@@ -188,7 +188,7 @@ export function ContractTopology() {
         </g>
         <g data-node="fraudproof" className={styles.diagramNode} style={{ animationDelay: "600ms" }}>
           <rect x="240" y="300" width="120" height="28" rx="4" fill="rgba(207,154,46,0.12)" stroke="var(--gold)" strokeWidth="1.5" />
-          <text x="300" y="318" textAnchor="middle" fill="var(--gold-bright)" opacity="0.95" fontSize="10" fontFamily={mono}>Fraud Proof</text>
+          <text x="300" y="318" textAnchor="middle" fill="var(--gold-bright)" opacity="0.95" fontSize="10" fontFamily={mono}>Fault Proof</text>
         </g>
 
         {/* Pipeline nodes */}
@@ -218,7 +218,7 @@ export function ContractTopology() {
           <i className={styles.legendLineNeutral} /> Operational flow
         </span>
         <span className={styles.legendItem}>
-          <i className={styles.legendLineGold} /> Fraud-proof path
+          <i className={styles.legendLineGold} /> Fault-proof path
         </span>
       </div>
     </div>

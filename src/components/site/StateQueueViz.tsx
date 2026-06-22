@@ -7,7 +7,7 @@ import css from "./StateQueueViz.module.css";
 
 /* ------------------------------------------------------------------ *
  * A SIMULATED, self-driven model of the on-chain state queue. Blocks
- * commit at the tail, mature through the fraud-proof window, and the
+ * commit at the tail, mature through the fault-proof window, and the
  * oldest "ready" block folds into the confirmed root (FIFO). Clearly
  * labelled simulated; never presented as live protocol data.
  * ------------------------------------------------------------------ */
@@ -188,7 +188,7 @@ export function StateQueueViz() {
           <span className={css.legendDot} data-kind="root" /> Confirmed state · live L1 UTxO
         </span>
         <span className={css.legendItem}>
-          <span className={css.legendDot} data-kind="maturing" /> Maturing · fraud-proof window
+          <span className={css.legendDot} data-kind="maturing" /> Maturing · fault-proof window
         </span>
         <span className={css.legendItem}>
           <span className={css.legendDot} data-kind="ready" /> Ready · folds next

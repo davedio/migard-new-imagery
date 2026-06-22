@@ -11,11 +11,11 @@ export const GLOSSARY = {
   },
   "optimistic-rollup": {
     term: "optimistic rollup",
-    def: "A Layer 2 design that assumes batches are valid by default and relies on fraud proofs during a challenge window to catch bad state.",
+    def: "A Layer 2 design that assumes batches are valid by default and relies on fault proofs during a challenge window to catch bad state.",
   },
   "challenge-window": {
     term: "challenge window",
-    def: "The dispute period after a state commitment lands on Cardano during which watchers can submit a fraud proof against it.",
+    def: "The dispute period after a state commitment lands on Cardano during which watchers can submit a fault proof against it.",
   },
   batcher: {
     term: "batcher",
@@ -23,7 +23,7 @@ export const GLOSSARY = {
   },
   watcher: {
     term: "watcher",
-    def: "An independent node that re-executes committed blocks and raises a fraud proof if a commitment does not match the rules.",
+    def: "An independent node that re-executes committed blocks and raises a fault proof if a commitment does not match the rules.",
   },
   operator: {
     term: "operator",
@@ -34,7 +34,11 @@ export const GLOSSARY = {
     def: "The point at which Layer 2 state becomes final on Cardano: the challenge window closes with no successful dispute.",
   },
   "fraud-proof": {
-    term: "fraud proof",
+    term: "fault proof",
+    def: "An on-chain proof that a committed state transition is invalid, built by re-executing only the disputed transaction's inputs.",
+  },
+  "fault-proof": {
+    term: "fault proof",
     def: "An on-chain proof that a committed state transition is invalid, built by re-executing only the disputed transaction's inputs.",
   },
   "state-commitment": {

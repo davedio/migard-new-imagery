@@ -24,7 +24,7 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
    (beams, network pulses, leaves, ADA diamonds) layered over it, and a
    HUD chapter rail whose labels are aligned to the
    page's protocol-lifecycle language (Submit · L2 -> Sequence ->
-   Commit -> Watch -> Settle · L1). The detailed textual sections below
+   Commit -> DA attestation -> Watch -> Settle · L1). The detailed textual sections below
    the act reinforce what the 3D just showed.
 
    This component owns the two RESN-class interaction systems, all
@@ -104,8 +104,9 @@ const ACT_BEATS: { stage: string; name: string; layer: string }[] = [
   { stage: "01", name: "Submit", layer: "l2" },
   { stage: "02", name: "Sequence", layer: "l2" },
   { stage: "03", name: "Commit", layer: "l2" },
-  { stage: "04", name: "Watch", layer: "bridge" },
-  { stage: "05", name: "Settle", layer: "l1" },
+  { stage: "04", name: "DA attestation", layer: "bridge" },
+  { stage: "05", name: "Watch", layer: "bridge" },
+  { stage: "06", name: "Settle", layer: "l1" },
 ];
 
 function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> }) {
@@ -120,9 +121,10 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
             <span style={{ color: "var(--green-bright)" }}>transaction</span>
           </h1>
           <p className="hiw-act__lead">
-            Midgard is a Cardano-native optimistic rollup. Scroll to follow one
-            transaction from L2 activity through sequencing, commitment, the
-            challenge window, and final settlement on Cardano&nbsp;L1.
+            For users, the path is deposit, transact, withdraw. Under the hood,
+            Midgard routes activity through sequencing, commitment, DA
+            attestation, the challenge window, and final settlement rooted in
+            Cardano.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (

@@ -85,7 +85,7 @@ export const CONTRACTS: readonly Contract[] = [
     accent: "gold",
     address:
       "addr_test1wrfvqj3tn2fzx56hkv5en53ypq6m4y2qkp4wv2wqwtdjcxq24ey8j",
-    desc: "Processes L2 → L1 exits after the associated block passes the fraud-proof window.",
+    desc: "Processes L2 → L1 exits after the associated block passes the fault-proof window.",
   },
   {
     name: "Tx Order",

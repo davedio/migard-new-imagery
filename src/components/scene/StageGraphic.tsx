@@ -12,7 +12,8 @@
    world tree —
 
      SUBMIT · L2 (canopy) -> SEQUENCE -> COMMIT (upper/mid trunk) ->
-     WATCH (lower trunk, challenge window) -> SETTLE · L1 (roots).
+     DA ATTESTATION -> WATCH (lower trunk, challenge window) ->
+     SETTLE · L1 (roots).
 
    Anchoring: the badge follows the LIVE packet screen-position that
    PhotorealBackdrop publishes each frame into a shared ref (single source
@@ -60,8 +61,8 @@ type Stage = {
   layer: Layer;
 };
 
-/* The five lifecycle stages + the lifecycle copy, intact from the HUD:
-   Submit · L2 -> Sequence -> Commit (settle to L1) -> Watch (challenge) ->
+/* The lifecycle stages + the lifecycle copy:
+   Submit · L2 -> Sequence -> Commit -> DA attestation -> Watch (challenge) ->
    Settle · L1. The badge keeps the narrative; the line is the compact
    description so the floating graphic stays light over the scene. */
 const STAGES: Stage[] = [
@@ -102,13 +103,25 @@ const STAGES: Stage[] = [
     layer: "l2",
   },
   {
+    id: "da",
+    tag: "DA attestation",
+    name: "DA attestation",
+    line: "DA nodes confirm that the block data behind the state commitment is available before the system progresses.",
+    readouts: [
+      { k: "Action", v: "Check availability", tone: "bridge" },
+      { k: "Data", v: "Block data present", tone: "bridge" },
+      { k: "Signal", v: "Attested", tone: "bridge" },
+    ],
+    layer: "bridge",
+  },
+  {
     id: "watch",
     tag: "Challenge Window",
     name: "Watch",
-    line: "Independent watchers re-execute every transaction during the challenge window — a single fraud proof removes an invalid commitment.",
+    line: "Independent watchers re-execute every transaction during the challenge window — a single fault proof removes an invalid commitment.",
     readouts: [
       { k: "Action", v: "Replay block", tone: "bridge" },
-      { k: "Check", v: "Fraud proof ready", tone: "bridge" },
+      { k: "Check", v: "Fault proof ready", tone: "bridge" },
       { k: "Window", v: "Challenge active", tone: "bridge" },
     ],
     layer: "bridge",
@@ -117,7 +130,7 @@ const STAGES: Stage[] = [
     id: "settle",
     tag: "L1 Confirmed",
     name: "Settle",
-    line: "No fraud and the maturity period ends: the block merges into confirmed state — settlement makes it as final as Cardano itself.",
+    line: "If no valid fault proof succeeds, the maturity period ends and the block merges into confirmed state on Cardano.",
     readouts: [
       { k: "Action", v: "Merge state", tone: "l1" },
       { k: "Anchor", v: "Cardano L1", tone: "l1" },
@@ -130,10 +143,11 @@ const STAGES: Stage[] = [
 /* SAME thresholds as the scene's stageOf / the old HUD, so the badge swaps
    on the exact scroll positions the camera dwells + the canvas beats fire. */
 function stageIndex(p: number): number {
-  if (p >= 0.84) return 4;
-  if (p >= 0.58) return 3;
-  if (p >= 0.4) return 2;
-  if (p >= 0.14) return 1;
+  if (p >= 0.86) return 5;
+  if (p >= 0.68) return 4;
+  if (p >= 0.52) return 3;
+  if (p >= 0.36) return 2;
+  if (p >= 0.18) return 1;
   return 0;
 }
 
@@ -173,6 +187,14 @@ function StageGlyph({ id }: { id: string }) {
         <svg {...common}>
           <path d="M12 2.6l8 4.6v9.6l-8 4.6-8-4.6V7.2z" />
           <path d="M12 2.6v9.6M12 12.2l8-4.6M12 12.2l-8-4.6" />
+        </svg>
+      );
+    case "da":
+      return (
+        <svg {...common}>
+          <path d="M4.2 7.2h15.6M4.2 12h15.6M4.2 16.8h15.6" />
+          <path d="M7 4.8v14.4M17 4.8v14.4" />
+          <circle cx="12" cy="12" r="2" fill="currentColor" stroke="none" />
         </svg>
       );
     case "watch":
