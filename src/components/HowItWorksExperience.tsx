@@ -19,7 +19,7 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
    centerpiece of /how-it-works.
 
    The page opens with a full-viewport JOURNEY ACT where a PHOTOREAL
-   tree PLATE plays the scroll-driven canopy -> Cardano-L1 descent (the
+   tree PLATE plays the scroll-driven canopy -> L1-settlement descent (the
    visual lifecycle) via a parallax pan, with LIVE green overlays
    (beams, network pulses, leaves, ADA diamonds) layered over it, and a
    HUD chapter rail whose labels are aligned to the
@@ -92,7 +92,7 @@ function BodyPortal({ children }: { children: ReactNode }) {
 
 /* The journey act: a TALL scroll-driven section that is transparent over
    the fixed 3D for its whole height. Scrolling its span drives the full
-   canopy -> Cardano-L1 descent (see the act-progress wiring below), so the
+   canopy -> L1-settlement descent (see the act-progress wiring below), so the
    transaction is actually WATCHED settling within the act; the detailed
    opaque sections then flow in beneath and reinforce it in words.
 
@@ -123,8 +123,7 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
           <p className="hiw-act__lead">
             For users, the path is deposit, transact, withdraw. Under the hood,
             Midgard routes activity through sequencing, commitment, DA
-            attestation, the challenge window, and final settlement rooted in
-            Cardano.
+            attestation, the challenge window, and final L1 settlement.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (

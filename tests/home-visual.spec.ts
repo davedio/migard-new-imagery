@@ -93,7 +93,7 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
   await expect(page.locator(".hiw-act__lead").getByText(/deposit, transact, withdraw/i)).toBeVisible();
 
   const bodyText = await page.locator("body").innerText();
-  expect(bodyText).toContain("final settlement rooted in Cardano");
+  expect(bodyText).toContain("final L1 settlement");
   expect(bodyText).toContain("fault-proof");
   expect(bodyText).not.toContain("fraud-proof");
   expect(bodyText).not.toContain("fraud proof");

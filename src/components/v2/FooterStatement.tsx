@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-/* The footer statement is a TOUR step (review 2026-06-11): from any page it
-   carries you to the NEXT page in the nav order. Two-page preview build:
-   the tour is just home <-> how-it-works. */
-const TOUR = ["/", "/how-it-works"] as const;
+/* The footer statement carries you to the next review page in the public
+   sitemap, so every core page is easy to inspect in sequence. */
+const TOUR = ["/", "/how-it-works", "/security", "/faq"] as const;
 
 export function FooterStatement() {
   const pathname = usePathname();
@@ -16,7 +15,7 @@ export function FooterStatement() {
   return (
     <Link href={next} className="v2-footer-statement">
       <span>
-        Build <em>on</em> Cardano.
+        Scale <em>UTXO</em> finance.
       </span>
       <span className="arrow" aria-hidden>
         ↗

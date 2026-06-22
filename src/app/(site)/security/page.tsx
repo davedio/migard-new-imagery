@@ -16,7 +16,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "Security | Midgard",
   description:
-    "How Midgard approaches L1-rooted settlement, mathematically verified smart contracts, fault-proof verification, and eUTXO-local security.",
+    "How Midgard approaches L1 security, mathematically verified smart contracts, fault-proof verification, and eUTXO-local security.",
   openGraph: {
     title: "Security | Midgard",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
@@ -47,7 +47,7 @@ export default function SecurityPage() {
       <Section
         id="mechanism"
         eyebrow="Trust path"
-        title="Fast confirmations first. L1-rooted settlement after verification."
+        title="Fast confirmations first. Full L1 security after verification."
         lead="Operators can give users fast soft confirmations, but finality depends on the base-layer settlement path and the challenge rules around committed state."
       >
         <Prose

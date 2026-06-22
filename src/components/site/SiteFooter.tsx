@@ -20,7 +20,6 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "How It Works", href: "/how-it-works" },
       { label: "Security", href: "/security" },
       { label: "FAQ", href: "/faq" },
-      { label: "Choose your path", href: "/#trunk" },
     ],
   },
   {
@@ -32,15 +31,13 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
         href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
         external: true,
       },
-      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
   {
-    title: "Official",
+    title: "Join",
     links: [
-      { label: "X", href: OFFICIAL_LINKS.x, external: true },
+      { label: "Choose your path", href: "/#trunk" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
-      { label: "Security contact", href: OFFICIAL_LINKS.securityPolicy, external: true },
     ],
   },
 ];

@@ -350,7 +350,7 @@ const LEDGER: {
     s: "mathematically verified smart contracts",
   },
   { k: "Fees", v: "ADA", s: "no separate gas token" },
-  { k: "Status", v: "Pre-alpha", s: "Cardano preprod testnet", accent: "gold" },
+  { k: "Status", v: "Pre-alpha", s: "public testnet status", accent: "gold" },
 ];
 
 export function Ledger() {
@@ -399,7 +399,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
         <Rise>
           <p>
             Midgard is built by Midgard Labs for UTXO applications that need
-            faster execution and L1-rooted settlement.
+            faster execution and L1 settlement.
           </p>
           <p>
             The protocol is open and the code can be inspected. As the testnet
@@ -415,7 +415,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Read the whitepaper
+              Whitepaper
             </a>
             <a
               className="btn btn--ghost"

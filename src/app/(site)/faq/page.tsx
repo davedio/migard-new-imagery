@@ -119,7 +119,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Where should builders start?",
-                  a: "Start with the source, the whitepaper, the How It Works page, and one concrete flow you want to make faster.",
+                  a: "Start with the source, the How It Works page, and one concrete flow you want to make faster.",
                 },
                 {
                   q: "How are fees paid?",
@@ -204,7 +204,7 @@ export default function FaqPage() {
           <Card
             title="Bring a real flow"
             body="The fastest useful feedback comes from a wallet action, dApp interaction, protocol path, indexer need, or fallback behavior."
-            cta="Register interest"
+            cta="Share a flow"
             href={OFFICIAL_LINKS.intakeForm}
           />
         </CardGrid>

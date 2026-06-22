@@ -11,7 +11,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export function ThesisSection() {
   return (
-    <Section eyebrow="The thesis" title="Fast UTXO execution. L1-rooted security.">
+    <Section eyebrow="The thesis" title="Fast UTXO execution. L1 security.">
       <Prose
         items={[
           {
@@ -36,7 +36,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
         <Prose
           items={[
             {
-              text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution and L1-rooted settlement.",
+              text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution and L1 settlement.",
             },
             {
               text: "The protocol is open and the code can be inspected. Public claims should stay tied to live status, measured benchmarks, and approved protocol parameters.",

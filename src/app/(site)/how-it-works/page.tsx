@@ -5,7 +5,7 @@ import { NextSteps } from "@/components/site/NextSteps";
 export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
-    "How Midgard runs as an optimistic rollup for UTXO applications: deposit, transact, withdraw, with sequencing, commitment, DA attestation, fault-proof verification, and settlement rooted in Cardano.",
+    "How Midgard runs as an optimistic rollup for UTXO applications: deposit, transact, withdraw, with sequencing, commitment, DA attestation, fault-proof verification, and L1 settlement.",
   openGraph: {
     title: "How Midgard Works",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -22,16 +22,16 @@ export default function HowItWorksPage() {
         items={[
           {
             label: "Read security",
-            sub: "The L1-rooted settlement, fault-proof, and watcher model",
+            sub: "The L1 security, fault-proof, and watcher model",
             href: "/security",
           },
           {
-            label: "Read the whitepaper",
+            label: "Whitepaper",
             sub: "The challenge and fault-proof design that keeps operators honest",
             href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
           },
           {
-            label: "Inspect the code",
+            label: "GitHub",
             sub: "The protocol is open — verify it yourself on GitHub",
             href: "https://github.com/Anastasia-Labs/midgard",
           },

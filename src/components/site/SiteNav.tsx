@@ -15,7 +15,6 @@ import { useTheme } from "@/lib/theme";
 type NavLink = {
   label: string;
   href: string;
-  sub?: string;
   external?: boolean;
   github?: boolean;
 };
@@ -29,21 +28,9 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Learn",
     items: [
-      {
-        label: "How it works",
-        href: "/how-it-works",
-        sub: "Deposit, transact, withdraw",
-      },
-      {
-        label: "Security",
-        href: "/security",
-        sub: "L1-rooted settlement and fault proofs",
-      },
-      {
-        label: "FAQ",
-        href: "/faq",
-        sub: "Plain answers and comparison notes",
-      },
+      { label: "How it works", href: "/how-it-works" },
+      { label: "Security", href: "/security" },
+      { label: "FAQ", href: "/faq" },
     ],
   },
   {
@@ -52,20 +39,12 @@ const NAV_GROUPS: readonly NavGroup[] = [
       {
         label: "GitHub",
         href: OFFICIAL_LINKS.github,
-        sub: "Inspect the source",
         external: true,
         github: true,
       },
       {
         label: "Whitepaper",
         href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
-        sub: "Read the protocol design",
-        external: true,
-      },
-      {
-        label: "Builder intake",
-        href: OFFICIAL_LINKS.intakeForm,
-        sub: "Bring a real UTXO flow",
         external: true,
       },
     ],
@@ -73,21 +52,10 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Join",
     items: [
-      {
-        label: "Choose your path",
-        href: "/#trunk",
-        sub: "Users, builders, operators, watchers",
-      },
+      { label: "Choose your path", href: "/#trunk" },
       {
         label: "Discord",
         href: OFFICIAL_LINKS.discord,
-        sub: "Community and testnet discussion",
-        external: true,
-      },
-      {
-        label: "X",
-        href: OFFICIAL_LINKS.x,
-        sub: "Protocol updates",
         external: true,
       },
     ],
@@ -236,11 +204,6 @@ export function SiteNav() {
           {item.github ? <GitHubIcon size={14} aria-hidden /> : null}
           {item.label}
         </span>
-        {item.sub ? (
-          <span className={mobile ? "site-nav__mobile-sub" : "site-nav__dropdown-sub"}>
-            {item.sub}
-          </span>
-        ) : null}
       </>
     );
     if (item.external) {

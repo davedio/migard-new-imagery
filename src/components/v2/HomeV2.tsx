@@ -135,7 +135,7 @@ function StaticHome({ plate }: { plate: string }) {
               <>
                 Fast UTXO execution.
                 <br />
-                L1-rooted security.
+                L1 security.
               </>
             }
           />
