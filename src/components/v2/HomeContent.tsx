@@ -191,13 +191,12 @@ type Phrase = { text: string; cls?: string };
 const THESIS: Phrase[][] = [
   [
     { text: "UTXO finance should not have to choose between speed and security." },
-    { text: "Midgard gives UTXO applications a faster execution layer," },
-    { text: "starting with Cardano and designed for a broader bridged future." },
+    { text: "Midgard gives UTXO applications faster execution" },
+    { text: "with settlement anchored to L1." },
   ],
   [
-    { text: "Settlement is rooted in", cls: "hi" },
-    { text: "Cardano today.", cls: "hi-green" },
-    { text: "The trust story comes from mathematically verified smart contracts," },
+    { text: "Security comes from", cls: "hi" },
+    { text: "mathematically verified smart contracts," },
     { text: "fault-proof verification, and a smaller eUTXO attack surface.", cls: "hi" },
   ],
 ];
@@ -400,7 +399,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
         <Rise>
           <p>
             Midgard is built by Midgard Labs for UTXO applications that need
-            faster execution, starting with Cardano.
+            faster execution and L1-rooted settlement.
           </p>
           <p>
             The protocol is open and the code can be inspected. As the testnet

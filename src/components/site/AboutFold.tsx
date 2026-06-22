@@ -5,20 +5,20 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 /* =========================================================================
    AboutFold — the About page's substantive sections (thesis, who-builds-it,
-   the Cardano stack), folded onto the home page. The About route was removed;
+   the security stack), folded onto the home page. The About route was removed;
    its hero, the testnet-status cards, and the closing band were dropped.
    ========================================================================= */
 
 export function ThesisSection() {
   return (
-    <Section eyebrow="The thesis" title="UTXO finance, starting with Cardano">
+    <Section eyebrow="The thesis" title="Fast UTXO execution. L1-rooted security.">
       <Prose
         items={[
           {
-            text: "UTXO finance should not have to choose between speed and security. Midgard gives UTXO applications a faster execution layer, starting with Cardano and designed for a broader bridged future.",
+            text: "UTXO finance should not have to choose between speed and security. Midgard gives UTXO applications faster execution with settlement anchored to L1.",
           },
           {
-            text: "Settlement is rooted in Cardano today. The trust story comes from mathematically verified smart contracts, fault-proof verification, and a smaller eUTXO attack surface.",
+            text: "Security comes from mathematically verified smart contracts, fault-proof verification, and a smaller eUTXO attack surface.",
             variant: "emph",
           },
         ]}
@@ -36,7 +36,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
         <Prose
           items={[
             {
-              text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution, starting with Cardano.",
+              text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution and L1-rooted settlement.",
             },
             {
               text: "The protocol is open and the code can be inspected. Public claims should stay tied to live status, measured benchmarks, and approved protocol parameters.",

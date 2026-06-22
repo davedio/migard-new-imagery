@@ -133,9 +133,9 @@ function StaticHome({ plate }: { plate: string }) {
             n="02"
             title={
               <>
-                UTXO finance,
+                Fast UTXO execution.
                 <br />
-                starting with Cardano.
+                L1-rooted security.
               </>
             }
           />
