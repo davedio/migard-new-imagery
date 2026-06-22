@@ -4,32 +4,27 @@
    WorldTreeCanvas — the ONE drawing surface behind the whole home page.
 
    Corn-Revolution lesson applied: one camera mapping draws BOTH the tree
-   plate and every particle, so image and orbs can never drift apart.
+   plate and every particle, so image and orbs can never drift apart (the
+   old "double vision" was tails cached in canvas space while the camera
+   panned).
 
    The descent narrative, driven by phase values (all 0..1) computed by
    DescentFlow from the smoothed scroll — the SAME tree carries the whole
    story, start to finish:
 
-     veins     orbs ride the painted veins down the tree
+     veins     orbs ride the painted green veins down the tree
      helix     they detach into a double helix OVER the visible tree
      collapse  the helix slowly winds down into ONE settlement orb
-     descend   that orb rides the trunk veins down into the blue cave
-     rest      it seats into this tree's own bedrock; a soft blue
-               detonation rings out — settled on L1
+     descend   that orb rides the trunk veins down; the camera follows
+     rest      it seats into this tree's own roots; at the bottom a soft
+               blue detonation rings out — settled on L1
 
-   Plate strategy (rebuild 2026-06-13): the home uses the WIDE cinematic
-   plate on landscape (tree right-of-frame, copy on the left, the whole
-   tree from canopy to the glowing cave held in view) and the TALL plate
-   on portrait phones (the camera pans canopy -> roots as you scroll, so
-   a phone still travels the full tree). One image-space orb engine drives
-   both. The helix radius is a fraction of imgW*scale (which is viewport-
-   relative), so it renders identically on a laptop and a 4K monitor — no
-   zoom needed when you switch displays.
-
-   Rendering rules learned the hard way:
+   Rendering rules learned the hard way (review 2026-06-10):
      · NO ctx.shadowBlur in the per-frame path — glows are pre-rendered
        radial-gradient sprites stamped with drawImage (≈20× cheaper)
      · tails live in IMAGE space and are projected at draw time
+     · DPR capped at 1.5 (the Corn site ships 1.0 on retina; 1.5 keeps our
+       type-adjacent glows crisp at half the pixel cost of 2.0)
    ========================================================================== */
 
 import { useEffect, useRef } from "react";
@@ -41,11 +36,9 @@ export type DescentPhases = {
   rest: number; //     settle in the blue
   bottom: number; //   raw progress through the final band — fires the burst
   black: number; //    a gentle dim under the helix (never full black)
-  camX: number; //     legacy pan knob (kept for compatibility; offX is
-  //                   trunk-anchored now so the framing is plate-agnostic)
-  camY: number; //     plate pos-y 0..1 (0.38 canopy → ~0.8 bedrock) — only
-  //                   bites on the tall plate, which has vertical slack
-  zoom: number; //     plate zoom 1..~1.1
+  camX: number; //     plate pos-x 0..1 (0.88 hero → 1.0 turned-in)
+  camY: number; //     plate pos-y 0..1 (0.38 canopy → ~0.8 bedrock)
+  zoom: number; //     plate zoom 1..~1.14
 };
 
 export const PHASES_REST: DescentPhases = {
@@ -60,9 +53,11 @@ export const PHASES_REST: DescentPhases = {
   zoom: 1,
 };
 
-/* defaults — parent overrides per theme */
-const WIDE_SRC = "/plates/worldtree-night-wide.avif";
-const TALL_SRC = "/plates/worldtree-night-tall.avif";
+/* The ONE world tree — the same tall night/day plate every surface uses
+   (hero, descent, how-it-works). Which time of day arrives via the `src`
+   prop from the theme; the vein field below is re-read from whichever
+   plate loads, so the orbs always ride THIS tree's painted veins. */
+const TREE_SRC = "/plates/worldtree-night-tall.avif";
 
 const GRID_W = 384;
 const SPAWN_BAND: [number, number] = [0.02, 0.58];
@@ -119,20 +114,19 @@ function makeSprite(r: number, g: number, b: number): HTMLCanvasElement {
 export default function WorldTreeCanvas({
   phasesRef,
   tickRef,
-  wideSrc = WIDE_SRC,
-  tallSrc = TALL_SRC,
+  src = TREE_SRC,
 }: {
   phasesRef: React.RefObject<DescentPhases>;
   /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
   tickRef: React.RefObject<((dt: number) => void) | null>;
-  /** landscape plate (theme picks night/day) */
-  wideSrc?: string;
-  /** portrait plate for phones (theme picks night/day) */
-  tallSrc?: string;
+  /** Tree plate to draw + read veins from (theme picks night or day). */
+  src?: string;
 }) {
-  /* TWO stacked canvases: the PLATE layer redraws only when the camera/
-     fades actually move (during a dwell it costs nothing); the PARTICLE
-     layer redraws every frame so the glows stay crisp. */
+  /* TWO stacked canvases (perf pass 2026-06-11): the PLATE layer redraws
+     only when the camera/fades actually move (during a dwell it costs
+     nothing), and at DPR 1 — the Corn site ships its whole frame at 1.0;
+     a cover-scaled photo can't tell. The PARTICLE layer redraws every
+     frame at up to 1.5 so the glows stay crisp. */
   const bgRef = useRef<HTMLCanvasElement>(null);
   const fgRef = useRef<HTMLCanvasElement>(null);
 
@@ -152,11 +146,11 @@ export default function WorldTreeCanvas({
     const spCyan = makeSprite(60, 230, 200);
     const spGold = makeSprite(255, 210, 110);
 
-    /* ---- the live plate + its derived vein field ---- */
-    let tree = new Image();
+    /* ---- images + vein field ---- */
+    const tree = new Image();
     let treeReady = false;
+    /* GPU-friendly pre-decoded bitmap for the per-frame blits */
     let treeBmp: ImageBitmap | null = null;
-    let activeSrc = "";
     let lastSig = -1;
     let field: Uint8Array | null = null;
     let gw = 0;
@@ -164,14 +158,9 @@ export default function WorldTreeCanvas({
     let imgW = 0;
     let imgH = 0;
     let trunkX = 0;
-    let vaultX = 0;
-    let vaultY = 0;
-    /* adaptive "is this still a vein" floor, set per plate from its peak
-       green so orbs don't die the instant they spawn on a dark plate */
-    let liveThresh = GREEN_MIN;
     const spawnSites: { x: number; y: number }[] = [];
     /** the settlement orb's road: a smoothed polyline down the trunk veins */
-    let path: { x: number; y: number }[] = [];
+    const path: { x: number; y: number }[] = [];
 
     const green = (ix: number, iy: number): number => {
       if (!field) return 0;
@@ -181,10 +170,10 @@ export default function WorldTreeCanvas({
       return field[gy * gw + gx];
     };
 
-    /* (re)build all image-derived data for a freshly-loaded plate */
-    const ingest = (img: HTMLImageElement) => {
-      imgW = img.naturalWidth;
-      imgH = img.naturalHeight;
+    tree.onload = () => {
+      if (disposed) return;
+      imgW = tree.naturalWidth;
+      imgH = tree.naturalHeight;
       gw = GRID_W;
       gh = Math.round((imgH / imgW) * gw);
       const off = document.createElement("canvas");
@@ -192,7 +181,7 @@ export default function WorldTreeCanvas({
       off.height = gh;
       const octx = off.getContext("2d", { willReadFrequently: true });
       if (!octx) return;
-      octx.drawImage(img, 0, 0, gw, gh);
+      octx.drawImage(tree, 0, 0, gw, gh);
       const data = octx.getImageData(0, 0, gw, gh).data;
       field = new Uint8Array(gw * gh);
       for (let i = 0; i < gw * gh; i++) {
@@ -203,15 +192,16 @@ export default function WorldTreeCanvas({
         field[i] = score;
       }
 
-      /* ---- trunk corridor: the plates' bark veins are faint, so measure
-         the row-wise green centroid + spread and bake that corridor into
-         the field — gated by row green mass so open sky above the crown
-         and bare bedrock get NO synthetic corridor (orbs in thin air). The
-         helix axis (trunkX) and the orbs both ride this. ---- */
+      /* ---- trunk corridor (client review 2026-06-12: "orbs must track
+         the tree exactly") — the new plates' bark veins are too faint for
+         the raw green walk, so measure the row-wise green centroid +
+         spread (the same anatomy the HtW backdrop rides) and BAKE that
+         corridor into the field. The walk then hugs the trunk even where
+         the paint is quiet, on the night and the day plate alike. ---- */
       const ROWS = 96;
       const cRow = new Float32Array(ROWS);
       const wRow = new Float32Array(ROWS);
-      const mRow = new Float32Array(ROWS);
+      const mRow = new Float32Array(ROWS); // row green mass — 0 in open sky
       let pc = 0.5;
       let pw = 0.16;
       for (let r = 0; r < ROWS; r++) {
@@ -246,6 +236,9 @@ export default function WorldTreeCanvas({
       }
       for (let gy = 0; gy < gh; gy++) {
         const r = Math.min(ROWS - 1, Math.round((gy / Math.max(1, gh - 1)) * (ROWS - 1)));
+        /* no tree in this row (open sky above the crown, bare bedrock) —
+           no corridor: synthetic veins through the sky put orbs in thin
+           air (day-plate review 2026-06-12) */
         const rowOk = Math.min(1, mRow[r] / 2600);
         if (rowOk < 0.08) continue;
         const c = cRow[r] * gw;
@@ -257,35 +250,17 @@ export default function WorldTreeCanvas({
         }
       }
 
-      /* spawn sites: the lit canopy + upper trunk. The wide plate's canopy
-         is a small, dark-green fraction of a 3168px frame, so a FIXED green
-         threshold finds almost nothing. Take the GREENEST ~700 cells in the
-         band instead — a target count adapts to night/day and any framing,
-         always giving a lush, evenly-fed swarm. */
-      spawnSites.length = 0;
       const y0 = Math.floor(SPAWN_BAND[0] * gh);
       const y1 = Math.floor(SPAWN_BAND[1] * gh);
-      const cand: { x: number; y: number; v: number }[] = [];
-      let peak = 1;
       for (let gy = y0; gy < y1; gy++) {
         for (let gx = 0; gx < gw; gx++) {
-          const v = field[gy * gw + gx];
-          if (v > peak) peak = v;
-          if (v > GREEN_MIN * 0.5) {
-            cand.push({ x: (gx / gw) * imgW, y: (gy / gh) * imgH, v });
+          if (field[gy * gw + gx] > GREEN_MIN + 18) {
+            spawnSites.push({ x: (gx / gw) * imgW, y: (gy / gh) * imgH });
           }
         }
       }
-      cand.sort((a, b) => b.v - a.v);
-      const TARGET = 700;
-      const keep = cand.slice(0, TARGET);
-      for (const c of keep) spawnSites.push({ x: c.x, y: c.y });
-      /* live floor: orbs persist while on anything brighter than the dimmest
-         site we kept (so they don't die the instant they spawn on a dark
-         plate), with a hard minimum */
-      liveThresh = Math.max(14, (keep.length ? keep[keep.length - 1].v : GREEN_MIN) * 0.7);
-
-      /* helix axis: the mass-weighted centerline of the trunk band */
+      /* the helix axis: the measured centerline through the TRUNK band —
+         weighted by row mass so empty bedrock rows don't drag it */
       {
         let cx = 0;
         let n = 0;
@@ -296,10 +271,10 @@ export default function WorldTreeCanvas({
         trunkX = n > 0 ? (cx / n) * imgW : imgW * 0.5;
       }
 
-      /* the cobalt vault: blue centroid of the bedrock band — the glowing
-         "cave" the settlement orb seats into */
-      vaultX = trunkX;
-      vaultY = imgH * 0.9;
+      /* ---- the cobalt vault: blue centroid of the bedrock band — the
+         "blue cave" the settlement orb must seat into ---- */
+      let vaultX = trunkX;
+      let vaultY = imgH * 0.9;
       {
         let bsum = 0;
         let bu = 0;
@@ -320,13 +295,15 @@ export default function WorldTreeCanvas({
           vaultY = (bv / bsum / gh) * imgH;
         }
       }
+      createImageBitmap(tree).then((b) => {
+        if (!disposed) treeBmp = b;
+      }).catch(() => {});
 
-      /* ---- settlement path: greedy turn-limited walk down the trunk
-         veins, then a measured glide INTO the blue cave ---- */
-      path = [];
+      /* ---- settlement path: greedy turn-limited walk down the trunk ---- */
       {
         let px = trunkX;
         let py = imgH * 0.27;
+        /* snap the start onto the strongest vein near the trunk crown */
         let best = -1;
         for (let dx = -0.06; dx <= 0.06; dx += 0.005) {
           const v = green(trunkX + dx * imgW, py);
@@ -335,9 +312,10 @@ export default function WorldTreeCanvas({
             px = trunkX + dx * imgW;
           }
         }
-        let heading = 0;
+        let heading = 0; // straight down
         const step = imgH * 0.012;
         path.push({ x: px, y: py });
+        /* ride the veins down the trunk, then hand over to the vault */
         while (py < imgH * 0.78) {
           let bestA = heading;
           let bestV = -1;
@@ -356,13 +334,19 @@ export default function WorldTreeCanvas({
           py += Math.cos(heading) * step;
           path.push({ x: px, y: py });
         }
-        const fromX = px;
-        const fromY = py;
-        const STEPS = 16;
-        for (let i = 1; i <= STEPS; i++) {
-          const t = smooth01(i / STEPS);
-          path.push({ x: lerp(fromX, vaultX, t), y: lerp(fromY, vaultY, t) });
+        /* the last reach: a measured glide INTO the blue cave (the
+           vault centroid), so the orb visibly seats in the glowing
+           bedrock — client review 2026-06-12 */
+        {
+          const fromX = px;
+          const fromY = py;
+          const STEPS = 16;
+          for (let i = 1; i <= STEPS; i++) {
+            const t = smooth01(i / STEPS);
+            path.push({ x: lerp(fromX, vaultX, t), y: lerp(fromY, vaultY, t) });
+          }
         }
+        /* two smoothing passes so the ride is silk */
         for (let pass = 0; pass < 2; pass++) {
           for (let i = 1; i < path.length - 1; i++) {
             path[i].x = (path[i - 1].x + path[i].x * 2 + path[i + 1].x) / 4;
@@ -371,44 +355,18 @@ export default function WorldTreeCanvas({
         }
       }
       treeReady = true;
-      bgDirty = true;
     };
-
-    /* load (or swap to) a plate, then ingest it */
-    const load = (srcUrl: string) => {
-      if (srcUrl === activeSrc) return;
-      activeSrc = srcUrl;
-      treeReady = false;
-      treeBmp?.close();
-      treeBmp = null;
-      const img = new Image();
-      img.onload = () => {
-        if (disposed || activeSrc !== srcUrl) return;
-        tree = img;
-        ingest(img);
-        createImageBitmap(img)
-          .then((b) => {
-            if (!disposed && activeSrc === srcUrl) treeBmp = b;
-          })
-          .catch(() => {});
-      };
-      img.src = srcUrl;
-    };
+    tree.src = src;
 
     /* ---- viewport ---- */
     let W = 0;
     let H = 0;
-    const isPortrait = () => window.innerWidth < window.innerHeight * 0.9;
-    const isMobile = () => window.innerWidth <= 760;
-    const dprCap = () => (isMobile() ? 1.25 : 1.5);
-    let DPR = Math.min(window.devicePixelRatio || 1, dprCap());
+    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
     const BG_DPR = 1;
     let bgDirty = true;
-
     const fit = () => {
       W = window.innerWidth;
       H = window.innerHeight;
-      DPR = Math.min(window.devicePixelRatio || 1, dprCap());
       fg.width = Math.round(W * DPR);
       fg.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -416,14 +374,13 @@ export default function WorldTreeCanvas({
       bg.height = Math.round(H * BG_DPR);
       bctx.setTransform(BG_DPR, 0, 0, BG_DPR, 0, 0);
       bgDirty = true;
-      /* swap plate if the orientation crossed the portrait threshold */
-      load(isPortrait() ? tallSrc : wideSrc);
     };
     fit();
     window.addEventListener("resize", fit);
 
     /* ---- orbs ---- */
-    const orbBase = () => (isMobile() ? 42 : 100);
+    const mobile = () => window.innerWidth <= 760;
+    const orbBase = () => (mobile() ? 52 : 100);
     const orbs: Orb[] = [];
 
     const spawn = (o?: Orb): Orb | null => {
@@ -448,6 +405,7 @@ export default function WorldTreeCanvas({
       orb.strand = Math.random() < 0.5 ? 0 : 1;
       orb.anchorY = null;
       orb.rise = 0;
+      /* tight: visible per-bead life WITHOUT smearing the strand line */
       orb.rJit = 0.94 + Math.random() * 0.12;
       orb.mix = Math.random() < 0.2 ? 0.1 + Math.random() * 0.15 : 1;
       return orb;
@@ -463,7 +421,6 @@ export default function WorldTreeCanvas({
     const tick = (dt: number) => {
       if (disposed || !treeReady || W === 0 || !field) return;
       const ph = phasesRef.current ?? PHASES_REST;
-      const day = activeSrc.includes("day");
 
       /* the helix unwinds as it collapses into the settlement orb */
       const col = ph.collapse;
@@ -472,20 +429,28 @@ export default function WorldTreeCanvas({
       const rest = ph.rest;
 
       /* ---- shared cover mapping for THIS frame ----
-         The MEASURED trunk is anchored to a viewport fraction (right of
-         centre on landscape so copy clears the left; centred on portrait).
-         Because the anchor is in viewport units, the framing is identical
-         on a laptop and a 4K monitor — no zoom needed between displays. */
+         The tree sits RIGHT of the copy like the old wide hero (client
+         review 2026-06-12): the MEASURED trunk is anchored to a viewport
+         fraction — right of centre everywhere, slightly less so on
+         portrait — and eases back toward centre through the descent so
+         the bedrock finale is centred. The tall plate has no horizontal
+         slack at cover scale on landscape, so the camera zooms in until
+         the anchor is reachable; the right canopy bleeding off-frame is
+         the same cinematic crop the old plate had. */
       const portrait = W < H * 0.9;
-      const scale = Math.max(W / imgW, H / imgH) * ph.zoom;
-      const anchorX = portrait ? 0.5 : 0.64 - 0.05 * smooth01(des);
-      let offX = anchorX * W - trunkX * scale;
-      offX = Math.min(0, Math.max(W - imgW * scale, offX));
+      const cover = Math.max(W / imgW, H / imgH);
+      const anchor = (portrait ? 0.6 : 0.66) - 0.12 * smooth01(des);
+      let scale = cover * ph.zoom;
+      if (!portrait) {
+        const reach = (W * anchor) / Math.max(1, trunkX);
+        scale = Math.max(scale, Math.min(reach, cover * 1.45));
+      }
+      const offX = Math.min(0, Math.max(W - imgW * scale, W * anchor - trunkX * scale));
       const offY = (H - imgH * scale) * ph.camY;
       const px = (ix: number) => ix * scale + offX;
       const py = (iy: number) => iy * scale + offY;
 
-      /* ---- plate (background canvas, only when the camera moved) ---- */
+      /* ---- plates (background canvas, only when the camera moved) ---- */
       const sig =
         Math.round(offX * 4) * 31 +
         Math.round(offY * 4) * 7 +
@@ -498,11 +463,13 @@ export default function WorldTreeCanvas({
         bctx.globalAlpha = 1 - ph.black * 0.55;
         bctx.drawImage(treeBmp ?? tree, offX, offY, imgW * scale, imgH * scale);
         bctx.globalAlpha = 1;
-        /* the thesis dwell pulls the plate back so the helix owns the frame
-           — toward NIGHT on the dark plate, into MIST on the day plate */
+        /* the thesis dwell pulls the plate back so the helix owns the
+           frame — toward NIGHT on the dark plate, into MIST on the dawn
+           plate (a black wash over daylight read as murk; client review
+           2026-06-12) */
         if (ph.black > 0.004) {
-          bctx.fillStyle = day
-            ? `rgba(236, 242, 233, ${(ph.black * 0.82).toFixed(3)})`
+          bctx.fillStyle = /day/.test(src)
+            ? `rgba(238, 243, 233, ${(ph.black * 0.8).toFixed(3)})`
             : `rgba(4, 7, 5, ${(ph.black * 0.92).toFixed(3)})`;
           bctx.fillRect(0, 0, W, H);
         }
@@ -533,7 +500,8 @@ export default function WorldTreeCanvas({
       /* ---- the settlement orb ----
          It is BORN of the collapse: as the helix winds down, the orb takes
          its light; the descend then carries it down the trunk on a long,
-         nearly-linear ride into the blue cave. */
+         nearly-linear ride (review: it shot down too fast — no smoothstep
+         mid-rush, and the flow gives the ride four sections of runway). */
       const ignite = Math.max(smooth01((col - 0.25) / 0.6), smooth01(des / 0.07));
       const travel = clamp01((des - 0.03) / 0.94);
       const bigT = Math.min(path.length - 1.001, travel * (path.length - 1));
@@ -572,7 +540,7 @@ export default function WorldTreeCanvas({
           }
         }
         o.a = lerp(o.a, bestA, Math.min(1, dt * 6));
-        if (bestV < liveThresh && hx * o.mix < 0.4) o.dying = true;
+        if (bestV < GREEN_MIN && hx * o.mix < 0.4) o.dying = true;
 
         const sp = o.speed * (1 + surge * 0.9) * (1 - calm * 0.45);
         o.x += Math.sin(o.a) * sp * dt;
@@ -661,12 +629,13 @@ export default function WorldTreeCanvas({
 
       /* ---- the settlement orb itself ---- */
       if (ignite > 0.001) {
+        /* it rests where the vein path ends — in THIS tree's roots */
         const bx = px(bigIx);
         const by = py(bigIy);
         /* hue ride: green → cyan → blue as it sinks toward bedrock */
         const hue = smooth01((travel - 0.45) / 0.5);
         const breathe = 1 + 0.06 * Math.sin(bigPulse * 3.1) + surge * 0.1;
-        const R0 = (isMobile() ? 16 : 22) * (0.55 + ignite * 0.45) * breathe;
+        const R0 = (mobile() ? 16 : 22) * (0.55 + ignite * 0.45) * breathe;
         const settle = smooth01(rest / 0.55);
         const R = R0 * (1 + settle * 0.35);
 
@@ -694,7 +663,7 @@ export default function WorldTreeCanvas({
           ctx.drawImage(spGold, bx - gr, by - gr, gr * 2, gr * 2);
         }
 
-        /* ---- terminal burst: one soft blue detonation at the cave ---- */
+        /* ---- terminal burst: one soft blue detonation at the bottom ---- */
         if (ph.bottom > 0.82 && !burst.fired) {
           burst.fired = true;
           burst.t = 0;
@@ -711,9 +680,11 @@ export default function WorldTreeCanvas({
           const bt = burst.t;
           const ease = 1 - Math.pow(1 - Math.min(1, bt / 1.5), 3);
           const reach = Math.min(W, H) * 0.36;
+          /* an expanding sphere of light under the rings */
           const gr = Math.max(1, ease * reach * 0.85);
           ctx.globalAlpha = Math.max(0, 0.5 * (1 - ease));
           ctx.drawImage(spBlue, bx - gr, by - gr, gr * 2, gr * 2);
+          /* two expanding rings */
           for (const [d0, w] of [
             [1, 3],
             [0.62, 1.6],
@@ -725,6 +696,7 @@ export default function WorldTreeCanvas({
             ctx.arc(bx, by, ease * reach * d0, 0, Math.PI * 2);
             ctx.stroke();
           }
+          /* radial sparks */
           for (const s of burst.parts) {
             const d = s.v * ease * (Math.min(W, H) / 700);
             const sx = bx + Math.cos(s.a) * d;
@@ -733,6 +705,7 @@ export default function WorldTreeCanvas({
             ctx.globalAlpha = Math.max(0, 0.9 * (1 - ease));
             ctx.drawImage(spBlue, sx - sr, sy - sr, sr * 2, sr * 2);
           }
+          /* one quiet whole-frame breath of blue */
           ctx.globalAlpha = Math.max(0, 0.16 * (1 - ease));
           ctx.fillStyle = "rgba(70, 140, 255, 1)";
           ctx.fillRect(0, 0, W, H);
@@ -751,7 +724,7 @@ export default function WorldTreeCanvas({
       treeBmp?.close();
       window.removeEventListener("resize", fit);
     };
-  }, [phasesRef, tickRef, wideSrc, tallSrc]);
+  }, [phasesRef, tickRef, src]);
 
   return (
     <>

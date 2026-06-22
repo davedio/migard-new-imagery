@@ -12,7 +12,6 @@ import { animate, motion } from "motion/react";
 import Image from "next/image";
 import { useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
-import { useNetworkSnapshot } from "@/lib/useNetworkSnapshot";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
@@ -44,77 +43,6 @@ export function Rise({
     >
       {children}
     </motion.div>
-  );
-}
-
-/* ---------------------------------------------------------------------- */
-/*  hero HUD                                                               */
-/* ---------------------------------------------------------------------- */
-
-function format(n: number) {
-  return new Intl.NumberFormat("en-US").format(n);
-}
-
-export function HeroHud() {
-  const { data: snap } = useNetworkSnapshot();
-  return (
-    <div className="v2-hero__hud">
-      <div className="v2-hud-cell">
-        <div className="k">Cardano L1 block</div>
-        <div className="v">{format(snap.l1.blockHeight)}</div>
-      </div>
-      <div className="v2-hud-cell">
-        <div className="k">L2 throughput</div>
-        <div className="v">
-          <em>{snap.l2.throughput.toFixed(1)}</em> tx/s
-        </div>
-      </div>
-      <div className="v2-hud-cell">
-        <div className="k">Latest proof</div>
-        <div className="v">{snap.l2.latestProofStatus.toUpperCase()}</div>
-      </div>
-      <div className="v2-hud-cell">
-        <div className="k">Feed</div>
-        <div className="v" style={{ color: "var(--gold-bright)" }}>
-          SIMULATED · LIVE AT LAUNCH
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ---------------------------------------------------------------------- */
-/*  marquee                                                                */
-/* ---------------------------------------------------------------------- */
-
-const TERMS = [
-  "Optimistic rollup",
-  "Settles on Cardano L1",
-  "Fraud proofs",
-  "eUTXO",
-  "Same wallet · Same ADA",
-  "24/7 watchers",
-  "Open source",
-  "Pre-alpha testnet",
-];
-
-export function Marquee() {
-  const seq = (hidden: boolean) => (
-    <div className="v2-marquee__seq" aria-hidden={hidden || undefined}>
-      {TERMS.map((t) => (
-        <span key={t}>
-          {t} <i aria-hidden>◆</i>
-        </span>
-      ))}
-    </div>
-  );
-  return (
-    <div className="v2-marquee" aria-hidden>
-      <div className="v2-marquee__track">
-        {seq(false)}
-        {seq(true)}
-      </div>
-    </div>
   );
 }
 
@@ -159,6 +87,64 @@ const PARTNERS = [
     tone: "dark",
   },
 ] as const;
+
+/* ---------------------------------------------------------------------- */
+/*  hero partner strip                                                     */
+/* ---------------------------------------------------------------------- */
+
+export function HeroHud() {
+  return (
+    <div className="v2-hero__logos" aria-label="Ecosystem partner logos">
+      {PARTNERS.map((partner) => (
+        <span className="v2-hero-logo" data-tone={partner.tone} key={partner.name}>
+          <Image
+            src={partner.logo}
+            alt={partner.name}
+            width={partner.width}
+            height={partner.height}
+            loading="eager"
+            unoptimized={partner.logo.endsWith(".svg")}
+          />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------------------- */
+/*  marquee                                                                */
+/* ---------------------------------------------------------------------- */
+
+const TERMS = [
+  "Optimistic rollup",
+  "Settles on Cardano L1",
+  "Fraud proofs",
+  "eUTXO",
+  "Same wallet · Same ADA",
+  "24/7 watchers",
+  "Open source",
+  "Pre-alpha testnet",
+];
+
+export function Marquee() {
+  const seq = (hidden: boolean) => (
+    <div className="v2-marquee__seq" aria-hidden={hidden || undefined}>
+      {TERMS.map((t) => (
+        <span key={t}>
+          {t} <i aria-hidden>◆</i>
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="v2-marquee" aria-hidden>
+      <div className="v2-marquee__track">
+        {seq(false)}
+        {seq(true)}
+      </div>
+    </div>
+  );
+}
 
 function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
   return (

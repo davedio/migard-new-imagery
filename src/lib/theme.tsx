@@ -29,18 +29,10 @@ const STORAGE_KEY = "midgard:theme";
 /** Runs before paint via the inline script in src/app/layout.tsx. */
 export const THEME_BOOT_SCRIPT = `try{var t=localStorage.getItem("${STORAGE_KEY}");if(t==="light")document.documentElement.dataset.theme="light";}catch(e){}`;
 
-/** The day/night world-tree plates — one tree, two times of day.
- *  `wide` is the cinematic landscape (home hero on desktop); `tall` is the
- *  portrait crop (mobile home + the How It Works vertical descent). */
-export const TREE_PLATES: Record<Theme, { wide: string; tall: string }> = {
-  dark: {
-    wide: "/plates/worldtree-night-wide.avif",
-    tall: "/plates/worldtree-night-tall.avif",
-  },
-  light: {
-    wide: "/plates/worldtree-day-wide.avif",
-    tall: "/plates/worldtree-day-tall.avif",
-  },
+/** The day/night world-tree plates — one tree, two times of day. */
+export const TREE_PLATES: Record<Theme, string> = {
+  dark: "/plates/worldtree-night-tall.avif",
+  light: "/plates/worldtree-day-tall.avif",
 };
 
 type ThemeState = {
@@ -96,15 +88,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     [apply],
   );
 
-  /* Warm the OTHER theme's plates once the page has settled, so the first
-     theme flip crossfades into an already-decoded image instead of a blank.
-     Warm whichever orientation this viewport actually uses. */
+  /* Warm the OTHER plate once the page has settled, so the first theme
+     flip crossfades into an already-decoded image instead of a blank. */
   useEffect(() => {
     const id = window.setTimeout(() => {
-      const other = TREE_PLATES[theme === "dark" ? "light" : "dark"];
-      const portrait = window.innerWidth < window.innerHeight * 0.9;
       const img = new window.Image();
-      img.src = portrait ? other.tall : other.wide;
+      img.src = TREE_PLATES[theme === "dark" ? "light" : "dark"];
     }, 2500);
     return () => window.clearTimeout(id);
   }, [theme]);

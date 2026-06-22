@@ -690,30 +690,37 @@ h2 em,
   padding-top: 18px;
   border-top: 1px solid var(--hairline);
 }
-.v2-hero__hud {
+.v2-hero__logos {
   display: flex;
-  gap: clamp(18px, 3vw, 44px);
-  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(6px, 0.9vw, 12px);
+  flex-wrap: nowrap;
+  max-width: min(560px, 100%);
+  overflow: hidden;
 }
-.v2-hud-cell {
-  font-family: var(--font-mono);
+.v2-hero-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: clamp(54px, 5.2vw, 84px);
+  height: 24px;
+  padding: 3px 6px;
+  border: 1px solid rgba(244, 241, 230, 0.1);
+  border-radius: 6px;
+  background: rgba(2, 5, 3, 0.58);
+  opacity: 0.84;
 }
-.v2-hud-cell .k {
-  font-size: 11px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--text-faint);
+.v2-hero-logo[data-tone="light"] {
+  background: rgba(244, 241, 230, 0.9);
+  border-color: rgba(244, 241, 230, 0.22);
 }
-.v2-hud-cell .v {
-  margin-top: 5px;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
-.v2-hud-cell .v em {
-  font-style: normal;
-  color: var(--green-bright);
+.v2-hero-logo img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 15px;
+  object-fit: contain;
 }
 .v2-hero__scrollcue {
   display: inline-flex;
@@ -1448,6 +1455,9 @@ h2 em,
 }
 
 @media (max-width: 760px) {
+  .v2-band__hero {
+    padding-bottom: clamp(84px, 12svh, 118px);
+  }
   .v2-hero__title {
     font-size: clamp(32px, 9.6vw, 58px);
     line-height: 1.04;
@@ -1486,7 +1496,9 @@ h2 em,
   .v2-hero__meta {
     flex-direction: column;
     align-items: flex-start;
-    gap: 20px;
+    gap: 12px;
+    margin-top: clamp(20px, 3vh, 34px);
+    padding-top: 14px;
   }
   .v2-hero__scrollcue {
     display: none;
@@ -1637,6 +1649,13 @@ h2 em,
 }
 [data-theme="light"] .v2-partner[data-tone="dark"] .v2-partner__plate {
   background: rgba(5, 10, 7, 0.84);
+}
+[data-theme="light"] .v2-hero-logo {
+  background: rgba(241, 246, 238, 0.62);
+  border-color: rgba(14, 27, 19, 0.14);
+}
+[data-theme="light"] .v2-hero-logo[data-tone="dark"] {
+  background: rgba(5, 10, 7, 0.78);
 }
 
 /* light mode: ghost buttons trade bone glass for ink glass */
