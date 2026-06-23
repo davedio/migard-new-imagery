@@ -87,7 +87,7 @@ export const SITE_COPY = {
     {
       title: "Whitepaper",
       body: "Protocol design and deeper mechanism notes.",
-      href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+      href: OFFICIAL_LINKS.whitepaper,
     },
   ],
 } as const;
@@ -98,6 +98,28 @@ export const DEVELOPER_COPY = {
     lead:
       "Start with the source, inspect the contracts, and use the transaction path to decide where your application plugs in.",
   },
+  entryPoints: [
+    {
+      label: "GitHub",
+      detail: "Source, contracts, node code",
+      href: OFFICIAL_LINKS.github,
+    },
+    {
+      label: "Contracts",
+      detail: "Addresses, topology, state anchors",
+      href: "/contracts",
+    },
+    {
+      label: "Whitepaper",
+      detail: "Protocol design notes",
+      href: OFFICIAL_LINKS.whitepaper,
+    },
+    {
+      label: "Security",
+      detail: "Trust path and assumptions",
+      href: "/security",
+    },
+  ],
   tracks: [
     {
       title: "Application builders",

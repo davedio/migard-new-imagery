@@ -46,7 +46,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
       },
       {
         label: "Whitepaper",
-        href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+        href: OFFICIAL_LINKS.whitepaper,
         external: true,
       },
     ],

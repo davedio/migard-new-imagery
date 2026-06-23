@@ -404,7 +404,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
           <div className="v2-prov__actions">
             <a
               className="btn btn--ghost"
-              href="https://anastasia-labs.github.io/midgard/midgard.pdf"
+              href={OFFICIAL_LINKS.whitepaper}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
 import { NextSteps } from "@/components/site/NextSteps";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -28,12 +29,12 @@ export default function HowItWorksPage() {
           {
             label: "Whitepaper",
             sub: "The challenge and fault-proof design that keeps operators honest",
-            href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+            href: OFFICIAL_LINKS.whitepaper,
           },
           {
             label: "GitHub",
             sub: "The protocol is open — verify it yourself on GitHub",
-            href: "https://github.com/Anastasia-Labs/midgard",
+            href: OFFICIAL_LINKS.github,
           },
         ]}
       />

@@ -30,7 +30,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       {
         label: "Whitepaper",
-        href: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+        href: OFFICIAL_LINKS.whitepaper,
         external: true,
       },
     ],

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
-import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 function isExternal(href: string) {
   return /^https?:\/\//.test(href);
@@ -38,13 +37,16 @@ export default function DeveloperLanding() {
           <h1>{DEVELOPER_COPY.hero.title}</h1>
           <p>{DEVELOPER_COPY.hero.lead}</p>
         </div>
-        <div className="minimal-actions">
-          <DevLink className="minimal-btn minimal-btn--primary" href={OFFICIAL_LINKS.github}>
-            Open GitHub
-          </DevLink>
-          <DevLink className="minimal-btn minimal-btn--ghost" href="/contracts">
-            Inspect contracts
-          </DevLink>
+        <div className="minimal-entry-panel" aria-label="Developer entry points">
+          <span>Developer entry points</span>
+          <div>
+            {DEVELOPER_COPY.entryPoints.map((item) => (
+              <DevLink key={item.label} href={item.href}>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </DevLink>
+            ))}
+          </div>
         </div>
       </section>
 

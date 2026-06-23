@@ -124,6 +124,10 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 test("developer and contracts pages render", async ({ page }, testInfo) => {
   await page.goto("/developers");
   await expect(page.getByRole("heading", { name: /Build on Midgard/i })).toBeVisible();
+  const developerEntryPoints = page.locator(".minimal-entry-panel");
+  await expect(developerEntryPoints).toContainText("Developer entry points");
+  await expect(developerEntryPoints).toContainText("Whitepaper");
+  await expect(developerEntryPoints).toContainText("Security");
   await expect(page.getByRole("heading", { name: /Application builders/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i }).first()).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("developers.png") });
