@@ -91,9 +91,9 @@ export default function DeveloperLanding() {
       >
         <div className={styles.launchInner}>
           <div className={styles.launchCopy}>
-            <h2 id="developer-launchpad-title">Start from the right place.</h2>
+            <h2 id="developer-launchpad-title">Open the source, then follow the path.</h2>
             <p>
-              Builders, reviewers, operators, and Watchers need different first links. Pick the first step that matches the job.
+              Builders, reviewers, operators, and Watchers need different proof points. Pick the link that matches the work.
             </p>
             <div className={styles.supportLinks} aria-label="Supporting documents">
               <span>Supporting docs</span>

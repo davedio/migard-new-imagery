@@ -4,14 +4,14 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for eUTXO finance",
     lead:
-      "Midgard lets eUTXO apps execute faster without making users trade away security: mathematically verified contracts, fault-proof checks, and final L1 settlement.",
-    primaryCta: { label: "Find your path", href: "#paths" },
+      "Midgard gives eUTXO applications faster execution with mathematically verified contracts, fault-proof checks, and final L1 settlement after verification.",
+    primaryCta: { label: "Start here", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
   paths: [
     {
       title: "Users",
-      body: "Deposit assets, transact faster, and withdraw through the L1 settlement path.",
+      body: "Move assets through apps with faster confirmations and a settlement path you can inspect.",
       cta: "Start as a user",
       href: "/learn#roles",
     },
@@ -23,7 +23,7 @@ export const SITE_COPY = {
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence transactions. Watchers replay commitments and challenge invalid state, so faster execution stays verifiable.",
+      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state.",
       cta: "Explore protocol roles",
       href: "/developers#developer-paths",
     },
@@ -86,7 +86,7 @@ export const SITE_COPY = {
     {
       intent: "Register interest",
       title: "Intake form",
-      body: "Builders, Protocol Roles, infrastructure partners, and testnet participation. Operators sequence activity; Watchers replay and challenge state.",
+      body: "Builders, Protocol Roles, infrastructure partners, and testnet participation.",
       cta: "Open intake form",
       href: OFFICIAL_LINKS.intakeForm,
     },
@@ -102,9 +102,9 @@ export const SITE_COPY = {
 
 export const DEVELOPER_COPY = {
   hero: {
-    title: "Build on Midgard.",
+    title: "Build faster eUTXO apps.",
     lead:
-      "Start with source code, contracts, security, or Protocol Roles. Then map your app flow to the protocol path.",
+      "Start with source, contracts, security assumptions, or Protocol Role participation. Then map your app flow to Midgard's execution path.",
   },
   entryPoints: [
     {
@@ -131,7 +131,7 @@ export const DEVELOPER_COPY = {
   tracks: [
     {
       title: "Application builders",
-      body: "Use Midgard when an eUTXO application needs faster execution, familiar wallet flows, and a settlement path users can inspect.",
+      body: "Use Midgard when an eUTXO application needs faster execution, familiar wallet flows, and inspectable settlement.",
       href: OFFICIAL_LINKS.github,
       cta: "Open GitHub",
     },
@@ -143,7 +143,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state. Participation details should follow approved testnet status.",
+      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state. Participation details follow approved testnet status.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Register interest",
     },

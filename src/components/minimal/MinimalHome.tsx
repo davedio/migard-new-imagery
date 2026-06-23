@@ -55,22 +55,22 @@ const INSPECTION_PATHS = [
 const QUICK_ROUTES = [
   {
     title: "Users",
-    body: "Deposit, transact, and withdraw through the settlement path.",
+    body: "Use apps with faster confirmations and inspectable settlement.",
     href: "/learn#roles",
   },
   {
     title: "Builders",
-    body: "Start with GitHub, contracts, and integration entry points.",
+    body: "Map real eUTXO flows to the execution layer.",
     href: "/developers",
   },
   {
     title: "Protocol Roles",
-    body: "Operators sequence blocks. Watchers replay and challenge state.",
+    body: "Sequence activity, replay commitments, and challenge state.",
     href: "/developers#developer-paths",
   },
   {
     title: "Official channels",
-    body: "Report, register interest, or ask community questions safely.",
+    body: "Use the right path for security, source, interest, or support.",
     href: "#channels",
   },
 ] as const;
@@ -144,8 +144,8 @@ export default function MinimalHome() {
 
       <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Start in the right place.</h2>
-          <p>Midgard has three useful starting points: use an app, build an app, or help run and verify the protocol.</p>
+          <h2 id="minimal-paths-title">Choose the route that matches your job.</h2>
+          <p>Users want faster activity. Builders need source and contracts. Protocol Roles keep execution verifiable.</p>
         </div>
         <div className="minimal-card-grid minimal-card-grid--3">
           {SITE_COPY.paths.map((path) => (
@@ -162,8 +162,8 @@ export default function MinimalHome() {
         <div className="minimal-section__head">
           <h2 id="minimal-mechanism-title">Fast execution first. Verification before final settlement.</h2>
           <p>
-            Users get faster confirmations first. Final settlement follows replayable
-            protocol checks.
+            Users get a faster usable signal while committed state remains replayable,
+            challengeable, and settled only after verification.
           </p>
         </div>
         <div className="minimal-flow-board" aria-label="Midgard user and protocol flow">
@@ -190,7 +190,7 @@ export default function MinimalHome() {
       <section className="minimal-section" aria-labelledby="minimal-proof-title">
         <div className="minimal-section__head">
           <h2 id="minimal-proof-title">Track the claims that matter.</h2>
-          <p>The numbers that matter are speed, settlement, eUTXO-native execution, verification coverage, and current status.</p>
+          <p>Publish the indicators that reduce guesswork: speed, settlement, eUTXO fit, verification coverage, and status.</p>
         </div>
         <div className="minimal-metrics">
           {SITE_COPY.proofPoints.map((item) => (
@@ -209,7 +209,7 @@ export default function MinimalHome() {
       <section className="minimal-section minimal-section--inspect" aria-labelledby="minimal-inspect-title">
         <div className="minimal-section__head">
           <h2 id="minimal-inspect-title">Inspect before you trust speed.</h2>
-          <p>Performance claims only matter when the trust path is visible: security model, contracts, and source.</p>
+          <p>Performance claims matter only when the trust path is visible: security model, contracts, and source.</p>
         </div>
         <div className="minimal-proof-surface">
           <div className="minimal-proof-rail" aria-hidden="true">
@@ -235,7 +235,7 @@ export default function MinimalHome() {
       <section id="channels" className="minimal-section" aria-labelledby="minimal-channels-title">
         <div className="minimal-section__head">
           <h2 id="minimal-channels-title">Use the right official channel.</h2>
-          <p>Pick the channel by intent. Sensitive reports should go through security; public questions and builder interest have separate routes.</p>
+          <p>Security reports, source review, builder interest, and public questions belong in different places.</p>
         </div>
         <div className="minimal-channel-grid">
           {SITE_COPY.channels.map((channel) => (

@@ -323,7 +323,7 @@ export function SiteNav() {
       </nav>
 
       {/* Mobile menu — same page list as desktop. */}
-      <div className="site-nav__mobile" data-open={open}>
+      <div className="site-nav__mobile" data-open={open} aria-hidden={!open} inert={!open}>
         <Link href="/" data-active={isActive("/")} onClick={closeMenu}>
           Home
         </Link>

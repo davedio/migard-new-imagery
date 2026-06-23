@@ -122,7 +122,7 @@ export default function SecurityPage() {
         compact
         tone="ink"
         title="Security you can inspect."
-        sub="Midgard combines mathematically verified smart contracts, fault-proof verification, and eUTXO-local state so faster execution does not require weaker settlement security."
+        sub="Midgard pairs faster execution with mathematically verified smart contracts, fault-proof verification, eUTXO-local state, and final L1 settlement after verification."
         actions={[
           { label: "Read the mechanism", href: "#mechanism", variant: "primary" },
           {
@@ -137,7 +137,7 @@ export default function SecurityPage() {
       <section className={styles.reviewRoutes} aria-labelledby="security-review-routes-title">
         <div className={styles.reviewRoutesInner}>
           <div className={styles.reviewRoutesHead}>
-            <h2 id="security-review-routes-title">Start with the right security route.</h2>
+            <h2 id="security-review-routes-title">Inspect the trust path from multiple angles.</h2>
             <p>Read the model, inspect the contracts, review the source, or report something sensitive through the official path.</p>
           </div>
           <div className={styles.reviewRouteGrid}>

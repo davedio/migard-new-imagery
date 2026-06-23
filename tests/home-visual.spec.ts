@@ -72,8 +72,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ]) {
     expect(bodyText).not.toContain(hiddenLabel);
   }
-  await expect(page.getByRole("link", { name: /Find your path/i }).first()).toBeVisible();
-  await expect(page.getByRole("link", { name: /Find your path/i }).first()).toHaveAttribute("href", "#paths");
+  await expect(page.getByRole("link", { name: /^Start here$/i }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Start here$/i }).first()).toHaveAttribute("href", "#paths");
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
@@ -82,11 +82,11 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.locator(".minimal-route-card").filter({ hasText: "Builders" })).toHaveAttribute("href", "/developers");
   await expect(page.locator(".minimal-route-card").filter({ hasText: "Protocol Roles" })).toHaveAttribute("href", "/developers#developer-paths");
   await expect(page.locator(".minimal-route-card").filter({ hasText: "Official channels" })).toHaveAttribute("href", "#channels");
-  await expect(pathSection.getByRole("heading", { name: /Start in the right place/i })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: /Choose the route that matches your job/i })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(pathSection.getByText(/Operators sequence transactions/i)).toBeVisible();
+  await expect(pathSection.getByText(/Operators sequence activity/i)).toBeVisible();
   await expect(pathSection.getByRole("link", { name: /Start as a user/i })).toHaveAttribute("href", "/learn#roles");
   await expect(pathSection.getByRole("link", { name: /Explore protocol roles/i })).toHaveAttribute("href", "/developers#developer-paths");
   await expect(page.getByRole("heading", { name: /Fast execution first/i })).toBeVisible();
@@ -144,10 +144,14 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   test.skip(testInfo.project.name !== "mobile-chromium", "Mobile menu behavior only");
 
   await page.goto("/");
+  const mobileMenu = page.locator(".site-nav__mobile");
+  await expect(mobileMenu).toHaveAttribute("aria-hidden", "true");
+  await expect(mobileMenu.getByRole("link", { name: /Developer overview/i })).toHaveCount(0);
+
   await page.getByRole("button", { name: /open menu/i }).click();
 
-  const mobileMenu = page.locator(".site-nav__mobile");
   await expect(mobileMenu).toHaveAttribute("data-open", "true");
+  await expect(mobileMenu).toHaveAttribute("aria-hidden", "false");
   await expect(mobileMenu.getByRole("link", { name: /^Home$/i })).toHaveAttribute("href", "/");
   await expect(mobileMenu.getByRole("link", { name: /Learn overview/i })).toHaveAttribute("href", "/learn");
   await expect(mobileMenu.getByRole("link", { name: /How it works/i })).toHaveAttribute("href", "/how-it-works");
@@ -163,6 +167,9 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   expect(box?.width).toBeGreaterThan(330);
   expect(box?.height).toBeLessThanOrEqual(825);
   await page.screenshot({ path: testInfo.outputPath("mobile-menu.png"), fullPage: true });
+
+  await page.getByRole("button", { name: /close menu/i }).click();
+  await expect(mobileMenu).toHaveAttribute("aria-hidden", "true");
 });
 
 test("minimal preview renders tree-themed routing concept", async ({ page }, testInfo) => {
@@ -173,9 +180,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
       name: /The execution layer for eUTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(
-    page.locator(".minimal-hero__copy").getByText(/trade away security/i),
-  ).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/final L1 settlement/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
@@ -192,7 +197,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.getByRole("heading", { name: /Final state settles on L1/i })).toBeVisible();
 
   const pathSection = page.locator("#paths");
-  await expect(pathSection.getByRole("heading", { name: /Start in the right place/i })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: /Choose the route that matches your job/i })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
@@ -247,7 +252,7 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   await page.goto("/learn");
 
   await expect(page.getByRole("heading", { name: /Learn Midgard/i })).toBeVisible();
-  await expect(page.getByText(/The execution layer for eUTXO finance: faster execution/i)).toBeVisible();
+  await expect(page.getByText(/plain-language map of faster eUTXO execution/i)).toBeVisible();
   await expect(page.getByText(/Deposit, transact, withdraw/i)).toBeVisible();
   await expect(page.getByText(/Submit, sequence, commit, data availability check, watch, settle/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
@@ -265,8 +270,8 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 
 test("developer and contracts pages render", async ({ page }, testInfo) => {
   await page.goto("/developers");
-  await expect(page.getByRole("heading", { name: /Build on Midgard/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Start from the right place/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Build faster eUTXO apps/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Open the source, then follow the path/i })).toBeVisible();
   await expect(page.getByText(/Supporting docs/i)).toBeVisible();
   await expect(page.getByLabel("Supporting documents").getByRole("link", { name: /Whitepaper/i })).toHaveAttribute("href", /midgard\.pdf/);
   await expect(page.locator("main").getByRole("heading", { name: /Protocol reviewers/i })).toBeVisible();
@@ -328,7 +333,7 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
 test("security and faq pages render", async ({ page }, testInfo) => {
   await page.goto("/security");
   await expect(page.getByRole("heading", { name: /Security you can inspect/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Start with the right security route/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Inspect the trust path from multiple angles/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i })).toHaveAttribute("href", "/contracts");
   await expect(page.getByRole("link", { name: /Report safely/i })).toHaveAttribute("href", /SECURITY\.md/);
   await expect(page.getByRole("heading", { name: /Fast confirmations first/i })).toBeVisible();

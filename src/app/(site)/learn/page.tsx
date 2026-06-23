@@ -62,7 +62,7 @@ export default function LearnPage() {
         compact
         tone="moss"
         title="Learn Midgard."
-        sub="The execution layer for eUTXO finance: faster execution, eUTXO-native design, and L1 settlement after verification."
+        sub="A plain-language map of faster eUTXO execution, verification, and final L1 settlement."
         actions={[
           { label: "See how it works", href: "/how-it-works", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },
@@ -77,7 +77,7 @@ export default function LearnPage() {
           <Card
             num="01"
             title="What Midgard is"
-            body="Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution without asking users to trade away full L1 settlement security."
+            body="Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while preserving inspectable L1 settlement."
           />
           <Card
             num="02"
@@ -92,7 +92,7 @@ export default function LearnPage() {
           <Card
             num="04"
             title="What to inspect"
-            body="Source code, security model, testnet status, approved parameters, and the public path for reporting issues."
+            body="Source code, contract surface, security model, testnet status, approved parameters, and the official path for reporting issues."
             cta="Open GitHub"
             ctaIcon={<GitHubIcon size={14} />}
             href={OFFICIAL_LINKS.github}
@@ -102,8 +102,8 @@ export default function LearnPage() {
 
       <Section
         id="roles"
-        title="Find where you fit."
-        lead="Start with Users, Builders, or Protocol Roles."
+        title="Choose the route that matches your job."
+        lead="Users move assets. Builders integrate applications. Protocol Roles run and verify the system."
       >
         <CardGrid>
           <Card

@@ -216,7 +216,7 @@ export default function FaqPage() {
         compact
         tone="moss"
         title="Questions, answered plainly."
-        sub="A shorter path through what Midgard is, why it matters, how security works, and where to inspect the claims."
+        sub="Plain answers on what Midgard is, why it matters, how security works, and where to inspect the claims."
         actions={[
           { label: "Compare L2 models", href: "#comparison", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },
