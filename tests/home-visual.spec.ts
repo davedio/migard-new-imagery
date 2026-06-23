@@ -140,6 +140,31 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
   await page.screenshot({ path: testInfo.outputPath("nav-learn-open.png") });
 });
 
+test("mobile menu exposes the full routing list clearly", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile-chromium", "Mobile menu behavior only");
+
+  await page.goto("/");
+  await page.getByRole("button", { name: /open menu/i }).click();
+
+  const mobileMenu = page.locator(".site-nav__mobile");
+  await expect(mobileMenu).toHaveAttribute("data-open", "true");
+  await expect(mobileMenu.getByRole("link", { name: /^Home$/i })).toHaveAttribute("href", "/");
+  await expect(mobileMenu.getByRole("link", { name: /Learn overview/i })).toHaveAttribute("href", "/learn");
+  await expect(mobileMenu.getByRole("link", { name: /How it works/i })).toHaveAttribute("href", "/how-it-works");
+  await expect(mobileMenu.getByRole("link", { name: /Developer overview/i })).toHaveAttribute("href", "/developers");
+  await expect(mobileMenu.getByRole("link", { name: /^Contracts/i })).toHaveAttribute("href", "/contracts");
+  await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/security");
+  await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveAttribute("href", /SECURITY\.md/);
+  await expect(mobileMenu.getByRole("link", { name: /Intake form/i })).toHaveAttribute("href", /docs\.google\.com\/forms/);
+  await expect(mobileMenu).toContainText("Builder and Protocol Role interest");
+
+  const box = await mobileMenu.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box?.width).toBeGreaterThan(330);
+  expect(box?.height).toBeLessThanOrEqual(825);
+  await page.screenshot({ path: testInfo.outputPath("mobile-menu.png"), fullPage: true });
+});
+
 test("minimal preview renders tree-themed routing concept", async ({ page }, testInfo) => {
   await page.goto("/minimal");
 
