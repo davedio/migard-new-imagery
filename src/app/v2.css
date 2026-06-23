@@ -3168,10 +3168,13 @@ h2 em,
   .minimal-card-grid--3,
   .minimal-card-grid--4,
   .minimal-channel-grid,
-  .minimal-route-strip,
   .minimal-thesis,
   .minimal-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .minimal-route-strip {
+    display: none;
   }
 
   .minimal-thesis__rail {
