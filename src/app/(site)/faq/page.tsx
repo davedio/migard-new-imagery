@@ -111,7 +111,7 @@ export default function FaqPage() {
               items: [
                 {
                   q: "Who is Midgard for?",
-                  a: "Users, builders, operators, and watchers. These roles overlap: most operators will also care about watching, and builders may also test user flows directly.",
+                  a: "Users, builders, and protocol roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
                 },
                 {
                   q: "Can existing UTXO apps use Midgard?",
@@ -128,11 +128,11 @@ export default function FaqPage() {
               ],
             },
             {
-              title: "Operators and status",
+              title: "Protocol roles and status",
               items: [
                 {
-                  q: "What do operators do?",
-                  a: "Operators order L2 activity, produce blocks, and commit state. They help the network feel fast, but they do not replace the verification and settlement path.",
+                  q: "What do protocol roles do?",
+                  a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments and use the fault-proof path if an operator submits invalid state.",
                 },
                 {
                   q: "What should I check before relying on Midgard?",

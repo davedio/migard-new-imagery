@@ -283,17 +283,10 @@ const PATHS = [
   },
   {
     n: "03",
-    title: "Operators",
-    line: "Run infrastructure for Midgard as the network moves through staged testnet and toward broader participation.",
-    cta: "Register interest",
+    title: "Protocol Roles",
+    line: "Operators & Watchers keep Midgard running and verifiable: sequence transactions, inspect commitments, and participate in fault-proof verification.",
+    cta: "Explore protocol roles",
     href: OFFICIAL_LINKS.intakeForm,
-  },
-  {
-    n: "04",
-    title: "Watchers",
-    line: "Monitor the protocol and participate in fault-proof verification.",
-    cta: "Review the code",
-    href: OFFICIAL_LINKS.github,
   },
 ] as const;
 

@@ -296,14 +296,6 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
                 </Link>
               </div>
             </Rise>
-            <Rise delay={0.42}>
-              <div className="v2-hero__meta">
-                <span className="v2-hero__scrollcue">
-                  <span className="line" aria-hidden />
-                  Pre-alpha testnet
-                </span>
-              </div>
-            </Rise>
           </div>
         </section>
 
@@ -312,7 +304,7 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
           <Chapter
             n="01"
             title={["Choose your path."]}
-            lead="Users, builders, operators, and watchers overlap. Start with the role that fits what you're here to do."
+            lead="Users, builders, and protocol roles overlap. Start with the role that fits what you're here to do."
           />
           <Paths />
         </section>

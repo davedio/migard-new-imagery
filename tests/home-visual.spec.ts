@@ -56,8 +56,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: "Choose your path." })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Operators", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Watchers", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
+  await expect(page.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
 });
@@ -91,8 +91,8 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   await expect(page.getByText(/Submit, sequence, commit, DA attestation, watch, settle/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Operators", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Watchers", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
+  await expect(page.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
 
   const bodyText = await page.locator("body").innerText();
   expect(bodyText).toContain("fault-proof");

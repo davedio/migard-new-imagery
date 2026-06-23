@@ -61,7 +61,6 @@ export default function LearnPage() {
       <PageHero
         compact
         tone="moss"
-        label="Learn"
         title="Learn Midgard."
         sub="The secure scaling layer for UTXO finance: faster execution, UTXO-native design, and L1 settlement after verification."
         actions={[
@@ -71,7 +70,6 @@ export default function LearnPage() {
       />
 
       <Section
-        eyebrow="Start here"
         title="One page for the core idea."
         lead="Midgard lets UTXO applications run faster while keeping the settlement path checkable."
       >
@@ -103,9 +101,8 @@ export default function LearnPage() {
       </Section>
 
       <Section
-        eyebrow="Choose your path"
         title="Find where you fit."
-        lead="These are the four ways people usually approach Midgard."
+        lead="Start with Users, Builders, or Protocol Roles."
       >
         <CardGrid>
           <Card
@@ -120,20 +117,14 @@ export default function LearnPage() {
           />
           <Card
             num="03"
-            title="Operators"
-            body="Operators sequence transactions and keep the system moving. Most serious Operators should also think like Watchers."
-          />
-          <Card
-            num="04"
-            title="Watchers"
-            body="Watchers replay commitments, verify state transitions, and challenge invalid behavior through the fault-proof path."
+            title="Protocol Roles"
+            body="Operators & Watchers keep Midgard running and verifiable: Operators sequence transactions; Watchers replay commitments and challenge invalid state through the fault-proof path."
           />
         </CardGrid>
       </Section>
 
       <Section
         id="transaction-path"
-        eyebrow="Transaction path"
         title="From fast action to final settlement."
         lead="The short version is easy to say, and the deeper mechanism is still available for people who need to inspect it."
         tight
@@ -142,7 +133,6 @@ export default function LearnPage() {
       </Section>
 
       <Section
-        eyebrow="What matters"
         title="Faster execution without softening trust."
         lead="The model is simple to review: faster execution first, then challenge and settlement."
       >
@@ -173,10 +163,10 @@ export default function LearnPage() {
         </CardGrid>
       </Section>
 
-      <Section eyebrow="Launch boundary" title="Current status stays explicit.">
+      <Section title="Current status stays explicit.">
         <Callout
           title="Pre-alpha testnet is the current public boundary."
-          body="Midgard is early. Live status, verified code, and approved parameters are the source for claims that affect users, builders, operators, and Watchers."
+          body="Midgard is early. Live status, verified code, and approved parameters are the source for claims that affect users, builders, and protocol roles."
           items={[
             "Fault-proof verification is the public verification path.",
             "DA and watcher assumptions are part of the security model.",
@@ -186,7 +176,6 @@ export default function LearnPage() {
       </Section>
 
       <CtaBand
-        eyebrow="Next"
         title="Move from overview to mechanism."
         lead="Start with the plain-language model, then inspect the transaction flow, the security path, and the source."
         actions={[
