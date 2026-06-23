@@ -281,7 +281,10 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 
   await expect(page.getByRole("heading", { name: /Learn Midgard/i })).toBeVisible();
   await expect(page.getByText(/plain-language map of faster eUTXO execution/i)).toBeVisible();
-  await expect(page.getByText(/Deposit, transact, withdraw/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /One path, three jobs/i })).toBeVisible();
+  await expect(page.getByLabel("Midgard core model").getByText(/Deposit, transact, withdraw/i)).toBeVisible();
+  await expect(page.getByLabel("Midgard core model").getByText(/Final L1 settlement after verification/i)).toBeVisible();
+  await expect(page.getByText(/The user path stays simple while the protocol handles verification underneath/i)).toBeVisible();
   await expect(page.getByText(/Submit, sequence, commit, data availability check, watch, settle/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();

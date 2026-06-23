@@ -10,6 +10,7 @@ import {
   Section,
 } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import styles from "@/components/site/learn.module.css";
 
 export const metadata: Metadata = {
   title: "Learn | Midgard",
@@ -55,6 +56,49 @@ const lifecycle = [
   },
 ];
 
+const coreModel = [
+  {
+    n: "01",
+    title: "User path",
+    body: "Deposit, transact, withdraw.",
+  },
+  {
+    n: "02",
+    title: "Verification path",
+    body: "Sequence, commit, replay, challenge.",
+  },
+  {
+    n: "03",
+    title: "Settlement path",
+    body: "Final L1 settlement after verification.",
+  },
+] as const;
+
+function CoreModel() {
+  return (
+    <div className={styles.coreModel} aria-label="Midgard core model">
+      <div className={styles.coreCopy}>
+        <h3>One path, three jobs.</h3>
+        <p>
+          Users get a simple app flow. The protocol keeps each commitment checkable. Settlement becomes final only after verification.
+        </p>
+      </div>
+      <div className={styles.coreGraphic} aria-hidden="true">
+        <div className={styles.coreSpine}>
+          <span className={styles.corePacket} />
+        </div>
+        {coreModel.map((item) => (
+          <div className={styles.coreLane} key={item.title}>
+            <span>{item.n}</span>
+            <strong>{item.title}</strong>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function LearnPage() {
   return (
     <main className="page-main">
@@ -73,6 +117,7 @@ export default function LearnPage() {
         title="One page for the core idea."
         lead="Midgard lets eUTXO applications run faster while keeping the settlement path checkable."
       >
+        <CoreModel />
         <CardGrid>
           <Card
             num="01"
