@@ -15,7 +15,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
       name: /The secure scaling layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.locator("#top").getByText(/mathematically verified security/i)).toBeVisible();
+  await expect(page.locator("#top").getByText(/mathematically verified smart contracts/i)).toBeVisible();
   await expect(page.locator(".v2-home__instant-plate")).toHaveCSS(
     "background-image",
     /worldtree-night-tall/,
@@ -88,6 +88,34 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
   await expect(dropdown.getByRole("link", { name: /How it works/i })).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("nav-learn-open.png") });
+});
+
+test("minimal preview renders tree-themed routing concept", async ({ page }, testInfo) => {
+  await page.goto("/minimal");
+
+  await expect(
+    page.getByRole("heading", {
+      name: /The secure scaling layer for UTXO finance/i,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.locator(".minimal-hero__copy").getByText(/L1 security through mathematically verified smart contracts/i),
+  ).toBeVisible();
+  await expect(page.locator(".minimal-tree")).toBeVisible();
+  await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
+  await expect(page.getByText("Data availability check").first()).toBeVisible();
+
+  const pathSection = page.locator("#paths");
+  await expect(pathSection.getByRole("heading", { name: /Choose the path that matches your job/i })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
+  await expect(pathSection.getByRole("link", { name: /Start as a user/i })).toHaveAttribute("href", "/learn#roles");
+  await expect(pathSection.getByRole("link", { name: /Explore protocol roles/i })).toHaveAttribute("href", "/developers#developer-paths");
+
+  await expect(page.locator(".minimal-metric")).toHaveCount(6);
+  await expect(page.locator(".minimal-card-grid--4 .minimal-card")).toHaveCount(4);
+  await page.screenshot({ path: testInfo.outputPath("minimal-preview.png") });
 });
 
 test("developers and security menus expose key routes", async ({ page }, testInfo) => {

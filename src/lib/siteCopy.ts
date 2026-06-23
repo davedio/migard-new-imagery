@@ -4,8 +4,8 @@ export const SITE_COPY = {
   hero: {
     title: "The secure scaling layer for UTXO finance",
     lead:
-      "Midgard gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
-    primaryCta: { label: "Choose your path", href: "#trunk" },
+      "Midgard gives UTXO applications faster execution while verified state settles with L1 security through mathematically verified smart contracts and fault-proof checks.",
+    primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
   paths: [
@@ -32,7 +32,7 @@ export const SITE_COPY = {
     ["Submit", "A user sends a transaction to Midgard."],
     ["Sequence", "An operator orders valid activity into an L2 block."],
     ["Commit", "Compact state is posted to the L1 settlement path."],
-    ["Attest", "Data availability is checked so commitments can be inspected."],
+    ["Data availability check", "Availability is checked so commitments can be inspected."],
     ["Watch", "Watchers replay state and use the fault-proof path if needed."],
     ["Settle", "Verified state reaches final L1 settlement."],
   ],

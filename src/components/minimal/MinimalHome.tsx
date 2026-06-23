@@ -45,14 +45,19 @@ export default function MinimalHome() {
               {SITE_COPY.hero.secondaryCta.label}
             </SmartLink>
           </div>
+          <div className="minimal-hero__proof-strip" aria-label="Core Midgard promise">
+            <span>Soft confirmation first</span>
+            <span>Fault-proof checks before settlement</span>
+            <span>L1 security after verification</span>
+          </div>
         </div>
         <ConceptTree />
       </section>
 
-      <section className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
+      <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Choose the right path.</h2>
-          <p>Three clear routes: use Midgard, build on Midgard, or help run and verify the protocol.</p>
+          <h2 id="minimal-paths-title">Choose the path that matches your job.</h2>
+          <p>Users, Builders, and Protocol Roles need different first steps. Start with the job, then choose the channel.</p>
         </div>
         <div className="minimal-card-grid minimal-card-grid--3">
           {SITE_COPY.paths.map((path) => (
@@ -67,10 +72,10 @@ export default function MinimalHome() {
 
       <section className="minimal-section minimal-section--split" aria-labelledby="minimal-mechanism-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-mechanism-title">Fast execution, then verification.</h2>
+          <h2 id="minimal-mechanism-title">Fast execution first. Verification before final settlement.</h2>
           <p>
-            The user experience is simple. The protocol path underneath stays
-            explicit enough for serious reviewers.
+            The user path stays simple: deposit, transact, withdraw. The protocol
+            path underneath stays explicit enough for serious reviewers to inspect.
           </p>
         </div>
         <div className="minimal-flow-list">
@@ -86,8 +91,8 @@ export default function MinimalHome() {
 
       <section className="minimal-section" aria-labelledby="minimal-proof-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-proof-title">What to evaluate first.</h2>
-          <p>Midgard should earn trust through inspectable mechanics, not vague claims.</p>
+          <h2 id="minimal-proof-title">Evaluate the claims that matter.</h2>
+          <p>Midgard should earn trust through inspectable mechanics, current status, and metrics that serious users can verify.</p>
         </div>
         <div className="minimal-metrics">
           {SITE_COPY.proofPoints.map((item) => (
@@ -102,7 +107,7 @@ export default function MinimalHome() {
 
       <section className="minimal-section" aria-labelledby="minimal-channels-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-channels-title">Go to the right place.</h2>
+          <h2 id="minimal-channels-title">Use the right official channel.</h2>
           <p>Each channel has a job. Start from official surfaces before you trust links or claims.</p>
         </div>
         <div className="minimal-card-grid minimal-card-grid--4">

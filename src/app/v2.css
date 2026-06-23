@@ -2088,11 +2088,43 @@ h2 em,
 .minimal-site {
   position: relative;
   z-index: 2;
+  overflow: hidden;
+  min-height: 100svh;
   color: var(--text);
   background:
-    radial-gradient(circle at 82% 12%, rgba(78, 243, 131, 0.1), transparent 34rem),
-    radial-gradient(circle at 18% 88%, rgba(207, 154, 46, 0.08), transparent 30rem),
+    radial-gradient(circle at 84% 10%, rgba(78, 243, 131, 0.16), transparent 34rem),
+    radial-gradient(circle at 16% 88%, rgba(207, 154, 46, 0.12), transparent 30rem),
     linear-gradient(180deg, rgba(4, 7, 5, 0.7), rgba(4, 7, 5, 0.96) 44rem, #040705);
+}
+
+.minimal-site::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(980px, 100svh);
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(4, 7, 5, 0.96), rgba(4, 7, 5, 0.62) 48%, rgba(4, 7, 5, 0.2) 74%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.2), rgba(4, 7, 5, 0.86)),
+    url("/plates/worldtree-night-tall.avif") 82% 24% / min(920px, 64vw) auto no-repeat;
+  opacity: 0.58;
+  mask-image: linear-gradient(180deg, #000 62%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent);
+}
+
+.minimal-site::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.11;
+  mix-blend-mode: screen;
+  background-image:
+    linear-gradient(rgba(244, 241, 230, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 241, 230, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, #000, transparent 68rem);
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 68rem);
 }
 
 .minimal-site h1,
@@ -2103,18 +2135,22 @@ h2 em,
 }
 
 .minimal-hero {
-  min-height: 78svh;
+  position: relative;
+  z-index: 1;
+  min-height: min(860px, 92svh);
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+  grid-template-columns: minmax(0, 0.9fr) minmax(430px, 1.1fr);
   align-items: center;
-  gap: 56px;
-  max-width: 1320px;
+  gap: clamp(36px, 5vw, 72px);
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 112px var(--gut) 48px;
+  padding: 116px var(--gut) 58px;
 }
 
 .minimal-hero__copy {
-  max-width: 660px;
+  max-width: 690px;
+  position: relative;
+  z-index: 1;
 }
 
 .minimal-kicker {
@@ -2128,7 +2164,7 @@ h2 em,
 .minimal-hero h1,
 .minimal-page-hero h1 {
   margin: 0;
-  font-size: 64px;
+  font-size: clamp(56px, 5.1vw, 86px);
   line-height: 1;
   font-weight: 500;
 }
@@ -2147,7 +2183,7 @@ h2 em,
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 34px;
+  margin-top: 32px;
 }
 
 .minimal-btn {
@@ -2179,8 +2215,31 @@ h2 em,
   border-color: rgba(244, 241, 230, 0.38);
 }
 
+.minimal-hero__proof-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 660px;
+  margin-top: 26px;
+}
+
+.minimal-hero__proof-strip span {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 12px 14px;
+  border: 1px solid rgba(244, 241, 230, 0.13);
+  border-radius: 6px;
+  color: rgba(244, 241, 230, 0.82);
+  background: rgba(4, 7, 5, 0.58);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
 .minimal-section {
-  max-width: 1320px;
+  position: relative;
+  z-index: 1;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 86px var(--gut);
 }
@@ -2226,7 +2285,9 @@ h2 em,
 .minimal-flow-row {
   border: 1px solid var(--panel-edge-strong);
   border-radius: 8px;
-  background: rgba(7, 12, 8, 0.76);
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 52%),
+    rgba(7, 12, 8, 0.76);
 }
 
 .minimal-card {
@@ -2324,13 +2385,16 @@ h2 em,
 
 .minimal-tree {
   position: relative;
-  min-height: 430px;
+  min-height: clamp(480px, 48vw, 620px);
   border: 1px solid rgba(244, 241, 230, 0.12);
   border-radius: 8px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 22%, rgba(78, 243, 131, 0.11), transparent 18rem),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.82)),
+    radial-gradient(circle at 50% 22%, rgba(78, 243, 131, 0.2), transparent 18rem),
+    url("/plates/worldtree-wide-alt.jpg") center / cover,
     linear-gradient(180deg, rgba(8, 16, 10, 0.88), rgba(4, 7, 5, 0.92));
+  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.36);
 }
 
 .minimal-tree::after {
@@ -2346,7 +2410,8 @@ h2 em,
   display: block;
   width: 100%;
   height: auto;
-  min-height: 430px;
+  min-height: clamp(480px, 48vw, 620px);
+  filter: drop-shadow(0 0 28px rgba(78, 243, 131, 0.16));
 }
 
 .minimal-tree__limb,
@@ -2526,6 +2591,11 @@ h2 em,
   .minimal-card-grid--4,
   .minimal-metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .minimal-hero__proof-strip {
+    grid-template-columns: 1fr;
+    max-width: 520px;
   }
 
   .minimal-tree__stage-list {
