@@ -191,6 +191,89 @@ const comparisonLegend = [
   ["watch", levelLabels.watch],
 ] as const;
 
+const faqGroups = [
+  {
+    title: "Product status",
+    items: [
+      {
+        q: "What is Midgard?",
+        a: "Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while keeping final settlement on the L1 path.",
+      },
+      {
+        q: "Why does Midgard matter?",
+        a: "eUTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
+      },
+      {
+        q: "Is Midgard live?",
+        a: "Midgard is in pre-alpha testnet. Public claims should be checked against current status, measured benchmarks, source code, and approved protocol parameters.",
+      },
+      {
+        q: "Is Midgard a sidechain?",
+        a: "No. Midgard is positioned as a rollup path: L2 execution, committed state, fault-proof verification, and settlement through the L1 path.",
+      },
+    ],
+  },
+  {
+    title: "Security",
+    items: [
+      {
+        q: "What is the main security claim?",
+        a: "Finalized state is designed to settle through the L1 path after verification, while Midgard reduces the attack surface through eUTXO-local state, mathematically verified contracts, and fault-proof verification.",
+      },
+      {
+        q: "Does that mean Midgard is impossible to hack?",
+        a: "No responsible protocol should promise that. The point is that the attack surface is narrower than many on-chain finance systems, and the most important logic can be inspected, challenged, and formally checked.",
+      },
+      {
+        q: "What do Watchers do?",
+        a: "Watchers inspect committed blocks, replay the relevant state transition, and use the fault-proof path if an operator submits invalid state.",
+      },
+      {
+        q: "Why does eUTXO matter?",
+        a: "eUTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that appears in account-model failures.",
+      },
+    ],
+  },
+  {
+    title: "Users and builders",
+    items: [
+      {
+        q: "Who is Midgard for?",
+        a: "Users, builders, and Protocol Roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
+      },
+      {
+        q: "Can existing eUTXO apps use Midgard?",
+        a: "That is the goal: give eUTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
+      },
+      {
+        q: "Where should builders start?",
+        a: "Start with the source, the How It Works page, and one concrete flow you want to make faster.",
+      },
+      {
+        q: "How are fees paid?",
+        a: "The current public positioning is ADA fees with no separate gas token.",
+      },
+    ],
+  },
+  {
+    title: "Protocol Roles and status",
+    items: [
+      {
+        q: "What do Protocol Roles do?",
+        a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments and use the fault-proof path if an operator submits invalid state.",
+      },
+      {
+        q: "What should I check before relying on Midgard?",
+        a: "Check current testnet status, contract surfaces, source code, challenge-window assumptions, operator behavior, and published benchmark data.",
+      },
+      {
+        q: "Where do I report a security issue?",
+        a: "Use the official security-policy route and preserve evidence. Midgard will never ask for your seed phrase, private key, recovery phrase, or password.",
+      },
+    ],
+  },
+];
+
 function ComparisonCell({
   label,
   cell,
@@ -268,15 +351,23 @@ export default function FaqPage() {
         title="Questions, answered plainly."
         sub="Plain answers on what Midgard is, why it matters, how security works, and where to inspect the claims."
         actions={[
-          { label: "Compare L2 models", href: "#comparison", variant: "primary" },
-          { label: "Read security", href: "/security", variant: "ghost" },
+          { label: "Start with basics", href: "#basics", variant: "primary" },
+          { label: "Compare L2 models", href: "#comparison", variant: "ghost" },
         ]}
       />
 
       <Section
+        id="basics"
+        title="Start with the basics."
+        lead="Get the short answers first. Then use the comparison section to inspect how Midgard differs from other L2 patterns."
+      >
+        <Faq groups={faqGroups} />
+      </Section>
+
+      <Section
         id="comparison"
-        title="Compare the trust model first."
-        lead="Do not compare L2s only by speed. Compare what executes faster, what can be independently checked, and what finally settles."
+        title="Compare the trust model."
+        lead="Once the basics are clear, compare what executes faster, what can be independently checked, and what finally settles."
       >
         <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
           {decisionGrid.map((card) => (
@@ -346,93 +437,6 @@ export default function FaqPage() {
         <Callout
           title="This page should stay current."
           body="As benchmarks, bridge integrations, and protocol parameters mature, this comparison should become more quantitative. For now, it keeps the evaluation criteria visible without pretending pre-alpha numbers are final."
-        />
-      </Section>
-
-      <Section id="basics">
-        <Faq
-          groups={[
-            {
-              title: "Product status",
-              items: [
-                {
-                  q: "What is Midgard?",
-                  a: "Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while keeping final settlement on the L1 path.",
-                },
-                {
-                  q: "Why does Midgard matter?",
-                  a: "eUTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
-                },
-                {
-                  q: "Is Midgard live?",
-                  a: "Midgard is in pre-alpha testnet. Public claims should be checked against current status, measured benchmarks, source code, and approved protocol parameters.",
-                },
-                {
-                  q: "Is Midgard a sidechain?",
-                  a: "No. Midgard is positioned as a rollup path: L2 execution, committed state, fault-proof verification, and settlement through the L1 path.",
-                },
-              ],
-            },
-            {
-              title: "Security",
-              items: [
-                {
-                  q: "What is the main security claim?",
-                  a: "Finalized state is designed to settle through the L1 path after verification, while Midgard reduces the attack surface through eUTXO-local state, mathematically verified contracts, and fault-proof verification.",
-                },
-                {
-                  q: "Does that mean Midgard is impossible to hack?",
-                  a: "No responsible protocol should promise that. The point is that the attack surface is narrower than many on-chain finance systems, and the most important logic can be inspected, challenged, and formally checked.",
-                },
-                {
-                  q: "What do Watchers do?",
-                  a: "Watchers inspect committed blocks, replay the relevant state transition, and use the fault-proof path if an operator submits invalid state.",
-                },
-                {
-                  q: "Why does eUTXO matter?",
-                  a: "eUTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that appears in account-model failures.",
-                },
-              ],
-            },
-            {
-              title: "Users and builders",
-              items: [
-                {
-                  q: "Who is Midgard for?",
-                  a: "Users, builders, and Protocol Roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
-                },
-                {
-                  q: "Can existing eUTXO apps use Midgard?",
-                  a: "That is the goal: give eUTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
-                },
-                {
-                  q: "Where should builders start?",
-                  a: "Start with the source, the How It Works page, and one concrete flow you want to make faster.",
-                },
-                {
-                  q: "How are fees paid?",
-                  a: "The current public positioning is ADA fees with no separate gas token.",
-                },
-              ],
-            },
-            {
-              title: "Protocol Roles and status",
-              items: [
-                {
-                  q: "What do Protocol Roles do?",
-                  a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments and use the fault-proof path if an operator submits invalid state.",
-                },
-                {
-                  q: "What should I check before relying on Midgard?",
-                  a: "Check current testnet status, contract surfaces, source code, challenge-window assumptions, operator behavior, and published benchmark data.",
-                },
-                {
-                  q: "Where do I report a security issue?",
-                  a: "Use the official security-policy route and preserve evidence. Midgard will never ask for your seed phrase, private key, recovery phrase, or password.",
-                },
-              ],
-            },
-          ]}
         />
       </Section>
 

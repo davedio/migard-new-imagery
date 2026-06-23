@@ -380,7 +380,14 @@ test("security and faq pages render", async ({ page }, testInfo) => {
 
   await page.goto("/faq");
   await expect(page.getByRole("heading", { name: /Questions, answered plainly/i })).toBeVisible();
-  await expect(page.getByText(/Compare the trust model/i)).toBeVisible();
+  await expect(page.getByRole("link", { name: /Start with basics/i })).toHaveAttribute("href", "#basics");
+  await expect(page.getByRole("heading", { name: /Start with the basics/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Compare the trust model/i })).toBeVisible();
+  const faqOrder = await page.locator("main").evaluate((main) => ({
+    basics: main.querySelector("#basics")?.getBoundingClientRect().top ?? 0,
+    comparison: main.querySelector("#comparison")?.getBoundingClientRect().top ?? 0,
+  }));
+  expect(faqOrder.basics).toBeLessThan(faqOrder.comparison);
   await expect(page.locator(".faq-decision-card")).toHaveCount(3);
   await expect(page.locator(".faq-decision-card").filter({ hasText: "Midgard" })).toContainText("eUTXO apps that need faster execution");
   await expect(page.locator(".faq-decision-card").filter({ hasText: "EVM rollups" })).toContainText("Bridge design");
