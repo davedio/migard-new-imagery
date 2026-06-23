@@ -33,16 +33,16 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://midgard-gateway.vercel.app"),
-  title: "Midgard | The secure scaling layer for UTXO finance",
+  title: "Midgard | The execution layer for eUTXO finance",
   description:
-    "Midgard is an optimistic rollup that gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
+    "Midgard is the execution layer for eUTXO finance: faster application execution with mathematically verified security and final settlement anchored to L1.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Midgard | The secure scaling layer for UTXO finance",
+    title: "Midgard | The execution layer for eUTXO finance",
     description:
-      "An optimistic rollup that gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
+      "The execution layer for eUTXO finance: faster application execution with mathematically verified security and final settlement anchored to L1.",
     url: "/",
     siteName: "Midgard",
     images: [
@@ -50,16 +50,16 @@ export const metadata: Metadata = {
         url: "/og/home.jpg",
         width: 1200,
         height: 630,
-        alt: "Midgard - the secure scaling layer for UTXO finance",
+        alt: "Midgard - the execution layer for eUTXO finance",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Midgard | The secure scaling layer for UTXO finance",
+    title: "Midgard | The execution layer for eUTXO finance",
     description:
-      "An optimistic rollup that gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
+      "The execution layer for eUTXO finance: faster application execution with mathematically verified security and final settlement anchored to L1.",
     images: ["/og/home.jpg"],
   },
   icons: {

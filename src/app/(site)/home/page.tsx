@@ -1,9 +1,21 @@
-import { permanentRedirect } from "next/navigation";
+import type { Metadata } from "next";
+import HomeV2 from "@/components/v2/HomeV2";
 
-/**
- * The canonical home now lives at `/` (src/app/(site)/page.tsx) — the root URL
- * carries the SEO weight. This stub keeps every old /home link working.
- */
-export default function HomeRedirect() {
-  permanentRedirect("/");
+export const metadata: Metadata = {
+  title: "Cinematic Preview | Midgard",
+  robots: { index: false, follow: false },
+};
+
+export default function CinematicHomePreview() {
+  return (
+    <>
+      <link
+        rel="preload"
+        as="image"
+        href="/plates/worldtree-night-tall.avif"
+        fetchPriority="high"
+      />
+      <HomeV2 />
+    </>
+  );
 }

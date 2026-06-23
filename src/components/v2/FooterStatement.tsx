@@ -15,7 +15,7 @@ export function FooterStatement() {
   return (
     <Link href={next} className="v2-footer-statement">
       <span>
-        Scale <em>UTXO</em> finance.
+        Execution layer for <em>eUTXO</em> finance.
       </span>
       <span className="arrow" aria-hidden>
         ↗

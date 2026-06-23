@@ -37,6 +37,29 @@ const breadcrumbJsonLd = {
   ],
 };
 
+const contractPath = [
+  {
+    n: "01",
+    title: "User bridge",
+    body: "Deposit, Tx Order, and Withdrawal move user activity into and out of the protocol.",
+  },
+  {
+    n: "02",
+    title: "Commitment path",
+    body: "Hub Oracle, Scheduler, State Queue, and Settlement coordinate the state that can mature.",
+  },
+  {
+    n: "03",
+    title: "Challenge path",
+    body: "Fault-proof contracts give Watchers a public route to contest invalid committed state.",
+  },
+  {
+    n: "04",
+    title: "Evidence",
+    body: "Addresses, state anchors, reference scripts, and genesis transactions are listed for review.",
+  },
+] as const;
+
 export default function ContractsPage() {
   return (
     <main className={`page-main contracts-page ${styles.contractsPage}`}>
@@ -50,8 +73,8 @@ export default function ContractsPage() {
         <div className={styles.contractHeroPlate} aria-hidden />
         <div className={styles.contractHeroInner}>
           <div className={styles.contractHeroCopy}>
-            <h1 data-rune-target>Inspect the contract path.</h1>
-            <p data-rune-target>
+            <h1>Inspect the contract path.</h1>
+            <p>
               Every Midgard validator, state anchor, reference script, and bootstrap transaction should be checkable from one place.
             </p>
             <div className={styles.contractHeroChips}>
@@ -61,12 +84,12 @@ export default function ContractsPage() {
               </span>
               <span className="chip chip--demo">
                 <span className="dot" />
-                Static preprod snapshot
+                Snapshot, not live status
               </span>
             </div>
             <Actions
               items={[
-                { label: "View topology", href: "#topology", variant: "primary" },
+                { label: "Inspect topology", href: "#topology", variant: "primary" },
                 {
                   label: "Open GitHub",
                   href: OFFICIAL_LINKS.github,
@@ -110,7 +133,11 @@ export default function ContractsPage() {
         <a href="#query">Query</a>
       </nav>
 
-      <Section id="topology" title="The protocol surface." lead="The topology makes the contract system easier to inspect before the address directory gets detailed.">
+      <Section
+        id="topology"
+        title="The protocol surface."
+        lead="Start with the contract path, then inspect the full address directory."
+      >
         <div className={styles.metaBar}>
           <span className={styles.metaActive}>
             <span className={styles.metaDot} />
@@ -126,10 +153,19 @@ export default function ContractsPage() {
             cexplorer.io
           </a>
         </div>
+        <div className={styles.pathMap} aria-label="Contract path at a glance">
+          {contractPath.map((step) => (
+            <article className={styles.pathStep} key={step.title}>
+              <span>{step.n}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </article>
+          ))}
+        </div>
         <Prose
           items={[
             {
-              text: "Hub Oracle anchors the registry. Scheduler and State Queue coordinate commitments. Settlement, Deposit, Tx Order, and Withdrawal handle the user bridge. The fault-proof path routes invalid state back through a verifiable challenge surface.",
+              text: "The detailed topology below shows how the same pieces connect. Hover a node to trace its related contracts, then use the directory sections for addresses, anchors, scripts, and bootstrap transactions.",
             },
           ]}
         />

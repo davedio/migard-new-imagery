@@ -98,15 +98,15 @@ function StaticHome({ plate }: { plate: string }) {
       <StaticScene id="top" plate={plate} position={STATIC_BANDS.hero}>
         <div className="v2-static__hero">
           <h1 className="v2-hero__title">
-            The <span className="ital">secure scaling</span> layer
+            The <span className="ital">execution layer</span>
             <br />
-            for UTXO finance
+            for eUTXO finance
           </h1>
           <p className="v2-hero__lead">
             {SITE_COPY.hero.lead}
           </p>
           <div className="v2-hero__actions">
-            <Link className="btn btn--primary" href="#trunk">
+            <Link className="btn btn--primary" href="#paths">
               Choose your path
             </Link>
             <Link className="btn-link--gold" href="/how-it-works">

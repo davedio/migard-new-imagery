@@ -1,5 +1,44 @@
 import { SITE_COPY } from "@/lib/siteCopy";
 
+const FLOW_GROUPS = [
+  {
+    n: "01",
+    label: "Fast confirmation",
+    detail: "Submit -> sequence -> commit",
+  },
+  {
+    n: "02",
+    label: "Verification",
+    detail: "Data stays checkable -> Watcher replay",
+  },
+  {
+    n: "03",
+    label: "L1 settlement",
+    detail: "Verified state settles",
+  },
+] as const;
+
+const CALLOUTS = [
+  {
+    title: "Fast action",
+    body: "submit -> commit",
+    x: 78,
+    y: 76,
+  },
+  {
+    title: "Public checks",
+    body: "replay -> challenge",
+    x: 356,
+    y: 184,
+  },
+  {
+    title: "Final settlement",
+    body: "verified state",
+    x: 574,
+    y: 366,
+  },
+] as const;
+
 export function ConceptTree() {
   return (
     <div className="minimal-tree" aria-label="Midgard transaction flow">
@@ -27,17 +66,18 @@ export function ConceptTree() {
         <path className="minimal-tree__limb faint" d="M382 104 C294 148 222 214 164 306" />
         <path className="minimal-tree__limb faint" d="M388 112 C494 152 580 220 656 318" />
         <path className="minimal-tree__limb" d="M104 124 C220 86 280 148 360 190 C462 242 516 320 676 458" />
+        <path className="minimal-tree__proof-loop" d="M468 270 C558 212 648 274 548 368 C488 424 412 360 468 270" />
         <path className="minimal-tree__root" d="M360 462 C312 438 258 438 204 468" />
         <path className="minimal-tree__root" d="M360 462 C428 426 508 436 606 480" />
         <path className="minimal-tree__root" d="M360 462 C354 418 362 382 394 342" />
 
         <g filter="url(#minimal-tree-glow)">
-          <circle className="minimal-tree__packet packet-a" r="7">
+          <circle className="minimal-tree__packet packet-a" r="9">
             <animateMotion dur="7s" repeatCount="indefinite">
               <mpath href="#minimal-packet-path" />
             </animateMotion>
           </circle>
-          <circle className="minimal-tree__packet packet-b" r="5">
+          <circle className="minimal-tree__packet packet-b" r="7">
             <animateMotion dur="7s" begin="-2.4s" repeatCount="indefinite">
               <mpath href="#minimal-packet-path" />
             </animateMotion>
@@ -61,12 +101,22 @@ export function ConceptTree() {
             </g>
           );
         })}
+        {CALLOUTS.map((callout) => (
+          <g className="minimal-tree__callout" key={callout.title} transform={`translate(${callout.x} ${callout.y})`}>
+            <rect width="126" height="48" rx="7" />
+            <text x="13" y="20">{callout.title}</text>
+            <text x="13" y="36" className="detail">{callout.body}</text>
+          </g>
+        ))}
       </svg>
-      <ol className="minimal-tree__stage-list" aria-label="Transaction stages">
-        {SITE_COPY.lifecycle.map(([label], i) => (
-          <li key={label}>
-            <span>{String(i + 1).padStart(2, "0")}</span>
-            <strong>{label}</strong>
+      <ol className="minimal-tree__stage-list" aria-label="Midgard transaction phases">
+        {FLOW_GROUPS.map((group) => (
+          <li key={group.label}>
+            <span>{group.n}</span>
+            <div>
+              <strong>{group.label}</strong>
+              <small>{group.detail}</small>
+            </div>
           </li>
         ))}
       </ol>

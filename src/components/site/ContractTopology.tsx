@@ -3,6 +3,29 @@
 import { useEffect, useRef } from "react";
 import styles from "./contracts.module.css";
 
+const MOBILE_TOPOLOGY = [
+  {
+    title: "Hub Oracle",
+    body: "Reference point for validator topology and fault-proof catalogue data.",
+    tone: "green",
+  },
+  {
+    title: "State Queue",
+    body: "Committed blocks sit in order so Watchers can replay and challenge state.",
+    tone: "green",
+  },
+  {
+    title: "Fault-proof path",
+    body: "Computation threads and proofs connect back to the committed state.",
+    tone: "gold",
+  },
+  {
+    title: "Settlement",
+    body: "Deposits, tx orders, withdrawals, and verified state meet the final settlement path.",
+    tone: "neutral",
+  },
+] as const;
+
 /**
  * The full Midgard contract topology — thirteen validators laid out as a
  * left-to-right pipeline (Hub Oracle → Scheduler → State Queue → Settlement)
@@ -84,6 +107,15 @@ export function ContractTopology() {
 
   return (
     <div className={styles.topoWrap} tabIndex={0}>
+      <div className={styles.topoMobile} aria-label="Midgard contract topology summary">
+        {MOBILE_TOPOLOGY.map((item, index) => (
+          <article className={styles.topoMobileStep} data-tone={item.tone} key={item.title}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
       <svg
         ref={ref}
         viewBox="0 0 960 345"

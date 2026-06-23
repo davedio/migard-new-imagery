@@ -7,23 +7,29 @@ import styles from "@/components/site/developer.module.css";
 
 const launchpad = [
   {
-    label: "GitHub",
-    detail: "Source, contracts, node code, and implementation details.",
+    label: "Review source",
+    detail: "Open the node code, contract implementation, and public issues.",
     href: OFFICIAL_LINKS.github,
     cta: "Open GitHub",
     github: true,
   },
   {
-    label: "Contracts",
-    detail: "Validator topology, preprod addresses, state anchors, and reference scripts.",
+    label: "Contract addresses",
+    detail: "Check validator topology, state anchors, reference scripts, and the preprod snapshot.",
     href: "/contracts",
     cta: "Inspect contracts",
   },
   {
-    label: "Security",
-    detail: "Trust path, fault-proof checks, Watcher replay, and settlement assumptions.",
+    label: "Security model",
+    detail: "Understand the trust path, fault-proof checks, Watcher replay, and settlement assumptions.",
     href: "/security",
-    cta: "Review security",
+    cta: "Read security",
+  },
+  {
+    label: "Protocol Roles",
+    detail: "Share operator, Watcher, infrastructure, or testnet participation interest.",
+    href: OFFICIAL_LINKS.intakeForm,
+    cta: "Open intake form",
   },
 ] as const;
 
@@ -32,11 +38,12 @@ function isExternal(href: string) {
 }
 
 function LaunchpadLink({ item, index }: { item: (typeof launchpad)[number]; index: number }) {
+  const isGitHubCard = "github" in item && item.github;
   const inner = (
     <>
       <span>{String(index + 1).padStart(2, "0")}</span>
       <h3>
-        {item.label === "GitHub" ? <GitHubIcon size={18} aria-hidden /> : null}
+        {isGitHubCard ? <GitHubIcon size={18} aria-hidden /> : null}
         {item.label}
       </h3>
       <p>{item.detail}</p>
@@ -84,13 +91,16 @@ export default function DeveloperLanding() {
       >
         <div className={styles.launchInner}>
           <div className={styles.launchCopy}>
-            <h2 id="developer-launchpad-title">Start with what you need to prove.</h2>
+            <h2 id="developer-launchpad-title">Pick the right technical surface.</h2>
             <p>
-              Builders, reviewers, Operators, and Watchers need different first links. Use the source for implementation work, contracts for on-chain inspection, and security for trust assumptions.
+              Builders, reviewers, and Protocol Roles need different first links. Choose the surface that matches your job before you go deeper.
             </p>
-            <a href={OFFICIAL_LINKS.whitepaper} target="_blank" rel="noreferrer">
-              Whitepaper: protocol design notes -&gt;
-            </a>
+            <div className={styles.supportLinks} aria-label="Supporting documents">
+              <span>Supporting docs</span>
+              <a href={OFFICIAL_LINKS.whitepaper} target="_blank" rel="noreferrer">
+                Whitepaper -&gt;
+              </a>
+            </div>
           </div>
           <div className={styles.launchGrid}>
             {launchpad.map((item, i) => (
@@ -103,7 +113,7 @@ export default function DeveloperLanding() {
       <Section
         id="developer-paths"
         title="Choose your developer path."
-        lead="Application builders, protocol reviewers, and protocol roles need different next steps."
+        lead="Application builders, protocol reviewers, and Protocol Roles need different next steps."
         glow="green"
       >
         <CardGrid>
@@ -142,7 +152,7 @@ export default function DeveloperLanding() {
         lead="The fastest useful developer conversation starts with a wallet action, dApp interaction, indexer need, or protocol path that can be mapped to Midgard."
         actions={[
           {
-            label: "View GitHub",
+            label: "Open GitHub",
             href: OFFICIAL_LINKS.github,
             variant: "primary",
             icon: <GitHubIcon size={15} />,

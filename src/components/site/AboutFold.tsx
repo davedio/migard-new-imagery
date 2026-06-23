@@ -15,7 +15,7 @@ export function ThesisSection() {
       <Prose
         items={[
           {
-            text: "UTXO finance should not have to choose between speed and security. Midgard gives UTXO applications faster execution with settlement anchored to L1.",
+            text: "eUTXO finance should not have to choose between speed and security. Midgard gives eUTXO applications faster execution with settlement anchored to L1.",
           },
           {
             text: "Security comes from mathematically verified smart contracts, fault-proof verification, and a smaller eUTXO attack surface.",
@@ -52,7 +52,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
               variant: "ghost",
             },
             {
-              label: "View GitHub",
+              label: "Open GitHub",
               href: OFFICIAL_LINKS.github,
               variant: "ghost",
               icon: <GitHubIcon size={15} />,

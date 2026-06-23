@@ -20,7 +20,7 @@
        no per-particle arc(), no React state in the hot path
    ========================================================================== */
 
-import { useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { Fragment, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import { useMotionPref } from "@/lib/motion";
 
 type Accent = "green" | "gold";
@@ -431,25 +431,28 @@ export default function ShatterHeading({
     <div ref={rootRef} className="v2-shx" style={style}>
       <Tag className={className} aria-label={lines.join(" ")}>
         {split.map((words, li) => (
-          <span className="shx-line" key={li} aria-hidden>
-            {words.map((word, wi) => (
-              <span key={wi}>
-                {wi > 0 ? " " : null}
-                <span className="shx-w">
-                  {word.map((r, ci) => (
-                    <span
-                      key={ci}
-                      className="shx-ch"
-                      data-ch={r.ch}
-                      data-accent={r.accent}
-                    >
-                      {r.ch}
-                    </span>
-                  ))}
+          <Fragment key={li}>
+            {li > 0 ? " " : null}
+            <span className="shx-line" aria-hidden>
+              {words.map((word, wi) => (
+                <span key={wi}>
+                  {wi > 0 ? " " : null}
+                  <span className="shx-w">
+                    {word.map((r, ci) => (
+                      <span
+                        key={ci}
+                        className="shx-ch"
+                        data-ch={r.ch}
+                        data-accent={r.accent}
+                      >
+                        {r.ch}
+                      </span>
+                    ))}
+                  </span>
                 </span>
-              </span>
-            ))}
-          </span>
+              ))}
+            </span>
+          </Fragment>
         ))}
       </Tag>
       <canvas ref={canvasRef} className="v2-shx__canvas" aria-hidden />

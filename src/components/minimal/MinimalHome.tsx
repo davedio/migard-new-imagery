@@ -52,10 +52,63 @@ const INSPECTION_PATHS = [
   },
 ] as const;
 
+const QUICK_ROUTES = [
+  {
+    label: "Use",
+    title: "Users",
+    body: "Deposit, transact, and withdraw through the settlement path.",
+    href: "/learn#roles",
+  },
+  {
+    label: "Build",
+    title: "Builders",
+    body: "Start with GitHub, contracts, and integration entry points.",
+    href: "/developers",
+  },
+  {
+    label: "Run / verify",
+    title: "Protocol Roles",
+    body: "Operators sequence blocks. Watchers replay and challenge state.",
+    href: "/developers#developer-paths",
+  },
+  {
+    label: "Contact",
+    title: "Official channels",
+    body: "Report, register interest, or ask community questions safely.",
+    href: "#channels",
+  },
+] as const;
+
+const USER_FLOW = ["Deposit", "Transact", "Withdraw"] as const;
+
+const VALUE_STEPS = [
+  {
+    title: "Apps execute faster",
+    body: "Users can receive soft confirmations before the final settlement path finishes.",
+  },
+  {
+    title: "State stays checkable",
+    body: "Commitments can be replayed, challenged, and inspected through the public contract surface.",
+  },
+  {
+    title: "Final state settles on L1",
+    body: "After verification, finalized state settles through the base-layer path.",
+  },
+] as const;
+
+const METRIC_STATUS = {
+  "Soft confirmations": "Benchmark",
+  "Settlement security": "Trust path",
+  "Execution model": "Architecture",
+  "Verified contracts": "Formal review",
+  "Fault-proof coverage": "Challenge path",
+  Status: "Current phase",
+} as const;
+
 export default function MinimalHome() {
   return (
     <main className="minimal-site">
-      <section className="minimal-hero" aria-labelledby="minimal-hero-title">
+      <section id="top" className="minimal-hero" aria-labelledby="minimal-hero-title">
         <div className="minimal-hero__copy">
           <h1 id="minimal-hero-title">{SITE_COPY.hero.title}</h1>
           <p>{SITE_COPY.hero.lead}</p>
@@ -67,19 +120,37 @@ export default function MinimalHome() {
               {SITE_COPY.hero.secondaryCta.label}
             </SmartLink>
           </div>
-          <div className="minimal-hero__proof-strip" aria-label="Core Midgard promise">
-            <span>Soft confirmation first</span>
-            <span>Fault-proof checks before settlement</span>
-            <span>L1 security after verification</span>
-          </div>
         </div>
         <ConceptTree />
       </section>
 
+      <section className="minimal-route-strip" aria-label="Choose a Midgard route">
+        {QUICK_ROUTES.map((route) => (
+          <SmartLink className="minimal-route-card" href={route.href} key={route.title}>
+            <span>{route.label}</span>
+            <strong>{route.title}</strong>
+            <p>{route.body}</p>
+          </SmartLink>
+        ))}
+      </section>
+
+      <section className="minimal-thesis" aria-label="Midgard at a glance">
+        <div className="minimal-thesis__rail" aria-hidden="true">
+          <span />
+        </div>
+        {VALUE_STEPS.map((step, index) => (
+          <article className="minimal-thesis__item" key={step.title}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <h2>{step.title}</h2>
+            <p>{step.body}</p>
+          </article>
+        ))}
+      </section>
+
       <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Choose the path that matches your job.</h2>
-          <p>Users, Builders, and Protocol Roles need different first steps. Start with the job, then choose the channel.</p>
+          <h2 id="minimal-paths-title">Start in the right place.</h2>
+          <p>Midgard has three useful starting points: use an app, build an app, or help run and verify the protocol.</p>
         </div>
         <div className="minimal-card-grid minimal-card-grid--3">
           {SITE_COPY.paths.map((path) => (
@@ -96,30 +167,43 @@ export default function MinimalHome() {
         <div className="minimal-section__head">
           <h2 id="minimal-mechanism-title">Fast execution first. Verification before final settlement.</h2>
           <p>
-            The user path stays simple: deposit, transact, withdraw. The protocol
-            path underneath stays explicit enough for serious reviewers to inspect.
+            Users get faster confirmations first. Final settlement follows replayable
+            protocol checks.
           </p>
         </div>
-        <div className="minimal-flow-list">
-          {SITE_COPY.lifecycle.map(([label, body], i) => (
-            <div className="minimal-flow-row" key={label}>
-              <span>{String(i + 1).padStart(2, "0")}</span>
-              <strong>{label}</strong>
-              <p>{body}</p>
-            </div>
-          ))}
+        <div className="minimal-flow-board" aria-label="Midgard user and protocol flow">
+          <div className="minimal-user-path" aria-label="User experience">
+            <span>User sees</span>
+            <ol>
+              {USER_FLOW.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ol>
+          </div>
+          <div className="minimal-flow-list" aria-label="Protocol verification path">
+            {SITE_COPY.lifecycle.map(([label, body], i) => (
+              <div className="minimal-flow-row" data-zone={i < 3 ? "speed" : "verify"} key={label}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <strong>{label}</strong>
+                <p>{body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="minimal-section" aria-labelledby="minimal-proof-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-proof-title">Evaluate the claims that matter.</h2>
-          <p>Midgard should earn trust through inspectable mechanics, current status, and metrics that serious users can verify.</p>
+          <h2 id="minimal-proof-title">Track the claims that matter.</h2>
+          <p>The numbers that matter are speed, settlement, UTXO-native execution, verification coverage, and current status.</p>
         </div>
         <div className="minimal-metrics">
           {SITE_COPY.proofPoints.map((item) => (
             <div className="minimal-metric" key={item.k}>
-              <span>{item.k}</span>
+              <div>
+                <span>{item.k}</span>
+                <em>{METRIC_STATUS[item.k]}</em>
+              </div>
               <strong>{item.v}</strong>
               <p>{item.s}</p>
             </div>
@@ -130,31 +214,41 @@ export default function MinimalHome() {
       <section className="minimal-section minimal-section--inspect" aria-labelledby="minimal-inspect-title">
         <div className="minimal-section__head">
           <h2 id="minimal-inspect-title">Inspect before you trust speed.</h2>
-          <p>Performance claims only matter after the trust path is clear: security model, contracts, and source.</p>
+          <p>Performance claims only matter when the trust path is visible: security model, contracts, and source.</p>
         </div>
-        <div className="minimal-inspect-grid">
-          {INSPECTION_PATHS.map((item, i) => (
-            <SmartLink key={item.title} className="minimal-inspect-card" href={item.href}>
-              <span>{String(i + 1).padStart(2, "0")}</span>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
-              <strong>{item.cta} -&gt;</strong>
-            </SmartLink>
-          ))}
+        <div className="minimal-proof-surface">
+          <div className="minimal-proof-rail" aria-hidden="true">
+            <span>Speed claim</span>
+            <i />
+            <strong>Verified trust path</strong>
+            <i />
+            <span>Public review</span>
+          </div>
+          <div className="minimal-inspect-grid">
+            {INSPECTION_PATHS.map((item, i) => (
+              <SmartLink key={item.title} className="minimal-inspect-card" href={item.href}>
+                <span>{String(i + 1).padStart(2, "0")}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <strong>{item.cta} -&gt;</strong>
+              </SmartLink>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="minimal-section" aria-labelledby="minimal-channels-title">
+      <section id="channels" className="minimal-section" aria-labelledby="minimal-channels-title">
         <div className="minimal-section__head">
           <h2 id="minimal-channels-title">Use the right official channel.</h2>
-          <p>Each channel has a job. Start from official surfaces before you trust links or claims.</p>
+          <p>Pick the channel by intent. Sensitive reports should go through security; public questions and builder interest have separate routes.</p>
         </div>
-        <div className="minimal-card-grid minimal-card-grid--4">
+        <div className="minimal-channel-grid">
           {SITE_COPY.channels.map((channel) => (
-            <SmartLink key={channel.title} className="minimal-card minimal-card--link" href={channel.href}>
+            <SmartLink key={channel.title} className="minimal-channel-card" href={channel.href}>
+              <span>{channel.intent}</span>
               <h3>{channel.title}</h3>
               <p>{channel.body}</p>
-              <span>Open -&gt;</span>
+              <strong>{channel.cta} -&gt;</strong>
             </SmartLink>
           ))}
         </div>

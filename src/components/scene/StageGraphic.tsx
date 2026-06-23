@@ -106,7 +106,7 @@ const STAGES: Stage[] = [
     id: "da",
     tag: "Data availability",
     name: "Data availability check",
-    line: "DA nodes confirm that the block data behind the state commitment is available before the system progresses.",
+    line: "Availability checks confirm that the block data behind the state commitment can be inspected before the system progresses.",
     readouts: [
       { k: "Action", v: "Check availability", tone: "bridge" },
       { k: "Data", v: "Block data present", tone: "bridge" },

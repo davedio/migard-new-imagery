@@ -2,9 +2,9 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const SITE_COPY = {
   hero: {
-    title: "The secure scaling layer for UTXO finance",
+    title: "The execution layer for eUTXO finance",
     lead:
-      "Midgard gives UTXO applications faster execution while verified state settles with L1 security through mathematically verified smart contracts and fault-proof checks.",
+      "Midgard gives eUTXO applications faster execution without asking users to trade off security: mathematically verified smart contracts, fault-proof checks, and final L1 settlement.",
     primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
@@ -17,13 +17,13 @@ export const SITE_COPY = {
     },
     {
       title: "Builders",
-      body: "Build UTXO applications that need faster execution without leaving the UTXO model.",
+      body: "Build eUTXO applications that need faster execution without leaving the eUTXO model.",
       cta: "Start building",
       href: "/developers",
     },
     {
       title: "Protocol Roles",
-      body: "Operators & Watchers keep Midgard running and verifiable. Operators sequence transactions; Watchers replay commitments and challenge invalid state.",
+      body: "Operators sequence transactions. Watchers replay commitments and challenge invalid state, so faster execution stays verifiable.",
       cta: "Explore protocol roles",
       href: "/developers#developer-paths",
     },
@@ -32,7 +32,7 @@ export const SITE_COPY = {
     ["Submit", "A user sends a transaction to Midgard."],
     ["Sequence", "An operator orders valid activity into an L2 block."],
     ["Commit", "Compact state is posted to the L1 settlement path."],
-    ["Data availability check", "Availability is checked so commitments can be inspected."],
+    ["Make data checkable", "The data behind each commitment stays available for review."],
     ["Watch", "Watchers replay state and use the fault-proof path if needed."],
     ["Settle", "Verified state reaches final L1 settlement."],
   ],
@@ -49,8 +49,8 @@ export const SITE_COPY = {
     },
     {
       k: "Execution model",
-      v: "UTXO-native",
-      s: "Track how well applications preserve UTXO design while gaining faster execution.",
+      v: "eUTXO-native",
+      s: "Track how well applications preserve eUTXO design while gaining faster execution.",
     },
     {
       k: "Verified contracts",
@@ -70,24 +70,32 @@ export const SITE_COPY = {
   ],
   channels: [
     {
-      title: "GitHub",
-      body: "Source, contracts, node code, and implementation details.",
-      href: OFFICIAL_LINKS.github,
-    },
-    {
+      intent: "Report something sensitive",
       title: "Security policy",
-      body: "Use this route for vulnerabilities, impersonation, and security-sensitive reports.",
+      body: "Vulnerabilities, impersonation, exploits, and anything that should not be posted publicly.",
+      cta: "Read security policy",
       href: OFFICIAL_LINKS.securityPolicy,
     },
     {
-      title: "Discord",
-      body: "Use this route for non-sensitive community questions and early builder discussion.",
-      href: OFFICIAL_LINKS.discord,
+      intent: "Build or review code",
+      title: "GitHub",
+      body: "Source, contracts, node code, implementation details, and public technical review.",
+      cta: "Open GitHub",
+      href: OFFICIAL_LINKS.github,
     },
     {
+      intent: "Register interest",
       title: "Intake form",
-      body: "Use this route for builders, operators, Watchers, infrastructure, and testnet participation.",
+      body: "Builders, Protocol Roles, infrastructure partners, and testnet participation. Operators sequence activity; Watchers replay and challenge state.",
+      cta: "Open intake form",
       href: OFFICIAL_LINKS.intakeForm,
+    },
+    {
+      intent: "Ask community questions",
+      title: "Discord",
+      body: "Non-sensitive questions, community discussion, and early builder coordination.",
+      cta: "Join Discord",
+      href: OFFICIAL_LINKS.discord,
     },
   ],
 } as const;
@@ -96,7 +104,7 @@ export const DEVELOPER_COPY = {
   hero: {
     title: "Build on Midgard.",
     lead:
-      "Start with the source, inspect the contracts, and use the transaction path to decide where your application plugs in.",
+      "Start with source, contract addresses, the security model, or Protocol Role interest. Then map your application flow to the protocol path.",
   },
   entryPoints: [
     {
@@ -129,13 +137,13 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Protocol reviewers",
-      body: "Review the validator topology, state anchors, reference scripts, and preprod deployment history.",
+      body: "Review validator topology, state anchors, reference scripts, and preprod deployment history before relying on the contract path.",
       href: "/contracts",
       cta: "Inspect contracts",
     },
     {
       title: "Protocol Roles",
-      body: "Operators and Watchers keep the system live and checkable. Participation details should follow approved testnet status.",
+      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state. Participation details should follow approved testnet status.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Register interest",
     },

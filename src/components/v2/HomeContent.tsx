@@ -192,7 +192,7 @@ type Phrase = { text: string; cls?: string };
 
 const THESIS: Phrase[][] = [
   [
-    { text: "UTXO finance should not have to trade security for scale." },
+  { text: "eUTXO finance should not have to trade security for scale." },
     { text: "Midgard gives applications faster execution" },
     { text: "without leaving the UTXO model." },
   ],
@@ -270,7 +270,7 @@ const PATHS = [
   {
     n: "01",
     title: "Users",
-    line: "Use UTXO finance applications with faster execution and familiar wallet flows.",
+    line: "Use eUTXO finance applications with faster execution and familiar wallet flows.",
     cta: "Start as a user",
     href: "/learn#roles",
   },
@@ -284,7 +284,7 @@ const PATHS = [
   {
     n: "03",
     title: "Protocol Roles",
-    line: "Operators & Watchers keep Midgard running and verifiable: sequence transactions, inspect commitments, and participate in fault-proof verification.",
+    line: "Protocol Roles keep Midgard running and verifiable. Operators sequence transactions; Watchers inspect commitments and challenge invalid state through the fault-proof path.",
     cta: "Explore protocol roles",
     href: "/developers#developer-paths",
   },
@@ -295,7 +295,7 @@ export function Paths() {
   const isExternal = (href: string) => /^https?:\/\//.test(href);
 
   return (
-    <div className="v2-explore" id="explore">
+    <div className="v2-explore" id="paths">
       <div className="v2-explore__grid">
         {PATHS.map((p, i) => (
           <Rise key={p.n} delay={i * 0.07} style={{ display: "flex" }}>
@@ -349,11 +349,16 @@ const PROTOCOL_PATH = [
   },
   {
     n: "04",
+    label: "Make data checkable",
+    body: "The data behind each commitment stays available for review.",
+  },
+  {
+    n: "05",
     label: "Watch",
     body: "Watchers replay commitments and challenge invalid state.",
   },
   {
-    n: "05",
+    n: "06",
     label: "Settle",
     body: "Verified state reaches final L1 settlement.",
   },
@@ -454,6 +459,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
         <Rise delay={0.06}>
           <h2 className="v2-prov__title">
             Built by
+            {" "}
             <br />
             Midgard Labs.
           </h2>
@@ -487,7 +493,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <GitHubIcon size={14} aria-hidden /> View GitHub
+              <GitHubIcon size={14} aria-hidden /> Open GitHub
             </a>
           </div>
         </Rise>

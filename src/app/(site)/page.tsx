@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import HomeV2 from "@/components/v2/HomeV2";
+import MinimalHome from "@/components/minimal/MinimalHome";
 
 export const metadata: Metadata = {
-  title: "Midgard | The secure scaling layer for UTXO finance",
+  title: "Midgard | The execution layer for eUTXO finance",
   description:
-    "Midgard is an optimistic rollup that gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
+    "Midgard is the execution layer for eUTXO finance: faster application execution with mathematically verified security and final settlement anchored to L1.",
   openGraph: {
-    title: "Midgard | The secure scaling layer for UTXO finance",
+    title: "Midgard | The execution layer for eUTXO finance",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", images: ["/og/home.jpg"] },
@@ -14,17 +14,9 @@ export const metadata: Metadata = {
 
 /**
  * Canonical home at `/`, inside the (site) group so it shares nav + footer.
+ * This branch uses the minimalist tree-themed direction as the primary
+ * experience; the cinematic version remains available at `/home` for review.
  */
 export default function HomePage() {
-  return (
-    <>
-      <link
-        rel="preload"
-        as="image"
-        href="/plates/worldtree-night-tall.avif"
-        fetchPriority="high"
-      />
-      <HomeV2 />
-    </>
-  );
+  return <MinimalHome />;
 }

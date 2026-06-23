@@ -109,6 +109,57 @@ const ACT_BEATS: { stage: string; name: string; layer: string }[] = [
   { stage: "06", name: "Settle", layer: "l1" },
 ];
 
+const EXPLAINER_STEPS = [
+  {
+    n: "01",
+    title: "Submit",
+    layer: "L2 entry",
+    what: "A user sends a transaction to Midgard.",
+    check: "The transaction is validated against UTXO rules before it enters the ordered flow.",
+    why: "The user can get a faster usable signal without waiting for final settlement.",
+  },
+  {
+    n: "02",
+    title: "Sequence",
+    layer: "Operator",
+    what: "An operator orders valid activity into an L2 block.",
+    check: "The order becomes part of the state that other parties can replay.",
+    why: "Applications get fast execution while the order remains inspectable.",
+  },
+  {
+    n: "03",
+    title: "Commit",
+    layer: "L1 path",
+    what: "Compact state is posted to the L1 settlement path.",
+    check: "The commitment points to state that must remain available and challengeable.",
+    why: "Midgard does not ask users to trust a private operator database.",
+  },
+  {
+    n: "04",
+    title: "Data availability check",
+    layer: "Availability",
+    what: "Block data is checked so commitments can be inspected.",
+    check: "Reviewers need the data required to replay the committed state.",
+    why: "A commitment is not useful if the underlying data cannot be checked.",
+  },
+  {
+    n: "05",
+    title: "Watch",
+    layer: "Challenge",
+    what: "Watchers replay state and use the fault-proof path if needed.",
+    check: "Invalid commitments can be challenged before they become settled state.",
+    why: "Operators do not get the final word on correctness.",
+  },
+  {
+    n: "06",
+    title: "Settle",
+    layer: "L1 finality",
+    what: "Verified state reaches final L1 settlement.",
+    check: "After the verification path clears, finalized state inherits L1 security.",
+    why: "Fast execution and final settlement stay separate, clear, and reviewable.",
+  },
+] as const;
+
 function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> }) {
   return (
     <section className="hiw-act" aria-label="Transaction journey" ref={actRef}>
@@ -121,8 +172,8 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
           </h1>
           <p className="hiw-act__lead">
             For users, the path is deposit, transact, withdraw. Under the hood,
-            Midgard routes activity through sequencing, commitment, DA
-            attestation, the challenge window, and final L1 settlement.
+            Midgard routes activity through sequencing, commitment, data
+            availability checks, the challenge window, and final L1 settlement.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (
@@ -137,6 +188,45 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
             Scroll to follow it down
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorksExplainer() {
+  return (
+    <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
+      <div className="hiw-explainer__head">
+        <p>Transaction path</p>
+        <h2 id="hiw-explainer-title">Fast action first. Verification before final settlement.</h2>
+        <span>
+          The animation shows the journey down the tree. This is the same path in plain language.
+        </span>
+      </div>
+      <div className="hiw-explainer__grid">
+        {EXPLAINER_STEPS.map((step) => (
+          <article className="hiw-explainer__card" data-layer={step.layer.includes("L1") ? "l1" : step.layer === "Challenge" || step.layer === "Availability" ? "bridge" : "l2"} key={step.title}>
+            <div className="hiw-explainer__card-head">
+              <span>{step.n}</span>
+              <em>{step.layer}</em>
+            </div>
+            <h3>{step.title}</h3>
+            <dl>
+              <div>
+                <dt>What happens</dt>
+                <dd>{step.what}</dd>
+              </div>
+              <div>
+                <dt>Who checks it</dt>
+                <dd>{step.check}</dd>
+              </div>
+              <div>
+                <dt>Why it matters</dt>
+                <dd>{step.why}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -268,6 +358,7 @@ export default function HowItWorksExperience({
           sections below stay opaque. */}
       <main className="page-main page-main--how-it-works page-main--hiw-experience">
         <JourneyAct actRef={actRef} />
+        <HowItWorksExplainer />
         {children}
       </main>
     </>

@@ -15,6 +15,7 @@ import { useTheme } from "@/lib/theme";
 type NavLink = {
   label: string;
   href: string;
+  description: string;
   external?: boolean;
   github?: boolean;
 };
@@ -28,25 +29,27 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Learn",
     items: [
-      { label: "Learn overview", href: "/learn" },
-      { label: "How it works", href: "/how-it-works" },
-      { label: "FAQ", href: "/faq" },
+      { label: "Learn overview", href: "/learn", description: "Plain-language model" },
+      { label: "How it works", href: "/how-it-works", description: "Transaction flow" },
+      { label: "FAQ", href: "/faq", description: "Trust-model answers" },
     ],
   },
   {
     label: "Developers",
     items: [
-      { label: "Developer overview", href: "/developers" },
-      { label: "Contracts", href: "/contracts" },
+      { label: "Developer overview", href: "/developers", description: "Builder and protocol-role paths" },
+      { label: "Contracts", href: "/contracts", description: "Topology, addresses, scripts" },
       {
         label: "GitHub",
         href: OFFICIAL_LINKS.github,
+        description: "Source and issues",
         external: true,
         github: true,
       },
       {
         label: "Whitepaper",
         href: OFFICIAL_LINKS.whitepaper,
+        description: "Protocol design notes",
         external: true,
       },
     ],
@@ -54,32 +57,36 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Security",
     items: [
-      { label: "Security overview", href: "/security" },
+      { label: "Security overview", href: "/security", description: "Trust path and assumptions" },
       {
         label: "Security policy",
         href: OFFICIAL_LINKS.securityPolicy,
+        description: "Report sensitive issues",
         external: true,
       },
-      { label: "FAQ", href: "/faq" },
+      { label: "FAQ", href: "/faq", description: "Compare L2 tradeoffs" },
     ],
   },
   {
-    label: "Channels",
+    label: "Connect",
     items: [
-      { label: "Choose your path", href: "/#trunk" },
+      { label: "Start here", href: "/#paths", description: "Choose user, builder, or role" },
       {
         label: "Discord",
         href: OFFICIAL_LINKS.discord,
+        description: "Non-sensitive community questions",
         external: true,
       },
       {
         label: "Intake form",
         href: OFFICIAL_LINKS.intakeForm,
+        description: "Builder and protocol-role interest",
         external: true,
       },
       {
         label: "X / Twitter",
         href: OFFICIAL_LINKS.x,
+        description: "Official announcements",
         external: true,
       },
     ],
@@ -228,6 +235,9 @@ export function SiteNav() {
           {item.github ? <GitHubIcon size={14} aria-hidden /> : null}
           {item.label}
         </span>
+        <span className={mobile ? "site-nav__mobile-desc" : "site-nav__dropdown-desc"}>
+          {item.description}
+        </span>
       </>
     );
     if (item.external) {
@@ -262,7 +272,7 @@ export function SiteNav() {
     <>
       <nav ref={navRef} className="site-nav" data-scrolled={scrolled}>
         <Link href="/" className="site-nav__logo" aria-label="Midgard home">
-          <Image src="/midgard-icon.png" alt="" aria-hidden width={28} height={28} />
+          <Image src="/midgard-icon.png" alt="" aria-hidden width={28} height={28} priority unoptimized />
           <span className="wm">Midgard</span>
         </Link>
 

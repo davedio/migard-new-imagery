@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   Actions,
   Callout,
@@ -47,6 +48,73 @@ const trustPath = [
   },
 ] as const;
 
+type ReviewRoute = {
+  n: string;
+  title: string;
+  body: string;
+  cta: string;
+  href: string;
+  tone?: "gold";
+};
+
+const reviewRoutes: ReviewRoute[] = [
+  {
+    n: "01",
+    title: "Understand the trust path",
+    body: "Soft confirmation, committed state, Watcher replay, and final settlement.",
+    cta: "Read mechanism",
+    href: "#mechanism",
+  },
+  {
+    n: "02",
+    title: "Inspect contracts",
+    body: "Validator topology, state anchors, reference scripts, and genesis history.",
+    cta: "Open contracts",
+    href: "/contracts",
+  },
+  {
+    n: "03",
+    title: "Review source",
+    body: "Implementation details, node code, contracts, and public technical review.",
+    cta: "Open GitHub",
+    href: OFFICIAL_LINKS.github,
+  },
+  {
+    n: "04",
+    title: "Report safely",
+    body: "Vulnerabilities, impersonation, and sensitive findings belong in the security policy.",
+    cta: "Security policy",
+    href: OFFICIAL_LINKS.securityPolicy,
+    tone: "gold",
+  },
+] as const;
+
+function RouteCard({ item }: { item: ReviewRoute }) {
+  const external = /^https?:\/\//.test(item.href);
+  const inner = (
+    <>
+      <span>{item.n}</span>
+      <h3>{item.title}</h3>
+      <p>{item.body}</p>
+      <strong>{item.cta} -&gt;</strong>
+    </>
+  );
+
+  if (external) {
+    return (
+      <a className={styles.reviewRouteCard} data-tone={item.tone} href={item.href} target="_blank" rel="noreferrer">
+        {inner}
+      </a>
+    );
+  }
+
+  return (
+    <Link className={styles.reviewRouteCard} data-tone={item.tone} href={item.href}>
+      {inner}
+    </Link>
+  );
+}
+
 export default function SecurityPage() {
   return (
     <main className={`page-main ${styles.securityPage}`}>
@@ -58,13 +126,27 @@ export default function SecurityPage() {
         actions={[
           { label: "Read the mechanism", href: "#mechanism", variant: "primary" },
           {
-            label: "View GitHub",
+            label: "Open GitHub",
             href: OFFICIAL_LINKS.github,
             variant: "ghost",
             icon: <GitHubIcon size={15} />,
           },
         ]}
       />
+
+      <section className={styles.reviewRoutes} aria-labelledby="security-review-routes-title">
+        <div className={styles.reviewRoutesInner}>
+          <div className={styles.reviewRoutesHead}>
+            <h2 id="security-review-routes-title">Start with the right security route.</h2>
+            <p>Read the model, inspect the contracts, review the source, or report something sensitive through the official path.</p>
+          </div>
+          <div className={styles.reviewRouteGrid}>
+            {reviewRoutes.map((item) => (
+              <RouteCard item={item} key={item.title} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section
         id="mechanism"
@@ -90,8 +172,26 @@ export default function SecurityPage() {
           <div className={styles.exploitNote}>
             <strong>Lower attack surface, not magic.</strong>
             <p>
-              DeFi systems can still fail. Midgard makes a narrower and more inspectable claim: keep the critical settlement surface small, mathematically verified, independently replayable, and contestable before final settlement.
+              On-chain finance systems can still fail. Midgard makes a narrower and more inspectable claim: keep the critical settlement surface small, mathematically verified, independently replayable, and contestable before final settlement.
             </p>
+          </div>
+          <div className={styles.claimBoundary} aria-label="Security claim boundaries">
+            <article>
+              <h3>What the claim means</h3>
+              <ul>
+                <li>Soft confirmations improve usability before final settlement.</li>
+                <li>Committed state remains replayable and challengeable.</li>
+                <li>Finalized state inherits L1 security after verification.</li>
+              </ul>
+            </article>
+            <article>
+              <h3>What it does not mean</h3>
+              <ul>
+                <li>Soft confirmations are not final settlement.</li>
+                <li>No protocol should claim exploits are impossible.</li>
+                <li>Unofficial links, DMs, and support accounts should not be trusted.</li>
+              </ul>
+            </article>
           </div>
         </div>
       </section>
@@ -121,8 +221,8 @@ export default function SecurityPage() {
           <Card
             num="05"
             title="Open-source review"
-            body="Security improves when builders, operators, Watchers, and auditors can inspect the implementation directly."
-            cta="View GitHub"
+            body="Security improves when builders, Protocol Roles, and auditors can inspect the implementation directly."
+            cta="Open GitHub"
             ctaIcon={<GitHubIcon size={14} />}
             href={OFFICIAL_LINKS.github}
           />
@@ -182,7 +282,7 @@ export default function SecurityPage() {
           <Card
             title="Builder or integration issue"
             body="Use GitHub for source-level issues, or bring a concrete flow through the intake form."
-            cta="View GitHub"
+            cta="Open GitHub"
             ctaIcon={<GitHubIcon size={14} />}
             href={OFFICIAL_LINKS.github}
           />
@@ -220,7 +320,7 @@ export default function SecurityPage() {
         actions={[
           { label: "Open FAQ", href: "/faq", variant: "primary" },
           {
-            label: "View GitHub",
+            label: "Open GitHub",
             href: OFFICIAL_LINKS.github,
             variant: "ghost",
             icon: <GitHubIcon size={15} />,

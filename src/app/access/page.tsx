@@ -18,8 +18,8 @@ type AccessPageProps = {
 };
 
 function safePath(value: FormDataEntryValue | string | null | undefined) {
-  if (typeof value !== "string") return "/home";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/home";
+  if (typeof value !== "string") return "/";
+  if (!value.startsWith("/") || value.startsWith("//")) return "/";
   return value;
 }
 

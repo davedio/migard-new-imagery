@@ -45,9 +45,9 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     ],
   },
   {
-    title: "Channels",
+    title: "Connect",
     links: [
-      { label: "Choose your path", href: "/#trunk" },
+      { label: "Start here", href: "/#paths" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
       { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
       { label: "X / Twitter", href: OFFICIAL_LINKS.x, external: true },
@@ -101,7 +101,7 @@ export function SiteFooter() {
       <div className="site-footer__top site-footer__top--sitemap">
         <div className="site-footer__brand">
           <div className="lock">
-            <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} />
+            <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} loading="eager" unoptimized />
             <span className="wm">Midgard</span>
           </div>
           <p>{SITE_COPY.hero.lead}</p>

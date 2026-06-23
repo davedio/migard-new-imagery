@@ -62,7 +62,7 @@ export default function LearnPage() {
         compact
         tone="moss"
         title="Learn Midgard."
-        sub="The secure scaling layer for UTXO finance: faster execution, UTXO-native design, and L1 settlement after verification."
+        sub="The execution layer for eUTXO finance: faster execution, eUTXO-native design, and L1 settlement after verification."
         actions={[
           { label: "See how it works", href: "/how-it-works", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },
@@ -77,7 +77,7 @@ export default function LearnPage() {
           <Card
             num="01"
             title="What Midgard is"
-            body="Midgard is an optimistic rollup for UTXO finance. It gives applications faster execution without asking users to trade away full L1 settlement security."
+            body="Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution without asking users to trade away full L1 settlement security."
           />
           <Card
             num="02"
@@ -93,7 +93,7 @@ export default function LearnPage() {
             num="04"
             title="What to inspect"
             body="Source code, security model, testnet status, approved parameters, and the public path for reporting issues."
-            cta="View GitHub"
+            cta="Open GitHub"
             ctaIcon={<GitHubIcon size={14} />}
             href={OFFICIAL_LINKS.github}
           />
@@ -119,7 +119,7 @@ export default function LearnPage() {
           <Card
             num="03"
             title="Protocol Roles"
-            body="Operators & Watchers keep Midgard running and verifiable: Operators sequence transactions; Watchers replay commitments and challenge invalid state through the fault-proof path."
+            body="Protocol Roles keep Midgard running and verifiable. Operators sequence transactions; Watchers inspect commitments and challenge invalid state through the fault-proof path."
           />
         </CardGrid>
       </Section>
@@ -141,7 +141,7 @@ export default function LearnPage() {
           <Card
             title="Security"
             body="Mathematically verified smart contracts, fault-proof verification, and final L1 settlement after verification reduce the attack surface without relying on operator reputation alone."
-            cta="Open security"
+            cta="Read security"
             href="/security"
           />
           <Card
@@ -153,7 +153,7 @@ export default function LearnPage() {
           <Card
             title="GitHub"
             body="Serious builders and reviewers can move from the overview to the source quickly."
-            cta="View GitHub"
+            cta="Open GitHub"
             ctaIcon={<GitHubIcon size={14} />}
             href={OFFICIAL_LINKS.github}
           />
@@ -182,7 +182,7 @@ export default function LearnPage() {
         actions={[
           { label: "How it works", href: "/how-it-works", variant: "primary" },
           {
-            label: "View GitHub",
+            label: "Open GitHub",
             href: OFFICIAL_LINKS.github,
             variant: "ghost",
             icon: <GitHubIcon size={15} />,

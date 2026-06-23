@@ -15,7 +15,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "FAQ | Midgard",
   description:
-    "Plain-language answers about Midgard, UTXO finance, security, fees, builders, operators, watchers, and how to compare Midgard with other L2 designs.",
+    "Plain-language answers about Midgard, eUTXO finance, security, fees, builders, Protocol Roles, and how to compare Midgard with other L2 designs.",
   openGraph: {
     title: "FAQ | Midgard",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
@@ -31,7 +31,7 @@ const comparisonRows = [
   },
   {
     k: "Execution model",
-    midgard: "Built for UTXO finance and eUTXO-local state transitions.",
+    midgard: "Built for eUTXO finance and local state transitions.",
     other: "Often built around account-state execution or a chain-specific VM.",
   },
   {
@@ -55,7 +55,7 @@ const comparisonChartRows = [
   },
   {
     k: "UTXO fit",
-    midgard: { level: "strong", label: "Built for UTXO finance" },
+    midgard: { level: "strong", label: "Built for eUTXO finance" },
     evm: { level: "watch", label: "Mostly account-model execution" },
     sidechain: { level: "varies", label: "Depends on the chain" },
   },
@@ -89,6 +89,11 @@ const modelCards = [
       "Fault-proof verification with Watcher replay",
       "Final settlement through the L1 path after verification",
     ],
+    scores: [
+      ["UTXO fit", "strong"],
+      ["Verification", "strong"],
+      ["Bridge exposure", "medium"],
+    ],
   },
   {
     label: "EVM rollups",
@@ -99,6 +104,11 @@ const modelCards = [
       "Security depends on bridge, proof, sequencer, and upgrade rules",
       "Execution model is usually not UTXO-native",
     ],
+    scores: [
+      ["UTXO fit", "watch"],
+      ["Verification", "varies"],
+      ["Bridge exposure", "varies"],
+    ],
   },
   {
     label: "Sidechains / appchains",
@@ -108,6 +118,11 @@ const modelCards = [
       "Can be fast and flexible",
       "Security often depends on a separate validator set",
       "Bridge exposure is usually central to the risk model",
+    ],
+    scores: [
+      ["UTXO fit", "varies"],
+      ["Verification", "watch"],
+      ["Bridge exposure", "watch"],
     ],
   },
 ] as const;
@@ -135,6 +150,20 @@ const trustPath = [
   },
 ] as const;
 
+const levelLabels = {
+  strong: "Strong fit",
+  medium: "Inspect details",
+  varies: "Varies",
+  watch: "Higher caution",
+} as const;
+
+const comparisonLegend = [
+  ["strong", levelLabels.strong],
+  ["medium", levelLabels.medium],
+  ["varies", levelLabels.varies],
+  ["watch", levelLabels.watch],
+] as const;
+
 function ComparisonCell({
   label,
   cell,
@@ -145,7 +174,10 @@ function ComparisonCell({
   return (
     <div className="comparison-chart__cell">
       <span className="comparison-chart__mobile-label">{label}</span>
-      <span className="comparison-chart__bar" data-level={cell.level} />
+      <span className="comparison-chart__score">
+        <span className="comparison-chart__bar" data-level={cell.level} />
+        <em>{levelLabels[cell.level]}</em>
+      </span>
       <p>{cell.label}</p>
     </div>
   );
@@ -165,6 +197,14 @@ function ModelCard({
           <li key={point}>{point}</li>
         ))}
       </ul>
+      <div className="faq-model-card__scores" aria-label={`${card.label} comparison scores`}>
+        {card.scores.map(([label, level]) => (
+          <div className="faq-model-card__score" key={label}>
+            <span>{label}</span>
+            <i data-level={level} />
+          </div>
+        ))}
+      </div>
     </article>
   );
 }
@@ -201,6 +241,15 @@ export default function FaqPage() {
               <p>{step.midgard}</p>
               <small>{step.watch}</small>
             </article>
+          ))}
+        </div>
+        <div className="comparison-chart__legend" aria-label="Comparison chart legend">
+          <strong>How to read the chart</strong>
+          {comparisonLegend.map(([level, label]) => (
+            <span key={level}>
+              <i data-level={level} />
+              {label}
+            </span>
           ))}
         </div>
         <div className="comparison-chart" aria-label="Qualitative comparison chart for Midgard and common L2 patterns">
@@ -253,7 +302,7 @@ export default function FaqPage() {
               items: [
                 {
                   q: "What is Midgard?",
-                  a: "Midgard is an optimistic rollup for UTXO finance. It gives applications faster execution while keeping settlement anchored to L1.",
+                  a: "Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while keeping settlement anchored to L1.",
                 },
                 {
                   q: "Why does Midgard matter?",
@@ -278,7 +327,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Does that mean Midgard is impossible to hack?",
-                  a: "No responsible protocol should promise that. The point is that the attack surface is much lower than many DeFi systems, and the most important logic can be inspected, challenged, and formally checked.",
+                  a: "No responsible protocol should promise that. The point is that the attack surface is narrower than many on-chain finance systems, and the most important logic can be inspected, challenged, and formally checked.",
                 },
                 {
                   q: "What do Watchers do?",
@@ -299,7 +348,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Can existing UTXO apps use Midgard?",
-                  a: "That is the goal: give UTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
+                  a: "That is the goal: give eUTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
                 },
                 {
                   q: "Where should builders start?",
@@ -343,13 +392,13 @@ export default function FaqPage() {
           <Card
             title="Review security"
             body="Inspect the trust path, security guarantees, watcher role, and responsible-disclosure route."
-            cta="Open security"
+            cta="Read security"
             href="/security"
           />
           <Card
             title="Inspect the source"
             body="Use GitHub to check the implementation rather than treating website copy as the final technical spec."
-            cta="View GitHub"
+            cta="Open GitHub"
             ctaIcon={<GitHubIcon size={14} />}
             href={OFFICIAL_LINKS.github}
           />
@@ -388,7 +437,7 @@ export default function FaqPage() {
         lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes UTXO execution faster."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
-          { label: "Open security", href: "/security", variant: "ghost" },
+          { label: "Read security", href: "/security", variant: "ghost" },
         ]}
       />
     </main>

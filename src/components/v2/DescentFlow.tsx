@@ -23,6 +23,7 @@
 import Link from "next/link";
 import { createPortal } from "react-dom";
 import {
+  Fragment,
   useEffect,
   useRef,
   useSyncExternalStore,
@@ -75,10 +76,13 @@ function Chapter({
       <Rise delay={0.08}>
         <h2>
           {title.map((t, i) => (
-            <span key={i}>
-              {i > 0 ? <br /> : null}
-              {t}
-            </span>
+            <Fragment key={t}>
+              {i > 0 ? " " : null}
+              <span>
+                {i > 0 ? <br /> : null}
+                {t}
+              </span>
+            </Fragment>
           ))}
         </h2>
       </Rise>
@@ -249,8 +253,8 @@ export default function DescentFlow({
               <ShatterHeading
                 as="h1"
                 className="v2-hero__title"
-                lines={["The secure scaling layer", "for UTXO finance"]}
-                accents={{ "secure scaling": "green" }}
+                lines={["The execution", "layer for", "eUTXO finance"]}
+                accents={{ execution: "green", "eUTXO finance": "green" }}
               />
             </Rise>
             <Rise delay={0.2}>
@@ -260,7 +264,7 @@ export default function DescentFlow({
             </Rise>
             <Rise delay={0.3}>
               <div className="v2-hero__actions">
-                <Link className="btn btn--primary" href="#trunk">
+                <Link className="btn btn--primary" href="#paths">
                   Choose your path
                 </Link>
                 <Link className="btn-link--gold" href="/how-it-works">

@@ -125,10 +125,10 @@ export function StateQueueViz() {
   }, [motionOn]);
 
   return (
-    <div className={css.queue} aria-label="Simulated state-queue animation">
+    <div className={css.queue} aria-label="Concept state-queue animation">
       <div className={css.overline}>
         <span className={css.overlineDot} aria-hidden />
-        SIMULATED&nbsp;&middot;&nbsp;STATE&nbsp;QUEUE
+        CONCEPT&nbsp;MODEL&nbsp;&middot;&nbsp;STATE&nbsp;QUEUE
       </div>
 
       <div className={css.track}>
@@ -185,7 +185,7 @@ export function StateQueueViz() {
 
       <div className={css.legend} aria-hidden>
         <span className={css.legendItem}>
-          <span className={css.legendDot} data-kind="root" /> Confirmed state · live L1 UTxO
+          <span className={css.legendDot} data-kind="root" /> Confirmed state · settlement UTxO
         </span>
         <span className={css.legendItem}>
           <span className={css.legendDot} data-kind="maturing" /> Maturing · fault-proof window

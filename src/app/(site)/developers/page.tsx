@@ -4,7 +4,7 @@ import DeveloperLanding from "@/components/minimal/DeveloperLanding";
 export const metadata: Metadata = {
   title: "Developers | Midgard",
   description:
-    "Developer paths for Midgard: source code, contracts, protocol review, and operator or watcher participation.",
+    "Developer paths for Midgard: source code, contracts, protocol review, and Protocol Role participation.",
   openGraph: {
     title: "Developers | Midgard",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
