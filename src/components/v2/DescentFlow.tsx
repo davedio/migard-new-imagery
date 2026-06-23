@@ -104,10 +104,8 @@ const subscribeNoop = () => () => {};
 
 export default function DescentFlow({
   treeSrc,
-  onStageReady,
 }: {
   treeSrc?: string;
-  onStageReady?: () => void;
 }) {
   const { motionOn } = useMotionPref();
   const mounted = useSyncExternalStore(
@@ -371,7 +369,6 @@ export default function DescentFlow({
                 src={treeSrc}
                 phasesRef={phasesRef}
                 tickRef={tickRef}
-                onReady={onStageReady}
               />
               <div className="v2-stage__veil" aria-hidden />
               <div className="v2-stage__mist" aria-hidden />

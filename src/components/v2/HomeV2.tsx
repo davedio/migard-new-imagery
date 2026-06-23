@@ -18,7 +18,7 @@
    ========================================================================== */
 
 import Link from "next/link";
-import { useCallback, useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme, TREE_PLATES } from "@/lib/theme";
 import { SITE_COPY } from "@/lib/siteCopy";
@@ -188,21 +188,12 @@ export default function HomeV2() {
   const { motionOn } = useMotionPref();
   const { theme } = useTheme();
   const plate = TREE_PLATES[theme];
-  const [readyPlate, setReadyPlate] = useState<string | null>(null);
-  const stageReady = readyPlate === plate;
-  const handleStageReady = useCallback(() => setReadyPlate(plate), [plate]);
 
   return (
     <main className="v2-home" data-motion={motionOn ? "on" : "off"}>
+      <link rel="preload" as="image" href={plate} />
       {motionOn ? (
-        <div
-          className="v2-home__instant-plate"
-          data-ready={stageReady ? "true" : "false"}
-          aria-hidden
-        />
-      ) : null}
-      {motionOn ? (
-        <DescentFlow key={plate} treeSrc={plate} onStageReady={handleStageReady} />
+        <DescentFlow key={plate} treeSrc={plate} />
       ) : (
         <StaticHome plate={plate} />
       )}

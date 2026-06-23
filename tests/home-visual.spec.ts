@@ -16,12 +16,15 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
     }),
   ).toBeVisible();
   await expect(page.locator("#top").getByText(/mathematically verified smart contracts/i)).toBeVisible();
-  await expect(page.locator(".v2-home__instant-plate")).toHaveCSS(
-    "background-image",
-    /worldtree-night-tall/,
-  );
   await expect(page.locator(".v2-stage")).toBeVisible();
   await expect(page.locator(".v2-stage canvas")).toHaveCount(2);
+  await page.waitForFunction(() => {
+    const canvas = document.querySelector(".v2-stage canvas") as HTMLCanvasElement | null;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx || canvas.width < 10 || canvas.height < 10) return false;
+    const data = ctx.getImageData(Math.floor(canvas.width / 2), Math.floor(canvas.height / 2), 1, 1).data;
+    return data[3] > 0 || data[0] + data[1] + data[2] > 8;
+  });
   await expect(page.locator(".v2-marquee")).toHaveCount(0);
   await expect(page.locator(".v2-rail")).toHaveCount(0);
   const bodyText = await page.locator("body").innerText();
@@ -173,9 +176,12 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 test("developer and contracts pages render", async ({ page }, testInfo) => {
   await page.goto("/developers");
   await expect(page.getByRole("heading", { name: /Build on Midgard/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Start from the right page/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Whitepaper/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Start with what you need to prove/i })).toBeVisible();
+  await expect(page.getByText(/Whitepaper: protocol design notes/i)).toBeVisible();
   await expect(page.locator("main").getByRole("heading", { name: /^Security$/i })).toBeVisible();
+  await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
+  await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Inspect contracts/i })).toHaveAttribute("href", "/contracts");
+  await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Review security/i })).toHaveAttribute("href", "/security");
   await expect(page.getByRole("heading", { name: /Application builders/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i }).first()).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("developers.png") });

@@ -1,11 +1,67 @@
+import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
+import styles from "@/components/site/developer.module.css";
+
+const launchpad = [
+  {
+    label: "GitHub",
+    detail: "Source, contracts, node code, and implementation details.",
+    href: OFFICIAL_LINKS.github,
+    cta: "Open GitHub",
+    github: true,
+  },
+  {
+    label: "Contracts",
+    detail: "Validator topology, preprod addresses, state anchors, and reference scripts.",
+    href: "/contracts",
+    cta: "Inspect contracts",
+  },
+  {
+    label: "Security",
+    detail: "Trust path, fault-proof checks, Watcher replay, and settlement assumptions.",
+    href: "/security",
+    cta: "Review security",
+  },
+] as const;
+
+function isExternal(href: string) {
+  return /^https?:\/\//.test(href);
+}
+
+function LaunchpadLink({ item, index }: { item: (typeof launchpad)[number]; index: number }) {
+  const inner = (
+    <>
+      <span>{String(index + 1).padStart(2, "0")}</span>
+      <h3>
+        {item.label === "GitHub" ? <GitHubIcon size={18} aria-hidden /> : null}
+        {item.label}
+      </h3>
+      <p>{item.detail}</p>
+      <strong>{item.cta} -&gt;</strong>
+    </>
+  );
+
+  if (isExternal(item.href)) {
+    return (
+      <a className={styles.launchCard} href={item.href} target="_blank" rel="noreferrer">
+        {inner}
+      </a>
+    );
+  }
+
+  return (
+    <Link className={styles.launchCard} href={item.href}>
+      {inner}
+    </Link>
+  );
+}
 
 export default function DeveloperLanding() {
   return (
-    <main className="page-main developer-page">
+    <main className={`page-main developer-page ${styles.developerPage}`}>
       <PageHero
         compact
         tone="tree"
@@ -22,24 +78,27 @@ export default function DeveloperLanding() {
         ]}
       />
 
-      <Section
-        title="Start from the right page."
-        lead="Most reviewers do not need the same first link. Pick the page that matches what you are trying to prove."
+      <section
+        className={styles.launchpad}
+        aria-labelledby="developer-launchpad-title"
       >
-        <CardGrid>
-          {DEVELOPER_COPY.entryPoints.map((item, i) => (
-            <Card
-              key={item.label}
-              num={String(i + 1).padStart(2, "0")}
-              title={item.label}
-              body={item.detail}
-              cta={item.label === "GitHub" ? "Open GitHub" : `Open ${item.label.toLowerCase()}`}
-              ctaIcon={item.label === "GitHub" ? <GitHubIcon size={14} /> : undefined}
-              href={item.href}
-            />
-          ))}
-        </CardGrid>
-      </Section>
+        <div className={styles.launchInner}>
+          <div className={styles.launchCopy}>
+            <h2 id="developer-launchpad-title">Start with what you need to prove.</h2>
+            <p>
+              Builders, reviewers, Operators, and Watchers need different first links. Use the source for implementation work, contracts for on-chain inspection, and security for trust assumptions.
+            </p>
+            <a href={OFFICIAL_LINKS.whitepaper} target="_blank" rel="noreferrer">
+              Whitepaper: protocol design notes -&gt;
+            </a>
+          </div>
+          <div className={styles.launchGrid}>
+            {launchpad.map((item, i) => (
+              <LaunchpadLink key={item.label} item={item} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
 
       <Section
         id="developer-paths"
