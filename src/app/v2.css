@@ -1148,6 +1148,151 @@ h2 em,
   flex: 1;
 }
 
+/* ---- product mechanism strip: a fast, literal read before the cinematic
+   thesis/metrics sections continue. */
+.v2-protocol {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 4px var(--gut) 86px;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.42fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+.v2-protocol__copy {
+  padding: 22px 0;
+}
+.v2-protocol__copy h2 {
+  max-width: 420px;
+  margin: 20px 0 0;
+  font-size: 32px;
+  line-height: 1.08;
+  font-weight: 500;
+  color: var(--bone);
+}
+.v2-protocol__copy p {
+  max-width: 430px;
+  margin: 18px 0 0;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--text);
+}
+.v2-protocol__diagram {
+  position: relative;
+  min-height: 256px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(211, 255, 225, 0.2);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 42%),
+    radial-gradient(circle at 22% 22%, rgba(78, 243, 131, 0.1), transparent 24rem),
+    rgba(5, 11, 8, 0.84);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045);
+}
+.v2-protocol__rail {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 50px;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(244, 241, 230, 0.1);
+}
+.v2-protocol__rail span {
+  position: absolute;
+  top: -4px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 18px rgba(78, 243, 131, 0.85);
+  animation: v2-protocol-packet 6.8s var(--ease) infinite;
+}
+@keyframes v2-protocol-packet {
+  0%,
+  9% {
+    left: 0;
+  }
+  86%,
+  100% {
+    left: calc(100% - 10px);
+  }
+}
+.v2-protocol__step {
+  position: relative;
+  z-index: 1;
+  min-height: 172px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 14px;
+  border: 1px solid rgba(244, 241, 230, 0.1);
+  border-radius: 7px;
+  background: rgba(4, 7, 5, 0.58);
+}
+.v2-protocol__step strong {
+  margin-top: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-hi);
+}
+.v2-protocol__step p {
+  margin: 10px 0 0;
+  font-size: 12.5px;
+  line-height: 1.48;
+  color: var(--text-dim);
+}
+.v2-protocol__outcome {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(244, 241, 230, 0.1);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+@media (max-width: 980px) {
+  .v2-protocol {
+    grid-template-columns: 1fr;
+    padding-bottom: 68px;
+  }
+  .v2-protocol__copy {
+    padding: 0;
+  }
+}
+@media (max-width: 680px) {
+  .v2-protocol__diagram {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 14px;
+  }
+  .v2-protocol__rail {
+    display: none;
+  }
+  .v2-protocol__step {
+    min-height: 0;
+  }
+  .v2-protocol__step strong {
+    margin-top: 14px;
+  }
+  .v2-protocol__outcome {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-protocol__rail span {
+    animation: none;
+  }
+}
+
 /* ---- ledger (roots chapter) — compact stat tiles at the original scale */
 .v2-ledger {
   max-width: var(--maxw);

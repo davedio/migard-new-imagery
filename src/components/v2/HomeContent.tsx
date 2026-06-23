@@ -10,6 +10,7 @@
 
 import { motion } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { GitHubIcon } from "@/components/site/BrandIcons";
@@ -293,30 +294,104 @@ const PATHS = [
 
 export function Paths() {
   const isGitHub = (href: string) => href === OFFICIAL_LINKS.github;
+  const isExternal = (href: string) => /^https?:\/\//.test(href);
 
   return (
     <div className="v2-explore" id="explore">
       <div className="v2-explore__grid">
         {PATHS.map((p, i) => (
           <Rise key={p.n} delay={i * 0.07} style={{ display: "flex" }}>
-            <a
-              href={p.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="panel panel--select-glow v2-explore__card"
-            >
-              <div className="v2-explore__num">{p.n}</div>
-              <h3>{p.title}</h3>
-              <p>{p.line}</p>
-              <span className="panel-cta-glow">
-                {isGitHub(p.href) ? <GitHubIcon size={14} aria-hidden /> : null}
-                {p.cta} →
-              </span>
-            </a>
+            {isExternal(p.href) ? (
+              <a
+                href={p.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="panel panel--select-glow v2-explore__card"
+              >
+                <div className="v2-explore__num">{p.n}</div>
+                <h3>{p.title}</h3>
+                <p>{p.line}</p>
+                <span className="panel-cta-glow">
+                  {isGitHub(p.href) ? <GitHubIcon size={14} aria-hidden /> : null}
+                  {p.cta} →
+                </span>
+              </a>
+            ) : (
+              <Link href={p.href} className="panel panel--select-glow v2-explore__card">
+                <div className="v2-explore__num">{p.n}</div>
+                <h3>{p.title}</h3>
+                <p>{p.line}</p>
+                <span className="panel-cta-glow">
+                  {p.cta} →
+                </span>
+              </Link>
+            )}
           </Rise>
         ))}
       </div>
     </div>
+  );
+}
+
+const PROTOCOL_PATH = [
+  {
+    n: "01",
+    label: "Submit",
+    body: "A user sends a transaction to Midgard.",
+  },
+  {
+    n: "02",
+    label: "Sequence",
+    body: "An operator orders valid activity into an L2 block.",
+  },
+  {
+    n: "03",
+    label: "Commit",
+    body: "Compact state is posted to the L1 settlement path.",
+  },
+  {
+    n: "04",
+    label: "Watch",
+    body: "Watchers replay commitments and challenge invalid state.",
+  },
+  {
+    n: "05",
+    label: "Settle",
+    body: "Verified state reaches final L1 settlement.",
+  },
+] as const;
+
+export function ProtocolPath() {
+  return (
+    <section className="v2-protocol" aria-labelledby="v2-protocol-title">
+      <div className="v2-protocol__copy">
+        <div className="v2-ch__index">
+          <span className="rule" />
+          <span className="stratum">Transaction path</span>
+        </div>
+        <h2 id="v2-protocol-title">Fast action first. Verification before settlement.</h2>
+        <p>
+          Users get a faster experience while the protocol keeps the settlement path
+          inspectable: ordered activity, committed state, Watcher replay, and final L1 settlement.
+        </p>
+      </div>
+      <div className="v2-protocol__diagram" aria-label="Midgard transaction path">
+        <div className="v2-protocol__rail" aria-hidden>
+          <span />
+        </div>
+        {PROTOCOL_PATH.map((step) => (
+          <div className="v2-protocol__step" key={step.label}>
+            <div className="v2-explore__num">{step.n}</div>
+            <strong>{step.label}</strong>
+            <p>{step.body}</p>
+          </div>
+        ))}
+        <div className="v2-protocol__outcome">
+          <span>Soft confirmation</span>
+          <span>Final settlement</span>
+        </div>
+      </div>
+    </section>
   );
 }
 

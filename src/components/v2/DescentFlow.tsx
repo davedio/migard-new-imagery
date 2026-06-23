@@ -36,6 +36,7 @@ import {
   Ledger,
   Marquee,
   Paths,
+  ProtocolPath,
   Provenance,
   Statement,
   Rise,
@@ -307,6 +308,7 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
             lead="Users, builders, and protocol roles overlap. Start with the role that fits what you're here to do."
           />
           <Paths />
+          <ProtocolPath />
         </section>
 
         <Marquee />

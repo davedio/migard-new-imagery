@@ -28,6 +28,7 @@ import {
   Ledger,
   Marquee,
   Paths,
+  ProtocolPath,
   Provenance,
   Statement,
   MotionToggle,
@@ -123,6 +124,7 @@ function StaticHome({ plate }: { plate: string }) {
           lead="Users, builders, and protocol roles overlap. Start with the role that fits what you're here to do."
         />
         <Paths />
+        <ProtocolPath />
       </StaticScene>
 
       <Marquee />

@@ -51,6 +51,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
   await expect(pathSection.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: /Fast action first/i })).toBeVisible();
+  await expect(pathSection.locator(".v2-protocol__step")).toHaveCount(5);
+  await expect(pathSection.getByText("Final settlement")).toBeVisible();
 
   await expect(page.locator(".v2-tile")).toHaveCount(6);
   await expect(page.locator(".v2-tile").filter({ hasText: "Soft confirmations" })).toBeVisible();
