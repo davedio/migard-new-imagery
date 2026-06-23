@@ -75,19 +75,19 @@ export const SITE_COPY = {
       href: OFFICIAL_LINKS.github,
     },
     {
-      title: "Contracts",
-      body: "Preprod addresses, state anchors, reference scripts, and genesis history.",
-      href: "/contracts",
+      title: "Security policy",
+      body: "Use this route for vulnerabilities, impersonation, and security-sensitive reports.",
+      href: OFFICIAL_LINKS.securityPolicy,
     },
     {
       title: "Discord",
-      body: "Community channel for builders, operators, and early users.",
+      body: "Use this route for non-sensitive community questions and early builder discussion.",
       href: OFFICIAL_LINKS.discord,
     },
     {
-      title: "Whitepaper",
-      body: "Protocol design and deeper mechanism notes.",
-      href: OFFICIAL_LINKS.whitepaper,
+      title: "Intake form",
+      body: "Use this route for builders, operators, Watchers, infrastructure, and testnet participation.",
+      href: OFFICIAL_LINKS.intakeForm,
     },
   ],
 } as const;

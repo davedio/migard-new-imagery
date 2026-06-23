@@ -114,6 +114,10 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(pathSection.getByRole("link", { name: /Explore protocol roles/i })).toHaveAttribute("href", "/developers#developer-paths");
 
   await expect(page.locator(".minimal-metric")).toHaveCount(6);
+  await expect(page.getByRole("heading", { name: /Inspect before you trust speed/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/security");
+  await expect(page.getByRole("link", { name: /Contract surface/i })).toHaveAttribute("href", "/contracts");
+  await expect(page.getByRole("link", { name: /Source review/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator(".minimal-card-grid--4 .minimal-card")).toHaveCount(4);
   await page.screenshot({ path: testInfo.outputPath("minimal-preview.png") });
 });
@@ -135,6 +139,13 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   const securityDropdown = page.locator(".site-nav__group", { has: security }).locator(".site-nav__dropdown");
   await expect(securityDropdown.getByRole("link", { name: /Security overview/i })).toBeVisible();
   await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toBeVisible();
+
+  const channels = page.getByRole("button", { name: /^Channels$/i });
+  await channels.click();
+  const channelsDropdown = page.locator(".site-nav__group", { has: channels }).locator(".site-nav__dropdown");
+  await expect(channelsDropdown.getByRole("link", { name: /Choose your path/i })).toBeVisible();
+  await expect(channelsDropdown.getByRole("link", { name: /Discord/i })).toBeVisible();
+  await expect(channelsDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("nav-developers-security-open.png") });
 });

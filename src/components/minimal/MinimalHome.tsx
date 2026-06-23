@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConceptTree } from "@/components/minimal/ConceptTree";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { SITE_COPY } from "@/lib/siteCopy";
 
 function isExternal(href: string) {
@@ -29,6 +30,27 @@ function SmartLink({
     </Link>
   );
 }
+
+const INSPECTION_PATHS = [
+  {
+    title: "Security model",
+    body: "How fast confirmations, fault-proof checks, Watcher replay, and final L1 settlement fit together.",
+    cta: "Read security",
+    href: "/security",
+  },
+  {
+    title: "Contract surface",
+    body: "Preprod validators, state anchors, reference scripts, topology, and genesis history in one place.",
+    cta: "Inspect contracts",
+    href: "/contracts",
+  },
+  {
+    title: "Source review",
+    body: "Implementation details, node code, contracts, and issues for builders and protocol reviewers.",
+    cta: "Open GitHub",
+    href: OFFICIAL_LINKS.github,
+  },
+] as const;
 
 export default function MinimalHome() {
   return (
@@ -101,6 +123,23 @@ export default function MinimalHome() {
               <strong>{item.v}</strong>
               <p>{item.s}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="minimal-section minimal-section--inspect" aria-labelledby="minimal-inspect-title">
+        <div className="minimal-section__head">
+          <h2 id="minimal-inspect-title">Inspect before you trust speed.</h2>
+          <p>Performance claims only matter after the trust path is clear: security model, contracts, and source.</p>
+        </div>
+        <div className="minimal-inspect-grid">
+          {INSPECTION_PATHS.map((item, i) => (
+            <SmartLink key={item.title} className="minimal-inspect-card" href={item.href}>
+              <span>{String(i + 1).padStart(2, "0")}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+              <strong>{item.cta} -&gt;</strong>
+            </SmartLink>
           ))}
         </div>
       </section>

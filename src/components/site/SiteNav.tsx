@@ -64,12 +64,22 @@ const NAV_GROUPS: readonly NavGroup[] = [
     ],
   },
   {
-    label: "Community",
+    label: "Channels",
     items: [
       { label: "Choose your path", href: "/#trunk" },
       {
         label: "Discord",
         href: OFFICIAL_LINKS.discord,
+        external: true,
+      },
+      {
+        label: "Intake form",
+        href: OFFICIAL_LINKS.intakeForm,
+        external: true,
+      },
+      {
+        label: "X / Twitter",
+        href: OFFICIAL_LINKS.x,
         external: true,
       },
     ],

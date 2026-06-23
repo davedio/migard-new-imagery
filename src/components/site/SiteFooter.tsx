@@ -45,10 +45,12 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     ],
   },
   {
-    title: "Community",
+    title: "Channels",
     links: [
       { label: "Choose your path", href: "/#trunk" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
+      { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
+      { label: "X / Twitter", href: OFFICIAL_LINKS.x, external: true },
     ],
   },
 ];
