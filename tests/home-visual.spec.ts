@@ -220,6 +220,10 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
 test("security and faq pages render", async ({ page }, testInfo) => {
   await page.goto("/security");
   await expect(page.getByRole("heading", { name: /Security you can inspect/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Fast confirmations first/i })).toBeVisible();
+  await expect(page.getByText(/Lower attack surface, not magic/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Soft confirmation/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /L1 settlement/i })).toBeVisible();
   await expect(page.getByText(/mathematically verified smart contracts/i).first()).toBeVisible();
   await expect(page.getByText(/fault-proof verification/i).first()).toBeVisible();
   await expect(page.getByText(/Vulnerability or impersonation/i)).toBeVisible();

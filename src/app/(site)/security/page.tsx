@@ -7,11 +7,11 @@ import {
   CtaBand,
   Layers,
   PageHero,
-  Prose,
   Section,
 } from "@/components/site/ui";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import styles from "@/components/site/security.module.css";
 
 export const metadata: Metadata = {
   title: "Security | Midgard",
@@ -24,9 +24,32 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/og/home.jpg"] },
 };
 
+const trustPath = [
+  {
+    n: "01",
+    title: "Soft confirmation",
+    body: "Users can receive a faster usable confirmation before final settlement.",
+  },
+  {
+    n: "02",
+    title: "Committed state",
+    body: "Operators post compact state to the settlement path where it can be inspected.",
+  },
+  {
+    n: "03",
+    title: "Watcher replay",
+    body: "Watchers replay commitments and use the fault-proof path if state is invalid.",
+  },
+  {
+    n: "04",
+    title: "L1 settlement",
+    body: "After verification, finalized state inherits the full security of the L1 settlement layer.",
+  },
+] as const;
+
 export default function SecurityPage() {
   return (
-    <main className="page-main">
+    <main className={`page-main ${styles.securityPage}`}>
       <PageHero
         compact
         tone="ink"
@@ -43,23 +66,35 @@ export default function SecurityPage() {
         ]}
       />
 
-      <Section
+      <section
         id="mechanism"
-        title="Fast confirmations first. Full L1 security after verification."
-        lead="Operators can give users fast soft confirmations, but finality depends on the base-layer settlement path and the challenge rules around committed state."
+        className={styles.trustSection}
+        aria-labelledby="security-mechanism-title"
       >
-        <Prose
-          items={[
-            {
-              text: "Midgard is designed so invalid state is contestable. Watchers can inspect commitments, replay the relevant state transition, and use the fault-proof path when an operator submits something wrong.",
-            },
-            {
-              text: "The security claim is not that nothing can ever fail. The claim is that finalized state inherits the full security of the L1 settlement layer, with a smaller and more inspectable attack surface than many DeFi systems.",
-              variant: "emph",
-            },
-          ]}
-        />
-      </Section>
+        <div className={styles.trustInner}>
+          <div className={styles.trustHead}>
+            <h2 id="security-mechanism-title">Fast confirmations first. Full L1 security after verification.</h2>
+            <p>
+              Operators can make activity feel fast, but finality still depends on the base-layer settlement path and the challenge rules around committed state.
+            </p>
+          </div>
+          <div className={styles.trustDiagram} aria-label="Security path from soft confirmation to L1 settlement">
+            {trustPath.map((step) => (
+              <article className={styles.trustStep} key={step.n}>
+                <span>{step.n}</span>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </article>
+            ))}
+          </div>
+          <div className={styles.exploitNote}>
+            <strong>Lower attack surface, not magic.</strong>
+            <p>
+              DeFi systems can still fail. Midgard makes a narrower and more inspectable claim: keep the critical settlement surface small, mathematically verified, independently replayable, and contestable before final settlement.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <Section title="The attack surface is narrower by design.">
         <CardGrid>
