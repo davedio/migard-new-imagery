@@ -62,6 +62,14 @@ export function ConceptTree() {
           );
         })}
       </svg>
+      <ol className="minimal-tree__stage-list" aria-label="Transaction stages">
+        {SITE_COPY.lifecycle.map(([label], i) => (
+          <li key={label}>
+            <span>{String(i + 1).padStart(2, "0")}</span>
+            <strong>{label}</strong>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

@@ -16,6 +16,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
     }),
   ).toBeVisible();
   await expect(page.getByText(/mathematically verified security/i)).toBeVisible();
+  const conceptTree = page.locator(".minimal-tree");
+  await expect(conceptTree).toContainText("Submit");
+  await expect(conceptTree).toContainText("Settle");
   const bodyText = await page.locator("body").innerText();
   for (const hiddenLabel of [
     "Surface",
