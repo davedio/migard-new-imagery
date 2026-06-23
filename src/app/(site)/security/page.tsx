@@ -44,7 +44,7 @@ const trustPath = [
   {
     n: "04",
     title: "L1 settlement",
-    body: "After verification, finalized state inherits the full security of the L1 settlement layer.",
+    body: "After verification, finalized state settles through the L1 path and inherits the security of that settlement layer.",
   },
 ] as const;
 
@@ -155,9 +155,9 @@ export default function SecurityPage() {
       >
         <div className={styles.trustInner}>
           <div className={styles.trustHead}>
-            <h2 id="security-mechanism-title">Fast confirmations first. Full L1 security after verification.</h2>
+            <h2 id="security-mechanism-title">Fast confirmations first. L1 settlement after verification.</h2>
             <p>
-              Operators can make activity feel fast, but finality still depends on the base-layer settlement path and the challenge rules around committed state.
+              Operators can make activity feel fast, but finality still depends on the base-layer settlement path, data availability, contract logic, approved parameters, and the challenge rules around committed state.
             </p>
           </div>
           <div className={styles.trustDiagram} aria-label="Security path from soft confirmation to L1 settlement">

@@ -1502,18 +1502,18 @@ button.panel:hover {
   overflow: hidden;
   pointer-events: none;
   background-image:
-    linear-gradient(90deg, rgba(3, 7, 4, 0.82) 0%, rgba(3, 7, 4, 0.56) 42%, rgba(3, 7, 4, 0.9) 100%),
-    linear-gradient(180deg, rgba(3, 7, 4, 0.28) 0%, #030704 94%),
-    url("/v2/stone-rune.avif");
+    linear-gradient(90deg, rgba(3, 7, 4, 0.9) 0%, rgba(3, 7, 4, 0.58) 42%, rgba(3, 7, 4, 0.9) 100%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.2) 0%, #030704 94%),
+    url("/backdrops/security-tree-roots.avif");
   background-repeat: no-repeat;
   background-size: cover;
-  background-position: 58% center;
-  filter: brightness(0.72) saturate(0.96) contrast(1.04);
+  background-position: 54% center;
+  filter: brightness(0.76) saturate(1.06) contrast(1.02);
 }
 
 @media (max-width: 760px) {
   .security-backdrop {
-    background-position: 63% center;
+    background-position: 58% center;
   }
 }
 
@@ -3214,7 +3214,7 @@ button.panel:hover {
 
 @media (max-width: 640px) {
   .hiw-act {
-    min-height: 360vh;
+    min-height: 220vh;
   }
   .hiw-act__viewport {
     padding-top: 96px;
@@ -3290,8 +3290,9 @@ button.panel:hover {
   transition: background 0.3s var(--ease);
 }
 .site-nav[data-scrolled="true"] {
-  background: linear-gradient(180deg, rgba(6, 14, 9, 0.92), rgba(6, 14, 9, 0.72));
-  border-bottom: 1px solid var(--panel-edge);
+  background: linear-gradient(180deg, rgba(6, 14, 9, 0.98), rgba(6, 14, 9, 0.9));
+  border-bottom: 1px solid rgba(215, 226, 216, 0.14);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
 }
 
 /* ---- nav: robustness at mid widths (links must never clip) ---- */
@@ -3698,7 +3699,7 @@ button.panel:hover {
 /* ---- sticky in-page TOC bar (long reference pages, e.g. /contracts) ---- */
 .page-sticky-toc {
   position: sticky;
-  top: 64px;
+  top: 84px;
   z-index: 30;
   display: flex;
   flex-wrap: wrap;
@@ -3708,7 +3709,7 @@ button.panel:hover {
   padding: 8px;
   border: 1px solid var(--panel-edge);
   border-radius: 999px;
-  background: rgba(7, 15, 10, 0.85);
+  background: rgba(7, 15, 10, 0.94);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }

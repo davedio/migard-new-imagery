@@ -102,7 +102,7 @@ export default function LearnPage() {
 
       <Section
         id="roles"
-        title="Choose the route that matches your job."
+        title="Pick the role that matches what you need."
         lead="Users move assets. Builders integrate applications. Protocol Roles run and verify the system."
       >
         <CardGrid>
@@ -167,7 +167,7 @@ export default function LearnPage() {
       <Section title="Current status stays explicit.">
         <Callout
           title="Pre-alpha testnet is the current public boundary."
-          body="Midgard is early. Live status, verified code, and approved parameters are the source for claims that affect users, builders, and protocol roles."
+          body="Midgard is early. Live status, verified code, and approved parameters are the source for claims that affect users, builders, and Protocol Roles."
           items={[
             "Fault-proof verification is the public verification path.",
             "Data availability and watcher assumptions are part of the security model.",

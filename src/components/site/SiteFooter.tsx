@@ -40,14 +40,14 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Security",
     links: [
       { label: "Security", href: "/security" },
-      { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy, external: true },
+      { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy },
       { label: "FAQ", href: "/faq" },
     ],
   },
   {
     title: "Connect",
     links: [
-      { label: "Start here", href: "/#paths" },
+      { label: "Choose your path", href: "/#paths" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
       { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
       { label: "X / Twitter", href: OFFICIAL_LINKS.x, external: true },

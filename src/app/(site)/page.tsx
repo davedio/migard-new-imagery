@@ -4,7 +4,7 @@ import MinimalHome from "@/components/minimal/MinimalHome";
 export const metadata: Metadata = {
   title: "Midgard | The execution layer for eUTXO finance",
   description:
-    "Midgard is the execution layer for eUTXO finance: faster application execution with mathematically verified security and final settlement anchored to L1.",
+    "Midgard is the execution layer for eUTXO finance: faster application execution with soft confirmations, fault-proof checks, and final L1 settlement after verification.",
   openGraph: {
     title: "Midgard | The execution layer for eUTXO finance",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],

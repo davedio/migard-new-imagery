@@ -199,7 +199,7 @@ const THESIS: Phrase[][] = [
   [
     { text: "Security comes from", cls: "hi" },
     { text: "mathematically verified smart contracts," },
-    { text: "fault-proof verification, and final settlement anchored to L1.", cls: "hi" },
+    { text: "fault-proof verification, and final settlement through the L1 path.", cls: "hi" },
   ],
 ];
 
@@ -271,7 +271,7 @@ const PATHS = [
     n: "01",
     title: "Users",
     line: "Use eUTXO finance applications with faster execution and familiar wallet flows.",
-    cta: "Start as a user",
+    cta: "Learn user path",
     href: "/learn#roles",
   },
   {
@@ -285,7 +285,7 @@ const PATHS = [
     n: "03",
     title: "Protocol Roles",
     line: "Protocol Roles keep Midgard running and verifiable. Operators sequence transactions; Watchers inspect commitments and challenge invalid state through the fault-proof path.",
-    cta: "Explore protocol roles",
+    cta: "Explore Protocol Roles",
     href: "/developers#developer-paths",
   },
 ] as const;

@@ -54,24 +54,24 @@ const INSPECTION_PATHS = [
 
 const QUICK_ROUTES = [
   {
-    title: "Users",
-    body: "Use apps with faster confirmations and inspectable settlement.",
+    title: "Use",
+    body: "Start with the user flow and what final settlement means.",
     href: "/learn#roles",
   },
   {
-    title: "Builders",
-    body: "Map real eUTXO flows to the execution layer.",
+    title: "Build",
+    body: "Open developer paths, source, contracts, and review materials.",
     href: "/developers",
   },
   {
-    title: "Protocol Roles",
-    body: "Sequence activity, replay commitments, and challenge state.",
-    href: "/developers#developer-paths",
+    title: "Verify",
+    body: "Read the security model before trusting the speed claim.",
+    href: "/security",
   },
   {
-    title: "Official channels",
-    body: "Use the right path for security, source, interest, or support.",
-    href: "#channels",
+    title: "Report",
+    body: "Use the official policy for sensitive security issues.",
+    href: OFFICIAL_LINKS.securityPolicy,
   },
 ] as const;
 
@@ -79,15 +79,15 @@ const USER_FLOW = ["Deposit", "Transact", "Withdraw"] as const;
 
 const VALUE_STEPS = [
   {
-    title: "Apps execute faster",
-    body: "Users can receive soft confirmations before the final settlement path finishes.",
+    title: "Apps feel faster",
+    body: "Users can receive soft confirmations while final settlement is still pending.",
   },
   {
     title: "State stays checkable",
     body: "Commitments can be replayed, challenged, and inspected through the public contract surface.",
   },
   {
-    title: "Final state settles on L1",
+    title: "L1 settlement comes last",
     body: "After verification, finalized state settles through the base-layer path.",
   },
 ] as const;
@@ -175,8 +175,8 @@ export default function MinimalHome() {
 
       <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Choose the route that matches your job.</h2>
-          <p>Users want faster activity. Builders need source and contracts. Protocol Roles keep execution verifiable.</p>
+          <h2 id="minimal-paths-title">Pick the role that matches what you need.</h2>
+          <p>Users learn the flow. Builders inspect source and contracts. Protocol Roles keep committed state verifiable.</p>
         </div>
         <div className="minimal-card-grid minimal-card-grid--3">
           {SITE_COPY.paths.map((path) => (

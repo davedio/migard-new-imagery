@@ -45,6 +45,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
       name: /The execution layer for eUTXO finance/i,
     }),
   ).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/trust path inspectable/i)).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified contracts/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
@@ -72,8 +73,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ]) {
     expect(bodyText).not.toContain(hiddenLabel);
   }
-  await expect(page.getByRole("link", { name: /^Start here$/i }).first()).toBeVisible();
-  await expect(page.getByRole("link", { name: /^Start here$/i }).first()).toHaveAttribute("href", "#paths");
+  await expect(page.getByRole("link", { name: /^Choose your path$/i }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Choose your path$/i }).first()).toHaveAttribute("href", "#paths");
   const heroRoutes = page.locator(".minimal-hero-routes");
   const routeStrip = page.locator(".minimal-route-strip");
   if (testInfo.project.name === "mobile-chromium") {
@@ -82,7 +83,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
     await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(4);
     await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
     await expect(heroRoutes.getByRole("link", { name: /Verify Security model/i })).toHaveAttribute("href", "/security");
-    await expect(heroRoutes.getByRole("link", { name: /Report Security policy/i })).toHaveAttribute("href", /SECURITY\.md/);
+    await expect(heroRoutes.getByRole("link", { name: /Report Security policy/i })).toHaveAttribute("href", "/security#disclosure");
   } else {
     await expect(heroRoutes).toBeHidden();
     await expect(routeStrip).toBeVisible();
@@ -90,18 +91,23 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
-  await expect(page.locator(".minimal-route-card")).toHaveCount(4);
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Users" })).toHaveAttribute("href", "/learn#roles");
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Builders" })).toHaveAttribute("href", "/developers");
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Protocol Roles" })).toHaveAttribute("href", "/developers#developer-paths");
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Official channels" })).toHaveAttribute("href", "#channels");
-  await expect(pathSection.getByRole("heading", { name: /Choose the route that matches your job/i })).toBeVisible();
+  const routeCards = page.locator(".minimal-route-card");
+  await expect(routeCards).toHaveCount(4);
+  await expect(routeCards.nth(0)).toContainText("Use");
+  await expect(routeCards.nth(0)).toHaveAttribute("href", "/learn#roles");
+  await expect(routeCards.nth(1)).toContainText("Build");
+  await expect(routeCards.nth(1)).toHaveAttribute("href", "/developers");
+  await expect(routeCards.nth(2)).toContainText("Verify");
+  await expect(routeCards.nth(2)).toHaveAttribute("href", "/security");
+  await expect(routeCards.nth(3)).toContainText("Report");
+  await expect(routeCards.nth(3)).toHaveAttribute("href", "/security#disclosure");
+  await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
   await expect(pathSection.getByText(/Operators sequence activity/i)).toBeVisible();
-  await expect(pathSection.getByRole("link", { name: /Start as a user/i })).toHaveAttribute("href", "/learn#roles");
-  await expect(pathSection.getByRole("link", { name: /Explore protocol roles/i })).toHaveAttribute("href", "/developers#developer-paths");
+  await expect(pathSection.getByRole("link", { name: /Learn user path/i })).toHaveAttribute("href", "/learn#roles");
+  await expect(pathSection.getByRole("link", { name: /Explore Protocol Roles/i })).toHaveAttribute("href", "/developers#developer-paths");
   await expect(page.getByRole("heading", { name: /Fast execution first/i })).toBeVisible();
   await expect(page.locator(".minimal-flow-row")).toHaveCount(6);
   await expect(page.locator(".minimal-flow-row").first()).toContainText("Submit");
@@ -175,7 +181,7 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   await expect(mobileMenu.getByRole("link", { name: /Developer overview/i })).toHaveAttribute("href", "/developers");
   await expect(mobileMenu.getByRole("link", { name: /^Contracts/i })).toHaveAttribute("href", "/contracts");
   await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/security");
-  await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveAttribute("href", /SECURITY\.md/);
+  await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveAttribute("href", "/security#disclosure");
   await expect(mobileMenu.getByRole("link", { name: /Intake form/i })).toHaveAttribute("href", /docs\.google\.com\/forms/);
   await expect(mobileMenu).toContainText("Builder and Protocol Role interest");
 
@@ -201,25 +207,30 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
-  await expect(page.locator(".minimal-route-card")).toHaveCount(4);
-  await expect(page.locator(".minimal-route-card").first()).toContainText("Users");
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Builders" })).toHaveAttribute("href", "/developers");
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Protocol Roles" })).toHaveAttribute("href", "/developers#developer-paths");
-  await expect(page.locator(".minimal-route-card").filter({ hasText: "Official channels" })).toHaveAttribute("href", "#channels");
+  const routeCards = page.locator(".minimal-route-card");
+  await expect(routeCards).toHaveCount(4);
+  await expect(routeCards.nth(0)).toContainText("Use");
+  await expect(routeCards.nth(0)).toHaveAttribute("href", "/learn#roles");
+  await expect(routeCards.nth(1)).toContainText("Build");
+  await expect(routeCards.nth(1)).toHaveAttribute("href", "/developers");
+  await expect(routeCards.nth(2)).toContainText("Verify");
+  await expect(routeCards.nth(2)).toHaveAttribute("href", "/security");
+  await expect(routeCards.nth(3)).toContainText("Report");
+  await expect(routeCards.nth(3)).toHaveAttribute("href", "/security#disclosure");
   await expect(page.locator(".minimal-flow-board").getByText("User sees")).toBeVisible();
   await expect(page.locator(".minimal-user-path").getByText("Deposit")).toBeVisible();
   await expect(page.locator(".minimal-flow-row").filter({ hasText: "Make data checkable" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Apps execute faster/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Apps feel faster/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /State stays checkable/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Final state settles on L1/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /L1 settlement comes last/i })).toBeVisible();
 
   const pathSection = page.locator("#paths");
-  await expect(pathSection.getByRole("heading", { name: /Choose the route that matches your job/i })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(pathSection.getByRole("link", { name: /Start as a user/i })).toHaveAttribute("href", "/learn#roles");
-  await expect(pathSection.getByRole("link", { name: /Explore protocol roles/i })).toHaveAttribute("href", "/developers#developer-paths");
+  await expect(pathSection.getByRole("link", { name: /Learn user path/i })).toHaveAttribute("href", "/learn#roles");
+  await expect(pathSection.getByRole("link", { name: /Explore Protocol Roles/i })).toHaveAttribute("href", "/developers#developer-paths");
 
   await expect(page.locator(".minimal-metric")).toHaveCount(6);
   await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toContainText("Benchmark");
@@ -232,7 +243,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(inspectGrid.getByRole("link", { name: /Source review/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator(".minimal-channel-card")).toHaveCount(4);
   await expect(page.locator(".minimal-channel-card").first()).toContainText("Report something sensitive");
-  await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", /SECURITY\.md/);
+  await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", "/security#disclosure");
   await expect(page.locator(".minimal-channel-card").filter({ hasText: "Intake form" })).toContainText("Protocol Roles");
   await page.screenshot({ path: testInfo.outputPath("minimal-preview.png") });
 });
@@ -258,7 +269,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   const connect = page.getByRole("button", { name: /^Connect$/i });
   await connect.click();
   const connectDropdown = page.locator(".site-nav__group", { has: connect }).locator(".site-nav__dropdown");
-  await expect(connectDropdown.getByRole("link", { name: /Start here/i })).toBeVisible();
+  await expect(connectDropdown.getByRole("link", { name: /Choose your path/i })).toBeVisible();
   await expect(connectDropdown.getByRole("link", { name: /Discord/i })).toBeVisible();
   await expect(connectDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
 
@@ -352,11 +363,11 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: /Security you can inspect/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Inspect the trust path from multiple angles/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i })).toHaveAttribute("href", "/contracts");
-  await expect(page.getByRole("link", { name: /Report safely/i })).toHaveAttribute("href", /SECURITY\.md/);
+  await expect(page.getByRole("link", { name: /Report safely/i })).toHaveAttribute("href", "/security#disclosure");
   await expect(page.getByRole("heading", { name: /Fast confirmations first/i })).toBeVisible();
   await expect(page.getByText(/Lower attack surface, not magic/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: /Soft confirmation/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /L1 settlement/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "L1 settlement", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: /What the claim means/i })).toBeVisible();
   await expect(page.getByText(/Soft confirmations are not final settlement/i)).toBeVisible();
   await expect(page.getByText(/mathematically verified smart contracts/i).first()).toBeVisible();

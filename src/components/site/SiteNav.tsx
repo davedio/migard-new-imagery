@@ -62,7 +62,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
         label: "Security policy",
         href: OFFICIAL_LINKS.securityPolicy,
         description: "Report sensitive issues",
-        external: true,
       },
       { label: "FAQ", href: "/faq", description: "Compare L2 tradeoffs" },
     ],
@@ -70,7 +69,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Connect",
     items: [
-      { label: "Start here", href: "/#paths", description: "Choose user, builder, or role" },
+      { label: "Choose your path", href: "/#paths", description: "Choose user, builder, or role" },
       {
         label: "Discord",
         href: OFFICIAL_LINKS.discord,

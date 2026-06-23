@@ -357,7 +357,7 @@ export default function FaqPage() {
               items: [
                 {
                   q: "What is Midgard?",
-                  a: "Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while keeping settlement anchored to L1.",
+                  a: "Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while keeping final settlement on the L1 path.",
                 },
                 {
                   q: "Why does Midgard matter?",
@@ -378,7 +378,7 @@ export default function FaqPage() {
               items: [
                 {
                   q: "What is the main security claim?",
-                  a: "Finalized state is designed to inherit the full security of the L1 settlement layer, while Midgard reduces the attack surface through eUTXO-local state, mathematically verified contracts, and fault-proof verification.",
+                  a: "Finalized state is designed to settle through the L1 path after verification, while Midgard reduces the attack surface through eUTXO-local state, mathematically verified contracts, and fault-proof verification.",
                 },
                 {
                   q: "Does that mean Midgard is impossible to hack?",
@@ -390,7 +390,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Why does eUTXO matter?",
-                  a: "eUTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that shows up in many account-model DeFi exploits.",
+                  a: "eUTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that appears in account-model failures.",
                 },
               ],
             },
@@ -416,10 +416,10 @@ export default function FaqPage() {
               ],
             },
             {
-              title: "Protocol roles and status",
+              title: "Protocol Roles and status",
               items: [
                 {
-                  q: "What do protocol roles do?",
+                  q: "What do Protocol Roles do?",
                   a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments and use the fault-proof path if an operator submits invalid state.",
                 },
                 {

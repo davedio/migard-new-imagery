@@ -4,27 +4,27 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for eUTXO finance",
     lead:
-      "Midgard gives eUTXO applications faster execution with mathematically verified contracts, fault-proof checks, and final L1 settlement after verification.",
-    primaryCta: { label: "Start here", href: "#paths" },
+      "Midgard makes eUTXO apps feel faster while keeping the trust path inspectable. Mathematically verified contracts, fault-proof checks, and final L1 settlement guard the path from activity to finality.",
+    primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
   paths: [
     {
       title: "Users",
-      body: "Move assets through apps with faster confirmations and a settlement path you can inspect.",
-      cta: "Start as a user",
+      body: "Learn how deposits, activity, withdrawals, and settlement fit together before you use an app.",
+      cta: "Learn user path",
       href: "/learn#roles",
     },
     {
       title: "Builders",
-      body: "Build apps that need faster execution without leaving the eUTXO model.",
+      body: "Inspect source, contracts, and the execution flow before mapping an eUTXO app to Midgard.",
       cta: "Start building",
       href: "/developers",
     },
     {
       title: "Protocol Roles",
       body: "Operators sequence activity. Watchers replay commitments and challenge invalid state.",
-      cta: "Explore protocol roles",
+      cta: "Explore Protocol Roles",
       href: "/developers#developer-paths",
     },
   ],

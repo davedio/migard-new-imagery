@@ -11,11 +11,11 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export function ThesisSection() {
   return (
-    <Section eyebrow="The thesis" title="Fast eUTXO execution. L1 security.">
+    <Section eyebrow="The thesis" title="Fast eUTXO execution. L1 settlement.">
       <Prose
         items={[
           {
-            text: "eUTXO finance should not have to choose between speed and security. Midgard gives eUTXO applications faster execution with settlement anchored to L1.",
+            text: "eUTXO finance should not have to choose between speed and security. Midgard gives eUTXO applications faster execution with final settlement through the L1 path.",
           },
           {
             text: "Security comes from mathematically verified smart contracts, fault-proof verification, and a smaller eUTXO attack surface.",

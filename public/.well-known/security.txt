@@ -1,7 +1,6 @@
 # Midgard Gateway security contact
-Contact: https://github.com/davedio/midgard-gateway/blob/main/SECURITY.md
-Contact: https://midgard-gateway.vercel.app/security#contact
-Policy: https://github.com/davedio/midgard-gateway/blob/main/SECURITY.md
+Contact: https://midgard-gateway.vercel.app/security#disclosure
+Policy: https://midgard-gateway.vercel.app/security#disclosure
 Canonical: https://midgard-gateway.vercel.app/.well-known/security.txt
 Preferred-Languages: en
 Expires: 2027-06-10T00:00:00.000Z

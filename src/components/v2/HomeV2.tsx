@@ -120,7 +120,7 @@ function StaticHome({ plate }: { plate: string }) {
         <StaticChapter
           n="01"
           title="Choose your path."
-          lead="Users, builders, and protocol roles overlap. Start with the role that fits what you're here to do."
+          lead="Users, builders, and Protocol Roles overlap. Start with the role that fits what you're here to do."
         />
         <Paths />
         <ProtocolPath />
