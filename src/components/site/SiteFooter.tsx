@@ -4,6 +4,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { NetworkChip } from "@/components/site/NetworkChip";
 import { FooterStatement } from "@/components/v2/FooterStatement";
+import { SITE_COPY } from "@/lib/siteCopy";
 
 type FooterLink = {
   label: string;
@@ -101,10 +102,7 @@ export function SiteFooter() {
             <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} />
             <span className="wm">Midgard</span>
           </div>
-          <p>
-            Midgard is an optimistic rollup that gives UTXO applications faster
-            execution with settlement anchored to L1.
-          </p>
+          <p>{SITE_COPY.hero.lead}</p>
 
           <div
             className="site-footer__social"

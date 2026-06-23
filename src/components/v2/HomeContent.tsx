@@ -191,14 +191,14 @@ type Phrase = { text: string; cls?: string };
 
 const THESIS: Phrase[][] = [
   [
-    { text: "UTXO finance should not have to choose between speed and security." },
-    { text: "Midgard gives UTXO applications faster execution" },
-    { text: "with settlement anchored to L1." },
+    { text: "UTXO finance should not have to trade security for scale." },
+    { text: "Midgard gives applications faster execution" },
+    { text: "without leaving the UTXO model." },
   ],
   [
     { text: "Security comes from", cls: "hi" },
     { text: "mathematically verified smart contracts," },
-    { text: "fault-proof verification, and a smaller eUTXO attack surface.", cls: "hi" },
+    { text: "fault-proof verification, and final settlement anchored to L1.", cls: "hi" },
   ],
 ];
 
@@ -278,9 +278,9 @@ const PATHS = [
   {
     n: "02",
     title: "Builders",
-    line: "Build UTXO applications that need more throughput without leaving the UTXO model.",
+    line: "Build UTXO applications that need faster execution without leaving the UTXO model.",
     cta: "Start building",
-    href: OFFICIAL_LINKS.github,
+    href: "/developers",
   },
   {
     n: "03",

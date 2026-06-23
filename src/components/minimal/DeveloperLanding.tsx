@@ -1,87 +1,96 @@
-import Link from "next/link";
-import type { ReactNode } from "react";
+import { GitHubIcon } from "@/components/site/BrandIcons";
+import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
-
-function isExternal(href: string) {
-  return /^https?:\/\//.test(href);
-}
-
-function DevLink({
-  href,
-  className,
-  children,
-}: {
-  href: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  if (isExternal(href)) {
-    return (
-      <a className={className} href={href} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
-    );
-  }
-  return (
-    <Link className={className} href={href}>
-      {children}
-    </Link>
-  );
-}
 
 export default function DeveloperLanding() {
   return (
-    <main className="minimal-site minimal-page">
-      <section className="minimal-page-hero">
-        <div>
-          <h1>{DEVELOPER_COPY.hero.title}</h1>
-          <p>{DEVELOPER_COPY.hero.lead}</p>
-        </div>
-        <div className="minimal-entry-panel" aria-label="Developer entry points">
-          <span>Developer entry points</span>
-          <div>
-            {DEVELOPER_COPY.entryPoints.map((item) => (
-              <DevLink key={item.label} href={item.href}>
-                <strong>{item.label}</strong>
-                <small>{item.detail}</small>
-              </DevLink>
-            ))}
-          </div>
-        </div>
-      </section>
+    <main className="page-main developer-page">
+      <PageHero
+        compact
+        tone="tree"
+        title={DEVELOPER_COPY.hero.title}
+        sub={DEVELOPER_COPY.hero.lead}
+        actions={[
+          {
+            label: "Open GitHub",
+            href: OFFICIAL_LINKS.github,
+            variant: "primary",
+            icon: <GitHubIcon size={15} />,
+          },
+          { label: "Inspect contracts", href: "/contracts", variant: "ghost" },
+        ]}
+      />
 
-      <section className="minimal-section">
-        <div className="minimal-card-grid minimal-card-grid--3">
-          {DEVELOPER_COPY.tracks.map((track) => (
-            <DevLink key={track.title} className="minimal-card minimal-card--link" href={track.href}>
-              <h3>{track.title}</h3>
-              <p>{track.body}</p>
-              <span>{track.cta} -&gt;</span>
-            </DevLink>
+      <Section
+        title="Start from the right surface."
+        lead="Most reviewers do not need the same first link. Pick the surface that matches what you are trying to prove."
+      >
+        <CardGrid>
+          {DEVELOPER_COPY.entryPoints.map((item, i) => (
+            <Card
+              key={item.label}
+              num={String(i + 1).padStart(2, "0")}
+              title={item.label}
+              body={item.detail}
+              cta={item.label === "GitHub" ? "Open GitHub" : `Open ${item.label.toLowerCase()}`}
+              ctaIcon={item.label === "GitHub" ? <GitHubIcon size={14} /> : undefined}
+              href={item.href}
+            />
           ))}
-        </div>
-      </section>
+        </CardGrid>
+      </Section>
 
-      <section className="minimal-section minimal-section--split" aria-labelledby="developer-flow-title">
-        <div className="minimal-section__head">
-          <h2 id="developer-flow-title">The builder checklist.</h2>
-          <p>Use this as the first review path before a deeper integration conversation.</p>
-        </div>
-        <div className="minimal-flow-list">
-          {[
-            ["Read", "Start with GitHub and the protocol overview."],
-            ["Inspect", "Open the contract addresses and state anchors."],
-            ["Model", "Map your user flow to deposit, transact, and withdraw."],
-            ["Verify", "Review the fault-proof and settlement assumptions."],
-          ].map(([label, body], i) => (
-            <div className="minimal-flow-row" key={label}>
-              <span>{String(i + 1).padStart(2, "0")}</span>
-              <strong>{label}</strong>
-              <p>{body}</p>
-            </div>
+      <Section
+        id="developer-paths"
+        title="Choose your developer path."
+        lead="Application builders, protocol reviewers, and protocol roles need different next steps."
+        glow="green"
+      >
+        <CardGrid>
+          {DEVELOPER_COPY.tracks.map((track, i) => (
+            <Card
+              key={track.title}
+              num={String(i + 1).padStart(2, "0")}
+              title={track.title}
+              body={track.body}
+              cta={track.cta}
+              ctaIcon={track.href === OFFICIAL_LINKS.github ? <GitHubIcon size={14} /> : undefined}
+              href={track.href}
+              ctaGlow
+            />
           ))}
-        </div>
-      </section>
+        </CardGrid>
+      </Section>
+
+      <Section
+        title="The builder checklist."
+        lead="Use this as the first review path before a deeper integration conversation."
+        tight
+      >
+        <Layers
+          items={[
+            { n: "01", name: "Read", desc: "Start with GitHub and the plain-language overview." },
+            { n: "02", name: "Inspect", desc: "Open the contract addresses, topology, and state anchors." },
+            { n: "03", name: "Model", desc: "Map your user flow to deposit, transact, withdraw, and fallback behavior." },
+            { n: "04", name: "Verify", desc: "Review the fault-proof path, Watcher role, and settlement assumptions." },
+          ]}
+        />
+      </Section>
+
+      <CtaBand
+        title="Bring a concrete flow."
+        lead="The fastest useful developer conversation starts with a wallet action, dApp interaction, indexer need, or protocol path that can be mapped to Midgard."
+        actions={[
+          {
+            label: "View GitHub",
+            href: OFFICIAL_LINKS.github,
+            variant: "primary",
+            icon: <GitHubIcon size={15} />,
+          },
+          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
+        ]}
+      />
     </main>
   );
 }
