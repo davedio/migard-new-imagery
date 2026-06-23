@@ -2219,6 +2219,16 @@ h2 em,
   margin-top: 32px;
 }
 
+.minimal-hero-routes {
+  display: none;
+}
+
+.minimal-hero-route {
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
 .minimal-btn {
   display: inline-flex;
   min-height: 48px;
@@ -3112,6 +3122,44 @@ h2 em,
     padding-top: 118px;
   }
 
+  .minimal-hero-routes {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .minimal-hero-route {
+    display: grid;
+    gap: 5px;
+    min-height: 70px;
+    align-content: center;
+    padding: 12px 10px;
+    border: 1px solid rgba(244, 241, 230, 0.1);
+    border-radius: 8px;
+    background: rgba(7, 12, 8, 0.7);
+  }
+
+  .minimal-hero-route strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-hi);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .minimal-hero-route span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
   .minimal-hero h1,
   .minimal-page-hero h1 {
     font-size: 52px;
@@ -3205,6 +3253,10 @@ h2 em,
 
   .minimal-actions {
     margin-top: 24px;
+  }
+
+  .minimal-hero-routes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .minimal-card-grid--3,

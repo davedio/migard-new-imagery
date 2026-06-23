@@ -74,6 +74,16 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   }
   await expect(page.getByRole("link", { name: /^Start here$/i }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /^Start here$/i }).first()).toHaveAttribute("href", "#paths");
+  const heroRoutes = page.locator(".minimal-hero-routes");
+  if (testInfo.project.name === "mobile-chromium") {
+    await expect(heroRoutes).toBeVisible();
+    await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(4);
+    await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
+    await expect(heroRoutes.getByRole("link", { name: /Verify Security model/i })).toHaveAttribute("href", "/security");
+    await expect(heroRoutes.getByRole("link", { name: /Report Security policy/i })).toHaveAttribute("href", /SECURITY\.md/);
+  } else {
+    await expect(heroRoutes).toBeHidden();
+  }
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");

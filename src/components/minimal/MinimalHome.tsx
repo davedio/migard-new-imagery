@@ -92,6 +92,29 @@ const VALUE_STEPS = [
   },
 ] as const;
 
+const HERO_ROUTES = [
+  {
+    label: "Use",
+    detail: "User path",
+    href: "/learn#roles",
+  },
+  {
+    label: "Build",
+    detail: "Developer path",
+    href: "/developers",
+  },
+  {
+    label: "Verify",
+    detail: "Security model",
+    href: "/security",
+  },
+  {
+    label: "Report",
+    detail: "Security policy",
+    href: OFFICIAL_LINKS.securityPolicy,
+  },
+] as const;
+
 const METRIC_STATUS = {
   "Soft confirmations": "Benchmark",
   "Settlement security": "Trust path",
@@ -116,6 +139,14 @@ export default function MinimalHome() {
               {SITE_COPY.hero.secondaryCta.label}
             </SmartLink>
           </div>
+          <nav className="minimal-hero-routes" aria-label="Fast Midgard routes">
+            {HERO_ROUTES.map((route) => (
+              <SmartLink className="minimal-hero-route" href={route.href} key={route.label}>
+                <strong>{route.label}</strong>
+                <span>{route.detail}</span>
+              </SmartLink>
+            ))}
+          </nav>
         </div>
         <ConceptTree />
       </section>
