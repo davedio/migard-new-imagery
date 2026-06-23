@@ -3399,7 +3399,8 @@ button.panel:hover {
 .page-hero--tone-moss::before,
 .page-hero--tone-cobalt::before,
 .page-hero--tone-ember::before,
-.page-hero--tone-ink::before {
+.page-hero--tone-ink::before,
+.page-hero--tone-tree::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -3417,6 +3418,32 @@ button.panel:hover {
 }
 .page-hero--tone-ink::before {
   background: radial-gradient(900px 480px at 50% 0%, rgba(8, 12, 18, 0.55), transparent 75%);
+}
+.page-hero--tone-tree::before {
+  background: radial-gradient(900px 480px at 82% 4%, rgba(32, 190, 67, 0.14), transparent 72%);
+}
+
+@media (max-width: 640px) {
+  .page-hero--tone-moss::before,
+  .page-hero--tone-cobalt::before,
+  .page-hero--tone-ember::before {
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.52) 58%, rgba(0, 0, 0, 0.18) 100%),
+      radial-gradient(680px 420px at 22% 8%, rgba(96, 170, 80, 0.13), transparent 72%);
+  }
+
+  .page-hero--tone-ink::before,
+  .page-hero--tone-tree::before {
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.58) 62%, rgba(0, 0, 0, 0.24) 100%),
+      radial-gradient(720px 460px at 44% 0%, rgba(8, 12, 18, 0.55), transparent 76%);
+  }
+
+  .page-hero h1,
+  .page-hero .sub,
+  .page-hero .body {
+    text-shadow: 0 2px 22px rgba(0, 0, 0, 0.86), 0 0 1px rgba(0, 0, 0, 0.9);
+  }
 }
 
 /* ---- shared ambient layer (below-the-fold depth) ---- */
