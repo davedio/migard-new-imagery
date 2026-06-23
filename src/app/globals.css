@@ -2255,6 +2255,70 @@ button.panel:hover {
 }
 
 /* ---- FAQ comparison matrix ---- */
+.faq-decision-grid {
+  margin-top: 34px;
+  max-width: 1120px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.faq-decision-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r);
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 44%),
+    rgba(7, 15, 10, 0.72);
+}
+.faq-decision-card[data-tone="midgard"] {
+  border-color: rgba(78, 243, 131, 0.42);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(78, 243, 131, 0.13), transparent 18rem),
+    rgba(7, 15, 10, 0.76);
+}
+.faq-decision-card[data-tone="watch"] {
+  border-color: rgba(207, 154, 46, 0.34);
+}
+.faq-decision-card__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+.faq-decision-card h3 {
+  margin-top: 20px;
+  color: var(--text-hi);
+  font-size: clamp(22px, 2.2vw, 30px);
+  line-height: 1.08;
+  font-weight: 500;
+}
+.faq-decision-card dl {
+  display: grid;
+  gap: 15px;
+  margin: 24px 0 0;
+}
+.faq-decision-card div {
+  display: grid;
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(244, 241, 230, 0.09);
+}
+.faq-decision-card dt {
+  color: var(--green-bright);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.faq-decision-card dd {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.48;
+}
+
 .comparison-chart {
   margin-top: 34px;
   max-width: 1120px;
@@ -2451,6 +2515,9 @@ button.panel:hover {
   box-shadow: 0 0 16px rgba(32, 190, 67, 0.2);
 }
 @media (max-width: 760px) {
+  .faq-decision-grid {
+    grid-template-columns: 1fr;
+  }
   .comparison-chart__legend {
     grid-template-columns: 1fr;
   }
