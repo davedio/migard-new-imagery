@@ -55,7 +55,7 @@
   color: var(--text-faint);
 }
 
-/* ---------- eUTXO vs account-model comparison ---------- */
+/* ---------- UTXO vs account-model comparison ---------- */
 .compare {
   display: grid;
   grid-template-columns: 1fr 1fr;

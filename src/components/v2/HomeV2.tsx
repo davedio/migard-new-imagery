@@ -100,7 +100,7 @@ function StaticHome({ plate }: { plate: string }) {
           <h1 className="v2-hero__title">
             The <span className="ital">execution layer</span>
             <br />
-            for eUTXO finance
+            for UTXO finance
           </h1>
           <p className="v2-hero__lead">
             {SITE_COPY.hero.lead}
@@ -132,9 +132,9 @@ function StaticHome({ plate }: { plate: string }) {
             n="02"
             title={
               <>
-                Fast eUTXO execution.
+                Fast UTXO execution.
                 <br />
-                L1 security.
+                Cardano L1 security.
               </>
             }
           />
@@ -155,7 +155,7 @@ function StaticHome({ plate }: { plate: string }) {
           lead={
             <>
               Track the indicators that matter: confirmation speed, settlement
-              security, eUTXO-native execution, verified contracts,
+              security, UTXO-native execution, verified contracts,
               fault-proof coverage, and current status.
             </>
           }

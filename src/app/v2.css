@@ -1594,7 +1594,7 @@ h2 em,
   color: var(--text-dim);
 }
 
-/* ---- eUTXO duel (proofs chapter) ---- */
+/* ---- UTXO duel (proofs chapter) ---- */
 .v2-duel {
   max-width: var(--maxw);
   margin: 0 auto;

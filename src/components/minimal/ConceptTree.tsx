@@ -13,7 +13,7 @@ const FLOW_GROUPS = [
   },
   {
     n: "03",
-    label: "L1 settlement",
+    label: "Cardano L1 settlement",
     detail: "Verified state becomes final",
   },
 ] as const;
@@ -32,7 +32,7 @@ const CALLOUTS = [
     y: 184,
   },
   {
-    title: "L1 settlement",
+    title: "Cardano L1 settlement",
     body: "verified -> final",
     x: 574,
     y: 366,

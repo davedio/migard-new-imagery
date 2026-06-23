@@ -253,8 +253,8 @@ export default function DescentFlow({
               <ShatterHeading
                 as="h1"
                 className="v2-hero__title"
-                lines={["The execution", "layer for", "eUTXO finance"]}
-                accents={{ execution: "green", "eUTXO finance": "green" }}
+                lines={["The execution", "layer for", "UTXO finance"]}
+                accents={{ execution: "green", "UTXO finance": "green" }}
               />
             </Rise>
             <Rise delay={0.2}>
@@ -297,7 +297,7 @@ export default function DescentFlow({
             </Rise>
             {/* one line on desktop, wraps naturally on phones */}
             <Rise delay={0.06}>
-              <h2 className="v2-thesis__h2">Fast eUTXO execution. L1 security.</h2>
+              <h2 className="v2-thesis__h2">Fast UTXO execution. Cardano L1 security.</h2>
             </Rise>
           </div>
           <div className="v2-thesis__row">
@@ -318,7 +318,7 @@ export default function DescentFlow({
             lead={
               <>
                 Track the indicators that matter: confirmation speed,
-                settlement security, eUTXO-native execution, verified contracts,
+                settlement security, UTXO-native execution, verified contracts,
                 fault-proof coverage, and current status.
               </>
             }
@@ -343,7 +343,7 @@ export default function DescentFlow({
               <p className="v2-ch__lead">
                 Operators append committed blocks to a singly-linked queue.
                 When a block&apos;s fault-proof window closes, it folds into
-                the confirmed state — oldest first, one L1 transaction at a
+                the confirmed state — oldest first, one Cardano L1 transaction at a
                 time.
               </p>
             </Rise>

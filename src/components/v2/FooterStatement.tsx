@@ -15,7 +15,7 @@ export function FooterStatement() {
   return (
     <Link href={next} className="v2-footer-statement">
       <span>
-        Execution layer for <em>eUTXO</em> finance.
+        Execution layer for <em>UTXO</em> finance.
       </span>
       <span className="arrow" aria-hidden>
         ↗

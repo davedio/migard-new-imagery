@@ -6,7 +6,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
-    "How Midgard runs as an optimistic rollup for eUTXO applications: deposit, transact, withdraw, with sequencing, commitment, data availability checks, fault-proof verification, and L1 settlement.",
+    "How Midgard runs as an optimistic rollup for UTXO applications: deposit, transact, withdraw, with sequencing, commitment, data availability checks, fault-proof verification, and Cardano L1 settlement.",
   openGraph: {
     title: "How Midgard Works",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -23,7 +23,7 @@ export default function HowItWorksPage() {
         items={[
           {
             label: "Read security",
-            sub: "The L1 security, fault-proof, and watcher model",
+            sub: "The Cardano L1 security, fault-proof, and watcher model",
             href: "/security",
           },
           {

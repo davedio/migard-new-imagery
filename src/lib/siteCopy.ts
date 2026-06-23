@@ -2,9 +2,9 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const SITE_COPY = {
   hero: {
-    title: "The execution layer for eUTXO finance",
+    title: "The execution layer for UTXO finance",
     lead:
-      "Midgard makes eUTXO apps feel faster while keeping the trust path inspectable. Mathematically verified contracts, fault-proof checks, and final L1 settlement guard the path from activity to finality.",
+      "Midgard makes UTXO apps feel faster while keeping the trust path inspectable. Mathematically verified contracts, fault-proof checks, and final Cardano L1 settlement guard the path from activity to finality.",
     primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
@@ -17,7 +17,7 @@ export const SITE_COPY = {
     },
     {
       title: "Builders",
-      body: "Inspect source, contracts, and the execution flow before mapping an eUTXO app to Midgard.",
+      body: "Inspect source, contracts, and the execution flow before mapping a UTXO app to Midgard.",
       cta: "Start building",
       href: "/developers",
     },
@@ -31,10 +31,10 @@ export const SITE_COPY = {
   lifecycle: [
     ["Submit", "A user sends a transaction to Midgard."],
     ["Sequence", "An operator orders valid transactions into an L2 block."],
-    ["Commit", "Compact state is posted to the L1 settlement path."],
+    ["Commit", "Compact state is posted to the Cardano L1 settlement path."],
     ["Make data checkable", "The data behind each commitment stays available for review."],
     ["Watch", "Watchers replay state and use the fault-proof path if needed."],
-    ["Settle", "Verified state reaches final L1 settlement."],
+    ["Settle", "Verified state reaches final Cardano L1 settlement."],
   ],
   proofPoints: [
     {
@@ -44,13 +44,13 @@ export const SITE_COPY = {
     },
     {
       k: "Settlement security",
-      v: "L1 finality",
-      s: "Track when verified state reaches the final settlement path.",
+      v: "Cardano L1",
+      s: "Track when verified state reaches the Cardano L1 settlement path.",
     },
     {
       k: "Execution model",
-      v: "eUTXO-native",
-      s: "Track how well applications preserve eUTXO design while gaining faster execution.",
+      v: "UTXO-native",
+      s: "Track how well applications preserve UTXO design while gaining faster execution.",
     },
     {
       k: "Verified contracts",
@@ -102,9 +102,9 @@ export const SITE_COPY = {
 
 export const DEVELOPER_COPY = {
   hero: {
-    title: "Build on the execution layer for eUTXO finance.",
+    title: "Build on the execution layer for UTXO finance.",
     lead:
-      "Start with the source, inspect the contract path, then map one eUTXO user flow to Midgard: deposit, transact, withdraw, fallback.",
+      "Start with the source, inspect the contract path, then map one UTXO user flow to Midgard: deposit, transact, withdraw, fallback.",
   },
   entryPoints: [
     {
@@ -131,7 +131,7 @@ export const DEVELOPER_COPY = {
   tracks: [
     {
       title: "Application builders",
-      body: "Map a real eUTXO flow to Midgard: wallet action, dApp interaction, indexer need, and fallback path.",
+      body: "Map a real UTXO flow to Midgard: wallet action, dApp interaction, indexer need, and fallback path.",
       href: OFFICIAL_LINKS.github,
       cta: "Open GitHub",
     },

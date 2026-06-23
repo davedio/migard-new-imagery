@@ -129,8 +129,8 @@ const EXPLAINER_STEPS = [
   {
     n: "03",
     title: "Commit",
-    layer: "L1 path",
-    what: "Compact state is posted to the L1 settlement path.",
+    layer: "Cardano L1 path",
+    what: "Compact state is posted to the Cardano L1 settlement path.",
     check: "The commitment points to state that must remain available and challengeable.",
     why: "Midgard does not ask users to trust a private operator database.",
   },
@@ -153,9 +153,9 @@ const EXPLAINER_STEPS = [
   {
     n: "06",
     title: "Settle",
-    layer: "L1 finality",
-    what: "Verified state reaches final L1 settlement.",
-    check: "After the verification path clears, finalized state inherits L1 security.",
+    layer: "Cardano L1 finality",
+    what: "Verified state reaches final Cardano L1 settlement.",
+    check: "After the verification path clears, finalized state inherits Cardano L1 security.",
     why: "Fast execution and final settlement stay separate, clear, and reviewable.",
   },
 ] as const;
@@ -173,7 +173,7 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
           <p className="hiw-act__lead">
             For users, the path is deposit, transact, withdraw. Under the hood,
             Midgard routes activity through sequencing, commitment, data
-            availability checks, the challenge window, and final L1 settlement.
+            availability checks, the challenge window, and final Cardano L1 settlement.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (

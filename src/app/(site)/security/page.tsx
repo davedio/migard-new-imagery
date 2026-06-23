@@ -17,7 +17,7 @@ import styles from "@/components/site/security.module.css";
 export const metadata: Metadata = {
   title: "Security | Midgard",
   description:
-    "How Midgard approaches L1 security, mathematically verified smart contracts, fault-proof verification, and eUTXO-local security.",
+    "How Midgard approaches Cardano L1 security, mathematically verified smart contracts, fault-proof verification, and UTXO-local security.",
   openGraph: {
     title: "Security | Midgard",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
@@ -43,8 +43,8 @@ const trustPath = [
   },
   {
     n: "04",
-    title: "L1 settlement",
-    body: "After verification, finalized state settles through the L1 path and inherits the security of that settlement layer.",
+    title: "Cardano L1 settlement",
+    body: "After verification, finalized state settles through the Cardano L1 path and inherits the security of that settlement layer.",
   },
 ] as const;
 
@@ -122,7 +122,7 @@ export default function SecurityPage() {
         compact
         tone="ink"
         title="Security you can inspect."
-        sub="Midgard pairs faster execution with mathematically verified smart contracts, fault-proof verification, eUTXO-local state, and final L1 settlement after verification."
+        sub="Midgard pairs faster execution with mathematically verified smart contracts, fault-proof verification, UTXO-local state, and final Cardano L1 settlement after verification."
         actions={[
           { label: "Read the mechanism", href: "#mechanism", variant: "primary" },
           {
@@ -155,12 +155,12 @@ export default function SecurityPage() {
       >
         <div className={styles.trustInner}>
           <div className={styles.trustHead}>
-            <h2 id="security-mechanism-title">Fast confirmations first. L1 settlement after verification.</h2>
+            <h2 id="security-mechanism-title">Fast confirmations first. Cardano L1 settlement after verification.</h2>
             <p>
-              Operators can make activity feel fast, but finality still depends on the base-layer settlement path, data availability, contract logic, approved parameters, and the challenge rules around committed state.
+              Operators can make activity feel fast, but finality still depends on the Cardano L1 settlement path, data availability, contract logic, approved parameters, and the challenge rules around committed state.
             </p>
           </div>
-          <div className={styles.trustDiagram} aria-label="Security path from soft confirmation to L1 settlement">
+          <div className={styles.trustDiagram} aria-label="Security path from soft confirmation to Cardano L1 settlement">
             {trustPath.map((step) => (
               <article className={styles.trustStep} key={step.n}>
                 <span>{step.n}</span>
@@ -181,7 +181,7 @@ export default function SecurityPage() {
               <ul>
                 <li>Soft confirmations improve usability before final settlement.</li>
                 <li>Committed state remains replayable and challengeable.</li>
-                <li>Finalized state inherits L1 security after verification.</li>
+                <li>Finalized state inherits Cardano L1 security after verification.</li>
               </ul>
             </article>
             <article>
@@ -210,8 +210,8 @@ export default function SecurityPage() {
           />
           <Card
             num="03"
-            title="eUTXO-local state"
-            body="eUTXO structure helps localize what must be inspected, reducing the broad shared-state surface that attackers often exploit."
+            title="UTXO-local state"
+            body="UTXO structure helps localize what must be inspected, reducing the broad shared-state surface that attackers often exploit."
           />
           <Card
             num="04"

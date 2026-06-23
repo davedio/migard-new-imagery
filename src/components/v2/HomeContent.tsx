@@ -109,9 +109,9 @@ export function HeroHud() {
 
 const TERMS = [
   "Optimistic rollup",
-  "L1 settlement",
+  "Cardano L1 settlement",
   "Fault proofs",
-  "eUTXO",
+  "UTXO",
   "Familiar wallets",
   "Formal methods",
   "Open source",
@@ -172,7 +172,7 @@ export function PartnerMarquee() {
       <div className="v2-partners__head">
         <p className="v2-partners__kicker">Network</p>
         <h2 id="ecosystem-partners-title">Ecosystem Partners</h2>
-        <p className="v2-partners__sub">eUTXO-native teams around Midgard.</p>
+        <p className="v2-partners__sub">UTXO-native teams around Midgard.</p>
       </div>
       <div className="v2-partners__rail" aria-label="Ecosystem partner logos">
         <div className="v2-partners__track">
@@ -192,14 +192,14 @@ type Phrase = { text: string; cls?: string };
 
 const THESIS: Phrase[][] = [
   [
-  { text: "eUTXO finance should not have to trade security for scale." },
+  { text: "UTXO finance should not have to trade security for scale." },
     { text: "Midgard gives applications faster execution" },
-    { text: "without leaving the eUTXO model." },
+    { text: "without leaving the UTXO model." },
   ],
   [
     { text: "Security comes from", cls: "hi" },
     { text: "mathematically verified smart contracts," },
-    { text: "fault-proof verification, and final settlement through the L1 path.", cls: "hi" },
+    { text: "fault-proof verification, and final settlement through the Cardano L1 path.", cls: "hi" },
   ],
 ];
 
@@ -270,14 +270,14 @@ const PATHS = [
   {
     n: "01",
     title: "Users",
-    line: "Use eUTXO finance applications with faster execution and familiar wallet flows.",
+    line: "Use UTXO finance applications with faster execution and familiar wallet flows.",
     cta: "Learn user path",
     href: "/learn#roles",
   },
   {
     n: "02",
     title: "Builders",
-    line: "Build eUTXO applications that need faster execution without leaving the eUTXO model.",
+    line: "Build UTXO applications that need faster execution without leaving the UTXO model.",
     cta: "Start building",
     href: "/developers",
   },
@@ -345,7 +345,7 @@ const PROTOCOL_PATH = [
   {
     n: "03",
     label: "Commit",
-    body: "Compact state is posted to the L1 settlement path.",
+    body: "Compact state is posted to the Cardano L1 settlement path.",
   },
   {
     n: "04",
@@ -360,7 +360,7 @@ const PROTOCOL_PATH = [
   {
     n: "06",
     label: "Settle",
-    body: "Verified state reaches final L1 settlement.",
+    body: "Verified state reaches final Cardano L1 settlement.",
   },
 ] as const;
 
@@ -375,7 +375,7 @@ export function ProtocolPath() {
         <h2 id="v2-protocol-title">Fast execution first. Verification before settlement.</h2>
         <p>
           Users get a faster experience while the protocol keeps the settlement path
-          inspectable: ordered activity, committed state, Watcher replay, and final L1 settlement.
+          inspectable: ordered activity, committed state, Watcher replay, and final Cardano L1 settlement.
         </p>
       </div>
       <div className="v2-protocol__diagram" aria-label="Midgard transaction path">
@@ -468,8 +468,8 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
       <div className="v2-prov__body">
         <Rise>
           <p>
-            Midgard is built by Midgard Labs for eUTXO applications that need
-            faster execution and L1 settlement.
+            Midgard is built by Midgard Labs for UTXO applications that need
+            faster execution and Cardano L1 settlement.
           </p>
           <p>
             The protocol is open and the code can be inspected. As the testnet
@@ -511,8 +511,8 @@ export const STRATA = [
   { id: "canopy", label: "Thesis", stratum: "canopy" },
   { id: "trunk", label: "Paths", stratum: "trunk" },
   { id: "roots", label: "Metrics", stratum: "roots" },
-  { id: "proofs", label: "Fault proofs · eUTXO", stratum: "proofs" },
-  { id: "bedrock", label: "Settlement · L1", stratum: "bedrock" },
+  { id: "proofs", label: "Fault proofs · UTXO", stratum: "proofs" },
+  { id: "bedrock", label: "Settlement · Cardano L1", stratum: "bedrock" },
 ] as const;
 
 export function MotionToggle() {

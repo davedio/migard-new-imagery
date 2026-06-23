@@ -4,7 +4,7 @@ import { GLOSSARY, type GlossaryKey } from "@/lib/glossary";
 /**
  * Inline glossary term with a lightweight, CSS-only tooltip.
  *
- *   <Term k="eutxo">eUTXO</Term>
+ *   <Term k="eutxo">UTXO</Term>
  *
  * - Dotted underline marks the term as defined.
  * - Tooltip shows on hover AND keyboard focus (tabIndex 0 + :focus-within CSS).

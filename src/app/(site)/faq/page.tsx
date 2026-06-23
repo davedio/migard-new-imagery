@@ -16,7 +16,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "FAQ | Midgard",
   description:
-    "Plain-language answers about Midgard, eUTXO finance, security, fees, builders, Protocol Roles, and how to compare Midgard with other L2 designs.",
+    "Plain-language answers about Midgard, UTXO finance, security, fees, builders, Protocol Roles, and how to compare Midgard with other L2 designs.",
   openGraph: {
     title: "FAQ | Midgard",
     images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
@@ -27,12 +27,12 @@ export const metadata: Metadata = {
 const comparisonRows = [
   {
     k: "Settlement",
-    midgard: "Final state settles through the L1 path after verification.",
+    midgard: "Final state settles through the Cardano L1 path after verification.",
     other: "Often depends on a bridge, multisig, sequencer, or separate settlement assumptions.",
   },
   {
     k: "Execution model",
-    midgard: "Built for eUTXO finance and local state transitions.",
+    midgard: "Built for UTXO finance and local state transitions.",
     other: "Often built around account-state execution or a chain-specific VM.",
   },
   {
@@ -50,13 +50,13 @@ const comparisonRows = [
 const comparisonChartRows = [
   {
     k: "Security anchor",
-    midgard: { level: "strong", label: "L1 settlement after verification" },
+    midgard: { level: "strong", label: "Cardano L1 settlement after verification" },
     evm: { level: "strong", label: "L1 settlement, bridge rules vary" },
     sidechain: { level: "watch", label: "Separate security set" },
   },
   {
-    k: "eUTXO fit",
-    midgard: { level: "strong", label: "Built for eUTXO finance" },
+    k: "UTXO fit",
+    midgard: { level: "strong", label: "Built for UTXO finance" },
     evm: { level: "watch", label: "Mostly account-model execution" },
     sidechain: { level: "varies", label: "Depends on the chain" },
   },
@@ -83,15 +83,15 @@ const comparisonChartRows = [
 const modelCards = [
   {
     label: "Midgard",
-    title: "eUTXO rollup path",
+    title: "UTXO rollup path",
     tone: "midgard",
     points: [
-      "Faster eUTXO execution",
+      "Faster UTXO execution",
       "Fault-proof verification with Watcher replay",
-      "Final settlement through the L1 path after verification",
+      "Final settlement through the Cardano L1 path after verification",
     ],
     scores: [
-      ["eUTXO fit", "strong"],
+      ["UTXO fit", "strong"],
       ["Verification", "strong"],
       ["Bridge exposure", "medium"],
     ],
@@ -103,10 +103,10 @@ const modelCards = [
     points: [
       "Often mature tooling and liquidity",
       "Security depends on bridge, proof, sequencer, and upgrade rules",
-      "Execution model is usually not eUTXO-native",
+      "Execution model is usually not UTXO-native",
     ],
     scores: [
-      ["eUTXO fit", "watch"],
+      ["UTXO fit", "watch"],
       ["Verification", "varies"],
       ["Bridge exposure", "varies"],
     ],
@@ -121,7 +121,7 @@ const modelCards = [
       "Bridge exposure is usually central to the risk model",
     ],
     scores: [
-      ["eUTXO fit", "varies"],
+      ["UTXO fit", "varies"],
       ["Verification", "watch"],
       ["Bridge exposure", "watch"],
     ],
@@ -131,8 +131,8 @@ const modelCards = [
 const decisionGrid = [
   {
     label: "Midgard",
-    title: "eUTXO apps that need faster execution",
-    best: "Applications that want faster activity without leaving the eUTXO model.",
+    title: "UTXO apps that need faster execution",
+    best: "Applications that want faster activity without leaving the UTXO model.",
     caution: "Pre-alpha status means public claims should stay tied to source, benchmarks, and approved parameters.",
     inspect: "Security model, contracts, source, and current testnet status.",
     tone: "midgard",
@@ -158,7 +158,7 @@ const decisionGrid = [
 const trustPath = [
   {
     k: "Execution",
-    midgard: "eUTXO-local activity runs faster.",
+    midgard: "UTXO-local activity runs faster.",
     watch: "Check what execution model changed.",
   },
   {
@@ -198,11 +198,11 @@ const faqGroups = [
     items: [
       {
         q: "What is Midgard?",
-        a: "Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while keeping final settlement on the L1 path.",
+        a: "Midgard is the execution layer for UTXO finance: an optimistic rollup that gives applications faster execution while keeping final settlement on the Cardano L1 path.",
       },
       {
         q: "Why does Midgard matter?",
-        a: "eUTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
+        a: "UTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
       },
       {
         q: "Is Midgard live?",
@@ -210,7 +210,7 @@ const faqGroups = [
       },
       {
         q: "Is Midgard a sidechain?",
-        a: "No. Midgard is positioned as a rollup path: L2 execution, committed state, fault-proof verification, and settlement through the L1 path.",
+        a: "No. Midgard is positioned as a rollup path: L2 execution, committed state, fault-proof verification, and settlement through the Cardano L1 path.",
       },
     ],
   },
@@ -219,7 +219,7 @@ const faqGroups = [
     items: [
       {
         q: "What is the main security claim?",
-        a: "Finalized state is designed to settle through the L1 path after verification, while Midgard reduces the attack surface through eUTXO-local state, mathematically verified contracts, and fault-proof verification.",
+        a: "Finalized state is designed to settle through the Cardano L1 path after verification, while Midgard reduces the attack surface through UTXO-local state, mathematically verified contracts, and fault-proof verification.",
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
@@ -230,8 +230,8 @@ const faqGroups = [
         a: "Watchers inspect committed blocks, replay the relevant state transition, and use the fault-proof path if an operator submits invalid state.",
       },
       {
-        q: "Why does eUTXO matter?",
-        a: "eUTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that appears in account-model failures.",
+        q: "Why does UTXO matter?",
+        a: "UTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that appears in account-model failures.",
       },
     ],
   },
@@ -243,8 +243,8 @@ const faqGroups = [
         a: "Users, builders, and Protocol Roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
       },
       {
-        q: "Can existing eUTXO apps use Midgard?",
-        a: "That is the goal: give eUTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
+        q: "Can existing UTXO apps use Midgard?",
+        a: "That is the goal: give UTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
       },
       {
         q: "Where should builders start?",
@@ -284,7 +284,7 @@ const basicsRail = [
   {
     label: "Security",
     href: `#${faqGroupId("Security")}`,
-    detail: "Claims, attack surface, Watchers, and eUTXO fit.",
+    detail: "Claims, attack surface, Watchers, and UTXO fit.",
   },
   {
     label: "Users and builders",
@@ -528,7 +528,7 @@ export default function FaqPage() {
 
       <CtaBand
         title="Start with the mechanism."
-        lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes eUTXO execution faster."
+        lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes UTXO execution faster."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },

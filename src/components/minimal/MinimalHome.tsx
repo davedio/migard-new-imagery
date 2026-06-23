@@ -34,7 +34,7 @@ function SmartLink({
 const INSPECTION_PATHS = [
   {
     title: "Security model",
-    body: "How fast confirmations, fault-proof checks, Watcher replay, and final L1 settlement fit together.",
+    body: "How fast confirmations, fault-proof checks, Watcher replay, and final Cardano L1 settlement fit together.",
     cta: "Read security",
     href: "/security",
   },
@@ -64,8 +64,8 @@ const VALUE_STEPS = [
     body: "Commitments can be replayed, challenged, and inspected through the public contract surface.",
   },
   {
-    title: "L1 settlement comes last",
-    body: "After verification, finalized state settles through the base-layer path.",
+    title: "Cardano L1 settlement comes last",
+    body: "After verification, finalized state settles through the Cardano L1 path.",
   },
 ] as const;
 
@@ -189,7 +189,7 @@ export default function MinimalHome() {
       <section className="minimal-section" aria-labelledby="minimal-proof-title">
         <div className="minimal-section__head">
           <h2 id="minimal-proof-title">Track the claims that matter.</h2>
-          <p>Publish the indicators that reduce guesswork: speed, settlement, eUTXO fit, verification coverage, and status.</p>
+          <p>Publish the indicators that reduce guesswork: speed, settlement, UTXO fit, verification coverage, and status.</p>
         </div>
         <div className="minimal-metrics">
           {SITE_COPY.proofPoints.map((item) => (

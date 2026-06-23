@@ -77,7 +77,7 @@ export const CONTRACTS: readonly Contract[] = [
     accent: "gold",
     address:
       "addr_test1wpuzy7pa0a2n5fddn5vuzua07nha28pug9l2w8l9v3vlxsg8mw2hg",
-    desc: "Handles L1 → L2 deposits. Funds remain locked on L1 until the deposit is confirmed in the state queue.",
+    desc: "Handles Cardano L1 → L2 deposits. Funds remain locked on Cardano L1 until the deposit is confirmed in the state queue.",
   },
   {
     name: "Withdrawal",
@@ -85,7 +85,7 @@ export const CONTRACTS: readonly Contract[] = [
     accent: "gold",
     address:
       "addr_test1wrfvqj3tn2fzx56hkv5en53ypq6m4y2qkp4wv2wqwtdjcxq24ey8j",
-    desc: "Processes L2 → L1 exits after the associated block passes the fault-proof window.",
+    desc: "Processes L2 → Cardano L1 exits after the associated block passes the fault-proof window.",
   },
   {
     name: "Tx Order",
@@ -101,7 +101,7 @@ export const CONTRACTS: readonly Contract[] = [
     accent: "gold",
     address:
       "addr_test1wquqs7cl5zajrura775a50zzwyuglqy95et3a6c8ajsz7xc2rdhyg",
-    desc: "Finalises L1 fund distribution when a merged block carries non-empty transaction, deposit, or withdrawal commitments.",
+    desc: "Finalises Cardano L1 fund distribution when a merged block carries non-empty transaction, deposit, or withdrawal commitments.",
   },
 ];
 

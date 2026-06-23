@@ -11,14 +11,14 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export function ThesisSection() {
   return (
-    <Section eyebrow="The thesis" title="Fast eUTXO execution. L1 settlement.">
+    <Section eyebrow="The thesis" title="Fast UTXO execution. Cardano L1 settlement.">
       <Prose
         items={[
           {
-            text: "eUTXO finance should not have to choose between speed and security. Midgard gives eUTXO applications faster execution with final settlement through the L1 path.",
+            text: "UTXO finance should not have to choose between speed and security. Midgard gives UTXO applications faster execution with final settlement through the Cardano L1 path.",
           },
           {
-            text: "Security comes from mathematically verified smart contracts, fault-proof verification, and a smaller eUTXO attack surface.",
+            text: "Security comes from mathematically verified smart contracts, fault-proof verification, and a smaller UTXO attack surface.",
             variant: "emph",
           },
         ]}
@@ -36,7 +36,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
         <Prose
           items={[
             {
-              text: "Midgard is built by Midgard Labs for eUTXO applications that need faster execution and L1 settlement.",
+              text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution and Cardano L1 settlement.",
             },
             {
               text: "The protocol is open and the code can be inspected. Public claims should stay tied to live status, measured benchmarks, and approved protocol parameters.",

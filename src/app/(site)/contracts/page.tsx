@@ -270,8 +270,8 @@ export default function ContractsPage() {
             },
             {
               n: "03",
-              name: "L1 settlement",
-              desc: "Verified state settles through the base-layer contract path.",
+              name: "Cardano L1 settlement",
+              desc: "Verified state settles through the Cardano L1 contract path.",
             },
           ]}
         />

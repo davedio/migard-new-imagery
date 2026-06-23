@@ -7,7 +7,7 @@ const STACK = [
   { name: "Haskell", role: "Node", href: "https://www.haskell.org/" },
   { name: "TypeScript", role: "SDK & tooling", href: "https://www.typescriptlang.org/" },
   { name: "Lean4", role: "Formal methods", href: "https://lean-lang.org/" },
-  { name: "Ouroboros", role: "L1 consensus", href: "https://cardano.org/ouroboros/" },
+  { name: "Ouroboros", role: "Cardano L1 consensus", href: "https://cardano.org/ouroboros/" },
   { name: "Leios", role: "Throughput", href: "https://leios.cardano-scaling.org/" },
 ];
 

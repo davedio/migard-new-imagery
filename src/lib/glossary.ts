@@ -6,8 +6,8 @@
  */
 export const GLOSSARY = {
   eutxo: {
-    term: "eUTXO",
-    def: "Cardano's extended UTXO ledger model: transactions consume and produce discrete outputs, so validation is local and parallelizable.",
+    term: "UTXO",
+    def: "A ledger model where transactions consume and produce discrete outputs, helping keep validation local and parallelizable.",
   },
   "optimistic-rollup": {
     term: "optimistic rollup",

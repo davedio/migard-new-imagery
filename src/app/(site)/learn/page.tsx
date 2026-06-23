@@ -37,7 +37,7 @@ const lifecycle = [
   {
     n: "03",
     name: "Commit",
-    desc: "The operator commits compact state to the L1 settlement path.",
+    desc: "The operator commits compact state to the Cardano L1 settlement path.",
   },
   {
     n: "04",
@@ -52,7 +52,7 @@ const lifecycle = [
   {
     n: "06",
     name: "Settle",
-    desc: "After verification, state reaches final L1 settlement.",
+    desc: "After verification, state reaches final Cardano L1 settlement.",
   },
 ];
 
@@ -70,7 +70,7 @@ const coreModel = [
   {
     n: "03",
     title: "Settlement path",
-    body: "Final L1 settlement after verification.",
+    body: "Final Cardano L1 settlement after verification.",
   },
 ] as const;
 
@@ -106,7 +106,7 @@ export default function LearnPage() {
         compact
         tone="moss"
         title="Learn Midgard."
-        sub="A plain-language map of faster eUTXO execution, verification, and final L1 settlement."
+        sub="A plain-language map of faster UTXO execution, verification, and final Cardano L1 settlement."
         actions={[
           { label: "See how it works", href: "/how-it-works", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },
@@ -115,14 +115,14 @@ export default function LearnPage() {
 
       <Section
         title="One page for the core idea."
-        lead="Midgard lets eUTXO applications run faster while keeping the settlement path checkable."
+        lead="Midgard lets UTXO applications run faster while keeping the settlement path checkable."
       >
         <CoreModel />
         <CardGrid>
           <Card
             num="01"
             title="What Midgard is"
-            body="Midgard is the execution layer for eUTXO finance: an optimistic rollup that gives applications faster execution while preserving inspectable L1 settlement."
+            body="Midgard is the execution layer for UTXO finance: an optimistic rollup that gives applications faster execution while preserving inspectable Cardano L1 settlement."
           />
           <Card
             num="02"
@@ -159,7 +159,7 @@ export default function LearnPage() {
           <Card
             num="02"
             title="Builders"
-            body="Builders care about eUTXO-native application design, lower latency, and source they can inspect before integrating."
+            body="Builders care about UTXO-native application design, lower latency, and source they can inspect before integrating."
           />
           <Card
             num="03"
@@ -185,7 +185,7 @@ export default function LearnPage() {
         <CardGrid cols={2}>
           <Card
             title="Security"
-            body="Mathematically verified smart contracts, fault-proof verification, and final L1 settlement after verification reduce the attack surface without relying on operator reputation alone."
+            body="Mathematically verified smart contracts, fault-proof verification, and final Cardano L1 settlement after verification reduce the attack surface without relying on operator reputation alone."
             cta="Read security"
             href="/security"
           />
