@@ -139,9 +139,13 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
   await page.goto("/");
 
   const learn = page.getByRole("button", { name: /Learn/i });
+  const dropdown = page.locator(".site-nav__group", { has: learn }).locator(".site-nav__dropdown");
+  await expect(dropdown).toHaveAttribute("aria-hidden", "true");
+  await expect(dropdown.getByRole("link", { name: /Learn overview/i })).toHaveCount(0);
+
   await learn.click();
 
-  const dropdown = page.locator(".site-nav__group", { has: learn }).locator(".site-nav__dropdown");
+  await expect(dropdown).toHaveAttribute("aria-hidden", "false");
   await expect(dropdown.getByRole("link", { name: /Learn overview/i })).toBeVisible();
   await expect(dropdown.getByRole("link", { name: /How it works/i })).toBeVisible();
   await expect(dropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();

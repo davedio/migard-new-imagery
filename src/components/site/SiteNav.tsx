@@ -280,32 +280,41 @@ export function SiteNav() {
           <Link href="/" {...linkClass("/")}>
             Home
           </Link>
-          {NAV_GROUPS.map((group) => (
-            <div
-              key={group.label}
-              className="site-nav__group"
-              data-open={openGroup === group.label}
-              onMouseEnter={() => setHoverGroup(group.label)}
-              onMouseLeave={() => setHoverGroup(null)}
-            >
-              <button
-                type="button"
-                className="site-nav__link site-nav__heading"
-                data-active={isGroupActive(group)}
-                aria-expanded={openGroup === group.label}
-                aria-haspopup="true"
-                onClick={() => openPinnedGroup(group.label)}
+          {NAV_GROUPS.map((group) => {
+            const groupOpen = openGroup === group.label;
+            return (
+              <div
+                key={group.label}
+                className="site-nav__group"
+                data-open={groupOpen}
+                onMouseEnter={() => setHoverGroup(group.label)}
+                onMouseLeave={() => setHoverGroup(null)}
               >
-                {group.label}
-                <span className="site-nav__chevron" aria-hidden>
-                  ↓
-                </span>
-              </button>
-              <div className="site-nav__dropdown" role="menu" aria-label={`${group.label} links`}>
-                {group.items.map((item) => renderDropdownLink(item))}
+                <button
+                  type="button"
+                  className="site-nav__link site-nav__heading"
+                  data-active={isGroupActive(group)}
+                  aria-expanded={groupOpen}
+                  aria-haspopup="true"
+                  onClick={() => openPinnedGroup(group.label)}
+                >
+                  {group.label}
+                  <span className="site-nav__chevron" aria-hidden>
+                    ↓
+                  </span>
+                </button>
+                <div
+                  className="site-nav__dropdown"
+                  role="menu"
+                  aria-label={`${group.label} links`}
+                  aria-hidden={!groupOpen}
+                  inert={!groupOpen}
+                >
+                  {group.items.map((item) => renderDropdownLink(item))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="site-nav__right">
