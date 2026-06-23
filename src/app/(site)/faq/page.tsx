@@ -6,6 +6,7 @@ import {
   CardGrid,
   CtaBand,
   Faq,
+  faqGroupId,
   PageHero,
   Section,
 } from "@/components/site/ui";
@@ -274,6 +275,29 @@ const faqGroups = [
   },
 ];
 
+const basicsRail = [
+  {
+    label: "Product status",
+    href: `#${faqGroupId("Product status")}`,
+    detail: "What Midgard is, why it matters, and current public status.",
+  },
+  {
+    label: "Security",
+    href: `#${faqGroupId("Security")}`,
+    detail: "Claims, attack surface, Watchers, and eUTXO fit.",
+  },
+  {
+    label: "Users and builders",
+    href: `#${faqGroupId("Users and builders")}`,
+    detail: "Who it is for, where builders start, and fee positioning.",
+  },
+  {
+    label: "Protocol Roles",
+    href: `#${faqGroupId("Protocol Roles and status")}`,
+    detail: "Operators, Watchers, current checks, and reporting route.",
+  },
+] as const;
+
 function ComparisonCell({
   label,
   cell,
@@ -361,7 +385,18 @@ export default function FaqPage() {
         title="Start with the basics."
         lead="Get the short answers first. Then use the comparison section to inspect how Midgard differs from other L2 patterns."
       >
-        <Faq groups={faqGroups} />
+        <div className="faq-basics-shell">
+          <Faq groups={faqGroups} />
+          <aside className="faq-topic-rail" aria-label="FAQ topic shortcuts">
+            <span>Jump to topic</span>
+            {basicsRail.map((item) => (
+              <a href={item.href} key={item.label}>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </a>
+            ))}
+          </aside>
+        </div>
       </Section>
 
       <Section

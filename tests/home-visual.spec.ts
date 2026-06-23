@@ -76,31 +76,17 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.getByRole("link", { name: /^Choose your path$/i }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /^Choose your path$/i }).first()).toHaveAttribute("href", "#paths");
   const heroRoutes = page.locator(".minimal-hero-routes");
-  const routeStrip = page.locator(".minimal-route-strip");
-  if (testInfo.project.name === "mobile-chromium") {
-    await expect(heroRoutes).toBeVisible();
-    await expect(routeStrip).toBeHidden();
-    await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(4);
-    await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
-    await expect(heroRoutes.getByRole("link", { name: /Verify Security model/i })).toHaveAttribute("href", "/security");
-    await expect(heroRoutes.getByRole("link", { name: /Report Security policy/i })).toHaveAttribute("href", "/security#disclosure");
-  } else {
-    await expect(heroRoutes).toBeHidden();
-    await expect(routeStrip).toBeVisible();
-  }
+  await expect(page.locator(".minimal-route-strip")).toHaveCount(0);
+  await expect(page.locator(".minimal-route-card")).toHaveCount(0);
+  await expect(heroRoutes).toBeVisible();
+  await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(4);
+  await expect(heroRoutes.getByRole("link", { name: /Use User path/i })).toHaveAttribute("href", "/learn#roles");
+  await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
+  await expect(heroRoutes.getByRole("link", { name: /Verify Security model/i })).toHaveAttribute("href", "/security");
+  await expect(heroRoutes.getByRole("link", { name: /Report Security policy/i })).toHaveAttribute("href", "/security#disclosure");
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
-  const routeCards = page.locator(".minimal-route-card");
-  await expect(routeCards).toHaveCount(4);
-  await expect(routeCards.nth(0)).toContainText("Use");
-  await expect(routeCards.nth(0)).toHaveAttribute("href", "/learn#roles");
-  await expect(routeCards.nth(1)).toContainText("Build");
-  await expect(routeCards.nth(1)).toHaveAttribute("href", "/developers");
-  await expect(routeCards.nth(2)).toContainText("Verify");
-  await expect(routeCards.nth(2)).toHaveAttribute("href", "/security");
-  await expect(routeCards.nth(3)).toContainText("Report");
-  await expect(routeCards.nth(3)).toHaveAttribute("href", "/security#disclosure");
   await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
@@ -207,7 +193,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
-  const routeCards = page.locator(".minimal-route-card");
+  const routeCards = page.locator(".minimal-hero-route");
   await expect(routeCards).toHaveCount(4);
   await expect(routeCards.nth(0)).toContainText("Use");
   await expect(routeCards.nth(0)).toHaveAttribute("href", "/learn#roles");
@@ -387,6 +373,9 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: /Questions, answered plainly/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Start with basics/i })).toHaveAttribute("href", "#basics");
   await expect(page.getByRole("heading", { name: /Start with the basics/i })).toBeVisible();
+  await expect(page.getByLabel("FAQ topic shortcuts").getByText(/Jump to topic/i)).toBeVisible();
+  await expect(page.getByLabel("FAQ topic shortcuts").getByRole("link", { name: /Security/i })).toHaveAttribute("href", "#faq-security");
+  await expect(page.getByLabel("FAQ topic shortcuts").getByRole("link", { name: /Protocol Roles/i })).toHaveAttribute("href", "#faq-protocol-roles-and-status");
   await expect(page.getByRole("heading", { name: /Compare the trust model/i })).toBeVisible();
   const faqOrder = await page.locator("main").evaluate((main) => ({
     basics: main.querySelector("#basics")?.getBoundingClientRect().top ?? 0,

@@ -52,29 +52,6 @@ const INSPECTION_PATHS = [
   },
 ] as const;
 
-const QUICK_ROUTES = [
-  {
-    title: "Use",
-    body: "Start with the user flow and what final settlement means.",
-    href: "/learn#roles",
-  },
-  {
-    title: "Build",
-    body: "Open developer paths, source, contracts, and review materials.",
-    href: "/developers",
-  },
-  {
-    title: "Verify",
-    body: "Read the security model before trusting the speed claim.",
-    href: "/security",
-  },
-  {
-    title: "Report",
-    body: "Use the official policy for sensitive security issues.",
-    href: OFFICIAL_LINKS.securityPolicy,
-  },
-] as const;
-
 const USER_FLOW = ["Deposit", "Transact", "Withdraw"] as const;
 
 const VALUE_STEPS = [
@@ -149,15 +126,6 @@ export default function MinimalHome() {
           </nav>
         </div>
         <ConceptTree />
-      </section>
-
-      <section className="minimal-route-strip" aria-label="Choose a Midgard route">
-        {QUICK_ROUTES.map((route) => (
-          <SmartLink className="minimal-route-card" href={route.href} key={route.title}>
-            <strong>{route.title}</strong>
-            <p>{route.body}</p>
-          </SmartLink>
-        ))}
       </section>
 
       <section className="minimal-thesis" aria-label="Midgard at a glance">

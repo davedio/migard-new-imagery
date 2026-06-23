@@ -2253,7 +2253,6 @@ button.panel:hover {
   color: var(--text-dim);
   max-width: 680px;
 }
-
 /* ---- FAQ comparison matrix ---- */
 .faq-decision-grid {
   margin-top: 34px;
