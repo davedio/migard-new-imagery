@@ -30,7 +30,6 @@ export default function SecurityPage() {
       <PageHero
         compact
         tone="ink"
-        label="Security"
         title="Security you can inspect."
         sub="Midgard combines mathematically verified smart contracts, fault-proof verification, and eUTXO-local state so faster execution does not require a softer trust model."
         actions={[
@@ -46,7 +45,6 @@ export default function SecurityPage() {
 
       <Section
         id="mechanism"
-        eyebrow="Trust path"
         title="Fast confirmations first. Full L1 security after verification."
         lead="Operators can give users fast soft confirmations, but finality depends on the base-layer settlement path and the challenge rules around committed state."
       >
@@ -63,7 +61,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section eyebrow="Why it matters" title="The attack surface is narrower by design.">
+      <Section title="The attack surface is narrower by design.">
         <CardGrid>
           <Card
             num="01"
@@ -103,7 +101,6 @@ export default function SecurityPage() {
 
       <Section
         id="guarantees"
-        eyebrow="Guarantees"
         title="What serious users should inspect."
         tight
       >
@@ -133,7 +130,7 @@ export default function SecurityPage() {
         />
       </Section>
 
-      <Section id="disclosure" eyebrow="Disclosure" title="Security reporting should be boring and official.">
+      <Section id="disclosure" title="Security reporting should be boring and official.">
         <Callout
           title="Use official routes and preserve evidence."
           body="Do not rely on unsolicited support messages. If you see a suspicious link, account, or security issue, preserve the URL, account name, screenshot, timestamp, and where you saw it."
@@ -156,7 +153,6 @@ export default function SecurityPage() {
       </Section>
 
       <CtaBand
-        eyebrow="Next"
         title="Trust should be checkable."
         lead="Read the mechanism, inspect the source, and compare the security model before treating any performance claim as meaningful."
         actions={[

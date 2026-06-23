@@ -412,6 +412,16 @@ h2 em,
   margin-top: 24px;
   max-width: 1000px;
 }
+
+.page-hero--compact {
+  padding-top: clamp(92px, 10vh, 124px);
+  padding-bottom: clamp(24px, 3.6vh, 42px);
+}
+
+.page-hero--compact h1 {
+  margin-top: 0;
+}
+
 .page-hero .sub {
   font-size: clamp(16px, 1.5vw, 21px);
   line-height: 1.45;
@@ -423,7 +433,7 @@ h2 em,
    Sections — more air, serif heads.
    ------------------------------------------------------------------------- */
 .section {
-  padding: clamp(56px, 8vh, 110px) var(--gut);
+  padding: clamp(46px, 6vh, 82px) var(--gut);
 }
 .section__head .eyebrow {
   margin-bottom: 4px;
@@ -1799,4 +1809,381 @@ h2 em,
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 42%),
     rgba(241, 246, 238, 0.66);
+}
+
+/* ---------------------------------------------------------------------------
+   Minimalist redesign branch
+   Product-first layout inspired by clean L2 homepages, with the Midgard tree
+   reduced to a readable protocol diagram instead of a full cinematic stage.
+   ------------------------------------------------------------------------- */
+.minimal-site {
+  position: relative;
+  z-index: 2;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 82% 12%, rgba(78, 243, 131, 0.1), transparent 34rem),
+    radial-gradient(circle at 18% 88%, rgba(207, 154, 46, 0.08), transparent 30rem),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.7), rgba(4, 7, 5, 0.96) 44rem, #040705);
+}
+
+.minimal-site h1,
+.minimal-site h2,
+.minimal-site h3,
+.minimal-site p {
+  letter-spacing: 0;
+}
+
+.minimal-hero {
+  min-height: 78svh;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.08fr);
+  align-items: center;
+  gap: 56px;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 112px var(--gut) 48px;
+}
+
+.minimal-hero__copy {
+  max-width: 660px;
+}
+
+.minimal-kicker {
+  margin: 0 0 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green-bright);
+  text-transform: uppercase;
+}
+
+.minimal-hero h1,
+.minimal-page-hero h1 {
+  margin: 0;
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+.minimal-hero__copy > p:not(.minimal-kicker),
+.minimal-page-hero p,
+.minimal-section__head p {
+  margin: 24px 0 0;
+  max-width: 660px;
+  font-size: 20px;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.minimal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.minimal-btn {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-hi);
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.minimal-btn--primary {
+  color: #04130a;
+  background: var(--green-bright);
+  border-color: var(--green-bright);
+}
+
+.minimal-btn--ghost:hover,
+.minimal-btn--primary:hover {
+  color: var(--bone);
+  background: rgba(244, 241, 230, 0.08);
+  border-color: rgba(244, 241, 230, 0.38);
+}
+
+.minimal-section {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 86px var(--gut);
+}
+
+.minimal-section--paths {
+  padding-top: 52px;
+}
+
+.minimal-section--split {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.76fr) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.minimal-section__head {
+  max-width: 720px;
+}
+
+.minimal-section h2 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.12;
+  font-weight: 500;
+}
+
+.minimal-card-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.minimal-card-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.minimal-card-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.minimal-card,
+.minimal-metric,
+.minimal-flow-row {
+  border: 1px solid var(--panel-edge-strong);
+  border-radius: 8px;
+  background: rgba(7, 12, 8, 0.76);
+}
+
+.minimal-card {
+  min-height: 208px;
+  padding: 24px;
+}
+
+.minimal-card--link {
+  display: flex;
+  flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s var(--ease), background 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.minimal-card--link:hover {
+  transform: translateY(-2px);
+  border-color: rgba(78, 243, 131, 0.55);
+  background: rgba(10, 18, 12, 0.9);
+}
+
+.minimal-card h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.minimal-card p {
+  margin: 16px 0 0;
+  color: var(--text-dim);
+  line-height: 1.55;
+}
+
+.minimal-card span {
+  margin-top: auto;
+  padding-top: 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green-bright);
+}
+
+.minimal-flow-list {
+  display: grid;
+  gap: 10px;
+}
+
+.minimal-flow-row {
+  display: grid;
+  grid-template-columns: 52px 132px minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  padding: 16px 18px;
+}
+
+.minimal-flow-row span,
+.minimal-metric span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold-bright);
+}
+
+.minimal-flow-row strong,
+.minimal-metric strong {
+  color: var(--text-hi);
+  font-weight: 500;
+}
+
+.minimal-flow-row p,
+.minimal-metric p {
+  margin: 0;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.minimal-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.minimal-metric {
+  min-height: 164px;
+  padding: 22px;
+}
+
+.minimal-metric strong {
+  display: block;
+  margin-top: 18px;
+  font-size: 24px;
+}
+
+.minimal-metric p {
+  margin-top: 12px;
+}
+
+.minimal-tree {
+  position: relative;
+  min-height: 430px;
+  border: 1px solid rgba(244, 241, 230, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(78, 243, 131, 0.11), transparent 18rem),
+    linear-gradient(180deg, rgba(8, 16, 10, 0.88), rgba(4, 7, 5, 0.92));
+}
+
+.minimal-tree svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 430px;
+}
+
+.minimal-tree__limb,
+.minimal-tree__root {
+  fill: none;
+  stroke: url("#minimal-tree-stroke");
+  stroke-width: 4;
+  stroke-linecap: round;
+  opacity: 0.92;
+}
+
+.minimal-tree__limb.faint,
+.minimal-tree__root {
+  stroke-width: 2;
+  opacity: 0.28;
+}
+
+.minimal-tree__packet {
+  fill: var(--green-bright);
+}
+
+.minimal-tree__packet.packet-b {
+  fill: var(--gold-bright);
+}
+
+.minimal-tree__node circle {
+  fill: rgba(4, 7, 5, 0.92);
+  stroke: rgba(78, 243, 131, 0.64);
+  stroke-width: 1.5;
+}
+
+.minimal-tree__node text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-anchor: middle;
+  fill: var(--bone);
+}
+
+.minimal-page {
+  min-height: 100svh;
+}
+
+.minimal-page-hero {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 150px var(--gut) 52px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: end;
+}
+
+.contracts-page .page-hero {
+  background:
+    linear-gradient(90deg, rgba(4, 7, 5, 0.96), rgba(4, 7, 5, 0.72)),
+    url("/v2/stone-rune.avif") center / cover;
+}
+
+@media (max-width: 980px) {
+  .minimal-hero,
+  .minimal-page-hero,
+  .minimal-section--split {
+    grid-template-columns: 1fr;
+  }
+
+  .minimal-hero {
+    min-height: auto;
+    padding-top: 118px;
+  }
+
+  .minimal-hero h1,
+  .minimal-page-hero h1 {
+    font-size: 52px;
+  }
+
+  .minimal-card-grid--3,
+  .minimal-card-grid--4,
+  .minimal-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .minimal-hero h1,
+  .minimal-page-hero h1 {
+    font-size: 42px;
+  }
+
+  .minimal-section h2 {
+    font-size: 32px;
+  }
+
+  .minimal-hero,
+  .minimal-section,
+  .minimal-page-hero {
+    padding-inline: 24px;
+  }
+
+  .minimal-card-grid--3,
+  .minimal-card-grid--4,
+  .minimal-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .minimal-flow-row {
+    grid-template-columns: 44px 1fr;
+  }
+
+  .minimal-flow-row p {
+    grid-column: 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .minimal-tree__packet {
+    display: none;
+  }
 }

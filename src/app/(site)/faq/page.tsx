@@ -46,13 +46,61 @@ const comparisonRows = [
   },
 ];
 
+const comparisonChartRows = [
+  {
+    k: "Security anchor",
+    midgard: { level: "strong", label: "L1 settlement after verification" },
+    evm: { level: "strong", label: "L1 settlement, bridge rules vary" },
+    sidechain: { level: "watch", label: "Separate security set" },
+  },
+  {
+    k: "UTXO fit",
+    midgard: { level: "strong", label: "Built for UTXO finance" },
+    evm: { level: "watch", label: "Mostly account-model execution" },
+    sidechain: { level: "varies", label: "Depends on the chain" },
+  },
+  {
+    k: "Verification path",
+    midgard: { level: "strong", label: "Fault proofs plus Watcher replay" },
+    evm: { level: "varies", label: "Optimistic, validity, or hybrid" },
+    sidechain: { level: "watch", label: "Often validator-trust based" },
+  },
+  {
+    k: "Contract assurance",
+    midgard: { level: "strong", label: "Formal-methods first" },
+    evm: { level: "varies", label: "Varies by protocol and app" },
+    sidechain: { level: "varies", label: "Varies by implementation" },
+  },
+  {
+    k: "Bridge exposure",
+    midgard: { level: "medium", label: "Narrow settlement path to inspect" },
+    evm: { level: "varies", label: "Bridge and upgrade rules matter" },
+    sidechain: { level: "watch", label: "Bridge risk is often central" },
+  },
+] as const;
+
+function ComparisonCell({
+  label,
+  cell,
+}: {
+  label: string;
+  cell: { level: "strong" | "medium" | "varies" | "watch"; label: string };
+}) {
+  return (
+    <div className="comparison-chart__cell">
+      <span className="comparison-chart__mobile-label">{label}</span>
+      <span className="comparison-chart__bar" data-level={cell.level} />
+      <p>{cell.label}</p>
+    </div>
+  );
+}
+
 export default function FaqPage() {
   return (
     <main className="page-main">
       <PageHero
         compact
         tone="moss"
-        label="FAQ"
         title="Questions, answered plainly."
         sub="A shorter path through what Midgard is, why it matters, how security works, and where to inspect the claims."
         actions={[
@@ -150,10 +198,25 @@ export default function FaqPage() {
 
       <Section
         id="comparison"
-        eyebrow="L2 comparison"
         title="Compare the trust model, not just the speed claim."
         lead="A faster L2 is only useful if users can understand what security changed. This is the comparison lens Midgard should keep making visible."
       >
+        <div className="comparison-chart" aria-label="Qualitative comparison chart for Midgard and common L2 patterns">
+          <div className="comparison-chart__head" aria-hidden>
+            <span>Question</span>
+            <span>Midgard</span>
+            <span>EVM rollups</span>
+            <span>Sidechains / appchains</span>
+          </div>
+          {comparisonChartRows.map((row) => (
+            <div className="comparison-chart__row" key={row.k}>
+              <div className="comparison-chart__k">{row.k}</div>
+              <ComparisonCell label="Midgard" cell={row.midgard} />
+              <ComparisonCell label="EVM rollups" cell={row.evm} />
+              <ComparisonCell label="Sidechains / appchains" cell={row.sidechain} />
+            </div>
+          ))}
+        </div>
         <div className="comparison-matrix">
           <div className="comparison-matrix__head" aria-hidden>
             <span>Dimension</span>
@@ -180,7 +243,7 @@ export default function FaqPage() {
         />
       </Section>
 
-      <Section eyebrow="Good next steps" title="What to inspect next.">
+      <Section title="What to inspect next.">
         <CardGrid cols={2}>
           <Card
             title="Read how it works"
@@ -210,7 +273,7 @@ export default function FaqPage() {
         </CardGrid>
       </Section>
 
-      <Section eyebrow="Safety" title="Use official paths only." tight>
+      <Section title="Use official paths only." tight>
         <Callout
           title="Midgard will never ask for wallet secrets."
           body="Do not share your seed phrase, private key, recovery phrase, password, or unnecessary personal information. Do not trust unsolicited support messages."
@@ -232,7 +295,6 @@ export default function FaqPage() {
       </Section>
 
       <CtaBand
-        eyebrow="Still curious"
         title="Start with the mechanism."
         lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes UTXO execution faster."
         actions={[

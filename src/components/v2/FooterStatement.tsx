@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 /* The footer statement carries you to the next review page in the public
    sitemap, so every core page is easy to inspect in sequence. */
-const TOUR = ["/", "/learn", "/how-it-works", "/security", "/faq"] as const;
+const TOUR = ["/", "/learn", "/developers", "/contracts", "/security", "/faq"] as const;
 
 export function FooterStatement() {
   const pathname = usePathname();

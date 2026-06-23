@@ -15,13 +15,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
       name: /The secure scaling layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect
-    .poll(async () =>
-      page.locator("#top .v2-band__hero > div").first().evaluate((node) => {
-        return Number.parseFloat(window.getComputedStyle(node).opacity);
-      }),
-    )
-    .toBeGreaterThan(0.99);
+  await expect(page.getByText(/mathematically verified security/i)).toBeVisible();
   const bodyText = await page.locator("body").innerText();
   for (const hiddenLabel of [
     "Surface",
@@ -45,19 +39,20 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ]) {
     expect(bodyText).not.toContain(hiddenLabel);
   }
-  await expect(
-    page.locator("#top").getByRole("link", { name: /Choose your path/i }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: /Choose your path/i }).first()).toBeVisible();
   await page.waitForTimeout(1_500);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
-  await page.locator("#top").getByRole("link", { name: /Choose your path/i }).click();
-  await page.waitForTimeout(1_000);
-  await expect(page.getByRole("heading", { name: "Choose your path." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(page.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
+  const pathSection = page.locator(".minimal-section--paths");
+  await expect(pathSection.getByRole("heading", { name: "Choose the right path." })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
+  await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
+  await expect(pathSection.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
+
+  await expect(page.locator(".minimal-metric")).toHaveCount(6);
+  await expect(page.getByText("Soft confirmations")).toBeVisible();
+  await expect(page.getByText("Fault-proof coverage")).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
 });
@@ -72,14 +67,35 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
 
   const dropdown = page.locator(".site-nav__group", { has: learn }).locator(".site-nav__dropdown");
   await expect(dropdown.getByRole("link", { name: /Learn overview/i })).toBeVisible();
-  await expect(dropdown.getByRole("link", { name: /Security/i })).toBeVisible();
+  await expect(dropdown.getByRole("link", { name: /How it works/i })).toBeVisible();
   await expect(dropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
   await expect(learn).toHaveAttribute("aria-expanded", "true");
 
   await page.mouse.move(80, 820);
-  await expect(dropdown.getByRole("link", { name: /Security/i })).toBeVisible();
+  await expect(dropdown.getByRole("link", { name: /How it works/i })).toBeVisible();
 
   await page.screenshot({ path: testInfo.outputPath("nav-learn-open.png") });
+});
+
+test("developers and security menus expose key routes", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop dropdown behavior only");
+
+  await page.goto("/");
+
+  const developers = page.getByRole("button", { name: /Developers/i });
+  await developers.click();
+  const devDropdown = page.locator(".site-nav__group", { has: developers }).locator(".site-nav__dropdown");
+  await expect(devDropdown.getByRole("link", { name: /Developer overview/i })).toBeVisible();
+  await expect(devDropdown.getByRole("link", { name: /Contracts/i })).toBeVisible();
+  await expect(devDropdown.getByRole("link", { name: /GitHub/i })).toBeVisible();
+
+  const security = page.getByRole("button", { name: /^Security$/i });
+  await security.click();
+  const securityDropdown = page.locator(".site-nav__group", { has: security }).locator(".site-nav__dropdown");
+  await expect(securityDropdown.getByRole("link", { name: /Security overview/i })).toBeVisible();
+  await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toBeVisible();
+
+  await page.screenshot({ path: testInfo.outputPath("nav-developers-security-open.png") });
 });
 
 test("learn overview page renders the agreed language map", async ({ page }, testInfo) => {
@@ -100,6 +116,21 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   expect(bodyText).not.toContain("Bitcoin DeFi");
 
   await page.screenshot({ path: testInfo.outputPath("learn.png") });
+});
+
+test("developer and contracts pages render", async ({ page }, testInfo) => {
+  await page.goto("/developers");
+  await expect(page.getByRole("heading", { name: /Build on Midgard/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Application builders/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Inspect contracts/i }).first()).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("developers.png") });
+
+  await page.goto("/contracts");
+  await expect(page.getByRole("heading", { name: /Inspect the contract path/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /The protocol surface/i })).toBeVisible();
+  await expect(page.getByText(/Hub Oracle/i).first()).toBeVisible();
+  await expect(page.getByText(/Static preprod snapshot/i)).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("contracts.png") });
 });
 
 test("how it works lifecycle language renders cleanly", async ({ page }, testInfo) => {
@@ -133,6 +164,11 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await page.goto("/faq");
   await expect(page.getByRole("heading", { name: /Questions, answered plainly/i })).toBeVisible();
   await expect(page.getByText(/Compare the trust model/i)).toBeVisible();
+  const comparisonChart = page.locator(".comparison-chart");
+  await expect(comparisonChart).toBeVisible();
+  await expect(comparisonChart).toContainText("EVM rollups");
+  await expect(comparisonChart).toContainText("Sidechains / appchains");
+  await expect(page.getByText(/Fault proofs plus Watcher replay/i)).toBeVisible();
   await expect(page.getByText(/Often depends on a bridge/i)).toBeVisible();
   await page.waitForTimeout(700);
   await page.screenshot({ path: testInfo.outputPath("faq.png") });

@@ -115,7 +115,6 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
       <div className="hiw-act__viewport">
         <div className="hiw-act__scrim" aria-hidden />
         <div className="hiw-act__intro">
-          <div className="eyebrow">How it works</div>
           <h1 className="hiw-act__title">
             Flow of a{" "}
             <span style={{ color: "var(--green-bright)" }}>transaction</span>

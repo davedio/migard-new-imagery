@@ -19,12 +19,18 @@ const SecurityPageBackdrop = dynamic(() => import("./SecurityPageBackdrop"), {
  * component portals its own fixed 3D stage), so the ambient canvas would be
  * a redundant second R3F canvas there. AmbientDepth is the single persistent
  * ambient canvas (drifting motes + fbm mist + scroll parallax) on the rest;
- * /security keeps its dedicated stone backdrop.
+ * /security keeps its dedicated stone backdrop. /contracts intentionally keeps
+ * the shared canvas off so the rune/address reference surface stays readable.
  * Drop <InteriorFluidBackground /> into the (site) layout.
  */
 export default function InteriorFluidBackground() {
   const pathname = usePathname();
-  if (pathname === "/" || pathname === "/home" || pathname === "/how-it-works") {
+  if (
+    pathname === "/" ||
+    pathname === "/home" ||
+    pathname === "/how-it-works" ||
+    pathname === "/contracts"
+  ) {
     return null;
   }
   if (pathname === "/security") {

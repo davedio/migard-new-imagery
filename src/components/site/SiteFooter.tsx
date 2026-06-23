@@ -19,13 +19,14 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "Home", href: "/" },
       { label: "Learn", href: "/learn" },
       { label: "How It Works", href: "/how-it-works" },
-      { label: "Security", href: "/security" },
       { label: "FAQ", href: "/faq" },
     ],
   },
   {
-    title: "Build",
+    title: "Developers",
     links: [
+      { label: "Developer Overview", href: "/developers" },
+      { label: "Contracts", href: "/contracts" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       {
         label: "Whitepaper",
@@ -35,9 +36,17 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     ],
   },
   {
-    title: "Join",
+    title: "Security",
     links: [
-      { label: "Choose your path", href: "/#trunk" },
+      { label: "Security", href: "/security" },
+      { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy, external: true },
+      { label: "FAQ", href: "/faq" },
+    ],
+  },
+  {
+    title: "Community",
+    links: [
+      { label: "Choose your path", href: "/#minimal-paths-title" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
     ],
   },

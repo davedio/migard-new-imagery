@@ -4,7 +4,7 @@ const SITE_URL = "https://midgard-gateway.vercel.app";
 
 /* Canonical, indexable routes only — /home and /faqs redirect, and /access is
    intentionally excluded (robots disallows it). */
-const ROUTES = ["", "/learn", "/how-it-works", "/security", "/faq"];
+const ROUTES = ["", "/learn", "/developers", "/contracts", "/how-it-works", "/security", "/faq"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.map((route) => ({

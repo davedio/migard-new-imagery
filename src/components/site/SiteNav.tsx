@@ -30,13 +30,14 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { label: "Learn overview", href: "/learn" },
       { label: "How it works", href: "/how-it-works" },
-      { label: "Security", href: "/security" },
       { label: "FAQ", href: "/faq" },
     ],
   },
   {
-    label: "Build",
+    label: "Developers",
     items: [
+      { label: "Developer overview", href: "/developers" },
+      { label: "Contracts", href: "/contracts" },
       {
         label: "GitHub",
         href: OFFICIAL_LINKS.github,
@@ -51,9 +52,21 @@ const NAV_GROUPS: readonly NavGroup[] = [
     ],
   },
   {
-    label: "Join",
+    label: "Security",
     items: [
-      { label: "Choose your path", href: "/#trunk" },
+      { label: "Security overview", href: "/security" },
+      {
+        label: "Security policy",
+        href: OFFICIAL_LINKS.securityPolicy,
+        external: true,
+      },
+      { label: "FAQ", href: "/faq" },
+    ],
+  },
+  {
+    label: "Community",
+    items: [
+      { label: "Choose your path", href: "/#minimal-paths-title" },
       {
         label: "Discord",
         href: OFFICIAL_LINKS.discord,
