@@ -27,7 +27,7 @@ const launchpad = [
   },
   {
     label: "Protocol Roles",
-    detail: "Share operator, Watcher, infrastructure, or testnet participation interest.",
+    detail: "Register operator, Watcher, infrastructure, or testnet interest.",
     href: OFFICIAL_LINKS.intakeForm,
     cta: "Open intake form",
   },
@@ -91,9 +91,9 @@ export default function DeveloperLanding() {
       >
         <div className={styles.launchInner}>
           <div className={styles.launchCopy}>
-            <h2 id="developer-launchpad-title">Pick the right technical surface.</h2>
+            <h2 id="developer-launchpad-title">Start from the right place.</h2>
             <p>
-              Builders, reviewers, and Protocol Roles need different first links. Choose the surface that matches your job before you go deeper.
+              Builders, reviewers, operators, and Watchers need different first links. Pick the first step that matches the job.
             </p>
             <div className={styles.supportLinks} aria-label="Supporting documents">
               <span>Supporting docs</span>

@@ -155,7 +155,7 @@ function StaticHome({ plate }: { plate: string }) {
           lead={
             <>
               Track the indicators that matter: confirmation speed, settlement
-              security, UTXO-native execution, verified contracts,
+              security, eUTXO-native execution, verified contracts,
               fault-proof coverage, and current status.
             </>
           }

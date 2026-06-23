@@ -3,37 +3,37 @@ import { SITE_COPY } from "@/lib/siteCopy";
 const FLOW_GROUPS = [
   {
     n: "01",
-    label: "Fast confirmation",
-    detail: "Submit -> sequence -> commit",
+    label: "Fast execution",
+    detail: "Transaction -> usable signal",
   },
   {
     n: "02",
-    label: "Verification",
-    detail: "Data stays checkable -> Watcher replay",
+    label: "Public verification",
+    detail: "Replay -> challenge if needed",
   },
   {
     n: "03",
     label: "L1 settlement",
-    detail: "Verified state settles",
+    detail: "Verified state becomes final",
   },
 ] as const;
 
 const CALLOUTS = [
   {
-    title: "Fast action",
-    body: "submit -> commit",
+    title: "Fast execution",
+    body: "tx -> signal",
     x: 78,
     y: 76,
   },
   {
-    title: "Public checks",
+    title: "Public verification",
     body: "replay -> challenge",
     x: 356,
     y: 184,
   },
   {
-    title: "Final settlement",
-    body: "verified state",
+    title: "L1 settlement",
+    body: "verified -> final",
     x: 574,
     y: 366,
   },

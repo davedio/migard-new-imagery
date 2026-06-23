@@ -54,25 +54,21 @@ const INSPECTION_PATHS = [
 
 const QUICK_ROUTES = [
   {
-    label: "Use",
     title: "Users",
     body: "Deposit, transact, and withdraw through the settlement path.",
     href: "/learn#roles",
   },
   {
-    label: "Build",
     title: "Builders",
     body: "Start with GitHub, contracts, and integration entry points.",
     href: "/developers",
   },
   {
-    label: "Run / verify",
     title: "Protocol Roles",
     body: "Operators sequence blocks. Watchers replay and challenge state.",
     href: "/developers#developer-paths",
   },
   {
-    label: "Contact",
     title: "Official channels",
     body: "Report, register interest, or ask community questions safely.",
     href: "#channels",
@@ -127,7 +123,6 @@ export default function MinimalHome() {
       <section className="minimal-route-strip" aria-label="Choose a Midgard route">
         {QUICK_ROUTES.map((route) => (
           <SmartLink className="minimal-route-card" href={route.href} key={route.title}>
-            <span>{route.label}</span>
             <strong>{route.title}</strong>
             <p>{route.body}</p>
           </SmartLink>
@@ -195,7 +190,7 @@ export default function MinimalHome() {
       <section className="minimal-section" aria-labelledby="minimal-proof-title">
         <div className="minimal-section__head">
           <h2 id="minimal-proof-title">Track the claims that matter.</h2>
-          <p>The numbers that matter are speed, settlement, UTXO-native execution, verification coverage, and current status.</p>
+          <p>The numbers that matter are speed, settlement, eUTXO-native execution, verification coverage, and current status.</p>
         </div>
         <div className="minimal-metrics">
           {SITE_COPY.proofPoints.map((item) => (

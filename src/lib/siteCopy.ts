@@ -4,8 +4,8 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for eUTXO finance",
     lead:
-      "Midgard gives eUTXO applications faster execution without asking users to trade off security: mathematically verified smart contracts, fault-proof checks, and final L1 settlement.",
-    primaryCta: { label: "Choose your path", href: "#paths" },
+      "Midgard lets eUTXO apps execute faster without making users trade away security: mathematically verified contracts, fault-proof checks, and final L1 settlement.",
+    primaryCta: { label: "Find your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
   paths: [
@@ -17,7 +17,7 @@ export const SITE_COPY = {
     },
     {
       title: "Builders",
-      body: "Build eUTXO applications that need faster execution without leaving the eUTXO model.",
+      body: "Build apps that need faster execution without leaving the eUTXO model.",
       cta: "Start building",
       href: "/developers",
     },
@@ -30,7 +30,7 @@ export const SITE_COPY = {
   ],
   lifecycle: [
     ["Submit", "A user sends a transaction to Midgard."],
-    ["Sequence", "An operator orders valid activity into an L2 block."],
+    ["Sequence", "An operator orders valid transactions into an L2 block."],
     ["Commit", "Compact state is posted to the L1 settlement path."],
     ["Make data checkable", "The data behind each commitment stays available for review."],
     ["Watch", "Watchers replay state and use the fault-proof path if needed."],
@@ -104,7 +104,7 @@ export const DEVELOPER_COPY = {
   hero: {
     title: "Build on Midgard.",
     lead:
-      "Start with source, contract addresses, the security model, or Protocol Role interest. Then map your application flow to the protocol path.",
+      "Start with source code, contracts, security, or Protocol Roles. Then map your app flow to the protocol path.",
   },
   entryPoints: [
     {

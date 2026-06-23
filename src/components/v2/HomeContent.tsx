@@ -372,7 +372,7 @@ export function ProtocolPath() {
           <span className="rule" />
           <span className="stratum">Transaction path</span>
         </div>
-        <h2 id="v2-protocol-title">Fast action first. Verification before settlement.</h2>
+        <h2 id="v2-protocol-title">Fast execution first. Verification before settlement.</h2>
         <p>
           Users get a faster experience while the protocol keeps the settlement path
           inspectable: ordered activity, committed state, Watcher replay, and final L1 settlement.

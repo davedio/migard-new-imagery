@@ -43,7 +43,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
       name: /The execution layer for eUTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified contracts/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".v2-stage canvas")).toHaveCount(0);
@@ -70,8 +70,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ]) {
     expect(bodyText).not.toContain(hiddenLabel);
   }
-  await expect(page.getByRole("link", { name: /Choose your path/i }).first()).toBeVisible();
-  await expect(page.getByRole("link", { name: /Choose your path/i }).first()).toHaveAttribute("href", "#paths");
+  await expect(page.getByRole("link", { name: /Find your path/i }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Find your path/i }).first()).toHaveAttribute("href", "#paths");
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
@@ -147,7 +147,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
     }),
   ).toBeVisible();
   await expect(
-    page.locator(".minimal-hero__copy").getByText(/trade off security/i),
+    page.locator(".minimal-hero__copy").getByText(/trade away security/i),
   ).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
@@ -239,7 +239,7 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 test("developer and contracts pages render", async ({ page }, testInfo) => {
   await page.goto("/developers");
   await expect(page.getByRole("heading", { name: /Build on Midgard/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Pick the right technical surface/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Start from the right place/i })).toBeVisible();
   await expect(page.getByText(/Supporting docs/i)).toBeVisible();
   await expect(page.getByLabel("Supporting documents").getByRole("link", { name: /Whitepaper/i })).toHaveAttribute("href", /midgard\.pdf/);
   await expect(page.locator("main").getByRole("heading", { name: /Protocol reviewers/i })).toBeVisible();
@@ -283,7 +283,7 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
   await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
   await expect(page.locator(".hiw-act__beats")).toContainText("Data availability check");
   await expect(page.locator(".hiw-act__lead").getByText(/deposit, transact, withdraw/i)).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Fast action first/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Fast execution first/i })).toBeVisible();
   await expect(page.locator(".hiw-explainer__card")).toHaveCount(6);
   await expect(page.locator(".hiw-explainer__card").first()).toContainText("faster usable signal");
   await expect(page.locator(".hiw-explainer__card").nth(4)).toContainText("Operators do not get the final word");

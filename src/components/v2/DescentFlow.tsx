@@ -318,7 +318,7 @@ export default function DescentFlow({
             lead={
               <>
                 Track the indicators that matter: confirmation speed,
-                settlement security, UTXO-native execution, verified contracts,
+                settlement security, eUTXO-native execution, verified contracts,
                 fault-proof coverage, and current status.
               </>
             }
