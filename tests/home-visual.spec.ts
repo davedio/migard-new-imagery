@@ -16,9 +16,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
     }),
   ).toBeVisible();
   await expect(page.getByText(/mathematically verified security/i)).toBeVisible();
-  const conceptTree = page.locator(".minimal-tree");
-  await expect(conceptTree).toContainText("Submit");
-  await expect(conceptTree).toContainText("Settle");
+  await expect(page.locator(".v2-stage")).toBeVisible();
+  await expect(page.locator(".v2-stage canvas")).toHaveCount(2);
   const bodyText = await page.locator("body").innerText();
   for (const hiddenLabel of [
     "Surface",
@@ -46,14 +45,14 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.waitForTimeout(1_500);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
-  const pathSection = page.locator(".minimal-section--paths");
-  await expect(pathSection.getByRole("heading", { name: "Choose the right path." })).toBeVisible();
+  const pathSection = page.locator("#trunk");
+  await expect(pathSection.getByRole("heading", { name: "Choose your path." })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
   await expect(pathSection.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
 
-  await expect(page.locator(".minimal-metric")).toHaveCount(6);
+  await expect(page.locator(".v2-tile")).toHaveCount(6);
   await expect(page.getByText("Soft confirmations")).toBeVisible();
   await expect(page.getByText("Fault-proof coverage")).toBeVisible();
 

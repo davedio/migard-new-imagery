@@ -5,7 +5,7 @@ export const SITE_COPY = {
     title: "The secure scaling layer for UTXO finance",
     lead:
       "Midgard gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
-    primaryCta: { label: "Choose your path", href: "#minimal-paths-title" },
+    primaryCta: { label: "Choose your path", href: "#trunk" },
     secondaryCta: { label: "See how it works", href: "/learn#transaction-path" },
   },
   paths: [

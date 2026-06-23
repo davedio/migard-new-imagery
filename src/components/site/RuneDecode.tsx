@@ -4,10 +4,9 @@
    RuneDecode — the Contracts page's opening incantation.
 
    On first render (and every reload) the page's display text appears as
-   Elder Futhark runes, then decodes into English in a staggered wave down
-   the page — each element flashes through shuffling runes while a reveal
-   cursor sweeps left to right. The effect runs ONCE per page open; nothing
-   that renders later (scroll reveals, live widgets) is touched.
+   Elder Futhark runes, then quickly decodes into English. The effect runs
+   ONCE per page open; body sections, live widgets, and copy fields stay
+   readable immediately.
 
    Mechanics, kept honest:
    · the server-rendered text stays English (SEO/no-JS/reduced-motion see
@@ -23,27 +22,21 @@ import { useMotionPref } from "@/lib/motion";
 
 /** display text that takes part in the incantation, in document order */
 const TARGETS = [
-  ".page-hero .eyebrow",
   ".page-hero h1",
   ".page-hero .sub",
   ".page-sticky-toc a",
-  ".section .eyebrow",
-  ".section h2",
-  ".section .lead",
 ].join(", ");
 
 /* Elder Futhark block */
 const RUNES = "ᚠᚢᚦᚨᚱᚲᚷᚹᚺᚾᛁᛃᛇᛈᛉᛊᛏᛒᛖᛗᛚᛜᛞᛟ";
 const rune = () => RUNES[(Math.random() * RUNES.length) | 0];
 
-/* The page WAITS in runes until the cursor first touches any runed text
-   (review 2026-06-11) — then the dominoes fall, top to bottom, unhurried.
-   Touch devices have no cursor: the first touch or scroll starts it, and a
-   generous timer backstops both. */
-const STAGGER_MS = 130; // per-element domino delay (slower, deliberate)
-const STAGGER_CAP_MS = 3400; // the page tail still decodes promptly
-const DECODE_MS = 700; // per-element reveal sweep
-const TOUCH_FALLBACK_MS = 2500; // no cursor ever arrives → start anyway
+/* The rune beat should read as atmosphere, not a loading state. It starts
+   almost immediately and only touches the hero/index text. */
+const STAGGER_MS = 55;
+const STAGGER_CAP_MS = 520;
+const DECODE_MS = 360;
+const TOUCH_FALLBACK_MS = 180;
 
 export default function RuneDecode() {
   const { motionOn } = useMotionPref();

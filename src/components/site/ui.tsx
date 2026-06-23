@@ -101,43 +101,29 @@ export function PageHero({
         </div>
       ) : null}
       <div className="page-hero__inner">
-        {top ? <Reveal>{top}</Reveal> : null}
-        {label ? (
-          <Reveal>
-            <div className="eyebrow">{label}</div>
-          </Reveal>
-        ) : null}
-        <Reveal delay={60}>
-          <h1>{title}</h1>
-        </Reveal>
+        {top}
+        {label ? <div className="eyebrow">{label}</div> : null}
+        <h1>{title}</h1>
         {sub ? (
-          <Reveal delay={120}>
-            <p className="sub">{sub}</p>
-          </Reveal>
+          <p className="sub">{sub}</p>
         ) : null}
         {body ? (
-          <Reveal delay={150}>
-            <p className="body">{body}</p>
-          </Reveal>
+          <p className="body">{body}</p>
         ) : null}
         {chips ? (
-          <Reveal delay={180}>
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                marginTop: 22,
-                flexWrap: "wrap",
-              }}
-            >
-              {chips}
-            </div>
-          </Reveal>
+          <div
+            style={{
+              display: "flex",
+              gap: 8,
+              marginTop: 22,
+              flexWrap: "wrap",
+            }}
+          >
+            {chips}
+          </div>
         ) : null}
         {actions && actions.length > 0 ? (
-          <Reveal delay={200}>
-            <Actions items={actions} />
-          </Reveal>
+          <Actions items={actions} />
         ) : null}
       </div>
     </header>

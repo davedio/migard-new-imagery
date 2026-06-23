@@ -14,6 +14,7 @@ import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { SITE_COPY } from "@/lib/siteCopy";
 
 export const EASE_EXPO = [0.16, 1, 0.3, 1] as const;
 export const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -330,20 +331,17 @@ const LEDGER: {
   accent?: "green" | "gold";
 }[] = [
   {
-    k: "Soft confirmations",
-    v: "Seconds",
-    s: "usable pre-alpha confirmation",
+    ...SITE_COPY.proofPoints[0],
     accent: "green",
   },
-  { k: "Settlement window", v: "3–7 days", s: "challenge window before settlement", accent: "gold" },
-  { k: "Execution model", v: "eUTXO-native", s: "built for UTXO finance" },
   {
-    k: "Verified contracts",
-    v: "Formal methods",
-    s: "mathematically verified smart contracts",
+    ...SITE_COPY.proofPoints[1],
+    accent: "gold",
   },
-  { k: "Fees", v: "ADA", s: "no separate gas token" },
-  { k: "Status", v: "Pre-alpha", s: "public testnet status", accent: "gold" },
+  SITE_COPY.proofPoints[2],
+  SITE_COPY.proofPoints[3],
+  SITE_COPY.proofPoints[4],
+  { ...SITE_COPY.proofPoints[5], accent: "gold" },
 ];
 
 export function Ledger() {

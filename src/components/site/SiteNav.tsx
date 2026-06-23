@@ -66,7 +66,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Community",
     items: [
-      { label: "Choose your path", href: "/#minimal-paths-title" },
+      { label: "Choose your path", href: "/#trunk" },
       {
         label: "Discord",
         href: OFFICIAL_LINKS.discord,

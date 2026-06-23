@@ -21,6 +21,7 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme, TREE_PLATES } from "@/lib/theme";
+import { SITE_COPY } from "@/lib/siteCopy";
 import DescentFlow from "./DescentFlow";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
@@ -102,14 +103,13 @@ function StaticHome({ plate }: { plate: string }) {
             for UTXO finance
           </h1>
           <p className="v2-hero__lead">
-            Midgard is an optimistic rollup that gives UTXO applications faster
-            execution with settlement anchored to L1.
+            {SITE_COPY.hero.lead}
           </p>
           <div className="v2-hero__actions">
             <Link className="btn btn--primary" href="#trunk">
               Choose your path
             </Link>
-            <Link className="btn-link--gold" href="/how-it-works">
+            <Link className="btn-link--gold" href="/learn#transaction-path">
               See how it works
             </Link>
           </div>

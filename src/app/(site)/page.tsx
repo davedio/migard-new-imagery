@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import MinimalHome from "@/components/minimal/MinimalHome";
+import HomeV2 from "@/components/v2/HomeV2";
 
 export const metadata: Metadata = {
   title: "Midgard | The secure scaling layer for UTXO finance",
@@ -16,5 +16,5 @@ export const metadata: Metadata = {
  * Canonical home at `/`, inside the (site) group so it shares nav + footer.
  */
 export default function HomePage() {
-  return <MinimalHome />;
+  return <HomeV2 />;
 }

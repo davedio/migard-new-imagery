@@ -46,7 +46,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
   {
     title: "Community",
     links: [
-      { label: "Choose your path", href: "/#minimal-paths-title" },
+      { label: "Choose your path", href: "/#trunk" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
     ],
   },

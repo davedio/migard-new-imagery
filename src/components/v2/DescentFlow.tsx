@@ -41,6 +41,7 @@ import {
   Rise,
   clamp01,
 } from "./HomeContent";
+import { SITE_COPY } from "@/lib/siteCopy";
 
 const smooth01 = (x: number) => {
   const c = clamp01(x);
@@ -282,8 +283,7 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
             </Rise>
             <Rise delay={0.2}>
               <p className="v2-hero__lead">
-                Midgard is an optimistic rollup that gives UTXO applications
-                faster execution with settlement anchored to L1.
+                {SITE_COPY.hero.lead}
               </p>
             </Rise>
             <Rise delay={0.3}>
@@ -291,7 +291,7 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
                 <Link className="btn btn--primary" href="#trunk">
                   Choose your path
                 </Link>
-                <Link className="btn-link--gold" href="/how-it-works">
+                <Link className="btn-link--gold" href="/learn#transaction-path">
                   See how it works
                 </Link>
               </div>
