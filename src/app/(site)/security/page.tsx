@@ -211,7 +211,7 @@ export default function SecurityPage() {
           <Card
             num="03"
             title="eUTXO-local state"
-            body="UTXO structure helps localize what must be inspected, reducing the broad shared-state surface that attackers often exploit."
+            body="eUTXO structure helps localize what must be inspected, reducing the broad shared-state surface that attackers often exploit."
           />
           <Card
             num="04"
@@ -287,7 +287,7 @@ export default function SecurityPage() {
             href={OFFICIAL_LINKS.github}
           />
           <Card
-            title="Protocol role interest"
+            title="Protocol Role interest"
             body="Use the intake form for operator, watcher, infrastructure, or deeper testnet participation."
             cta="Register interest"
             href={OFFICIAL_LINKS.intakeForm}

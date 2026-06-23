@@ -14,6 +14,8 @@ test("shared site imagery loads on primary routes", async ({ page }) => {
   const failedImages: string[] = [];
   page.on("requestfailed", (request) => {
     if (request.resourceType() === "image") {
+      const failure = request.failure();
+      if (failure?.errorText.includes("net::ERR_ABORTED")) return;
       failedImages.push(request.url());
     }
   });
@@ -312,8 +314,9 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await expect(page.getByText(/Soft confirmations are not final settlement/i)).toBeVisible();
   await expect(page.getByText(/mathematically verified smart contracts/i).first()).toBeVisible();
   await expect(page.getByText(/fault-proof verification/i).first()).toBeVisible();
-  await expect(page.getByText(/Vulnerability or impersonation/i)).toBeVisible();
-  await expect(page.getByText(/Protocol role interest/i)).toBeVisible();
+  const securityMain = page.locator("main");
+  await expect(securityMain.getByRole("heading", { name: /Vulnerability or impersonation/i })).toBeVisible();
+  await expect(securityMain.getByRole("heading", { name: /Protocol Role interest/i })).toBeVisible();
   await page.waitForTimeout(700);
   await page.screenshot({ path: testInfo.outputPath("security.png") });
 

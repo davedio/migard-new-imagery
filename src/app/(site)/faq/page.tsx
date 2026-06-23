@@ -54,7 +54,7 @@ const comparisonChartRows = [
     sidechain: { level: "watch", label: "Separate security set" },
   },
   {
-    k: "UTXO fit",
+    k: "eUTXO fit",
     midgard: { level: "strong", label: "Built for eUTXO finance" },
     evm: { level: "watch", label: "Mostly account-model execution" },
     sidechain: { level: "varies", label: "Depends on the chain" },
@@ -82,15 +82,15 @@ const comparisonChartRows = [
 const modelCards = [
   {
     label: "Midgard",
-    title: "UTXO rollup path",
+    title: "eUTXO rollup path",
     tone: "midgard",
     points: [
-      "Faster UTXO execution",
+      "Faster eUTXO execution",
       "Fault-proof verification with Watcher replay",
       "Final settlement through the L1 path after verification",
     ],
     scores: [
-      ["UTXO fit", "strong"],
+      ["eUTXO fit", "strong"],
       ["Verification", "strong"],
       ["Bridge exposure", "medium"],
     ],
@@ -102,10 +102,10 @@ const modelCards = [
     points: [
       "Often mature tooling and liquidity",
       "Security depends on bridge, proof, sequencer, and upgrade rules",
-      "Execution model is usually not UTXO-native",
+      "Execution model is usually not eUTXO-native",
     ],
     scores: [
-      ["UTXO fit", "watch"],
+      ["eUTXO fit", "watch"],
       ["Verification", "varies"],
       ["Bridge exposure", "varies"],
     ],
@@ -120,7 +120,7 @@ const modelCards = [
       "Bridge exposure is usually central to the risk model",
     ],
     scores: [
-      ["UTXO fit", "varies"],
+      ["eUTXO fit", "varies"],
       ["Verification", "watch"],
       ["Bridge exposure", "watch"],
     ],
@@ -130,7 +130,7 @@ const modelCards = [
 const trustPath = [
   {
     k: "Execution",
-    midgard: "UTXO-local activity runs faster.",
+    midgard: "eUTXO-local activity runs faster.",
     watch: "Check what execution model changed.",
   },
   {
@@ -306,7 +306,7 @@ export default function FaqPage() {
                 },
                 {
                   q: "Why does Midgard matter?",
-                  a: "UTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
+                  a: "eUTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
                 },
                 {
                   q: "Is Midgard live?",
@@ -344,10 +344,10 @@ export default function FaqPage() {
               items: [
                 {
                   q: "Who is Midgard for?",
-                  a: "Users, builders, and protocol roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
+                  a: "Users, builders, and Protocol Roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
                 },
                 {
-                  q: "Can existing UTXO apps use Midgard?",
+                  q: "Can existing eUTXO apps use Midgard?",
                   a: "That is the goal: give eUTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
                 },
                 {
@@ -434,7 +434,7 @@ export default function FaqPage() {
 
       <CtaBand
         title="Start with the mechanism."
-        lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes UTXO execution faster."
+        lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes eUTXO execution faster."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },

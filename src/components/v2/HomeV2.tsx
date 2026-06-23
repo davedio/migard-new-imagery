@@ -132,7 +132,7 @@ function StaticHome({ plate }: { plate: string }) {
             n="02"
             title={
               <>
-                Fast UTXO execution.
+                Fast eUTXO execution.
                 <br />
                 L1 security.
               </>

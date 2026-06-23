@@ -297,7 +297,7 @@ export default function DescentFlow({
             </Rise>
             {/* one line on desktop, wraps naturally on phones */}
             <Rise delay={0.06}>
-              <h2 className="v2-thesis__h2">Fast UTXO execution. L1 security.</h2>
+              <h2 className="v2-thesis__h2">Fast eUTXO execution. L1 security.</h2>
             </Rise>
           </div>
           <div className="v2-thesis__row">

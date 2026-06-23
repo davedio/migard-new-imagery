@@ -37,7 +37,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
   {
     label: "Developers",
     items: [
-      { label: "Developer overview", href: "/developers", description: "Builder and protocol-role paths" },
+      { label: "Developer overview", href: "/developers", description: "Builder and Protocol Role paths" },
       { label: "Contracts", href: "/contracts", description: "Topology, addresses, scripts" },
       {
         label: "GitHub",
@@ -80,7 +80,7 @@ const NAV_GROUPS: readonly NavGroup[] = [
       {
         label: "Intake form",
         href: OFFICIAL_LINKS.intakeForm,
-        description: "Builder and protocol-role interest",
+        description: "Builder and Protocol Role interest",
         external: true,
       },
       {

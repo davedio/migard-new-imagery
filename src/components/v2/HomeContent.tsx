@@ -172,7 +172,7 @@ export function PartnerMarquee() {
       <div className="v2-partners__head">
         <p className="v2-partners__kicker">Network</p>
         <h2 id="ecosystem-partners-title">Ecosystem Partners</h2>
-        <p className="v2-partners__sub">UTXO-native teams around Midgard.</p>
+        <p className="v2-partners__sub">eUTXO-native teams around Midgard.</p>
       </div>
       <div className="v2-partners__rail" aria-label="Ecosystem partner logos">
         <div className="v2-partners__track">
@@ -194,7 +194,7 @@ const THESIS: Phrase[][] = [
   [
   { text: "eUTXO finance should not have to trade security for scale." },
     { text: "Midgard gives applications faster execution" },
-    { text: "without leaving the UTXO model." },
+    { text: "without leaving the eUTXO model." },
   ],
   [
     { text: "Security comes from", cls: "hi" },
@@ -277,7 +277,7 @@ const PATHS = [
   {
     n: "02",
     title: "Builders",
-    line: "Build UTXO applications that need faster execution without leaving the UTXO model.",
+    line: "Build eUTXO applications that need faster execution without leaving the eUTXO model.",
     cta: "Start building",
     href: "/developers",
   },
@@ -468,7 +468,7 @@ export function Provenance({ compact = false }: { compact?: boolean }) {
       <div className="v2-prov__body">
         <Rise>
           <p>
-            Midgard is built by Midgard Labs for UTXO applications that need
+            Midgard is built by Midgard Labs for eUTXO applications that need
             faster execution and L1 settlement.
           </p>
           <p>

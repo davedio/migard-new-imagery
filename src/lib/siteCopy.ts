@@ -131,7 +131,7 @@ export const DEVELOPER_COPY = {
   tracks: [
     {
       title: "Application builders",
-      body: "Use Midgard when a UTXO application needs faster execution, familiar wallet flows, and a settlement path users can inspect.",
+      body: "Use Midgard when an eUTXO application needs faster execution, familiar wallet flows, and a settlement path users can inspect.",
       href: OFFICIAL_LINKS.github,
       cta: "Open GitHub",
     },

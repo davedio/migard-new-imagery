@@ -71,7 +71,7 @@ export default function LearnPage() {
 
       <Section
         title="One page for the core idea."
-        lead="Midgard lets UTXO applications run faster while keeping the settlement path checkable."
+        lead="Midgard lets eUTXO applications run faster while keeping the settlement path checkable."
       >
         <CardGrid>
           <Card
@@ -87,7 +87,7 @@ export default function LearnPage() {
           <Card
             num="03"
             title="What the protocol does"
-            body="Submit, sequence, commit, data availability check, watch, settle. Those are the moving parts that turn fast activity into settled state."
+            body="Submit, sequence, commit, data availability check, watch, settle. Those are the moving parts that turn fast execution into settled state."
           />
           <Card
             num="04"
@@ -114,7 +114,7 @@ export default function LearnPage() {
           <Card
             num="02"
             title="Builders"
-            body="Builders care about UTXO-native application design, lower latency, and source they can inspect before integrating."
+            body="Builders care about eUTXO-native application design, lower latency, and source they can inspect before integrating."
           />
           <Card
             num="03"
@@ -126,7 +126,7 @@ export default function LearnPage() {
 
       <Section
         id="transaction-path"
-        title="From fast action to final settlement."
+        title="From fast execution to final settlement."
         lead="The short version is easy to say, and the deeper mechanism is still available for people who need to inspect it."
         tight
       >
