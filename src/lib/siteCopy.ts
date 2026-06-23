@@ -102,9 +102,9 @@ export const SITE_COPY = {
 
 export const DEVELOPER_COPY = {
   hero: {
-    title: "Build faster eUTXO apps.",
+    title: "Build on the execution layer for eUTXO finance.",
     lead:
-      "Start with source, contracts, security assumptions, or Protocol Role participation. Then map your app flow to Midgard's execution path.",
+      "Start with the source, inspect the contract path, then map one eUTXO user flow to Midgard: deposit, transact, withdraw, fallback.",
   },
   entryPoints: [
     {
@@ -131,7 +131,7 @@ export const DEVELOPER_COPY = {
   tracks: [
     {
       title: "Application builders",
-      body: "Use Midgard when an eUTXO application needs faster execution, familiar wallet flows, and inspectable settlement.",
+      body: "Map a real eUTXO flow to Midgard: wallet action, dApp interaction, indexer need, and fallback path.",
       href: OFFICIAL_LINKS.github,
       cta: "Open GitHub",
     },
@@ -143,7 +143,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state. Participation details follow approved testnet status.",
+      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state. Register interest after reviewing the trust path.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Register interest",
     },

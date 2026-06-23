@@ -70,6 +70,114 @@
   opacity: 1;
 }
 
+.launchStack {
+  display: grid;
+  gap: 14px;
+}
+
+.flowPanel {
+  position: relative;
+  overflow: hidden;
+  padding: 18px;
+  border: 1px solid rgba(78, 243, 131, 0.23);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 16% 0%, rgba(78, 243, 131, 0.16), transparent 20rem),
+    linear-gradient(135deg, rgba(244, 241, 230, 0.06), transparent 52%),
+    rgba(6, 11, 8, 0.84);
+}
+
+.flowPanel::before {
+  content: "";
+  position: absolute;
+  inset: 62px 10% auto;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(78, 243, 131, 0), rgba(78, 243, 131, 0.78), rgba(224, 182, 82, 0.48), rgba(78, 243, 131, 0));
+  box-shadow: 0 0 22px rgba(78, 243, 131, 0.28);
+}
+
+.flowHeader {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: baseline;
+  margin-bottom: 18px;
+}
+
+.flowHeader span,
+.flowHeader strong,
+.flowSteps > li > span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.flowHeader span {
+  color: var(--text-faint);
+}
+
+.flowHeader strong {
+  color: var(--gold-bright);
+  font-weight: 500;
+}
+
+.flowSteps {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flowSteps > li {
+  position: relative;
+  min-height: 132px;
+  padding: 46px 12px 14px;
+  border: 1px solid rgba(244, 241, 230, 0.1);
+  border-radius: 8px;
+  background: rgba(1, 5, 3, 0.42);
+}
+
+.flowSteps > li::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: 12px;
+  width: 13px;
+  height: 13px;
+  border: 1px solid rgba(224, 182, 82, 0.72);
+  border-radius: 50%;
+  background: rgba(78, 243, 131, 0.16);
+  box-shadow: 0 0 18px rgba(78, 243, 131, 0.42);
+}
+
+.flowSteps > li > span {
+  position: absolute;
+  top: 18px;
+  right: 12px;
+  color: var(--text-faint);
+}
+
+.flowSteps h3 {
+  margin: 0;
+  color: var(--text-hi);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.flowSteps p {
+  margin: 8px 0 0;
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.38;
+}
+
 .launchGrid {
   display: grid;
   gap: 12px;
@@ -151,9 +259,52 @@
   .launchCard strong {
     grid-column: 2;
   }
+
+  .flowPanel::before {
+    inset: 62px 12% auto;
+  }
+
+  .flowSteps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
+  .flowHeader {
+    display: block;
+  }
+
+  .flowHeader strong {
+    display: block;
+    margin-top: 7px;
+  }
+
+  .flowPanel::before {
+    inset: 84px auto 24px 24px;
+    width: 1px;
+    height: auto;
+    background: linear-gradient(180deg, rgba(78, 243, 131, 0), rgba(78, 243, 131, 0.78), rgba(224, 182, 82, 0.48), rgba(78, 243, 131, 0));
+  }
+
+  .flowSteps {
+    grid-template-columns: 1fr;
+  }
+
+  .flowSteps > li {
+    min-height: auto;
+    padding: 16px 14px 16px 48px;
+  }
+
+  .flowSteps > li::before {
+    top: 20px;
+    left: 0;
+  }
+
+  .flowSteps > li > span {
+    top: 18px;
+    right: 14px;
+  }
+
   .launchCard {
     min-height: auto;
   }

@@ -33,6 +33,25 @@ const launchpad = [
   },
 ] as const;
 
+const integrationPath = [
+  {
+    label: "Source",
+    detail: "Read node and contract code.",
+  },
+  {
+    label: "Contracts",
+    detail: "Check topology and state anchors.",
+  },
+  {
+    label: "App flow",
+    detail: "Map deposit, transact, withdraw, fallback.",
+  },
+  {
+    label: "Trust path",
+    detail: "Verify fault proofs, Watchers, settlement.",
+  },
+] as const;
+
 function isExternal(href: string) {
   return /^https?:\/\//.test(href);
 }
@@ -102,10 +121,27 @@ export default function DeveloperLanding() {
               </a>
             </div>
           </div>
-          <div className={styles.launchGrid}>
-            {launchpad.map((item, i) => (
-              <LaunchpadLink key={item.label} item={item} index={i} />
-            ))}
+          <div className={styles.launchStack}>
+            <div className={styles.flowPanel} aria-label="Developer integration path">
+              <div className={styles.flowHeader}>
+                <span>Integration path</span>
+                <strong>One app flow at a time</strong>
+              </div>
+              <ol className={styles.flowSteps}>
+                {integrationPath.map((step, i) => (
+                  <li key={step.label}>
+                    <span>{String(i + 1).padStart(2, "0")}</span>
+                    <h3>{step.label}</h3>
+                    <p>{step.detail}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div className={styles.launchGrid}>
+              {launchpad.map((item, i) => (
+                <LaunchpadLink key={item.label} item={item} index={i} />
+              ))}
+            </div>
           </div>
         </div>
       </section>

@@ -298,8 +298,10 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 
 test("developer and contracts pages render", async ({ page }, testInfo) => {
   await page.goto("/developers");
-  await expect(page.getByRole("heading", { name: /Build faster eUTXO apps/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Build on the execution layer for eUTXO finance/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Open the source, then follow the path/i })).toBeVisible();
+  await expect(page.getByLabel("Developer integration path").getByText(/One app flow at a time/i)).toBeVisible();
+  await expect(page.getByLabel("Developer integration path").getByRole("heading", { name: /App flow/i })).toBeVisible();
   await expect(page.getByText(/Supporting docs/i)).toBeVisible();
   await expect(page.getByLabel("Supporting documents").getByRole("link", { name: /Whitepaper/i })).toHaveAttribute("href", /midgard\.pdf/);
   await expect(page.locator("main").getByRole("heading", { name: /Protocol reviewers/i })).toBeVisible();
