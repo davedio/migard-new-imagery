@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useMemo, type CSSProperties, type ReactNode } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { SITE_COPY } from "@/lib/siteCopy";
 
@@ -42,43 +43,7 @@ export function Rise({
 /*  ecosystem partners                                                     */
 /* ---------------------------------------------------------------------- */
 
-const PARTNERS = [
-  {
-    name: "Liqwid",
-    logo: "/ecosystem/liqwid.svg",
-    width: 190,
-    height: 60,
-    tone: "dark",
-  },
-  {
-    name: "Sundae Labs",
-    logo: "/ecosystem/sundae-labs.png",
-    width: 210,
-    height: 36,
-    tone: "light",
-  },
-  {
-    name: "Input Output",
-    logo: "/ecosystem/input-output.svg",
-    width: 210,
-    height: 27,
-    tone: "dark",
-  },
-  {
-    name: "Lace",
-    logo: "/ecosystem/lace-wordmark.svg",
-    width: 150,
-    height: 50,
-    tone: "dark",
-  },
-  {
-    name: "Artifi Labs",
-    logo: "/ecosystem/artifi-labs.png",
-    width: 230,
-    height: 43,
-    tone: "dark",
-  },
-] as const;
+const PARTNERS = ECOSYSTEM_PARTNERS;
 
 /* ---------------------------------------------------------------------- */
 /*  hero partner strip                                                     */

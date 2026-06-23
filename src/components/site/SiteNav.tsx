@@ -147,6 +147,7 @@ function ThemeToggle() {
 export function SiteNav() {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
+  const hoverCloseTimer = useRef<number | null>(null);
   const [menu, setMenu] = useState({ pathname: "", open: false });
   const [hoverGroup, setHoverGroup] = useState<string | null>(null);
   const [pinnedGroup, setPinnedGroup] = useState<string | null>(null);
@@ -154,6 +155,12 @@ export function SiteNav() {
 
   const open = menu.open && menu.pathname === pathname;
   const openGroup = pinnedGroup ?? hoverGroup;
+
+  const clearHoverClose = () => {
+    if (!hoverCloseTimer.current) return;
+    window.clearTimeout(hoverCloseTimer.current);
+    hoverCloseTimer.current = null;
+  };
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */
   useEffect(() => {
@@ -172,6 +179,7 @@ export function SiteNav() {
     return () => {
       window.cancelAnimationFrame(syncInitial);
       window.removeEventListener("scroll", onScroll);
+      clearHoverClose();
     };
   }, []);
 
@@ -217,13 +225,29 @@ export function SiteNav() {
   const isGroupActive = (group: NavGroup) => group.items.some((item) => isActive(item.href));
 
   const openPinnedGroup = (label: string) => {
+    clearHoverClose();
     setPinnedGroup((current) => (current === label ? null : label));
     setHoverGroup(label);
   };
 
   const closeDropdown = () => {
+    clearHoverClose();
     setPinnedGroup(null);
     setHoverGroup(null);
+  };
+
+  const openHoverGroup = (label: string) => {
+    clearHoverClose();
+    setHoverGroup(label);
+  };
+
+  const scheduleHoverClose = () => {
+    if (pinnedGroup) return;
+    clearHoverClose();
+    hoverCloseTimer.current = window.setTimeout(() => {
+      setHoverGroup(null);
+      hoverCloseTimer.current = null;
+    }, 320);
   };
 
   const renderDropdownLink = (item: NavLink, mobile = false) => {
@@ -286,8 +310,8 @@ export function SiteNav() {
                 key={group.label}
                 className="site-nav__group"
                 data-open={groupOpen}
-                onMouseEnter={() => setHoverGroup(group.label)}
-                onMouseLeave={() => setHoverGroup(null)}
+                onMouseEnter={() => openHoverGroup(group.label)}
+                onMouseLeave={scheduleHoverClose}
               >
                 <button
                   type="button"

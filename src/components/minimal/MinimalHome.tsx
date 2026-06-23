@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConceptTree } from "@/components/minimal/ConceptTree";
+import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { SITE_COPY } from "@/lib/siteCopy";
 
@@ -101,6 +103,41 @@ const METRIC_STATUS = {
   Status: "Current phase",
 } as const;
 
+function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
+  return (
+    <ul className="minimal-partners__seq" aria-hidden={hidden || undefined}>
+      {ECOSYSTEM_PARTNERS.map((partner) => (
+        <li key={partner.name}>
+          <span className="minimal-partner" data-tone={partner.tone}>
+            <Image
+              src={partner.logo}
+              alt={hidden ? "" : partner.name}
+              width={partner.width}
+              height={partner.height}
+              loading="eager"
+              unoptimized={partner.logo.endsWith(".svg")}
+            />
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function EcosystemPartners() {
+  return (
+    <section className="minimal-partners" aria-labelledby="minimal-partners-title">
+      <h2 id="minimal-partners-title">Ecosystem Partners</h2>
+      <div className="minimal-partners__rail" aria-label="Ecosystem partner logos">
+        <div className="minimal-partners__track">
+          <PartnerSequence />
+          <PartnerSequence hidden />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function MinimalHome() {
   return (
     <main className="minimal-site">
@@ -140,6 +177,8 @@ export default function MinimalHome() {
           </article>
         ))}
       </section>
+
+      <EcosystemPartners />
 
       <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">

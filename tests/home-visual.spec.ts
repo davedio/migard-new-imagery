@@ -143,6 +143,10 @@ test("desktop nav opens persistent child page menu", async ({ page }, testInfo) 
   await expect(dropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
   await expect(learn).toHaveAttribute("aria-expanded", "true");
 
+  await dropdown.getByRole("link", { name: /FAQ/i }).hover();
+  await page.mouse.wheel(0, 420);
+  await expect(dropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
+
   await page.mouse.move(80, 820);
   await expect(dropdown.getByRole("link", { name: /How it works/i })).toBeVisible();
 
@@ -209,6 +213,8 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.getByRole("heading", { name: /Apps feel faster/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /State stays checkable/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Cardano L1 settlement comes last/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Ecosystem Partners/i })).toBeVisible();
+  await expect(page.getByLabel("Ecosystem partner logos").getByAltText("Liqwid")).toBeVisible();
 
   const pathSection = page.locator("#paths");
   await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
@@ -228,6 +234,9 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(inspectGrid.getByRole("link", { name: /Contract surface/i })).toHaveAttribute("href", "/contracts");
   await expect(inspectGrid.getByRole("link", { name: /Source review/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator(".minimal-channel-card")).toHaveCount(4);
+  if (testInfo.project.name === "desktop-chromium") {
+    await expect(page.locator(".minimal-channel-grid")).toHaveCSS("grid-template-columns", /px .*px/);
+  }
   await expect(page.locator(".minimal-channel-card").first()).toContainText("Report something sensitive");
   await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", "/security#disclosure");
   await expect(page.locator(".minimal-channel-card").filter({ hasText: "Intake form" })).toContainText("Protocol Roles");
