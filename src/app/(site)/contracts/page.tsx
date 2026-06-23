@@ -3,7 +3,7 @@ import { GitHubIcon } from "@/components/site/BrandIcons";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { CopyField } from "@/components/site/CopyField";
 import RuneDecode from "@/components/site/RuneDecode";
-import { Actions, CtaBand, Layers, PageHero, Prose, Section } from "@/components/site/ui";
+import { Actions, CtaBand, Layers, Prose, Section } from "@/components/site/ui";
 import {
   CONTRACTS,
   CONTRACTS_META,
@@ -39,40 +39,66 @@ const breadcrumbJsonLd = {
 
 export default function ContractsPage() {
   return (
-    <main className="page-main contracts-page">
+    <main className={`page-main contracts-page ${styles.contractsPage}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <RuneDecode />
 
-      <PageHero
-        compact
-        tone="ember"
-        title="Inspect the contract path."
-        sub="Every Midgard validator, state anchor, reference script, and bootstrap transaction should be checkable from one place."
-        chips={
-          <>
-            <span className="chip chip--testnet">
-              <span className="dot" />
-              Pre-alpha testnet
+      <header className={styles.contractHero} data-contracts-hero>
+        <div className={styles.contractHeroPlate} aria-hidden />
+        <div className={styles.contractHeroInner}>
+          <div className={styles.contractHeroCopy}>
+            <h1 data-rune-target>Inspect the contract path.</h1>
+            <p data-rune-target>
+              Every Midgard validator, state anchor, reference script, and bootstrap transaction should be checkable from one place.
+            </p>
+            <div className={styles.contractHeroChips}>
+              <span className="chip chip--testnet">
+                <span className="dot" />
+                Pre-alpha testnet
+              </span>
+              <span className="chip chip--demo">
+                <span className="dot" />
+                Static preprod snapshot
+              </span>
+            </div>
+            <Actions
+              items={[
+                { label: "View topology", href: "#topology", variant: "primary" },
+                {
+                  label: "Open GitHub",
+                  href: OFFICIAL_LINKS.github,
+                  variant: "ghost",
+                  icon: <GitHubIcon size={15} />,
+                },
+              ]}
+            />
+          </div>
+          <div className={styles.runePanel} aria-label="Contracts inspection map">
+            <span className={styles.runePanelGlyphs} aria-hidden>
+              ᚠᚢᚦᚨ · ᚱᚲᚷᚹ · ᛉᛊᛏᛒ
             </span>
-            <span className="chip chip--demo">
-              <span className="dot" />
-              Static preprod snapshot
-            </span>
-          </>
-        }
-        actions={[
-          { label: "View topology", href: "#topology", variant: "primary" },
-          {
-            label: "Open GitHub",
-            href: OFFICIAL_LINKS.github,
-            variant: "ghost",
-            icon: <GitHubIcon size={15} />,
-          },
-        ]}
-      />
+            <div>
+              <strong>Validator topology</strong>
+              <span>Hub Oracle, Scheduler, State Queue, Settlement</span>
+            </div>
+            <div>
+              <strong>State anchors</strong>
+              <span>NFT-marked UTxOs that record protocol state in this snapshot</span>
+            </div>
+            <div>
+              <strong>Reference scripts</strong>
+              <span>On-chain scripts transactions can point to directly</span>
+            </div>
+            <div>
+              <strong>Genesis history</strong>
+              <span>Bootstrap transactions from initialization to first confirmed state</span>
+            </div>
+          </div>
+        </div>
+      </header>
 
       <nav className="page-sticky-toc" aria-label="On this page">
         <a href="#topology">Topology</a>

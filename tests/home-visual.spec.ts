@@ -182,6 +182,9 @@ test("developer and contracts pages render", async ({ page }, testInfo) => {
 
   await page.goto("/contracts");
   await expect(page.getByRole("heading", { name: /Inspect the contract path/i })).toBeVisible();
+  await expect(page.locator("[data-contracts-hero]")).toBeVisible();
+  await expect(page.locator(".contracts-page .page-hero")).toHaveCount(0);
+  await expect(page.locator("[data-contracts-hero]").getByText(/Validator topology/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: /The protocol surface/i })).toBeVisible();
   await expect(page.getByText(/Hub Oracle/i).first()).toBeVisible();
   await expect(page.getByText(/Static preprod snapshot/i)).toBeVisible();

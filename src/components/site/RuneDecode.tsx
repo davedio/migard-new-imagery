@@ -24,6 +24,7 @@ import { useMotionPref } from "@/lib/motion";
 const TARGETS = [
   ".page-hero h1",
   ".page-hero .sub",
+  "[data-rune-target]",
   ".page-sticky-toc a",
 ].join(", ");
 
