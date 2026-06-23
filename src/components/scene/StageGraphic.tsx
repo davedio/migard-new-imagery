@@ -62,7 +62,7 @@ type Stage = {
 };
 
 /* The lifecycle stages + the lifecycle copy:
-   Submit · L2 -> Sequence -> Commit -> DA attestation -> Watch (challenge) ->
+   Submit · L2 -> Sequence -> Commit -> data availability check -> Watch (challenge) ->
    Settle · L1. The badge keeps the narrative; the line is the compact
    description so the floating graphic stays light over the scene. */
 const STAGES: Stage[] = [
@@ -104,8 +104,8 @@ const STAGES: Stage[] = [
   },
   {
     id: "da",
-    tag: "DA attestation",
-    name: "DA attestation",
+    tag: "Data availability",
+    name: "Data availability check",
     line: "DA nodes confirm that the block data behind the state commitment is available before the system progresses.",
     readouts: [
       { k: "Action", v: "Check availability", tone: "bridge" },

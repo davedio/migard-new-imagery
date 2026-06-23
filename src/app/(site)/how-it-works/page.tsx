@@ -6,7 +6,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
-    "How Midgard runs as an optimistic rollup for UTXO applications: deposit, transact, withdraw, with sequencing, commitment, DA attestation, fault-proof verification, and L1 settlement.",
+    "How Midgard runs as an optimistic rollup for UTXO applications: deposit, transact, withdraw, with sequencing, commitment, data availability checks, fault-proof verification, and L1 settlement.",
   openGraph: {
     title: "How Midgard Works",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],

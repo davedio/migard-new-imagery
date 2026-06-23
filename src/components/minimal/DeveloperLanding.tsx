@@ -23,8 +23,8 @@ export default function DeveloperLanding() {
       />
 
       <Section
-        title="Start from the right surface."
-        lead="Most reviewers do not need the same first link. Pick the surface that matches what you are trying to prove."
+        title="Start from the right page."
+        lead="Most reviewers do not need the same first link. Pick the page that matches what you are trying to prove."
       >
         <CardGrid>
           {DEVELOPER_COPY.entryPoints.map((item, i) => (

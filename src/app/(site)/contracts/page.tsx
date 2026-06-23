@@ -88,7 +88,7 @@ export default function ContractsPage() {
         <div className={styles.metaBar}>
           <span className={styles.metaActive}>
             <span className={styles.metaDot} />
-            {CONTRACTS_META.network} · Active
+            {CONTRACTS_META.network} · Preprod snapshot
           </span>
           <span className={styles.metaSep}>·</span>
           <span>{CONTRACTS_META.era} era</span>
@@ -137,7 +137,7 @@ export default function ContractsPage() {
         </div>
       </Section>
 
-      <Section id="anchors" title="State anchors." lead="Each anchor is an NFT-marked UTxO that holds live protocol state on L1.">
+      <Section id="anchors" title="State anchors." lead="Each anchor is an NFT-marked UTxO that records protocol state in this snapshot.">
         <div className={styles.anchorsGrid}>
           {STATE_ANCHORS.map((anchor) => (
             <div className={styles.anchorCard} key={anchor.name}>
@@ -238,7 +238,7 @@ const stateQueue =
   "addr_test1wqkh8medgake46f96ztg37etwgfpgz32zcz353f08jvw90ggse5ey";
 
 const utxos = await lucid.utxosAt(stateQueue);
-console.log(\`\${utxos.length} live entries in the queue\`);`}</code>
+console.log(\`\${utxos.length} entries at the State Queue address\`);`}</code>
           </pre>
         </div>
       </Section>

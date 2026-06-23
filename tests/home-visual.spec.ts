@@ -22,6 +22,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   );
   await expect(page.locator(".v2-stage")).toBeVisible();
   await expect(page.locator(".v2-stage canvas")).toHaveCount(2);
+  await expect(page.locator(".v2-marquee")).toHaveCount(0);
+  await expect(page.locator(".v2-rail")).toHaveCount(0);
   const bodyText = await page.locator("body").innerText();
   for (const hiddenLabel of [
     "Surface",
@@ -55,6 +57,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
   await expect(pathSection.getByText(/Operators & Watchers keep Midgard running and verifiable/i)).toBeVisible();
+  await expect(pathSection.getByRole("link", { name: /Start as a user/i })).toHaveAttribute("href", "/learn#roles");
+  await expect(pathSection.getByRole("link", { name: /Explore protocol roles/i })).toHaveAttribute("href", "/developers#developer-paths");
   await expect(pathSection.getByRole("heading", { name: /Fast action first/i })).toBeVisible();
   await expect(pathSection.locator(".v2-protocol__step")).toHaveCount(5);
   await expect(pathSection.getByText("Final settlement")).toBeVisible();
@@ -113,7 +117,7 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   await expect(page.getByRole("heading", { name: /Learn Midgard/i })).toBeVisible();
   await expect(page.getByText(/The secure scaling layer for UTXO finance/i)).toBeVisible();
   await expect(page.getByText(/Deposit, transact, withdraw/i)).toBeVisible();
-  await expect(page.getByText(/Submit, sequence, commit, DA attestation, watch, settle/i)).toBeVisible();
+  await expect(page.getByText(/Submit, sequence, commit, data availability check, watch, settle/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
@@ -130,7 +134,7 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 test("developer and contracts pages render", async ({ page }, testInfo) => {
   await page.goto("/developers");
   await expect(page.getByRole("heading", { name: /Build on Midgard/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Start from the right surface/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Start from the right page/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Whitepaper/i })).toBeVisible();
   await expect(page.locator("main").getByRole("heading", { name: /^Security$/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Application builders/i })).toBeVisible();
@@ -142,6 +146,12 @@ test("developer and contracts pages render", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: /The protocol surface/i })).toBeVisible();
   await expect(page.getByText(/Hub Oracle/i).first()).toBeVisible();
   await expect(page.getByText(/Static preprod snapshot/i)).toBeVisible();
+  await expect(page.getByText(/Preprod snapshot/i).first()).toBeVisible();
+  await expect(page.getByText(/entries at the State Queue address/i)).toBeVisible();
+  const contractsText = await page.locator("body").innerText();
+  expect(contractsText).not.toContain("· Active");
+  expect(contractsText).not.toContain("live entries");
+  expect(contractsText).not.toContain("holds live protocol state");
   await page.screenshot({ path: testInfo.outputPath("contracts.png") });
 });
 
@@ -153,7 +163,7 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
   await page.goto("/how-it-works");
 
   await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
-  await expect(page.locator(".hiw-act__beats").getByText("DA attestation")).toBeVisible();
+  await expect(page.locator(".hiw-act__beats").getByText("Data availability check")).toBeVisible();
   await expect(page.locator(".hiw-act__lead").getByText(/deposit, transact, withdraw/i)).toBeVisible();
 
   const bodyText = await page.locator("body").innerText();
@@ -170,6 +180,8 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: /Security you can inspect/i })).toBeVisible();
   await expect(page.getByText(/mathematically verified smart contracts/i).first()).toBeVisible();
   await expect(page.getByText(/fault-proof verification/i).first()).toBeVisible();
+  await expect(page.getByText(/Vulnerability or impersonation/i)).toBeVisible();
+  await expect(page.getByText(/Protocol role interest/i)).toBeVisible();
   await page.waitForTimeout(700);
   await page.screenshot({ path: testInfo.outputPath("security.png") });
 

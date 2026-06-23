@@ -266,15 +266,13 @@ export function Statement() {
 /*  trunk / paths                                                          */
 /* ---------------------------------------------------------------------- */
 
-/* Two-page preview branch: the /get-started destinations are not part of
-   this build, so the path cards route to the live community surfaces. */
 const PATHS = [
   {
     n: "01",
     title: "Users",
     line: "Use UTXO finance applications with faster execution and familiar wallet flows.",
     cta: "Start as a user",
-    href: OFFICIAL_LINKS.discord,
+    href: "/learn#roles",
   },
   {
     n: "02",
@@ -288,7 +286,7 @@ const PATHS = [
     title: "Protocol Roles",
     line: "Operators & Watchers keep Midgard running and verifiable: sequence transactions, inspect commitments, and participate in fault-proof verification.",
     cta: "Explore protocol roles",
-    href: OFFICIAL_LINKS.intakeForm,
+    href: "/developers#developer-paths",
   },
 ] as const;
 

@@ -26,7 +26,6 @@ import DescentFlow from "./DescentFlow";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
   Ledger,
-  Marquee,
   Paths,
   ProtocolPath,
   Provenance,
@@ -110,7 +109,7 @@ function StaticHome({ plate }: { plate: string }) {
             <Link className="btn btn--primary" href="#trunk">
               Choose your path
             </Link>
-            <Link className="btn-link--gold" href="/learn#transaction-path">
+            <Link className="btn-link--gold" href="/how-it-works">
               See how it works
             </Link>
           </div>
@@ -126,8 +125,6 @@ function StaticHome({ plate }: { plate: string }) {
         <Paths />
         <ProtocolPath />
       </StaticScene>
-
-      <Marquee />
 
       <section id="canopy" className="v2-static v2-static--dark">
         <div className="v2-static__body">

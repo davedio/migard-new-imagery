@@ -17,7 +17,7 @@
        bottom over the roots close-up
      · chapter copy scrolls naturally and earns soft whileInView reveals;
        a single rAF lerps the scroll (ease 0.11) and drives ONLY the
-       canvas phases + the depth rail
+       canvas phases
    ========================================================================== */
 
 import Link from "next/link";
@@ -34,7 +34,6 @@ import ShatterHeading from "./ShatterHeading";
 import { StateQueueViz } from "@/components/site/StateQueueViz";
 import {
   Ledger,
-  Marquee,
   Paths,
   ProtocolPath,
   Provenance,
@@ -92,17 +91,6 @@ function Chapter({
   );
 }
 
-/* ---------------------------------------------------------------------- */
-/*  depth rail                                                             */
-/* ---------------------------------------------------------------------- */
-
-const RAIL = [
-  { id: "top", label: "Intro", stratum: "surface" },
-  { id: "trunk", label: "Paths", stratum: "trunk" },
-  { id: "canopy", label: "Thesis", stratum: "canopy" },
-  { id: "roots", label: "Metrics", stratum: "roots" },
-] as const;
-
 const BAND_IDS = [
   "top",
   "trunk",
@@ -129,7 +117,6 @@ export default function DescentFlow({
   );
   const flowRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const railRef = useRef<HTMLElement>(null);
   const phasesRef = useRef<DescentPhases>({ ...PHASES_REST });
   const tickRef = useRef<((dt: number) => void) | null>(null);
 
@@ -220,23 +207,6 @@ export default function DescentFlow({
         0.04 * smooth01(ramp(s, 0, canopyT)) +
         0.06 * smooth01((descend - 0.08) / 0.84);
 
-      /* ---- rail ---- */
-      const rail = railRef.current;
-      if (rail) {
-        let active: string = "top";
-        for (let i = 0; i < BAND_IDS.length; i++) {
-          if (s >= tops[i] - vh * 0.45) active = BAND_IDS[i];
-        }
-        if (active === "queue") active = "roots";
-        if (active === "prov") active = "roots";
-        if (rail.dataset.current !== active) {
-          rail.dataset.current = active;
-          for (const item of rail.querySelectorAll<HTMLElement>("[data-band]")) {
-            item.dataset.active = String(item.dataset.band === active);
-          }
-        }
-      }
-
       tickRef.current?.(dt);
     };
 
@@ -270,9 +240,6 @@ export default function DescentFlow({
     };
   }, [mounted, motionOn]);
 
-  const jump = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-
   return (
     <>
       {/* content flows normally — only the background is choreographed */}
@@ -298,7 +265,7 @@ export default function DescentFlow({
                 <Link className="btn btn--primary" href="#trunk">
                   Choose your path
                 </Link>
-                <Link className="btn-link--gold" href="/learn#transaction-path">
+                <Link className="btn-link--gold" href="/how-it-works">
                   See how it works
                 </Link>
               </div>
@@ -316,8 +283,6 @@ export default function DescentFlow({
           <Paths />
           <ProtocolPath />
         </section>
-
-        <Marquee />
 
         {/* ---------- 01 canopy / thesis (the helix forms here) ---------- */}
         <section id="canopy" className="v2-band v2-band--thesis">
@@ -410,21 +375,6 @@ export default function DescentFlow({
               />
               <div className="v2-stage__veil" aria-hidden />
               <div className="v2-stage__mist" aria-hidden />
-              <nav ref={railRef} className="v2-rail" aria-label="Page progress">
-                {RAIL.map((r) => (
-                  <button
-                    key={r.id}
-                    type="button"
-                    className="v2-rail__item"
-                    data-band={r.id}
-                    data-stratum={r.stratum}
-                    onClick={() => jump(r.id)}
-                  >
-                    <span className="lbl">{r.label}</span>
-                    <span className="dot" aria-hidden />
-                  </button>
-                ))}
-              </nav>
             </div>,
             document.body,
           )

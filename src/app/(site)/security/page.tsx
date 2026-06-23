@@ -31,7 +31,7 @@ export default function SecurityPage() {
         compact
         tone="ink"
         title="Security you can inspect."
-        sub="Midgard combines mathematically verified smart contracts, fault-proof verification, and eUTXO-local state so faster execution does not require a softer trust model."
+        sub="Midgard combines mathematically verified smart contracts, fault-proof verification, and eUTXO-local state so faster execution does not require weaker settlement security."
         actions={[
           { label: "Read the mechanism", href: "#mechanism", variant: "primary" },
           {
@@ -119,7 +119,7 @@ export default function SecurityPage() {
             {
               n: "03",
               name: "Availability",
-              desc: "Data availability and attestation details belong in the deeper mechanism, where builders can inspect the assumptions.",
+              desc: "Data availability checks belong in the deeper mechanism, where builders can inspect the assumptions.",
             },
             {
               n: "04",
@@ -131,13 +131,40 @@ export default function SecurityPage() {
       </Section>
 
       <Section id="disclosure" title="Security reporting should be boring and official.">
+        <CardGrid cols={2}>
+          <Card
+            title="Vulnerability or impersonation"
+            body="Use the security policy. Preserve links, account names, screenshots, timestamps, and where you saw the issue."
+            cta="Security policy"
+            href={OFFICIAL_LINKS.securityPolicy}
+          />
+          <Card
+            title="General user question"
+            body="Use Discord for non-sensitive help. Do not share wallet secrets, private account details, or recovery material."
+            cta="Join Discord"
+            href={OFFICIAL_LINKS.discord}
+          />
+          <Card
+            title="Builder or integration issue"
+            body="Use GitHub for source-level issues, or bring a concrete flow through the intake form."
+            cta="View GitHub"
+            ctaIcon={<GitHubIcon size={14} />}
+            href={OFFICIAL_LINKS.github}
+          />
+          <Card
+            title="Protocol role interest"
+            body="Use the intake form for operator, watcher, infrastructure, or deeper testnet participation."
+            cta="Register interest"
+            href={OFFICIAL_LINKS.intakeForm}
+          />
+        </CardGrid>
         <Callout
           title="Use official routes and preserve evidence."
           body="Do not rely on unsolicited support messages. If you see a suspicious link, account, or security issue, preserve the URL, account name, screenshot, timestamp, and where you saw it."
           items={[
             "Never share a seed phrase, private key, recovery phrase, or password.",
             "Do not sign wallet approvals you do not understand.",
-            "Start from the official website, GitHub, Discord, and security-policy links.",
+            "Use the security policy for vulnerabilities and impersonation; use community channels only for non-sensitive questions.",
           ]}
         />
         <Actions

@@ -6,14 +6,14 @@ export const SITE_COPY = {
     lead:
       "Midgard gives UTXO applications faster execution with mathematically verified security and final settlement anchored to L1.",
     primaryCta: { label: "Choose your path", href: "#trunk" },
-    secondaryCta: { label: "See how it works", href: "/learn#transaction-path" },
+    secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
   paths: [
     {
       title: "Users",
       body: "Deposit assets, transact faster, and withdraw through the L1 settlement path.",
       cta: "Start as a user",
-      href: "/learn",
+      href: "/learn#roles",
     },
     {
       title: "Builders",
@@ -25,7 +25,7 @@ export const SITE_COPY = {
       title: "Protocol Roles",
       body: "Operators & Watchers keep Midgard running and verifiable. Operators sequence transactions; Watchers replay commitments and challenge invalid state.",
       cta: "Explore protocol roles",
-      href: "/contracts",
+      href: "/developers#developer-paths",
     },
   ],
   lifecycle: [

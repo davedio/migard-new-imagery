@@ -40,7 +40,7 @@ const lifecycle = [
   },
   {
     n: "04",
-    name: "DA attestation",
+    name: "Data availability check",
     desc: "Data availability participants check that the data behind the commitment can be inspected.",
   },
   {
@@ -87,7 +87,7 @@ export default function LearnPage() {
           <Card
             num="03"
             title="What the protocol does"
-            body="Submit, sequence, commit, DA attestation, watch, settle. Those are the moving parts that turn fast activity into settled state."
+            body="Submit, sequence, commit, data availability check, watch, settle. Those are the moving parts that turn fast activity into settled state."
           />
           <Card
             num="04"
@@ -101,6 +101,7 @@ export default function LearnPage() {
       </Section>
 
       <Section
+        id="roles"
         title="Find where you fit."
         lead="Start with Users, Builders, or Protocol Roles."
       >
@@ -169,7 +170,7 @@ export default function LearnPage() {
           body="Midgard is early. Live status, verified code, and approved parameters are the source for claims that affect users, builders, and protocol roles."
           items={[
             "Fault-proof verification is the public verification path.",
-            "DA and watcher assumptions are part of the security model.",
+            "Data availability and watcher assumptions are part of the security model.",
             "Rewards, bonds, and partner claims appear only after parameters are approved.",
           ]}
         />

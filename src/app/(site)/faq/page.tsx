@@ -79,6 +79,62 @@ const comparisonChartRows = [
   },
 ] as const;
 
+const modelCards = [
+  {
+    label: "Midgard",
+    title: "UTXO rollup path",
+    tone: "midgard",
+    points: [
+      "Faster UTXO execution",
+      "Fault-proof verification with Watcher replay",
+      "Final settlement through the L1 path after verification",
+    ],
+  },
+  {
+    label: "EVM rollups",
+    title: "Account-model L2s",
+    tone: "neutral",
+    points: [
+      "Often mature tooling and liquidity",
+      "Security depends on bridge, proof, sequencer, and upgrade rules",
+      "Execution model is usually not UTXO-native",
+    ],
+  },
+  {
+    label: "Sidechains / appchains",
+    title: "Separate execution chains",
+    tone: "watch",
+    points: [
+      "Can be fast and flexible",
+      "Security often depends on a separate validator set",
+      "Bridge exposure is usually central to the risk model",
+    ],
+  },
+] as const;
+
+const trustPath = [
+  {
+    k: "Execution",
+    midgard: "UTXO-local activity runs faster.",
+    watch: "Check what execution model changed.",
+  },
+  {
+    k: "Commitment",
+    midgard: "Operators commit state for inspection.",
+    watch: "Check who can see and replay it.",
+  },
+  {
+    k: "Challenge",
+    midgard: "Watchers can use the fault-proof path.",
+    watch: "Check the proof and challenge rules.",
+  },
+  {
+    k: "Settlement",
+    midgard: "Finalized state settles after verification.",
+    watch: "Check what becomes final and when.",
+  },
+] as const;
+
 function ComparisonCell({
   label,
   cell,
@@ -95,6 +151,24 @@ function ComparisonCell({
   );
 }
 
+function ModelCard({
+  card,
+}: {
+  card: (typeof modelCards)[number];
+}) {
+  return (
+    <article className="faq-model-card" data-tone={card.tone}>
+      <span>{card.label}</span>
+      <h3>{card.title}</h3>
+      <ul>
+        {card.points.map((point) => (
+          <li key={point}>{point}</li>
+        ))}
+      </ul>
+    </article>
+  );
+}
+
 export default function FaqPage() {
   return (
     <main className="page-main">
@@ -108,6 +182,68 @@ export default function FaqPage() {
           { label: "Read security", href: "/security", variant: "ghost" },
         ]}
       />
+
+      <Section
+        id="comparison"
+        title="Compare the trust model first."
+        lead="Do not compare L2s only by speed. Compare what executes faster, what can be independently checked, and what finally settles."
+      >
+        <div className="faq-model-cards" aria-label="High-level comparison of Midgard, EVM rollups, and sidechains">
+          {modelCards.map((card) => (
+            <ModelCard key={card.label} card={card} />
+          ))}
+        </div>
+        <div className="faq-trust-path" aria-label="Trust path from execution to settlement">
+          {trustPath.map((step, index) => (
+            <article className="faq-trust-path__step" key={step.k}>
+              <span className="faq-trust-path__n">{String(index + 1).padStart(2, "0")}</span>
+              <h3>{step.k}</h3>
+              <p>{step.midgard}</p>
+              <small>{step.watch}</small>
+            </article>
+          ))}
+        </div>
+        <div className="comparison-chart" aria-label="Qualitative comparison chart for Midgard and common L2 patterns">
+          <div className="comparison-chart__head" aria-hidden>
+            <span>Question</span>
+            <span>Midgard</span>
+            <span>EVM rollups</span>
+            <span>Sidechains / appchains</span>
+          </div>
+          {comparisonChartRows.map((row) => (
+            <div className="comparison-chart__row" key={row.k}>
+              <div className="comparison-chart__k">{row.k}</div>
+              <ComparisonCell label="Midgard" cell={row.midgard} />
+              <ComparisonCell label="EVM rollups" cell={row.evm} />
+              <ComparisonCell label="Sidechains / appchains" cell={row.sidechain} />
+            </div>
+          ))}
+        </div>
+        <div className="comparison-matrix">
+          <div className="comparison-matrix__head" aria-hidden>
+            <span>Dimension</span>
+            <span>Midgard</span>
+            <span>Other L2 patterns</span>
+          </div>
+          {comparisonRows.map((row) => (
+            <div className="comparison-matrix__row" key={row.k}>
+              <div className="comparison-matrix__k">{row.k}</div>
+              <div>
+                <span className="comparison-matrix__bar comparison-matrix__bar--midgard" />
+                <p>{row.midgard}</p>
+              </div>
+              <div>
+                <span className="comparison-matrix__bar" />
+                <p>{row.other}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <Callout
+          title="This page should stay current."
+          body="As benchmarks, bridge integrations, and protocol parameters mature, this comparison should become more quantitative. For now, it keeps the evaluation criteria visible without pretending pre-alpha numbers are final."
+        />
+      </Section>
 
       <Section id="basics">
         <Faq
@@ -196,58 +332,11 @@ export default function FaqPage() {
         />
       </Section>
 
-      <Section
-        id="comparison"
-        title="Compare the trust model, not just the speed claim."
-        lead="A faster L2 is only useful if users can understand what security changed. This is the comparison lens Midgard should keep making visible."
-      >
-        <div className="comparison-chart" aria-label="Qualitative comparison chart for Midgard and common L2 patterns">
-          <div className="comparison-chart__head" aria-hidden>
-            <span>Question</span>
-            <span>Midgard</span>
-            <span>EVM rollups</span>
-            <span>Sidechains / appchains</span>
-          </div>
-          {comparisonChartRows.map((row) => (
-            <div className="comparison-chart__row" key={row.k}>
-              <div className="comparison-chart__k">{row.k}</div>
-              <ComparisonCell label="Midgard" cell={row.midgard} />
-              <ComparisonCell label="EVM rollups" cell={row.evm} />
-              <ComparisonCell label="Sidechains / appchains" cell={row.sidechain} />
-            </div>
-          ))}
-        </div>
-        <div className="comparison-matrix">
-          <div className="comparison-matrix__head" aria-hidden>
-            <span>Dimension</span>
-            <span>Midgard</span>
-            <span>Other L2 patterns</span>
-          </div>
-          {comparisonRows.map((row) => (
-            <div className="comparison-matrix__row" key={row.k}>
-              <div className="comparison-matrix__k">{row.k}</div>
-              <div>
-                <span className="comparison-matrix__bar comparison-matrix__bar--midgard" />
-                <p>{row.midgard}</p>
-              </div>
-              <div>
-                <span className="comparison-matrix__bar" />
-                <p>{row.other}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <Callout
-          title="This page should stay current."
-          body="As benchmarks, bridge integrations, and protocol parameters mature, this comparison should become more quantitative. For now, it keeps the evaluation criteria visible without pretending pre-alpha numbers are final."
-        />
-      </Section>
-
       <Section title="What to inspect next.">
         <CardGrid cols={2}>
           <Card
             title="Read how it works"
-            body="Follow deposit, transact, withdraw, commitment, DA attestation, fault-proof verification, and settlement."
+            body="Follow deposit, transact, withdraw, commitment, data availability checks, fault-proof verification, and settlement."
             cta="Open flow"
             href="/how-it-works"
           />

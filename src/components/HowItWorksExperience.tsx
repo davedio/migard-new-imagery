@@ -24,7 +24,7 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
    (beams, network pulses, leaves, ADA diamonds) layered over it, and a
    HUD chapter rail whose labels are aligned to the
    page's protocol-lifecycle language (Submit · L2 -> Sequence ->
-   Commit -> DA attestation -> Watch -> Settle · L1). The detailed textual sections below
+   Commit -> data availability check -> Watch -> Settle · L1). The detailed textual sections below
    the act reinforce what the 3D just showed.
 
    This component owns the two RESN-class interaction systems, all
@@ -104,7 +104,7 @@ const ACT_BEATS: { stage: string; name: string; layer: string }[] = [
   { stage: "01", name: "Submit", layer: "l2" },
   { stage: "02", name: "Sequence", layer: "l2" },
   { stage: "03", name: "Commit", layer: "l2" },
-  { stage: "04", name: "DA attestation", layer: "bridge" },
+  { stage: "04", name: "Data availability check", layer: "bridge" },
   { stage: "05", name: "Watch", layer: "bridge" },
   { stage: "06", name: "Settle", layer: "l1" },
 ];
