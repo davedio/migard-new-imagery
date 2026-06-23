@@ -115,12 +115,15 @@ export default function WorldTreeCanvas({
   phasesRef,
   tickRef,
   src = TREE_SRC,
+  onReady,
 }: {
   phasesRef: React.RefObject<DescentPhases>;
   /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
   tickRef: React.RefObject<((dt: number) => void) | null>;
   /** Tree plate to draw + read veins from (theme picks night or day). */
   src?: string;
+  /** Fired once the tree plate is decoded enough for the canvas takeover. */
+  onReady?: () => void;
 }) {
   /* TWO stacked canvases (perf pass 2026-06-11): the PLATE layer redraws
      only when the camera/fades actually move (during a dwell it costs
@@ -355,6 +358,7 @@ export default function WorldTreeCanvas({
         }
       }
       treeReady = true;
+      onReady?.();
     };
     tree.src = src;
 
@@ -724,7 +728,7 @@ export default function WorldTreeCanvas({
       treeBmp?.close();
       window.removeEventListener("resize", fit);
     };
-  }, [phasesRef, tickRef, src]);
+  }, [phasesRef, tickRef, src, onReady]);
 
   return (
     <>

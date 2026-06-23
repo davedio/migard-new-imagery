@@ -16,6 +16,10 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
     }),
   ).toBeVisible();
   await expect(page.locator("#top").getByText(/mathematically verified security/i)).toBeVisible();
+  await expect(page.locator(".v2-home__instant-plate")).toHaveCSS(
+    "background-image",
+    /worldtree-night-tall/,
+  );
   await expect(page.locator(".v2-stage")).toBeVisible();
   await expect(page.locator(".v2-stage canvas")).toHaveCount(2);
   const bodyText = await page.locator("body").innerText();

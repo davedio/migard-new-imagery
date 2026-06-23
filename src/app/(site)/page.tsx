@@ -16,5 +16,15 @@ export const metadata: Metadata = {
  * Canonical home at `/`, inside the (site) group so it shares nav + footer.
  */
 export default function HomePage() {
-  return <HomeV2 />;
+  return (
+    <>
+      <link
+        rel="preload"
+        as="image"
+        href="/plates/worldtree-night-tall.avif"
+        fetchPriority="high"
+      />
+      <HomeV2 />
+    </>
+  );
 }

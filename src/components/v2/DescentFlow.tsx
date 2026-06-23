@@ -114,7 +114,13 @@ const BAND_IDS = [
 
 const subscribeNoop = () => () => {};
 
-export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
+export default function DescentFlow({
+  treeSrc,
+  onStageReady,
+}: {
+  treeSrc?: string;
+  onStageReady?: () => void;
+}) {
   const { motionOn } = useMotionPref();
   const mounted = useSyncExternalStore(
     subscribeNoop,
@@ -400,6 +406,7 @@ export default function DescentFlow({ treeSrc }: { treeSrc?: string }) {
                 src={treeSrc}
                 phasesRef={phasesRef}
                 tickRef={tickRef}
+                onReady={onStageReady}
               />
               <div className="v2-stage__veil" aria-hidden />
               <div className="v2-stage__mist" aria-hidden />
