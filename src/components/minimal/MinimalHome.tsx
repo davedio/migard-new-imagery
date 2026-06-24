@@ -88,11 +88,6 @@ const HERO_ROUTES = [
     detail: "Security model",
     href: "/security",
   },
-  {
-    label: "Report",
-    detail: "Security policy",
-    href: OFFICIAL_LINKS.securityPolicy,
-  },
 ] as const;
 
 const METRIC_STATUS = {

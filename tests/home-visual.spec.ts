@@ -79,11 +79,10 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.locator(".minimal-route-strip")).toHaveCount(0);
   await expect(page.locator(".minimal-route-card")).toHaveCount(0);
   await expect(heroRoutes).toBeVisible();
-  await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(4);
+  await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(3);
   await expect(heroRoutes.getByRole("link", { name: /Use User path/i })).toHaveAttribute("href", "/learn#roles");
   await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
   await expect(heroRoutes.getByRole("link", { name: /Verify Security model/i })).toHaveAttribute("href", "/security");
-  await expect(heroRoutes.getByRole("link", { name: /Report Security policy/i })).toHaveAttribute("href", "/security#disclosure");
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
@@ -174,7 +173,7 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   await expect(mobileMenu.getByRole("link", { name: /^Contracts/i })).toHaveAttribute("href", "/contracts");
   await expect(mobileMenu.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
   await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/security");
-  await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveAttribute("href", "/security#disclosure");
+  await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveCount(0);
   await expect(mobileMenu.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(mobileMenu.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
   await expect(mobileMenu.getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
@@ -205,15 +204,13 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
   const routeCards = page.locator(".minimal-hero-route");
-  await expect(routeCards).toHaveCount(4);
+  await expect(routeCards).toHaveCount(3);
   await expect(routeCards.nth(0)).toContainText("Use");
   await expect(routeCards.nth(0)).toHaveAttribute("href", "/learn#roles");
   await expect(routeCards.nth(1)).toContainText("Build");
   await expect(routeCards.nth(1)).toHaveAttribute("href", "/developers");
   await expect(routeCards.nth(2)).toContainText("Verify");
   await expect(routeCards.nth(2)).toHaveAttribute("href", "/security");
-  await expect(routeCards.nth(3)).toContainText("Report");
-  await expect(routeCards.nth(3)).toHaveAttribute("href", "/security#disclosure");
   await expect(page.locator(".minimal-flow-board").getByText("User sees")).toBeVisible();
   await expect(page.locator(".minimal-user-path").getByText("Deposit")).toBeVisible();
   await expect(page.locator(".minimal-flow-row").filter({ hasText: "Data availability" })).toBeVisible();
@@ -271,7 +268,8 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await security.click();
   const securityDropdown = page.locator(".site-nav__group", { has: security }).locator(".site-nav__dropdown");
   await expect(securityDropdown.getByRole("link", { name: /Security overview/i })).toBeVisible();
-  await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toBeVisible();
+  await expect(securityDropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
+  await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toHaveCount(0);
 
   await expect(page.getByRole("button", { name: /^Connect$/i })).toHaveCount(0);
   const nav = page.locator(".site-nav");

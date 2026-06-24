@@ -61,14 +61,9 @@ const NAV_GROUPS: readonly NavGroup[] = [
       {
         label: "Security overview",
         href: "/security",
-        description: "Trust path and assumptions",
+        description: "Trust path, assumptions, reporting route",
       },
-      {
-        label: "Security policy",
-        href: OFFICIAL_LINKS.securityPolicy,
-        description: "Report sensitive issues",
-      },
-      { label: "FAQ", href: "/faq", description: "Compare L2 tradeoffs" },
+      { label: "FAQ", href: "/faq", description: "L2 tradeoffs and common questions" },
     ],
   },
 ] as const;

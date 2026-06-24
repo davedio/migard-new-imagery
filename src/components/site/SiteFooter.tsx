@@ -42,7 +42,6 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Security",
     links: [
       { label: "Security", href: "/security" },
-      { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy },
       { label: "FAQ", href: "/faq" },
     ],
   },
