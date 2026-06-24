@@ -174,8 +174,12 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   await expect(mobileMenu.getByRole("link", { name: /^Contracts/i })).toHaveAttribute("href", "/contracts");
   await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/security");
   await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveAttribute("href", "/security#disclosure");
+  await expect(mobileMenu.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
+  await expect(mobileMenu.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
+  await expect(mobileMenu.getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
   await expect(mobileMenu.getByRole("link", { name: /Intake form/i })).toHaveAttribute("href", /docs\.google\.com\/forms/);
   await expect(mobileMenu).toContainText("Builder and Protocol Role interest");
+  await expect(mobileMenu).not.toContainText("Connect");
 
   const box = await mobileMenu.boundingBox();
   expect(box).not.toBeNull();
@@ -242,6 +246,9 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.locator(".minimal-channel-card").first()).toContainText("Report something sensitive");
   await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", "/security#disclosure");
   await expect(page.locator(".minimal-channel-card").filter({ hasText: "Intake form" })).toContainText("Protocol Roles");
+  await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
+  await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
+  await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
   await page.screenshot({ path: testInfo.outputPath("minimal-preview.png") });
 });
 
@@ -256,6 +263,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(devDropdown.getByRole("link", { name: /Developer overview/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /Contracts/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /GitHub/i })).toBeVisible();
+  await expect(devDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
 
   const security = page.getByRole("button", { name: /^Security$/i });
   await security.click();
@@ -263,12 +271,11 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(securityDropdown.getByRole("link", { name: /Security overview/i })).toBeVisible();
   await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toBeVisible();
 
-  const connect = page.getByRole("button", { name: /^Connect$/i });
-  await connect.click();
-  const connectDropdown = page.locator(".site-nav__group", { has: connect }).locator(".site-nav__dropdown");
-  await expect(connectDropdown.getByRole("link", { name: /Choose your path/i })).toBeVisible();
-  await expect(connectDropdown.getByRole("link", { name: /Discord/i })).toBeVisible();
-  await expect(connectDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Connect$/i })).toHaveCount(0);
+  const nav = page.locator(".site-nav");
+  await expect(nav.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
+  await expect(nav.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
+  await expect(nav.getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
 
   await page.screenshot({ path: testInfo.outputPath("nav-developers-security-open.png") });
 });

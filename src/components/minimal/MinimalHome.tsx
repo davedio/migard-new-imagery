@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ConceptTree } from "@/components/minimal/ConceptTree";
+import { OfficialChannelIcon, OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { SITE_COPY } from "@/lib/siteCopy";
@@ -274,11 +275,22 @@ export default function MinimalHome() {
         <div className="minimal-section__head">
           <h2 id="minimal-channels-title">Use the right official channel.</h2>
           <p>Security reports, source review, builder interest, and public questions belong in different places.</p>
+          <OfficialSocialLinks
+            className="minimal-channel-socials"
+            linkClassName="minimal-channel-social"
+            iconSize={18}
+            showLabels
+          />
         </div>
         <div className="minimal-channel-grid">
           {SITE_COPY.channels.map((channel) => (
             <SmartLink key={channel.title} className="minimal-channel-card" href={channel.href}>
-              <span>{channel.intent}</span>
+              <div className="minimal-channel-card__head">
+                <span>{channel.intent}</span>
+                <span className="minimal-channel-card__icon">
+                  <OfficialChannelIcon label={channel.title} size={20} />
+                </span>
+              </div>
               <h3>{channel.title}</h3>
               <p>{channel.body}</p>
               <strong>{channel.cta} -&gt;</strong>

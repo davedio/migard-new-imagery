@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { useTheme } from "@/lib/theme";
 
@@ -52,42 +53,28 @@ const NAV_GROUPS: readonly NavGroup[] = [
         description: "Protocol design notes",
         external: true,
       },
-    ],
-  },
-  {
-    label: "Security",
-    items: [
-      { label: "Security overview", href: "/security", description: "Trust path and assumptions" },
-      {
-        label: "Security policy",
-        href: OFFICIAL_LINKS.securityPolicy,
-        description: "Report sensitive issues",
-      },
-      { label: "FAQ", href: "/faq", description: "Compare L2 tradeoffs" },
-    ],
-  },
-  {
-    label: "Connect",
-    items: [
-      { label: "Choose your path", href: "/#paths", description: "Choose user, builder, or role" },
-      {
-        label: "Discord",
-        href: OFFICIAL_LINKS.discord,
-        description: "Non-sensitive community questions",
-        external: true,
-      },
       {
         label: "Intake form",
         href: OFFICIAL_LINKS.intakeForm,
         description: "Builder and Protocol Role interest",
         external: true,
       },
+    ],
+  },
+  {
+    label: "Security",
+    items: [
       {
-        label: "X / Twitter",
-        href: OFFICIAL_LINKS.x,
-        description: "Official announcements",
-        external: true,
+        label: "Security overview",
+        href: "/security",
+        description: "Trust path and assumptions",
       },
+      {
+        label: "Security policy",
+        href: OFFICIAL_LINKS.securityPolicy,
+        description: "Report sensitive issues",
+      },
+      { label: "FAQ", href: "/faq", description: "Compare L2 tradeoffs" },
     ],
   },
 ] as const;
@@ -341,6 +328,7 @@ export function SiteNav() {
         </div>
 
         <div className="site-nav__right">
+          <OfficialSocialLinks className="site-nav__social" linkClassName="site-nav__social-link" iconSize={17} />
           <ThemeToggle />
           <button
             type="button"
@@ -359,6 +347,13 @@ export function SiteNav() {
         <Link href="/" data-active={isActive("/")} onClick={closeMenu}>
           Home
         </Link>
+        <OfficialSocialLinks
+          className="site-nav__mobile-social"
+          linkClassName="site-nav__mobile-social-link"
+          iconSize={18}
+          showLabels
+          onNavigate={closeMenu}
+        />
         {NAV_GROUPS.map((group) => (
           <div className="site-nav__mobile-group" key={group.label}>
             <div className="site-nav__mobile-title">{group.label}</div>
