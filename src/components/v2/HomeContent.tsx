@@ -249,7 +249,7 @@ const PATHS = [
   {
     n: "03",
     title: "Protocol Roles",
-    line: "Protocol Roles keep Midgard running and verifiable. Operators sequence transactions; Watchers inspect commitments and challenge invalid state through the fault-proof path.",
+    line: "Protocol Roles keep Midgard running and verifiable. Operators sequence and bond; Watchers inspect commitments, submit fault proofs, and keep invalid state from settling.",
     cta: "Explore Protocol Roles",
     href: "/developers#developer-paths",
   },
@@ -300,7 +300,7 @@ const PROTOCOL_PATH = [
   {
     n: "01",
     label: "Submit",
-    body: "A user sends a transaction to Midgard.",
+    body: "A user submits a transaction to Midgard, usually through an app or wallet.",
   },
   {
     n: "02",
@@ -310,22 +310,22 @@ const PROTOCOL_PATH = [
   {
     n: "03",
     label: "Commit",
-    body: "Compact state is posted to the Cardano L1 settlement path.",
+    body: "The operator posts a compact block header to the Cardano L1 settlement path.",
   },
   {
     n: "04",
-    label: "Make data checkable",
-    body: "The data behind each commitment stays available for review.",
+    label: "Data availability",
+    body: "Block data is published so Watchers and builders can inspect the commitment.",
   },
   {
     n: "05",
     label: "Watch",
-    body: "Watchers replay commitments and challenge invalid state.",
+    body: "Watchers replay committed blocks; a valid fault proof keeps bad state from settling.",
   },
   {
     n: "06",
     label: "Settle",
-    body: "Verified state reaches final Cardano L1 settlement.",
+    body: "If no valid fault proof succeeds, verified state settles through Cardano L1.",
   },
 ] as const;
 
@@ -337,10 +337,10 @@ export function ProtocolPath() {
           <span className="rule" />
           <span className="stratum">Transaction path</span>
         </div>
-        <h2 id="v2-protocol-title">Fast execution first. Verification before settlement.</h2>
+        <h2 id="v2-protocol-title">Fast execution first. Verification before final settlement.</h2>
         <p>
           Users get a faster experience while the protocol keeps the settlement path
-          inspectable: ordered activity, committed state, Watcher replay, and final Cardano L1 settlement.
+          inspectable: ordered activity, committed state, data availability, Watcher replay, and Cardano L1 settlement.
         </p>
       </div>
       <div className="v2-protocol__diagram" aria-label="Midgard transaction path">

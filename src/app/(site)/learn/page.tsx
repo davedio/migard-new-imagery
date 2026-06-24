@@ -47,7 +47,7 @@ const lifecycle = [
   {
     n: "05",
     name: "Watch",
-    desc: "Watchers replay state and use the fault-proof path when a commitment is wrong.",
+    desc: "Watchers replay committed blocks and submit a fault proof when a commitment is wrong.",
   },
   {
     n: "06",
@@ -106,7 +106,7 @@ export default function LearnPage() {
         compact
         tone="moss"
         title="Learn Midgard."
-        sub="A plain-language map of faster UTXO execution, verification, and final Cardano L1 settlement."
+        sub="A plain-language map of faster UTXO execution, public verification, and Cardano L1 settlement."
         actions={[
           { label: "See how it works", href: "/how-it-works", variant: "primary" },
           { label: "Read security", href: "/security", variant: "ghost" },
@@ -122,7 +122,7 @@ export default function LearnPage() {
           <Card
             num="01"
             title="What Midgard is"
-            body="Midgard is the execution layer for UTXO finance: an optimistic rollup that gives applications faster execution while preserving inspectable Cardano L1 settlement."
+            body="Midgard is an optimistic rollup for UTXO finance: applications execute faster, while verified state settles through Cardano L1."
           />
           <Card
             num="02"
@@ -132,7 +132,7 @@ export default function LearnPage() {
           <Card
             num="03"
             title="What the protocol does"
-            body="Submit, sequence, commit, data availability check, watch, settle. Those are the moving parts that turn fast execution into settled state."
+            body="Submit, sequence, commit, data availability, watch, settle. These steps turn fast execution into verified settlement."
           />
           <Card
             num="04"
@@ -148,7 +148,7 @@ export default function LearnPage() {
       <Section
         id="roles"
         title="Pick the role that matches what you need."
-        lead="Users move assets. Builders integrate applications. Protocol Roles run and verify the system."
+        lead="Users move assets. Builders integrate applications. Protocol Roles operate and verify the system."
       >
         <CardGrid>
           <Card
@@ -164,7 +164,7 @@ export default function LearnPage() {
           <Card
             num="03"
             title="Protocol Roles"
-            body="Protocol Roles keep Midgard running and verifiable. Operators sequence transactions; Watchers inspect commitments and challenge invalid state through the fault-proof path."
+            body="Protocol Roles keep Midgard running and verifiable. Operators sequence and bond; Watchers inspect commitments, submit fault proofs, and keep invalid state from settling."
           />
         </CardGrid>
       </Section>
@@ -204,7 +204,7 @@ export default function LearnPage() {
           />
           <Card
             title="Economics"
-            body="Fees, operator bonds, watcher incentives, and launch incentives will be published through official channels as parameters are approved."
+            body="Current public positioning is ADA fees with no separate gas token at launch. Bonds, watcher incentives, and launch incentives should publish only after parameters are approved."
           />
         </CardGrid>
       </Section>

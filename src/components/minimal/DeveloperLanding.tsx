@@ -21,13 +21,13 @@ const launchpad = [
   },
   {
     label: "Security model",
-    detail: "Understand the trust path, fault-proof checks, Watcher replay, and settlement assumptions.",
+    detail: "Understand the trust path, fault-proof checks, Watcher replay, data availability, and Cardano L1 settlement.",
     href: "/security",
     cta: "Read security",
   },
   {
     label: "Protocol Roles",
-    detail: "Register operator, Watcher, infrastructure, or testnet interest.",
+    detail: "Register operator, Watcher, infrastructure, or testnet interest. Participation should match the current testnet phase.",
     href: OFFICIAL_LINKS.intakeForm,
     cta: "Open intake form",
   },
@@ -44,11 +44,11 @@ const integrationPath = [
   },
   {
     label: "App flow",
-    detail: "Map deposit, transact, withdraw, fallback.",
+    detail: "Map wallet action, app interaction, data availability, fallback.",
   },
   {
     label: "Trust path",
-    detail: "Verify fault proofs, Watchers, settlement.",
+    detail: "Verify fault proofs, Watchers, data availability, settlement.",
   },
 ] as const;
 
@@ -149,10 +149,10 @@ export default function DeveloperLanding() {
       <Section
         id="developer-paths"
         title="Choose your developer path."
-        lead="Application builders, protocol reviewers, and Protocol Roles need different next steps."
+        lead="Application builders, protocol reviewers, Protocol Roles, and stack partners need different next steps."
         glow="green"
       >
-        <CardGrid>
+        <CardGrid cols={2}>
           {DEVELOPER_COPY.tracks.map((track, i) => (
             <Card
               key={track.title}
@@ -177,8 +177,8 @@ export default function DeveloperLanding() {
           items={[
             { n: "01", name: "Read", desc: "Start with GitHub and the plain-language overview." },
             { n: "02", name: "Inspect", desc: "Open the contract addresses, topology, and state anchors." },
-            { n: "03", name: "Model", desc: "Map your user flow to deposit, transact, withdraw, and fallback behavior." },
-            { n: "04", name: "Verify", desc: "Review the fault-proof path, Watcher role, and settlement assumptions." },
+            { n: "03", name: "Model", desc: "Map your flow to wallet action, app interaction, data availability, and fallback behavior." },
+            { n: "04", name: "Verify", desc: "Review the fault-proof path, Watcher role, data availability assumption, and Cardano L1 settlement path." },
           ]}
         />
       </Section>

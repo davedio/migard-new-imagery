@@ -121,8 +121,8 @@ export default function SecurityPage() {
       <PageHero
         compact
         tone="ink"
-        title="Security you can inspect."
-        sub="Midgard pairs faster execution with mathematically verified smart contracts, fault-proof verification, UTXO-local state, and final Cardano L1 settlement after verification."
+        title="Security assumptions you can inspect."
+        sub="Midgard narrows the critical surface: mathematically verified contracts, UTXO-local proofs, Watcher replay, data availability, and Cardano L1 settlement after verification."
         actions={[
           { label: "Read the mechanism", href: "#mechanism", variant: "primary" },
           {
@@ -157,7 +157,7 @@ export default function SecurityPage() {
           <div className={styles.trustHead}>
             <h2 id="security-mechanism-title">Fast confirmations first. Cardano L1 settlement after verification.</h2>
             <p>
-              Operators can make activity feel fast, but finality still depends on the Cardano L1 settlement path, data availability, contract logic, approved parameters, and the challenge rules around committed state.
+              Operators can make activity feel fast, but they do not custody final settlement. Finality depends on Cardano L1 settlement, data availability, verified contract logic, approved parameters, and fault-proof challenge rules.
             </p>
           </div>
           <div className={styles.trustDiagram} aria-label="Security path from soft confirmation to Cardano L1 settlement">
@@ -172,7 +172,7 @@ export default function SecurityPage() {
           <div className={styles.exploitNote}>
             <strong>Lower attack surface, not magic.</strong>
             <p>
-              On-chain finance systems can still fail. Midgard makes a narrower and more inspectable claim: keep the critical settlement surface small, mathematically verified, independently replayable, and contestable before final settlement.
+              On-chain finance systems can still fail. Midgard makes a narrower and more inspectable claim: keep the critical settlement surface small, mathematically verified, independently replayable, and contestable before Cardano L1 settlement.
             </p>
           </div>
           <div className={styles.claimBoundary} aria-label="Security claim boundaries">
@@ -211,7 +211,7 @@ export default function SecurityPage() {
           <Card
             num="03"
             title="UTXO-local state"
-            body="UTXO structure helps localize what must be inspected, reducing the broad shared-state surface that attackers often exploit."
+            body="UTXO structure helps a fault proof focus on the relevant inputs and transition instead of broad global account state."
           />
           <Card
             num="04"
@@ -229,7 +229,7 @@ export default function SecurityPage() {
           <Card
             num="06"
             title="Honest status labels"
-            body="Public claims should stay tied to live status, measured benchmarks, approved parameters, and the current pre-alpha testnet boundary."
+            body="Public claims should stay tied to live status, measured benchmarks, approved parameters, and the current pre-alpha testnet boundary. Initial operation is internal-team-led before broader Operator and Watcher registration opens."
           />
         </CardGrid>
       </Section>
@@ -254,7 +254,7 @@ export default function SecurityPage() {
             {
               n: "03",
               name: "Availability",
-              desc: "Data availability checks belong in the deeper mechanism, where builders can inspect the assumptions.",
+              desc: "Data availability is a security assumption: block data must remain available during the challenge window so Watchers can replay it.",
             },
             {
               n: "04",

@@ -99,7 +99,7 @@ const METRIC_STATUS = {
   "Settlement security": "Trust path",
   "Execution model": "Architecture",
   "Verified contracts": "Formal review",
-  "Fault-proof coverage": "Challenge path",
+  "Watcher coverage": "Challenge path",
   Status: "Current phase",
 } as const;
 
@@ -227,7 +227,7 @@ export default function MinimalHome() {
 
       <section className="minimal-section" aria-labelledby="minimal-proof-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-proof-title">Track the claims that matter.</h2>
+          <h2 id="minimal-proof-title">Track the claims people can verify.</h2>
           <p>Publish the indicators that reduce guesswork: speed, settlement, UTXO fit, verification coverage, and status.</p>
         </div>
         <div className="minimal-metrics">

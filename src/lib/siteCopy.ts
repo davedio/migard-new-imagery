@@ -4,37 +4,37 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for UTXO finance",
     lead:
-      "Midgard makes UTXO apps feel faster while keeping the trust path inspectable. Mathematically verified contracts, fault-proof checks, and final Cardano L1 settlement guard the path from activity to finality.",
+      "Midgard gives UTXO applications faster execution, then settles verified state through Cardano L1. The trust path is public: committed state, data availability, Watcher replay, fault proofs, and Cardano L1 settlement.",
     primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
   paths: [
     {
       title: "Users",
-      body: "Learn how deposits, activity, withdrawals, and settlement fit together before you use an app.",
+      body: "Deposit, transact, withdraw. Use the app while final settlement completes after verification.",
       cta: "Learn user path",
       href: "/learn#roles",
     },
     {
       title: "Builders",
-      body: "Inspect source, contracts, and the execution flow before mapping a UTXO app to Midgard.",
+      body: "Map one UTXO app flow to Midgard: wallet action, contract path, data availability, fallback.",
       cta: "Start building",
       href: "/developers",
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state.",
+      body: "Operators sequence and bond. Watchers replay commitments, submit fault proofs, and keep invalid state from settling.",
       cta: "Explore Protocol Roles",
       href: "/developers#developer-paths",
     },
   ],
   lifecycle: [
-    ["Submit", "A user sends a transaction to Midgard."],
+    ["Submit", "A user submits a transaction to Midgard, usually through an app or wallet."],
     ["Sequence", "An operator orders valid transactions into an L2 block."],
-    ["Commit", "Compact state is posted to the Cardano L1 settlement path."],
-    ["Make data checkable", "The data behind each commitment stays available for review."],
-    ["Watch", "Watchers replay state and use the fault-proof path if needed."],
-    ["Settle", "Verified state reaches final Cardano L1 settlement."],
+    ["Commit", "The operator posts a compact block header to the Cardano L1 settlement path."],
+    ["Data availability", "Block data is published so Watchers and builders can inspect the commitment."],
+    ["Watch", "Watchers replay committed blocks; a valid fault proof keeps bad state from settling."],
+    ["Settle", "If no valid fault proof succeeds, verified state settles through Cardano L1."],
   ],
   proofPoints: [
     {
@@ -58,13 +58,13 @@ export const SITE_COPY = {
       s: "Track which core contracts have completed mathematical verification.",
     },
     {
-      k: "Fault-proof coverage",
+      k: "Watcher coverage",
       v: "Contestable state",
       s: "Track the commitments that independent Watchers can replay and challenge.",
     },
     {
       k: "Status",
-      v: "Pre-alpha",
+      v: "Pre-alpha testnet",
       s: "Public claims stay tied to live code, measured results, and approved parameters.",
     },
   ],
@@ -104,7 +104,7 @@ export const DEVELOPER_COPY = {
   hero: {
     title: "Build on the execution layer for UTXO finance.",
     lead:
-      "Start with the source, inspect the contract path, then map one UTXO user flow to Midgard: deposit, transact, withdraw, fallback.",
+      "Start with the source, inspect the contract path, then map one UTXO flow to Midgard: wallet action, app interaction, data availability, fallback.",
   },
   entryPoints: [
     {
@@ -143,9 +143,15 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence activity. Watchers replay commitments and challenge invalid state. Register interest after reviewing the trust path.",
+      body: "Operators sequence and bond. Watchers replay commitments, submit fault proofs, and keep invalid state from settling. Register interest after reviewing the trust path.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Register interest",
+    },
+    {
+      title: "Midgard Stack",
+      body: "Explore custom deployments, reusable L2 infrastructure, and deeper partner integrations after the base protocol path is clear.",
+      href: OFFICIAL_LINKS.intakeForm,
+      cta: "Discuss stack path",
     },
   ],
 } as const;

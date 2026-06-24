@@ -51,7 +51,7 @@ const contractPath = [
   {
     n: "03",
     title: "Challenge path",
-    body: "Fault-proof contracts give Watchers a public route to contest invalid committed state.",
+    body: "Fault-proof contracts give Watchers a public route to contest invalid committed state before it settles.",
   },
   {
     n: "04",
@@ -75,7 +75,7 @@ export default function ContractsPage() {
           <div className={styles.contractHeroCopy}>
             <h1>Inspect the contract path.</h1>
             <p>
-              Every Midgard validator, state anchor, reference script, and bootstrap transaction should be checkable from one place.
+              Developer deep dive: verify Midgard preprod contract addresses, inspect state anchors, and trace bootstrap history from one place.
             </p>
             <div className={styles.contractHeroChips}>
               <span className="chip chip--testnet">
@@ -136,7 +136,7 @@ export default function ContractsPage() {
       <Section
         id="topology"
         title="The protocol surface."
-        lead="Start with the contract path, then inspect the full address directory."
+        lead="Start with a visual contract-path explainer, then inspect the full address directory."
       >
         <div className={styles.metaBar}>
           <span className={styles.metaActive}>
@@ -254,7 +254,7 @@ export default function ContractsPage() {
       <Section
         id="security-model"
         title="Security model."
-        lead="The contracts matter because they make invalid state contestable and final settlement inspectable."
+        lead="The contracts matter because they make invalid state contestable, data availability inspectable, and Cardano L1 settlement reviewable."
       >
         <Layers
           items={[

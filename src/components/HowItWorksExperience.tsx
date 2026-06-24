@@ -114,7 +114,7 @@ const EXPLAINER_STEPS = [
     n: "01",
     title: "Submit",
     layer: "L2 entry",
-    what: "A user sends a transaction to Midgard.",
+    what: "A user submits a transaction to Midgard, usually through an app or wallet.",
     check: "The transaction is validated against UTXO rules before it enters the ordered flow.",
     why: "The user can get a faster usable signal without waiting for final settlement.",
   },
@@ -130,7 +130,7 @@ const EXPLAINER_STEPS = [
     n: "03",
     title: "Commit",
     layer: "Cardano L1 path",
-    what: "Compact state is posted to the Cardano L1 settlement path.",
+    what: "The operator posts a compact block header to the Cardano L1 settlement path.",
     check: "The commitment points to state that must remain available and challengeable.",
     why: "Midgard does not ask users to trust a private operator database.",
   },
@@ -138,7 +138,7 @@ const EXPLAINER_STEPS = [
     n: "04",
     title: "Data availability check",
     layer: "Availability",
-    what: "Block data is checked so commitments can be inspected.",
+    what: "Block data is made available so commitments can be replayed and inspected.",
     check: "Reviewers need the data required to replay the committed state.",
     why: "A commitment is not useful if the underlying data cannot be checked.",
   },
@@ -146,7 +146,7 @@ const EXPLAINER_STEPS = [
     n: "05",
     title: "Watch",
     layer: "Challenge",
-    what: "Watchers replay state and use the fault-proof path if needed.",
+    what: "Watchers replay committed blocks; a valid fault proof keeps bad state from settling.",
     check: "Invalid commitments can be challenged before they become settled state.",
     why: "Operators do not get the final word on correctness.",
   },
@@ -154,7 +154,7 @@ const EXPLAINER_STEPS = [
     n: "06",
     title: "Settle",
     layer: "Cardano L1 finality",
-    what: "Verified state reaches final Cardano L1 settlement.",
+    what: "If no valid fault proof succeeds, verified state settles through Cardano L1.",
     check: "After the verification path clears, finalized state inherits Cardano L1 security.",
     why: "Fast execution and final settlement stay separate, clear, and reviewable.",
   },
@@ -173,7 +173,7 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
           <p className="hiw-act__lead">
             For users, the path is deposit, transact, withdraw. Under the hood,
             Midgard routes activity through sequencing, commitment, data
-            availability checks, the challenge window, and final Cardano L1 settlement.
+            availability, Watcher replay, fault proofs, and Cardano L1 settlement.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (

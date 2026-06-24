@@ -35,14 +35,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://midgard-gateway.vercel.app"),
   title: "Midgard | The execution layer for UTXO finance",
   description:
-    "Midgard is the execution layer for UTXO finance: faster application execution with soft confirmations, fault-proof checks, and final Cardano L1 settlement after verification.",
+    "Midgard is an optimistic rollup for UTXO finance: faster application execution, public fault-proof verification, and Cardano L1 settlement after verification.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Midgard | The execution layer for UTXO finance",
     description:
-      "The execution layer for UTXO finance: faster application execution with soft confirmations, fault-proof checks, and final Cardano L1 settlement after verification.",
+      "An optimistic rollup for UTXO finance: faster application execution, public fault-proof verification, and Cardano L1 settlement after verification.",
     url: "/",
     siteName: "Midgard",
     images: [
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Midgard | The execution layer for UTXO finance",
     description:
-      "The execution layer for UTXO finance: faster application execution with soft confirmations, fault-proof checks, and final Cardano L1 settlement after verification.",
+      "An optimistic rollup for UTXO finance: faster application execution, public fault-proof verification, and Cardano L1 settlement after verification.",
     images: ["/og/home.jpg"],
   },
   icons: {

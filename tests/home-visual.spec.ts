@@ -45,8 +45,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
       name: /The execution layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/trust path inspectable/i)).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified contracts/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/faster execution/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/The trust path is public/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".v2-stage canvas")).toHaveCount(0);
@@ -91,18 +91,18 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(pathSection.getByText(/Operators sequence activity/i)).toBeVisible();
+  await expect(pathSection.getByText(/Operators sequence and bond/i)).toBeVisible();
   await expect(pathSection.getByRole("link", { name: /Learn user path/i })).toHaveAttribute("href", "/learn#roles");
   await expect(pathSection.getByRole("link", { name: /Explore Protocol Roles/i })).toHaveAttribute("href", "/developers#developer-paths");
   await expect(page.getByRole("heading", { name: /Fast execution first/i })).toBeVisible();
   await expect(page.locator(".minimal-flow-row")).toHaveCount(6);
   await expect(page.locator(".minimal-flow-row").first()).toContainText("Submit");
-  await expect(page.locator(".minimal-flow-row").nth(3)).toContainText("Make data checkable");
+  await expect(page.locator(".minimal-flow-row").nth(3)).toContainText("Data availability");
   await expect(page.locator(".minimal-flow-row").nth(5)).toContainText("Settle");
 
   await expect(page.locator(".minimal-metric")).toHaveCount(6);
   await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toBeVisible();
-  await expect(page.locator(".minimal-metric").filter({ hasText: "Fault-proof coverage" })).toBeVisible();
+  await expect(page.locator(".minimal-metric").filter({ hasText: "Watcher coverage" })).toBeVisible();
   await expect(page.locator(".v2-footer-statement")).toContainText("Execution layer for UTXO finance");
 
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
@@ -193,7 +193,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
       name: /The execution layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/final Cardano L1 settlement/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/settles verified state through Cardano L1/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
@@ -209,7 +209,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(routeCards.nth(3)).toHaveAttribute("href", "/security#disclosure");
   await expect(page.locator(".minimal-flow-board").getByText("User sees")).toBeVisible();
   await expect(page.locator(".minimal-user-path").getByText("Deposit")).toBeVisible();
-  await expect(page.locator(".minimal-flow-row").filter({ hasText: "Make data checkable" })).toBeVisible();
+  await expect(page.locator(".minimal-flow-row").filter({ hasText: "Data availability" })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Apps feel faster/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /State stays checkable/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Cardano L1 settlement comes last/i })).toBeVisible();
@@ -280,7 +280,7 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   await expect(page.getByLabel("Midgard core model").getByText(/Deposit, transact, withdraw/i)).toBeVisible();
   await expect(page.getByLabel("Midgard core model").getByText(/Final Cardano L1 settlement after verification/i)).toBeVisible();
   await expect(page.getByText(/The user path stays simple while the protocol handles verification underneath/i)).toBeVisible();
-  await expect(page.getByText(/Submit, sequence, commit, data availability check, watch, settle/i)).toBeVisible();
+  await expect(page.getByText(/Submit, sequence, commit, data availability, watch, settle/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
@@ -303,6 +303,7 @@ test("developer and contracts pages render", async ({ page }, testInfo) => {
   await expect(page.getByText(/Supporting docs/i)).toBeVisible();
   await expect(page.getByLabel("Supporting documents").getByRole("link", { name: /Whitepaper/i })).toHaveAttribute("href", /midgard\.pdf/);
   await expect(page.locator("main").getByRole("heading", { name: /Protocol reviewers/i })).toBeVisible();
+  await expect(page.locator("main").getByRole("heading", { name: /Midgard Stack/i })).toBeVisible();
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Review source/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Contract addresses/i })).toHaveAttribute("href", "/contracts");
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/security");
@@ -350,7 +351,7 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
   await expect(page.locator(".hiw-explainer__card").nth(5)).toContainText("inherits Cardano L1 security");
 
   const bodyText = await page.locator("body").innerText();
-  expect(bodyText).toContain("final Cardano L1 settlement");
+  expect(bodyText).toContain("Cardano L1 settlement");
   expect(bodyText).toContain("fault-proof");
   expect(bodyText).not.toContain("fraud-proof");
   expect(bodyText).not.toContain("fraud proof");
@@ -360,7 +361,7 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
 
 test("security and faq pages render", async ({ page }, testInfo) => {
   await page.goto("/security");
-  await expect(page.getByRole("heading", { name: /Security you can inspect/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Security assumptions you can inspect/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Inspect the trust path from multiple angles/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i })).toHaveAttribute("href", "/contracts");
   await expect(page.getByRole("link", { name: /Report safely/i })).toHaveAttribute("href", "/security#disclosure");
@@ -370,7 +371,7 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: "Cardano L1 settlement", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: /What the claim means/i })).toBeVisible();
   await expect(page.getByText(/Soft confirmations are not final settlement/i)).toBeVisible();
-  await expect(page.getByText(/mathematically verified smart contracts/i).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Mathematically verified contracts/i })).toBeVisible();
   await expect(page.getByText(/fault-proof verification/i).first()).toBeVisible();
   const securityMain = page.locator("main");
   await expect(securityMain.getByRole("heading", { name: /Vulnerability or impersonation/i })).toBeVisible();
@@ -400,6 +401,8 @@ test("security and faq pages render", async ({ page }, testInfo) => {
   await expect(page.locator(".faq-model-card__score")).toHaveCount(9);
   await expect(comparisonChart).toContainText("EVM rollups");
   await expect(comparisonChart).toContainText("Sidechains / appchains");
+  await expect(comparisonChart).toContainText("Data availability");
+  await expect(comparisonChart).toContainText("Rule-change risk");
   await expect(page.locator(".comparison-chart__legend")).toContainText("Strong fit");
   await expect(page.locator(".comparison-chart__legend")).toContainText("Higher caution");
   await expect(comparisonChart).toContainText("Inspect details");

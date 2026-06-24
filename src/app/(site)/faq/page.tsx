@@ -45,6 +45,16 @@ const comparisonRows = [
     midgard: "Fault-proof path plus independent Watcher replay.",
     other: "Ranges from optimistic proofs to validity proofs to trusted operator models.",
   },
+  {
+    k: "Data availability",
+    midgard: "Block data must remain available during the challenge window so Watchers can replay it.",
+    other: "DA assumptions vary by rollup, committee, chain, or off-chain provider.",
+  },
+  {
+    k: "Rule changes",
+    midgard: "Protocol claims should stay tied to approved parameters, source, and current testnet status.",
+    other: "Upgrade keys, councils, governance, and bridge controls can change the real trust model.",
+  },
 ];
 
 const comparisonChartRows = [
@@ -77,6 +87,18 @@ const comparisonChartRows = [
     midgard: { level: "medium", label: "Narrow settlement path to inspect" },
     evm: { level: "varies", label: "Bridge and upgrade rules matter" },
     sidechain: { level: "watch", label: "Bridge risk is often central" },
+  },
+  {
+    k: "Data availability",
+    midgard: { level: "medium", label: "Explicit challenge-window assumption" },
+    evm: { level: "varies", label: "Varies by DA design" },
+    sidechain: { level: "varies", label: "Depends on the chain" },
+  },
+  {
+    k: "Rule-change risk",
+    midgard: { level: "medium", label: "Track approved parameters and status" },
+    evm: { level: "varies", label: "Upgrade controls vary" },
+    sidechain: { level: "watch", label: "Governance and validator rules matter" },
   },
 ] as const;
 
@@ -168,7 +190,7 @@ const trustPath = [
   },
   {
     k: "Challenge",
-    midgard: "Watchers can use the fault-proof path.",
+    midgard: "A valid fault proof keeps bad state from settling.",
     watch: "Check the proof and challenge rules.",
   },
   {
@@ -198,7 +220,7 @@ const faqGroups = [
     items: [
       {
         q: "What is Midgard?",
-        a: "Midgard is the execution layer for UTXO finance: an optimistic rollup that gives applications faster execution while keeping final settlement on the Cardano L1 path.",
+        a: "Midgard is an optimistic rollup for UTXO finance. Applications execute faster, while verified state settles through Cardano L1.",
       },
       {
         q: "Why does Midgard matter?",
@@ -206,11 +228,15 @@ const faqGroups = [
       },
       {
         q: "Is Midgard live?",
-        a: "Midgard is in pre-alpha testnet. Public claims should be checked against current status, measured benchmarks, source code, and approved protocol parameters.",
+        a: "Midgard is in pre-alpha testnet. Check current operator status, source code, benchmarks, challenge-window assumptions, and approved parameters before relying on any public claim.",
       },
       {
         q: "Is Midgard a sidechain?",
         a: "No. Midgard is positioned as a rollup path: L2 execution, committed state, fault-proof verification, and settlement through the Cardano L1 path.",
+      },
+      {
+        q: "What does LayerZero or another bridge change?",
+        a: "Bridge integrations can affect liquidity and user reach, but bridge and DVN assumptions are separate from Midgard protocol guarantees. Midgard can settle through Cardano L1 while bridge security still depends on the bridge configuration.",
       },
     ],
   },
@@ -219,7 +245,7 @@ const faqGroups = [
     items: [
       {
         q: "What is the main security claim?",
-        a: "Finalized state is designed to settle through the Cardano L1 path after verification, while Midgard reduces the attack surface through UTXO-local state, mathematically verified contracts, and fault-proof verification.",
+        a: "Finalized state settles through Cardano L1 after verification. The security model depends on mathematically verified contracts, UTXO-local fault proofs, data availability, and at least one honest Watcher.",
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
@@ -227,11 +253,11 @@ const faqGroups = [
       },
       {
         q: "What do Watchers do?",
-        a: "Watchers inspect committed blocks, replay the relevant state transition, and use the fault-proof path if an operator submits invalid state.",
+        a: "Watchers inspect committed blocks, replay the relevant state transition, and submit a fault proof if an operator submits invalid state. Midgard safety requires at least one honest Watcher with the data needed to check the block.",
       },
       {
         q: "Why does UTXO matter?",
-        a: "UTXO state is more local. That helps narrow what must be inspected and can reduce the broad shared-state risk that appears in account-model failures.",
+        a: "UTXO state is local. A fault proof can focus on referenced inputs and one disputed transition instead of replaying broad global account state.",
       },
     ],
   },
@@ -252,7 +278,7 @@ const faqGroups = [
       },
       {
         q: "How are fees paid?",
-        a: "The current public positioning is ADA fees with no separate gas token.",
+        a: "The current public positioning is ADA fees with no separate gas token at launch. Do not treat this as a permanent governance-token statement until incentives are finalized.",
       },
     ],
   },
@@ -261,7 +287,11 @@ const faqGroups = [
     items: [
       {
         q: "What do Protocol Roles do?",
-        a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments and use the fault-proof path if an operator submits invalid state.",
+        a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments, submit fault proofs, and keep invalid state from settling.",
+      },
+      {
+        q: "Can anyone run an Operator or Watcher today?",
+        a: "Midgard is pre-alpha. Participation is staged: initial operation is internal-team-led, with broader Operator and Watcher registration opened as parameters mature.",
       },
       {
         q: "What should I check before relying on Midgard?",
@@ -402,7 +432,7 @@ export default function FaqPage() {
       <Section
         id="comparison"
         title="Compare the trust model."
-        lead="Once the basics are clear, compare what executes faster, what can be independently checked, and what finally settles."
+        lead="Once the basics are clear, compare five things: execution model, settlement anchor, data availability, who can challenge bad state, and who can change the rules."
       >
         <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
           {decisionGrid.map((card) => (
