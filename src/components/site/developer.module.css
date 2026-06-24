@@ -246,6 +246,65 @@
   white-space: nowrap;
 }
 
+:global([data-theme="light"]) .developerPage {
+  --developer-edge: rgba(12, 125, 54, 0.16);
+}
+
+:global([data-theme="light"]) .launchpad {
+  border-top-color: rgba(27, 23, 16, 0.1);
+  border-bottom-color: rgba(27, 23, 16, 0.1);
+  background:
+    radial-gradient(circle at 84% 0%, rgba(12, 125, 54, 0.08), transparent 30rem),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.18), rgba(255, 250, 240, 0.72));
+}
+
+:global([data-theme="light"]) .flowPanel {
+  border-color: rgba(12, 125, 54, 0.2);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(12, 125, 54, 0.09), transparent 20rem),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.42), transparent 54%),
+    rgba(255, 250, 240, 0.84);
+  box-shadow: 0 16px 44px rgba(54, 45, 30, 0.08);
+}
+
+:global([data-theme="light"]) .flowPanel::before {
+  background: linear-gradient(90deg, rgba(12, 125, 54, 0), rgba(12, 125, 54, 0.58), rgba(138, 97, 21, 0.4), rgba(12, 125, 54, 0));
+  box-shadow: 0 0 18px rgba(12, 125, 54, 0.12);
+}
+
+:global([data-theme="light"]) .flowSteps > li {
+  border-color: rgba(27, 23, 16, 0.1);
+  background: rgba(255, 250, 240, 0.72);
+}
+
+:global([data-theme="light"]) .flowSteps > li::before {
+  border-color: rgba(138, 97, 21, 0.54);
+  background: rgba(12, 125, 54, 0.1);
+  box-shadow: 0 0 14px rgba(12, 125, 54, 0.18);
+}
+
+:global([data-theme="light"]) .launchCard {
+  border-color: rgba(27, 23, 16, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 60%),
+    rgba(255, 250, 240, 0.82);
+  box-shadow: 0 12px 34px rgba(54, 45, 30, 0.06);
+}
+
+:global([data-theme="light"]) .launchCard:first-child {
+  border-color: rgba(12, 125, 54, 0.28);
+  background:
+    radial-gradient(circle at 0% 50%, rgba(12, 125, 54, 0.1), transparent 18rem),
+    rgba(255, 250, 240, 0.86);
+}
+
+:global([data-theme="light"]) .launchCard:hover {
+  border-color: rgba(12, 125, 54, 0.36);
+  background:
+    radial-gradient(circle at 0% 50%, rgba(12, 125, 54, 0.12), transparent 18rem),
+    rgba(255, 250, 240, 0.94);
+}
+
 @media (max-width: 980px) {
   .launchInner {
     grid-template-columns: 1fr;

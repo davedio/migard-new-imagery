@@ -3880,29 +3880,41 @@ h2 em,
   );
 }
 
-/* interior pages: in light mode the painterly plate is the page's
-   atmosphere, so let the shared ambient tint stay faint and lift text */
-[data-theme="light"] .page-hero h1 {
-  text-shadow: 0 1px 20px rgba(248, 244, 236, 0.6);
+/* light preview: child-page plates become quiet atmosphere, not competing art */
+[data-theme="light"] .page-hero::before {
+  animation: none;
+  opacity: 0.3;
+  filter: saturate(0.82) brightness(1.08);
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 94%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 94%);
+}
+
+[data-theme="light"] .page-hero::after {
+  background:
+    linear-gradient(90deg, rgba(246, 241, 232, 0.82) 0%, rgba(246, 241, 232, 0.54) 50%, rgba(246, 241, 232, 0.12) 82%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.18), rgba(246, 241, 232, 0.72));
+}
+
+[data-theme="light"] .page-hero h1,
+[data-theme="light"] .page-hero .sub {
+  text-shadow: none;
+}
+
+[data-theme="light"] .page-hero .sub {
+  color: #374535;
+}
+
+[data-theme="light"] .page-hero--tone-ink::before,
+[data-theme="light"] .page-hero--tone-ember::before {
+  opacity: 0.82;
+  filter: none;
+  -webkit-mask-image: linear-gradient(180deg, #000 36%, transparent 98%);
+  mask-image: linear-gradient(180deg, #000 36%, transparent 98%);
 }
 
 [data-theme="light"] .page-hero--tone-ink::after,
 [data-theme="light"] .page-hero--tone-ember::after {
   background: linear-gradient(90deg, rgba(4, 7, 5, 0.76) 0%, rgba(4, 7, 5, 0.44) 46%, transparent 78%);
-}
-
-[data-theme="light"] .page-hero--tone-ink h1,
-[data-theme="light"] .page-hero--tone-ember h1 {
-  color: #f8f3ea;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.72);
-}
-
-[data-theme="light"] .page-hero--tone-ink .sub,
-[data-theme="light"] .page-hero--tone-ember .sub,
-[data-theme="light"] .page-hero--tone-ink .body,
-[data-theme="light"] .page-hero--tone-ember .body {
-  color: #dce8dc;
-  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.72);
 }
 
 /* ============================================================
@@ -3959,6 +3971,29 @@ h2 em,
 [data-theme="light"] .page-hero--tone-ember .body {
   color: #dce8dc;
   text-shadow: 0 1px 18px rgba(0, 0, 0, 0.72);
+}
+
+[data-theme="light"] .faq-topic-rail {
+  border-color: rgba(27, 23, 16, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.44), transparent 58%),
+    rgba(255, 250, 240, 0.84);
+  box-shadow: 0 16px 42px rgba(54, 45, 30, 0.08);
+}
+
+[data-theme="light"] .faq-topic-rail a {
+  border-top-color: rgba(27, 23, 16, 0.1);
+}
+
+[data-theme="light"] .world-bg {
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(224, 163, 60, 0.18), transparent 55%),
+    radial-gradient(100% 60% at 50% 115%, rgba(32, 190, 67, 0.1), transparent 60%),
+    radial-gradient(140% 100% at 50% 50%, #f4efe3, #e7ede1 70%, #f0eadf);
+}
+
+[data-theme="light"] .world-grain {
+  opacity: 0.18;
 }
 
 /* Warm the home page body to match the cream child pages */

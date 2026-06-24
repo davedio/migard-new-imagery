@@ -10,28 +10,6 @@ async function expectNoBrokenImages(page: Page) {
   expect(brokenImages).toEqual([]);
 }
 
-async function expectCanvasHasPaint(page: Page, selector: string) {
-  await expect
-    .poll(
-      async () =>
-        page.locator(selector).first().evaluate((node) => {
-          const canvas = node as HTMLCanvasElement;
-          const ctx = canvas.getContext("2d", { willReadFrequently: true });
-          if (!ctx || canvas.width === 0 || canvas.height === 0) return 0;
-          const w = Math.min(canvas.width, 220);
-          const h = Math.min(canvas.height, 160);
-          const data = ctx.getImageData(0, 0, w, h).data;
-          let painted = 0;
-          for (let i = 3; i < data.length; i += 16) {
-            if (data[i] > 0) painted += 1;
-          }
-          return painted;
-        }),
-      { timeout: 7000 },
-    )
-    .toBeGreaterThan(80);
-}
-
 test("shared site imagery loads on primary routes", async ({ page }) => {
   const failedImages: string[] = [];
   page.on("requestfailed", (request) => {
@@ -136,7 +114,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("hero-scrolled.png") });
 });
 
-test("night mode keeps the animated home tree available", async ({ page }, testInfo) => {
+test("preview ignores stored dark theme preference", async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem("midgard:theme", "dark");
   });
@@ -148,11 +126,10 @@ test("night mode keeps the animated home tree available", async ({ page }, testI
       name: /The execution layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.locator(".hero-tree-stage")).toHaveCount(0);
-  await expect(page.locator(".minimal-world-tree-stage")).toBeVisible();
-  await expect(page.locator(".minimal-world-tree-stage canvas.v2-stage__canvas")).toHaveCount(2);
-  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
-  await page.screenshot({ path: testInfo.outputPath("home-night-tree.png") });
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.locator(".theme-toggle")).toHaveCount(0);
+  await expect(page.locator(".hero-tree-stage")).toBeVisible();
+  await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
 });
 
 test("cinematic home remains available as a preview", async ({ page }, testInfo) => {

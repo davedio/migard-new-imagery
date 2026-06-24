@@ -1,20 +1,11 @@
 "use client";
 
 /* ============================================================
-   PageBackdrop — light-mode painterly backdrop for interior pages.
+   PageBackdrop — calm painterly backdrop for preview interior pages.
 
-   One component, four treatments so the new imagery can be reviewed
-   across a range of intensities:
-     soft   — canopy floats at the top and dissolves into clean light
-     bold   — full-bleed presence with a legibility wash
-     side   — anchored to the right; the text column stays crisp
-     banner — a header band that fades into the page
-
-   Rendered only in light mode; dark keeps its existing backdrops
-   (AmbientDepth / SecurityPageBackdrop), so no current effect is lost.
+   One component, four treatments so the new imagery can be used only where
+   it supports the page instead of competing with the content.
    ============================================================ */
-
-import { useTheme } from "@/lib/theme";
 
 export type BackdropVariant = "soft" | "bold" | "side" | "banner";
 
@@ -29,9 +20,6 @@ export function PageBackdrop({
   name: string;
   variant?: BackdropVariant;
 }) {
-  const { theme } = useTheme();
-  if (theme !== "light") return null;
-
   return (
     <div className={`page-backdrop page-backdrop--${variant}`} aria-hidden="true">
       <picture>

@@ -4023,39 +4023,7 @@ a.chip:hover {
 }
 
 /* ============================================================
-   THEME TOGGLE — sun/moon in the nav. The glyph is pure CSS: a disc
-   that is a moon (masked) in dark mode and a sun (rayed) in light.
-   ============================================================ */
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: 1px solid var(--panel-edge-strong);
-  background: transparent;
-  color: var(--text-dim);
-  cursor: pointer;
-  transition:
-    color 0.25s var(--ease),
-    border-color 0.25s var(--ease),
-    transform 0.25s var(--ease);
-}
-.theme-toggle:hover {
-  color: var(--text-hi);
-  border-color: var(--hairline-strong);
-  transform: translateY(-1px);
-}
-.theme-toggle svg {
-  display: block;
-}
-
-/* ============================================================
-   LIGHT THEME — the same tree at dawn. data-theme="light" on <html>
-   flips the core tokens; the day plate arrives via TREE_PLATES in
-   src/lib/theme.tsx. Scrims that sat dark over the night plate become
-   morning mist over the day plate.
+   LIGHT PREVIEW THEME — data-theme="light" is forced before paint.
    ============================================================ */
 :root[data-theme="light"] {
   /* proof gold deepens to stay legible on the bright plate */
