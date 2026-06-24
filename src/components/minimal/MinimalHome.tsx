@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ConceptTree } from "@/components/minimal/ConceptTree";
+import { HeroWorldTree } from "@/components/minimal/HeroWorldTree";
 import { OfficialChannelIcon, OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -158,7 +158,7 @@ export default function MinimalHome() {
             ))}
           </nav>
         </div>
-        <ConceptTree />
+        <HeroWorldTree />
       </section>
 
       <section className="minimal-thesis" aria-label="Midgard at a glance">

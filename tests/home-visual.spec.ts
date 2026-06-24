@@ -10,6 +10,28 @@ async function expectNoBrokenImages(page: Page) {
   expect(brokenImages).toEqual([]);
 }
 
+async function expectCanvasHasPaint(page: Page, selector: string) {
+  await expect
+    .poll(
+      async () =>
+        page.locator(selector).first().evaluate((node) => {
+          const canvas = node as HTMLCanvasElement;
+          const ctx = canvas.getContext("2d", { willReadFrequently: true });
+          if (!ctx || canvas.width === 0 || canvas.height === 0) return 0;
+          const w = Math.min(canvas.width, 220);
+          const h = Math.min(canvas.height, 160);
+          const data = ctx.getImageData(0, 0, w, h).data;
+          let painted = 0;
+          for (let i = 3; i < data.length; i += 16) {
+            if (data[i] > 0) painted += 1;
+          }
+          return painted;
+        }),
+      { timeout: 7000 },
+    )
+    .toBeGreaterThan(80);
+}
+
 test("shared site imagery loads on primary routes", async ({ page }) => {
   const failedImages: string[] = [];
   page.on("requestfailed", (request) => {
@@ -48,7 +70,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.locator(".minimal-hero__copy").getByText(/faster execution/i)).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
-  await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
+  await expect(page.locator(".minimal-tree svg")).toHaveCount(0);
+  await expect(page.locator(".minimal-tree canvas.v2-stage__canvas")).toHaveCount(2);
+  await expectCanvasHasPaint(page, ".minimal-tree canvas.v2-stage__canvas");
   await expect(page.locator(".v2-stage canvas")).toHaveCount(0);
   const bodyText = await page.locator("body").innerText();
   for (const hiddenLabel of [
@@ -201,8 +225,9 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
-  await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
-  await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
+  await expect(page.locator(".minimal-tree svg")).toHaveCount(0);
+  await expect(page.locator(".minimal-tree canvas.v2-stage__canvas")).toHaveCount(2);
+  await expectCanvasHasPaint(page, ".minimal-tree canvas.v2-stage__canvas");
   const routeCards = page.locator(".minimal-hero-route");
   await expect(routeCards).toHaveCount(3);
   await expect(routeCards.nth(0)).toContainText("Use");

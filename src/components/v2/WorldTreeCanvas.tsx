@@ -115,12 +115,15 @@ export default function WorldTreeCanvas({
   phasesRef,
   tickRef,
   src = TREE_SRC,
+  fitToParent = false,
 }: {
   phasesRef: React.RefObject<DescentPhases>;
   /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
   tickRef: React.RefObject<((dt: number) => void) | null>;
   /** Tree plate to draw + read veins from (theme picks night or day). */
   src?: string;
+  /** Use the canvas parent box instead of the viewport. */
+  fitToParent?: boolean;
 }) {
   /* TWO stacked canvases (perf pass 2026-06-11): the PLATE layer redraws
      only when the camera/fades actually move (during a dwell it costs
@@ -365,8 +368,9 @@ export default function WorldTreeCanvas({
     const BG_DPR = 1;
     let bgDirty = true;
     const fit = () => {
-      W = window.innerWidth;
-      H = window.innerHeight;
+      const box = fitToParent ? fg.parentElement?.getBoundingClientRect() : null;
+      W = Math.max(1, Math.round(box?.width ?? window.innerWidth));
+      H = Math.max(1, Math.round(box?.height ?? window.innerHeight));
       fg.width = Math.round(W * DPR);
       fg.height = Math.round(H * DPR);
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -377,6 +381,8 @@ export default function WorldTreeCanvas({
     };
     fit();
     window.addEventListener("resize", fit);
+    const ro = fitToParent && fg.parentElement ? new ResizeObserver(fit) : null;
+    ro?.observe(fg.parentElement as Element);
 
     /* ---- orbs ---- */
     const mobile = () => window.innerWidth <= 760;
@@ -723,8 +729,9 @@ export default function WorldTreeCanvas({
       tickRef.current = null;
       treeBmp?.close();
       window.removeEventListener("resize", fit);
+      ro?.disconnect();
     };
-  }, [phasesRef, tickRef, src]);
+  }, [phasesRef, tickRef, src, fitToParent]);
 
   return (
     <>

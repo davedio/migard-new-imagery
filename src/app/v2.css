@@ -2409,13 +2409,13 @@ h2 em,
 }
 
 .minimal-hero-route span {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
+  overflow-wrap: anywhere;
   color: var(--text-faint);
   font-family: var(--font-mono);
   font-size: 10px;
   line-height: 1.3;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .minimal-btn {
@@ -3150,13 +3150,42 @@ h2 em,
   box-shadow: 0 30px 120px rgba(0, 0, 0, 0.36);
 }
 
+.minimal-tree--world {
+  isolation: isolate;
+  min-height: clamp(520px, 50vw, 680px);
+  background:
+    radial-gradient(circle at 62% 34%, rgba(78, 243, 131, 0.18), transparent 20rem),
+    radial-gradient(circle at 72% 82%, rgba(64, 156, 255, 0.14), transparent 18rem),
+    linear-gradient(180deg, rgba(7, 12, 8, 0.42), rgba(4, 7, 5, 0.9));
+}
+
 .minimal-tree::after {
   content: "";
   position: absolute;
   inset: auto 0 0;
   height: 38%;
   background: linear-gradient(180deg, transparent, rgba(4, 7, 5, 0.84));
+  z-index: 2;
   pointer-events: none;
+}
+
+.minimal-tree--world .v2-stage__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.minimal-tree__world-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(4, 7, 5, 0.58), transparent 34%, transparent 72%, rgba(4, 7, 5, 0.16)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.28), transparent 26%, rgba(4, 7, 5, 0.44));
 }
 
 .minimal-tree svg {
