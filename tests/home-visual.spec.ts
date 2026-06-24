@@ -293,7 +293,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   const devDropdown = page.locator(".site-nav__group", { has: developers }).locator(".site-nav__dropdown");
   await expect(devDropdown.getByRole("link", { name: /Developer overview/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /Contracts/i })).toBeVisible();
-  await expect(devDropdown.getByRole("link", { name: /GitHub/i })).toBeVisible();
+  await expect(devDropdown.getByRole("link", { name: /^GitHub$/i })).toHaveCount(0);
   await expect(devDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
 
@@ -305,6 +305,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toHaveCount(0);
 
   await expect(page.getByRole("button", { name: /^Connect$/i })).toHaveCount(0);
+  await expect(page.locator(".site-nav__chevron")).toHaveCount(0);
   const nav = page.locator(".site-nav");
   await expect(nav.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(nav.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);

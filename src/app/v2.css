@@ -237,18 +237,6 @@ h2 em,
 .site-nav__link[data-active="true"] {
   color: var(--bone);
 }
-.site-nav__link[data-active="true"]::before {
-  content: "";
-  position: absolute;
-  left: -12px;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  margin-top: -2.5px;
-  border-radius: 50%;
-  background: var(--green-bright);
-  box-shadow: 0 0 10px var(--green-bright);
-}
 .site-nav__group {
   position: relative;
 }
@@ -267,15 +255,6 @@ h2 em,
   border: 0;
   background: none;
   cursor: pointer;
-}
-.site-nav__heading .site-nav__chevron {
-  color: var(--gold-bright);
-  font-size: 10px;
-  transform: translateY(-1px);
-  transition: transform 0.18s var(--ease);
-}
-.site-nav__group[data-open="true"] .site-nav__chevron {
-  transform: translateY(-1px) rotate(180deg);
 }
 .site-nav__dropdown {
   position: absolute;

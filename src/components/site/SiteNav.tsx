@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { useTheme } from "@/lib/theme";
@@ -18,7 +17,6 @@ type NavLink = {
   href: string;
   description: string;
   external?: boolean;
-  github?: boolean;
 };
 
 type NavGroup = {
@@ -40,13 +38,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { label: "Developer overview", href: "/developers", description: "Builder and Protocol Role paths" },
       { label: "Contracts", href: "/contracts", description: "Topology, addresses, scripts" },
-      {
-        label: "GitHub",
-        href: OFFICIAL_LINKS.github,
-        description: "Source and issues",
-        external: true,
-        github: true,
-      },
       {
         label: "Intake form",
         href: OFFICIAL_LINKS.intakeForm,
@@ -231,7 +222,6 @@ export function SiteNav() {
     const content = (
       <>
         <span className={mobile ? "site-nav__mobile-label" : "site-nav__dropdown-label"}>
-          {item.github ? <GitHubIcon size={14} aria-hidden /> : null}
           {item.label}
         </span>
         <span className={mobile ? "site-nav__mobile-desc" : "site-nav__dropdown-desc"}>
@@ -298,9 +288,6 @@ export function SiteNav() {
                   onClick={() => openPinnedGroup(group.label)}
                 >
                   {group.label}
-                  <span className="site-nav__chevron" aria-hidden>
-                    ↓
-                  </span>
                 </button>
                 <div
                   className="site-nav__dropdown"
