@@ -96,7 +96,7 @@ const SOCIAL = [
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      {/* V2 statement line — display type with the cursor-wave effect. */}
+      {/* Compact next-step link above the sitemap. */}
       <FooterStatement />
       <div className="site-footer__top site-footer__top--sitemap">
         <div className="site-footer__brand">

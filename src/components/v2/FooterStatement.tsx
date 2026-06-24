@@ -3,22 +3,60 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-/* The footer statement carries you to the next review page in the public
-   sitemap, so every core page is easy to inspect in sequence. */
-const TOUR = ["/", "/learn", "/developers", "/contracts", "/security", "/faq"] as const;
+const TOUR = [
+  {
+    href: "/",
+    title: "Home",
+    detail: "Return to the main UTXO finance overview.",
+    cta: "Back to home",
+  },
+  {
+    href: "/learn",
+    title: "Learn Midgard",
+    detail: "Start with the plain-language model.",
+    cta: "Open Learn",
+  },
+  {
+    href: "/developers",
+    title: "Developers",
+    detail: "Review source, contracts, and integration paths.",
+    cta: "Open Developers",
+  },
+  {
+    href: "/contracts",
+    title: "Contracts",
+    detail: "Inspect preprod addresses and contract topology.",
+    cta: "Open Contracts",
+  },
+  {
+    href: "/security",
+    title: "Security",
+    detail: "Review assumptions before trusting speed.",
+    cta: "Open Security",
+  },
+  {
+    href: "/faq",
+    title: "FAQ",
+    detail: "Compare trust models and common questions.",
+    cta: "Open FAQ",
+  },
+] as const;
 
 export function FooterStatement() {
   const pathname = usePathname();
-  const at = TOUR.indexOf(pathname as (typeof TOUR)[number]);
-  const next = at >= 0 ? TOUR[(at + 1) % TOUR.length] : "/learn";
+  const at = TOUR.findIndex((item) => item.href === pathname);
+  const next = TOUR[at >= 0 ? (at + 1) % TOUR.length : 1];
 
   return (
-    <Link href={next} className="v2-footer-statement">
-      <span>
-        Execution layer for <em>UTXO</em> finance.
+    <Link href={next.href} className="v2-footer-statement">
+      <span className="v2-footer-statement__kicker">Next page</span>
+      <span className="v2-footer-statement__main">
+        <strong>{next.title}</strong>
+        <em>{next.detail}</em>
       </span>
-      <span className="arrow" aria-hidden>
-        ↗
+      <span className="v2-footer-statement__cta">
+        {next.cta}
+        <span aria-hidden>-&gt;</span>
       </span>
     </Link>
   );

@@ -103,7 +103,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.locator(".minimal-metric")).toHaveCount(6);
   await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toBeVisible();
   await expect(page.locator(".minimal-metric").filter({ hasText: "Watcher coverage" })).toBeVisible();
-  await expect(page.locator(".v2-footer-statement")).toContainText("Execution layer for UTXO finance");
+  await expect(page.locator(".v2-footer-statement")).toContainText("Next page");
+  await expect(page.locator(".v2-footer-statement")).toContainText("Learn Midgard");
+  await expect(page.locator(".v2-footer-statement")).toHaveAttribute("href", "/learn");
 
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
 });
