@@ -69,10 +69,10 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/faster execution/i)).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
-  await expect(page.locator(".minimal-tree")).toBeVisible();
-  await expect(page.locator(".minimal-tree svg")).toHaveCount(0);
-  await expect(page.locator(".minimal-tree canvas.v2-stage__canvas")).toHaveCount(2);
-  await expectCanvasHasPaint(page, ".minimal-tree canvas.v2-stage__canvas");
+  await expect(page.locator(".minimal-world-tree-stage")).toBeVisible();
+  await expect(page.locator(".minimal-world-tree-stage canvas.v2-stage__canvas")).toHaveCount(2);
+  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
+  await expect(page.locator(".minimal-tree")).toHaveCount(0);
   await expect(page.locator(".v2-stage canvas")).toHaveCount(0);
   const bodyText = await page.locator("body").innerText();
   for (const hiddenLabel of [
@@ -133,7 +133,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
   await page.evaluate(() => window.scrollTo({ top: Math.round(window.innerHeight * 0.42), behavior: "instant" }));
   await page.waitForTimeout(300);
-  await expectCanvasHasPaint(page, ".minimal-tree canvas.v2-stage__canvas");
+  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
   await page.screenshot({ path: testInfo.outputPath("hero-scrolled.png") });
 });
 
@@ -228,10 +228,10 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
     }),
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
-  await expect(page.locator(".minimal-tree")).toBeVisible();
-  await expect(page.locator(".minimal-tree svg")).toHaveCount(0);
-  await expect(page.locator(".minimal-tree canvas.v2-stage__canvas")).toHaveCount(2);
-  await expectCanvasHasPaint(page, ".minimal-tree canvas.v2-stage__canvas");
+  await expect(page.locator(".minimal-world-tree-stage")).toBeVisible();
+  await expect(page.locator(".minimal-world-tree-stage canvas.v2-stage__canvas")).toHaveCount(2);
+  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
+  await expect(page.locator(".minimal-tree")).toHaveCount(0);
   const routeCards = page.locator(".minimal-hero-route");
   await expect(routeCards).toHaveCount(3);
   await expect(routeCards.nth(0)).toContainText("Use");

@@ -137,6 +137,7 @@ function EcosystemPartners() {
 export default function MinimalHome() {
   return (
     <main className="minimal-site">
+      <HeroWorldTree />
       <section id="top" className="minimal-hero" aria-labelledby="minimal-hero-title">
         <div className="minimal-hero__copy">
           <h1 id="minimal-hero-title">{SITE_COPY.hero.title}</h1>
@@ -158,7 +159,7 @@ export default function MinimalHome() {
             ))}
           </nav>
         </div>
-        <HeroWorldTree />
+        <div className="minimal-hero__visual-space" aria-hidden />
       </section>
 
       <section className="minimal-thesis" aria-label="Midgard at a glance">

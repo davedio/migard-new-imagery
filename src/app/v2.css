@@ -2263,11 +2263,11 @@ h2 em,
   position: absolute;
   inset: 0 0 auto;
   height: min(980px, 100svh);
+  z-index: 0;
   pointer-events: none;
   background:
     linear-gradient(90deg, rgba(4, 7, 5, 0.96), rgba(4, 7, 5, 0.62) 48%, rgba(4, 7, 5, 0.2) 74%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.2), rgba(4, 7, 5, 0.86)),
-    url("/plates/worldtree-night-tall.avif") 82% 24% / min(920px, 64vw) auto no-repeat;
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.82));
   opacity: 0.58;
   mask-image: linear-gradient(180deg, #000 62%, transparent);
   -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent);
@@ -2277,6 +2277,7 @@ h2 em,
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   pointer-events: none;
   opacity: 0.11;
   mix-blend-mode: screen;
@@ -2286,6 +2287,31 @@ h2 em,
   background-size: 72px 72px;
   mask-image: linear-gradient(180deg, #000, transparent 68rem);
   -webkit-mask-image: linear-gradient(180deg, #000, transparent 68rem);
+}
+
+.minimal-world-tree-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.minimal-world-tree-stage .v2-stage__canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.minimal-world-tree-stage__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(4, 7, 5, 0.96), rgba(4, 7, 5, 0.7) 38%, rgba(4, 7, 5, 0.16) 72%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.34), transparent 24%, rgba(4, 7, 5, 0.7));
 }
 
 .minimal-site h1,
@@ -2312,6 +2338,10 @@ h2 em,
   max-width: 760px;
   position: relative;
   z-index: 1;
+}
+
+.minimal-hero__visual-space {
+  min-height: clamp(520px, 50vw, 680px);
 }
 
 .minimal-kicker {
@@ -3129,15 +3159,6 @@ h2 em,
   box-shadow: 0 30px 120px rgba(0, 0, 0, 0.36);
 }
 
-.minimal-tree--world {
-  isolation: isolate;
-  min-height: clamp(520px, 50vw, 680px);
-  background:
-    radial-gradient(circle at 62% 34%, rgba(78, 243, 131, 0.18), transparent 20rem),
-    radial-gradient(circle at 72% 82%, rgba(64, 156, 255, 0.14), transparent 18rem),
-    linear-gradient(180deg, rgba(7, 12, 8, 0.42), rgba(4, 7, 5, 0.9));
-}
-
 .minimal-tree::after {
   content: "";
   position: absolute;
@@ -3146,25 +3167,6 @@ h2 em,
   background: linear-gradient(180deg, transparent, rgba(4, 7, 5, 0.84));
   z-index: 2;
   pointer-events: none;
-}
-
-.minimal-tree--world .v2-stage__canvas {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.minimal-tree__world-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(4, 7, 5, 0.58), transparent 34%, transparent 72%, rgba(4, 7, 5, 0.16)),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.28), transparent 26%, rgba(4, 7, 5, 0.44));
 }
 
 .minimal-tree svg {
@@ -3411,6 +3413,10 @@ h2 em,
     padding-top: 118px;
   }
 
+  .minimal-hero__visual-space {
+    min-height: min(48svh, 420px);
+  }
+
   .minimal-hero-route {
     min-height: 70px;
     padding: 12px 10px;
@@ -3498,6 +3504,10 @@ h2 em,
     gap: 26px;
     padding-top: 96px;
     padding-bottom: 34px;
+  }
+
+  .minimal-hero__visual-space {
+    min-height: 300px;
   }
 
   .minimal-hero__copy > p:not(.minimal-kicker),
