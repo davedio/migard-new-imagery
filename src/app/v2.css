@@ -891,7 +891,7 @@ h2 em,
   scroll-margin-top: clamp(96px, 14svh, 150px);
 }
 .v2-band--hero {
-  min-height: 100svh;
+  min-height: 98svh;
   display: flex;
   align-items: flex-end;
 }
@@ -908,7 +908,7 @@ h2 em,
     align-items: center;
   }
   .v2-band__hero {
-    padding-top: clamp(96px, 10vh, 150px);
+    padding-top: clamp(72px, 8vh, 124px);
   }
 }
 /* the thesis band carries extra runway below the words — the helix earns a

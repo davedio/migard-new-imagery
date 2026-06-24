@@ -203,7 +203,7 @@ export default function DescentFlow({
       ph.bottom = bottom;
       ph.black = black;
       ph.camX = 0.88 + 0.12 * smooth01(ramp(s, canopyT - vh * 0.6, canopyT + canopyH * 0.4));
-      ph.camY = lerp(0.38, 0.8, smooth01((descend - 0.04) / 0.92));
+      ph.camY = lerp(0.45, 0.8, smooth01((descend - 0.04) / 0.92));
       ph.zoom =
         1 +
         0.04 * smooth01(ramp(s, 0, canopyT)) +

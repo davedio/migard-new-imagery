@@ -49,7 +49,7 @@ export const PHASES_REST: DescentPhases = {
   bottom: 0,
   black: 0,
   camX: 0.88,
-  camY: 0.38,
+  camY: 0.45,
   zoom: 1,
 };
 
@@ -448,7 +448,7 @@ export default function WorldTreeCanvas({
          the same cinematic crop the old plate had. */
       const portrait = W < H * 0.9;
       const cover = Math.max(W / imgW, H / imgH);
-      const anchor = fitToParent ? ph.camX : (portrait ? 0.6 : 0.66) - 0.12 * smooth01(des);
+      const anchor = fitToParent ? ph.camX : (portrait ? 0.58 : 0.62) - 0.12 * smooth01(des);
       let scale = cover * ph.zoom;
       if (!portrait) {
         const reach = (W * anchor) / Math.max(1, trunkX);
