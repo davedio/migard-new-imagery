@@ -3904,19 +3904,6 @@ h2 em,
   color: #374535;
 }
 
-[data-theme="light"] .page-hero--tone-ink::before,
-[data-theme="light"] .page-hero--tone-ember::before {
-  opacity: 0.82;
-  filter: none;
-  -webkit-mask-image: linear-gradient(180deg, #000 36%, transparent 98%);
-  mask-image: linear-gradient(180deg, #000 36%, transparent 98%);
-}
-
-[data-theme="light"] .page-hero--tone-ink::after,
-[data-theme="light"] .page-hero--tone-ember::after {
-  background: linear-gradient(90deg, rgba(4, 7, 5, 0.76) 0%, rgba(4, 7, 5, 0.44) 46%, transparent 78%);
-}
-
 /* ============================================================
    Editorial serif headlines (Fraunces) + warm dawn/cream palette
    ============================================================ */
@@ -3957,20 +3944,6 @@ h2 em,
 [data-theme="light"] .minimal-section h2,
 [data-theme="light"] .section h2 {
   color: #1b1710;
-}
-
-[data-theme="light"] .page-hero--tone-ink h1,
-[data-theme="light"] .page-hero--tone-ember h1 {
-  color: #f8f3ea;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.72);
-}
-
-[data-theme="light"] .page-hero--tone-ink .sub,
-[data-theme="light"] .page-hero--tone-ember .sub,
-[data-theme="light"] .page-hero--tone-ink .body,
-[data-theme="light"] .page-hero--tone-ember .body {
-  color: #dce8dc;
-  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.72);
 }
 
 [data-theme="light"] .faq-topic-rail {

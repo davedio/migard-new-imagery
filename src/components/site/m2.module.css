@@ -243,6 +243,18 @@
   border-top: 1px solid var(--panel-edge);
 }
 
+:global([data-theme="light"]) .switch {
+  background: #f0eadf;
+}
+
+:global([data-theme="light"]) .switchBar {
+  background: rgba(255, 250, 240, 0.72);
+}
+
+:global([data-theme="light"]) .switchToggle {
+  background: rgba(14, 27, 19, 0.04);
+}
+
 /* ---------- built-with tech-stack chips ---------- */
 .stack {
   display: flex;

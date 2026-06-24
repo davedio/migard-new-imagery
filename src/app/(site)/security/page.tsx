@@ -197,7 +197,7 @@ export default function SecurityPage() {
       </section>
 
       <Section title="The attack surface is narrower by design.">
-        <CardGrid>
+        <CardGrid cols={3}>
           <Card
             num="01"
             title="Mathematically verified contracts"

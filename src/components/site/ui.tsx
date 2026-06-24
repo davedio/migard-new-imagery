@@ -209,10 +209,10 @@ export function CardGrid({
   cols,
 }: {
   children: ReactNode;
-  cols?: 2;
+  cols?: 2 | 3;
 }) {
   return (
-    <div className={`card-grid${cols === 2 ? " card-grid--2" : ""}`}>
+    <div className={`card-grid${cols ? ` card-grid--${cols}` : ""}`}>
       {children}
     </div>
   );
