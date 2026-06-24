@@ -116,6 +116,7 @@ export default function WorldTreeCanvas({
   tickRef,
   src = TREE_SRC,
   fitToParent = false,
+  helixAxisOffset = 0,
 }: {
   phasesRef: React.RefObject<DescentPhases>;
   /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
@@ -124,6 +125,8 @@ export default function WorldTreeCanvas({
   src?: string;
   /** Use the canvas parent box instead of the viewport. */
   fitToParent?: boolean;
+  /** Small image-width offset for the helix axis when the canvas is cropped into a hero card. */
+  helixAxisOffset?: number;
 }) {
   /* TWO stacked canvases (perf pass 2026-06-11): the PLATE layer redraws
      only when the camera/fades actually move (during a dwell it costs
@@ -445,7 +448,7 @@ export default function WorldTreeCanvas({
          the same cinematic crop the old plate had. */
       const portrait = W < H * 0.9;
       const cover = Math.max(W / imgW, H / imgH);
-      const anchor = (portrait ? 0.6 : 0.66) - 0.12 * smooth01(des);
+      const anchor = fitToParent ? ph.camX : (portrait ? 0.6 : 0.66) - 0.12 * smooth01(des);
       let scale = cover * ph.zoom;
       if (!portrait) {
         const reach = (W * anchor) / Math.max(1, trunkX);
@@ -520,6 +523,7 @@ export default function WorldTreeCanvas({
       ctx.globalCompositeOperation = "lighter";
 
       /* ---- small orbs ---- */
+      const helixX = trunkX + imgW * helixAxisOffset;
       for (const o of orbs) {
         if (o.dying) {
           o.alpha -= dt * 1.6;
@@ -578,7 +582,7 @@ export default function WorldTreeCanvas({
             (0.012 + 0.105 * hx) *
             o.rJit *
             (1 + 0.03 * Math.sin(helixT * 0.6 + o.theta));
-          const hxp = trunkX + Math.cos(phase) * R;
+          const hxp = helixX + Math.cos(phase) * R;
           depthMod = 0.62 + 0.38 * Math.sin(phase + Math.PI / 2);
           ix = lerp(o.x, hxp, di);
           iy = lerp(o.y, hy, di);
@@ -731,7 +735,7 @@ export default function WorldTreeCanvas({
       window.removeEventListener("resize", fit);
       ro?.disconnect();
     };
-  }, [phasesRef, tickRef, src, fitToParent]);
+  }, [phasesRef, tickRef, src, fitToParent, helixAxisOffset]);
 
   return (
     <>

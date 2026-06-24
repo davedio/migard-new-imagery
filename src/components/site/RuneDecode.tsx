@@ -25,6 +25,7 @@ const TARGETS = [
   ".page-hero h1",
   ".page-hero .sub",
   "[data-rune-target]",
+  ".page-sticky-toc a",
 ].join(", ");
 
 /* Elder Futhark block */

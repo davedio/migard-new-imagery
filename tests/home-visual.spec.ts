@@ -131,6 +131,10 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(page.locator(".v2-footer-statement")).toHaveAttribute("href", "/learn");
 
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
+  await page.evaluate(() => window.scrollTo({ top: Math.round(window.innerHeight * 0.42), behavior: "instant" }));
+  await page.waitForTimeout(300);
+  await expectCanvasHasPaint(page, ".minimal-tree canvas.v2-stage__canvas");
+  await page.screenshot({ path: testInfo.outputPath("hero-scrolled.png") });
 });
 
 test("cinematic home remains available as a preview", async ({ page }, testInfo) => {
@@ -352,7 +356,8 @@ test("developer and contracts pages render", async ({ page }, testInfo) => {
 
   await page.goto("/contracts");
   await expect(page.getByRole("heading", { name: /Inspect the contract path/i })).toBeVisible();
-  await expect(page.locator("h1")).toHaveText("Inspect the contract path.");
+  await expect(page.locator("[data-contracts-hero] h1[data-rune-target]")).toHaveText("Inspect the contract path.");
+  await expect(page.locator("[data-contracts-hero] p[data-rune-target]")).toContainText("Developer deep dive");
   await expect(page.locator("[data-contracts-hero]")).toBeVisible();
   await expect(page.locator(".contracts-page .page-hero")).toHaveCount(0);
   await expect(page.locator("[data-contracts-hero]").getByText(/Validator topology/i)).toBeVisible();

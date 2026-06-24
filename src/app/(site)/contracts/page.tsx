@@ -73,8 +73,8 @@ export default function ContractsPage() {
         <div className={styles.contractHeroPlate} aria-hidden />
         <div className={styles.contractHeroInner}>
           <div className={styles.contractHeroCopy}>
-            <h1>Inspect the contract path.</h1>
-            <p>
+            <h1 data-rune-target>Inspect the contract path.</h1>
+            <p data-rune-target>
               Developer deep dive: verify Midgard preprod contract addresses, inspect state anchors, and trace bootstrap history from one place.
             </p>
             <div className={styles.contractHeroChips}>
