@@ -91,7 +91,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(pathSection.getByText(/Operators sequence and bond/i)).toBeVisible();
+  await expect(pathSection.getByText(/Run Operator or Watcher nodes/i)).toBeVisible();
   await expect(pathSection.getByRole("link", { name: /Learn user path/i })).toHaveAttribute("href", "/learn#roles");
   await expect(pathSection.getByRole("link", { name: /Explore Protocol Roles/i })).toHaveAttribute("href", "/developers#developer-paths");
   await expect(page.getByRole("heading", { name: /Fast execution first/i })).toBeVisible();
@@ -286,7 +286,7 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   await expect(page.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(page.getByText(/Protocol Roles keep Midgard running and verifiable/i)).toBeVisible();
+  await expect(page.getByText(/Protocol Roles participate in the Midgard network/i)).toBeVisible();
 
   const bodyText = await page.locator("body").innerText();
   expect(bodyText).toContain("fault-proof");

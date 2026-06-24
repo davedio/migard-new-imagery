@@ -27,7 +27,7 @@ const launchpad = [
   },
   {
     label: "Protocol Roles",
-    detail: "Register operator, Watcher, infrastructure, or testnet interest. Participation should match the current testnet phase.",
+    detail: "Run Operator or Watcher nodes, register infrastructure interest, or follow the current testnet participation path.",
     href: OFFICIAL_LINKS.intakeForm,
     cta: "Open intake form",
   },

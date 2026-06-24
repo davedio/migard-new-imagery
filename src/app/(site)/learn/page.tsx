@@ -164,7 +164,7 @@ export default function LearnPage() {
           <Card
             num="03"
             title="Protocol Roles"
-            body="Protocol Roles keep Midgard running and verifiable. Operators sequence and bond; Watchers inspect commitments, submit fault proofs, and keep invalid state from settling."
+            body="Protocol Roles participate in the Midgard network. Operators and Watchers run nodes that verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement."
           />
         </CardGrid>
       </Section>

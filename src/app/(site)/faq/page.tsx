@@ -287,7 +287,7 @@ const faqGroups = [
     items: [
       {
         q: "What do Protocol Roles do?",
-        a: "Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments, submit fault proofs, and keep invalid state from settling.",
+        a: "Protocol Roles participate in the Midgard network. Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments, challenge invalid state, and help secure the path to Cardano L1 settlement.",
       },
       {
         q: "Can anyone run an Operator or Watcher today?",

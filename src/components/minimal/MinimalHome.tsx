@@ -183,7 +183,7 @@ export default function MinimalHome() {
       <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">
           <h2 id="minimal-paths-title">Pick the role that matches what you need.</h2>
-          <p>Users learn the flow. Builders inspect source and contracts. Protocol Roles keep committed state verifiable.</p>
+          <p>Users learn the flow. Builders inspect source and contracts. Protocol Roles participate in the network.</p>
         </div>
         <div className="minimal-card-grid minimal-card-grid--3">
           {SITE_COPY.paths.map((path) => (

@@ -23,7 +23,7 @@ export const SITE_COPY = {
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence and bond. Watchers replay commitments, submit fault proofs, and keep invalid state from settling.",
+      body: "Participate in the Midgard network. Run Operator or Watcher nodes to verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement.",
       cta: "Explore Protocol Roles",
       href: "/developers#developer-paths",
     },
@@ -143,7 +143,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Protocol Roles",
-      body: "Operators sequence and bond. Watchers replay commitments, submit fault proofs, and keep invalid state from settling. Register interest after reviewing the trust path.",
+      body: "Participate in the Midgard network. Run Operator or Watcher nodes to verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement. Register interest when the current testnet phase matches your role.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Register interest",
     },
