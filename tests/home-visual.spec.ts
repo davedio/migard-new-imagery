@@ -101,7 +101,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
 
   await expect(page.locator(".minimal-metric")).toHaveCount(6);
   await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toBeVisible();
-  await expect(page.locator(".minimal-metric").filter({ hasText: "Watcher coverage" })).toBeVisible();
+  await expect(page.locator(".minimal-metric").filter({ hasText: "Independent verification" })).toBeVisible();
   await expect(page.locator(".v2-footer-statement")).toContainText("Next page");
   await expect(page.locator(".v2-footer-statement")).toContainText("Learn Midgard");
   await expect(page.locator(".v2-footer-statement")).toHaveAttribute("href", "/learn");
@@ -233,6 +233,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toContainText("Benchmark");
   const verifiedSmartContracts = page.locator(".minimal-metric").filter({ hasText: "Verified smart contracts" });
   await expect(verifiedSmartContracts).toContainText("Formal methods");
+  await expect(verifiedSmartContracts).toContainText("mathematical security");
   await expect(verifiedSmartContracts.getByRole("link", { name: /Read about Blaster/i })).toHaveAttribute("href", /iog\.io\/news\/automated-formal-verification/);
   await expect(page.getByRole("heading", { name: /Inspect before you trust speed/i })).toBeVisible();
   await expect(page.locator(".minimal-proof-rail")).toContainText("Verified trust path");

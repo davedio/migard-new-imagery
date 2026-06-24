@@ -95,7 +95,7 @@ const METRIC_STATUS = {
   "Settlement security": "Trust path",
   "Execution model": "Architecture",
   "Verified smart contracts": "Formal methods",
-  "Watcher coverage": "Challenge path",
+  "Independent verification": "Challenge path",
   Status: "Current phase",
 } as const;
 

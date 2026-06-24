@@ -55,14 +55,14 @@ export const SITE_COPY = {
     {
       k: "Verified smart contracts",
       v: "Formal methods",
-      s: "Track formal verification coverage, public source, and live deployment status for critical smart-contract paths.",
+      s: "Track formal verification coverage, public source, and live deployment status for smart contracts that support mathematical security claims.",
       cta: "Read about Blaster",
       href: OFFICIAL_LINKS.blaster,
     },
     {
-      k: "Watcher coverage",
+      k: "Independent verification",
       v: "Contestable state",
-      s: "Track the commitments that independent Watchers can replay and challenge.",
+      s: "Track whether committed state can be independently replayed, challenged, and verified before settlement.",
     },
     {
       k: "Status",
