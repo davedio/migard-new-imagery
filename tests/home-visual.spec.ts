@@ -46,7 +46,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
     }),
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/faster execution/i)).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/The trust path is public/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".v2-stage canvas")).toHaveCount(0);
@@ -82,7 +82,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(heroRoutes.locator(".minimal-hero-route")).toHaveCount(3);
   await expect(heroRoutes.getByRole("link", { name: /Use User path/i })).toHaveAttribute("href", "/learn#roles");
   await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
-  await expect(heroRoutes.getByRole("link", { name: /Verify Security model/i })).toHaveAttribute("href", "/security");
+  await expect(heroRoutes.getByRole("link", { name: /Verify Independent verification/i })).toHaveAttribute("href", "/developers#developer-paths");
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
@@ -199,7 +199,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
       name: /The execution layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/settles verified state through Cardano L1/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
   await expect(page.locator(".minimal-tree")).toBeVisible();
   await expect(page.locator(".minimal-tree__packet")).toHaveCount(2);
   await expect(page.locator(".minimal-tree__proof-loop")).toHaveCount(1);
@@ -210,7 +210,8 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(routeCards.nth(1)).toContainText("Build");
   await expect(routeCards.nth(1)).toHaveAttribute("href", "/developers");
   await expect(routeCards.nth(2)).toContainText("Verify");
-  await expect(routeCards.nth(2)).toHaveAttribute("href", "/security");
+  await expect(routeCards.nth(2)).toContainText("Independent verification");
+  await expect(routeCards.nth(2)).toHaveAttribute("href", "/developers#developer-paths");
   await expect(page.locator(".minimal-flow-board").getByText("User sees")).toBeVisible();
   await expect(page.locator(".minimal-user-path").getByText("Deposit")).toBeVisible();
   await expect(page.locator(".minimal-flow-row").filter({ hasText: "Data availability" })).toBeVisible();
@@ -230,7 +231,9 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
 
   await expect(page.locator(".minimal-metric")).toHaveCount(6);
   await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toContainText("Benchmark");
-  await expect(page.locator(".minimal-metric").filter({ hasText: "Verified contracts" })).toContainText("Formal review");
+  const verifiedSmartContracts = page.locator(".minimal-metric").filter({ hasText: "Verified smart contracts" });
+  await expect(verifiedSmartContracts).toContainText("Formal methods");
+  await expect(verifiedSmartContracts.getByRole("link", { name: /Read about Blaster/i })).toHaveAttribute("href", /iog\.io\/news\/automated-formal-verification/);
   await expect(page.getByRole("heading", { name: /Inspect before you trust speed/i })).toBeVisible();
   await expect(page.locator(".minimal-proof-rail")).toContainText("Verified trust path");
   const inspectGrid = page.locator(".minimal-inspect-grid");

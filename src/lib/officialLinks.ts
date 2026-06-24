@@ -9,6 +9,7 @@ export const OFFICIAL_LINKS = {
   /** Responsible-disclosure route on the public Midgard site. */
   securityPolicy: "/security#disclosure",
   whitepaper: "https://anastasia-labs.github.io/midgard/midgard.pdf",
+  blaster: "https://www.iog.io/news/automated-formal-verification-for-cardano-smart-contracts",
   /** Legacy Anastasia Labs URL retained for approved partner/background links. */
   anastasiaLabs: "https://anastasialabs.com",
 } as const;

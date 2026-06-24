@@ -371,6 +371,8 @@ const LEDGER: {
   k: string;
   v: ReactNode;
   s: string;
+  cta?: string;
+  href?: string;
   accent?: "green" | "gold";
 }[] = [
   {
@@ -399,6 +401,11 @@ export function Ledger() {
                 {c.v}
               </div>
               <div className="s">{c.s}</div>
+              {c.href ? (
+                <a className="v2-tile__link" href={c.href} target="_blank" rel="noopener noreferrer">
+                  {c.cta ?? "Read more"} -&gt;
+                </a>
+              ) : null}
             </div>
           </Rise>
         ))}

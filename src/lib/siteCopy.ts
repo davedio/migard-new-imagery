@@ -4,7 +4,7 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for UTXO finance",
     lead:
-      "Midgard gives UTXO applications faster execution, then settles verified state through Cardano L1. The trust path is public: committed state, data availability, Watcher replay, fault proofs, and Cardano L1 settlement.",
+      "Midgard gives UTXO applications faster execution with mathematically verified smart contracts and Cardano L1 settlement.",
     primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
@@ -53,9 +53,11 @@ export const SITE_COPY = {
       s: "Track how well applications preserve UTXO design while gaining faster execution.",
     },
     {
-      k: "Verified contracts",
+      k: "Verified smart contracts",
       v: "Formal methods",
-      s: "Track which core contracts have completed mathematical verification.",
+      s: "Track formal verification coverage, public source, and live deployment status for critical smart-contract paths.",
+      cta: "Read about Blaster",
+      href: OFFICIAL_LINKS.blaster,
     },
     {
       k: "Watcher coverage",

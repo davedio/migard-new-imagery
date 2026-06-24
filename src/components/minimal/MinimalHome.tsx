@@ -85,8 +85,8 @@ const HERO_ROUTES = [
   },
   {
     label: "Verify",
-    detail: "Security model",
-    href: "/security",
+    detail: "Independent verification",
+    href: "/developers#developer-paths",
   },
 ] as const;
 
@@ -94,7 +94,7 @@ const METRIC_STATUS = {
   "Soft confirmations": "Benchmark",
   "Settlement security": "Trust path",
   "Execution model": "Architecture",
-  "Verified contracts": "Formal review",
+  "Verified smart contracts": "Formal methods",
   "Watcher coverage": "Challenge path",
   Status: "Current phase",
 } as const;
@@ -235,6 +235,11 @@ export default function MinimalHome() {
               </div>
               <strong>{item.v}</strong>
               <p>{item.s}</p>
+              {"href" in item ? (
+                <a className="minimal-metric__link" href={item.href} target="_blank" rel="noopener noreferrer">
+                  {item.cta} -&gt;
+                </a>
+              ) : null}
             </div>
           ))}
         </div>
