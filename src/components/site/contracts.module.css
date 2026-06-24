@@ -16,6 +16,24 @@
   padding-top: clamp(26px, 3.8vh, 48px);
 }
 
+:global([data-theme="light"]) .contractsPage {
+  --deep-ink: #030704;
+  --charcoal: #0a140f;
+  --obsidian: #050b08;
+  --basalt: #06100b;
+  --basalt-2: #091611;
+  --panel: #07110c;
+  --bg-1: #030704;
+  --bg-2: #050b08;
+  --panel-edge: rgba(244, 241, 230, 0.11);
+  --panel-edge-strong: rgba(244, 241, 230, 0.18);
+  --text-hi: #f8f3ea;
+  --text: #dce8dc;
+  --text-dim: #adbdaf;
+  --text-faint: #7f907e;
+  background: #030704;
+}
+
 .contractHero {
   position: relative;
   overflow: hidden;
@@ -24,6 +42,41 @@
   background:
     radial-gradient(circle at 80% 12%, rgba(207, 154, 46, 0.14), transparent 32rem),
     linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.96) 86%);
+}
+
+:global([data-theme="light"]) .contractHero,
+:global([data-theme="light"]) .pathMap,
+:global([data-theme="light"]) .metaBar,
+:global([data-theme="light"]) .topoMobileStep,
+:global([data-theme="light"]) .codeBlock {
+  --text-hi: #f8f3ea;
+  --text: #dce8dc;
+  --text-dim: #adbdaf;
+  --text-faint: #7f907e;
+}
+
+:global([data-theme="light"]) .contractsPage :global(.page-sticky-toc) {
+  color: #dce8dc;
+  background: rgba(5, 11, 8, 0.9);
+  border-color: rgba(244, 241, 230, 0.12);
+}
+
+:global([data-theme="light"]) .contractsPage :global(.page-sticky-toc a) {
+  color: #adbdaf;
+}
+
+:global([data-theme="light"]) .contractsPage :global(.section h2) {
+  color: #f8f3ea;
+}
+
+:global([data-theme="light"]) .contractsPage :global(.lead),
+:global([data-theme="light"]) .contractsPage :global(.prose p) {
+  color: #dce8dc;
+}
+
+:global([data-theme="light"]) .codeBlock {
+  --obsidian: #050b08;
+  --panel-edge: rgba(244, 241, 230, 0.12);
 }
 
 .contractHeroPlate {

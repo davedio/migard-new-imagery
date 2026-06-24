@@ -139,7 +139,7 @@ h4 {
   font-family: var(--font-display);
   color: var(--text-hi);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   margin: 0;
   text-wrap: balance;
 }
@@ -565,7 +565,7 @@ a {
   font-family: var(--font-display);
   font-size: 21px;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.05;
   color: var(--text-hi);
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
@@ -1219,7 +1219,7 @@ button.panel:hover {
   color: var(--text-hi);
   font-size: clamp(34px, 3.6vw, 54px);
   line-height: 1.04;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .lifecycle__hero p {
@@ -1545,9 +1545,9 @@ button.panel:hover {
   display: block;
 }
 .site-nav__logo .wm {
-  font-family: var(--font-display);
+  font-family: var(--font-wordmark);
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
   color: var(--text-hi);
@@ -1836,8 +1836,8 @@ button.panel:hover {
   gap: 9px;
 }
 .site-footer__brand .lock .wm {
-  font-family: var(--font-display);
-  font-weight: 500;
+  font-family: var(--font-wordmark);
+  font-weight: 700;
   font-size: 16px;
   line-height: 1;
   color: var(--text-hi);
@@ -3032,7 +3032,7 @@ button.panel:hover {
   font-family: var(--font-display);
   font-size: clamp(38px, 5vw, 76px);
   line-height: 1.02;
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
   font-weight: 500;
 }
 .hiw-act__lead {

@@ -37,7 +37,6 @@ export function PageBackdrop({
       <picture>
         <source type="image/avif" srcSet={widthsFor(name, "avif")} sizes="100vw" />
         <source type="image/webp" srcSet={widthsFor(name, "webp")} sizes="100vw" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           className="page-backdrop__img"
           src={`${BASE}/${name}-1440.webp`}

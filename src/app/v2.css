@@ -3,8 +3,8 @@
    Awwwards-pass presentation layer. Loaded AFTER globals.css (see
    src/app/layout.tsx import order), so everything here wins the cascade.
 
-   Voice: museum-grade dark editorial. Carved serif display (Fraunces),
-   grotesk UI (Schibsted), HUD mono (Spline Sans Mono). Bone-on-ink,
+   Voice: museum-grade dark editorial. High-contrast serif display (Fraunces),
+   neutral UI sans (Inter), HUD/code mono (JetBrains Mono). Bone-on-ink,
    living green signal, proof gold, cobalt only at L1.
    ========================================================================== */
 
@@ -30,11 +30,11 @@
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* V2 display scale — Syne is wide, so big but not gigantic, near-flat tracking */
+  /* V2 display scale — Fraunces is high-contrast, so keep tracking flat */
   --h1-size: clamp(38px, 5vw, 78px);
   --h1-line: 1.02;
   --h1-weight: 500;
-  --h1-spacing: -0.012em;
+  --h1-spacing: 0;
   --h2-size: clamp(25px, 2.8vw, 44px);
   --h2-line: 1.08;
   --h2-weight: 500;
@@ -55,13 +55,13 @@ h1,
 h2 {
   font-family: var(--font-display);
   font-weight: var(--h1-weight);
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
   color: var(--text-hi);
 }
 h3 {
   font-family: var(--font-body);
   font-weight: var(--h3-weight);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--text-hi);
 }
 .section h2,
@@ -926,7 +926,7 @@ h2 em,
   font-size: clamp(36px, 5.35vw, 92px);
   line-height: 1.0;
   font-weight: 500;
-  letter-spacing: -0.014em;
+  letter-spacing: 0;
   color: var(--bone);
   max-width: 11em;
 }
@@ -995,7 +995,7 @@ h2 em,
   margin: 22px 0 0;
   font-size: clamp(25px, 2.9vw, 46px);
   line-height: 1.08;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--bone);
   font-weight: 500;
 }
@@ -1326,7 +1326,7 @@ h2 em,
   font-size: clamp(27px, 3.5vw, 56px);
   line-height: 1.06;
   font-weight: 500;
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
   color: var(--bone);
   max-width: 14em;
   text-wrap: balance;
@@ -1354,7 +1354,7 @@ h2 em,
   font-size: clamp(19px, 2.1vw, 32px);
   line-height: 1.22;
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--text-dim);
   max-width: 18em;
   margin: 0;
@@ -1624,7 +1624,7 @@ h2 em,
   font-family: var(--font-display);
   font-size: clamp(20px, 1.9vw, 27px);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   line-height: 1.1;
   color: var(--text-hi);
   font-variant-numeric: tabular-nums;
@@ -1682,7 +1682,7 @@ h2 em,
   font-family: var(--font-display);
   font-size: clamp(20px, 2vw, 30px);
   font-weight: 500;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 .v2-duel__side[data-side="them"] h3 {
   color: var(--text-dim);
@@ -1776,7 +1776,7 @@ h2 em,
   font-size: clamp(38px, 5.8vw, 100px);
   line-height: 1.02;
   font-weight: 500;
-  letter-spacing: -0.014em;
+  letter-spacing: 0;
   color: var(--bone);
   margin: 26px 0 0;
   max-width: 10em;
@@ -2113,10 +2113,12 @@ h2 em,
      text, not midtones (client review 2026-06-12: "white on white") */
   --bone: #0e1b13;
   --text-hi: #0e1b13;
-  --text: #1f3327;
-  --text-dim: #2e4436;
-  --text-faint: #46594c;
+  --text: #203126;
+  --text-dim: #405144;
+  --text-faint: #617064;
   --green-bright: #0c7d36;
+  --gold: #9b6e18;
+  --gold-bright: #8a6115;
   --cobalt: #2447b8;
   --cobalt-dim: rgba(36, 71, 184, 0.6);
   --hairline: rgba(14, 27, 19, 0.2);
@@ -2140,10 +2142,10 @@ h2 em,
   background: #e9eee3;
 }
 [data-theme="light"] .site-nav {
-  background: linear-gradient(180deg, rgba(241, 246, 238, 0.82), rgba(241, 246, 238, 0.16) 80%, transparent);
+  background: linear-gradient(180deg, rgba(246, 241, 232, 0.84), rgba(246, 241, 232, 0.16) 80%, transparent);
 }
 [data-theme="light"] .site-nav[data-scrolled="true"] {
-  background: rgba(241, 246, 238, 0.9);
+  background: rgba(246, 241, 232, 0.92);
 }
 /* light mode: the primary button stays the dark-ink slab, so its label
    flips to bone; chrome buttons pick up the morning surface */
@@ -2159,7 +2161,7 @@ h2 em,
 
 /* light mode: the footer's own scrim becomes morning paper */
 [data-theme="light"] .site-footer {
-  background: linear-gradient(180deg, rgba(241, 246, 238, 0.3), rgba(241, 246, 238, 0.95) 55%);
+  background: linear-gradient(180deg, rgba(246, 241, 232, 0.28), rgba(246, 241, 232, 0.95) 55%);
 }
 
 /* (the old light-mode hero "mist pool" ::before is gone — it read as a
@@ -2168,33 +2170,33 @@ h2 em,
 
 /* light mode: the network chip flips to a paper capsule */
 [data-theme="light"] .network-chip {
-  background: rgba(241, 246, 238, 0.85);
+  background: rgba(255, 250, 240, 0.85);
   border-color: rgba(20, 39, 28, 0.2);
   color: var(--text);
 }
 
 /* light mode: the marquee band flips to frosted paper */
 [data-theme="light"] .v2-marquee {
-  background: rgba(241, 246, 238, 0.72);
+  background: rgba(255, 250, 240, 0.72);
 }
 
 [data-theme="light"] .v2-partners {
   background:
     radial-gradient(70% 90% at 12% 0%, rgba(32, 190, 67, 0.1), transparent 62%),
-    radial-gradient(72% 90% at 88% 100%, rgba(207, 154, 46, 0.1), transparent 64%),
-    rgba(241, 246, 238, 0.7);
+    radial-gradient(72% 90% at 88% 100%, rgba(155, 110, 24, 0.12), transparent 64%),
+    rgba(246, 241, 232, 0.7);
 }
 [data-theme="light"] .v2-partner {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.44), transparent 60%),
-    rgba(241, 246, 238, 0.72);
+    rgba(255, 250, 240, 0.72);
   border-color: rgba(14, 27, 19, 0.14);
 }
 [data-theme="light"] .v2-partner[data-tone="dark"] .v2-partner__plate {
   background: rgba(5, 10, 7, 0.84);
 }
 [data-theme="light"] .v2-hero-logo {
-  background: rgba(241, 246, 238, 0.62);
+  background: rgba(255, 250, 240, 0.62);
   border-color: rgba(14, 27, 19, 0.14);
 }
 [data-theme="light"] .v2-hero-logo[data-tone="dark"] {
@@ -2214,7 +2216,7 @@ h2 em,
 [data-theme="light"] .panel {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 45%),
-    rgba(241, 246, 238, 0.66);
+    rgba(255, 250, 240, 0.66);
   backdrop-filter: blur(14px) saturate(1.05);
   -webkit-backdrop-filter: blur(14px) saturate(1.05);
 }
@@ -2222,7 +2224,7 @@ h2 em,
 /* light mode: the provenance body rides the dark trunk — give it the
    same deliberate glass card treatment (a designed panel, not a wash) */
 [data-theme="light"] .v2-prov__body {
-  background: rgba(241, 246, 238, 0.6);
+  background: rgba(255, 250, 240, 0.62);
   backdrop-filter: blur(14px) saturate(1.05);
   -webkit-backdrop-filter: blur(14px) saturate(1.05);
   border: 1px solid var(--panel-edge);
@@ -2238,7 +2240,7 @@ h2 em,
 [data-theme="light"] .v2-phase {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 42%),
-    rgba(241, 246, 238, 0.66);
+    rgba(255, 250, 240, 0.66);
 }
 
 /* ---------------------------------------------------------------------------
@@ -3884,6 +3886,25 @@ h2 em,
   text-shadow: 0 1px 20px rgba(248, 244, 236, 0.6);
 }
 
+[data-theme="light"] .page-hero--tone-ink::after,
+[data-theme="light"] .page-hero--tone-ember::after {
+  background: linear-gradient(90deg, rgba(4, 7, 5, 0.76) 0%, rgba(4, 7, 5, 0.44) 46%, transparent 78%);
+}
+
+[data-theme="light"] .page-hero--tone-ink h1,
+[data-theme="light"] .page-hero--tone-ember h1 {
+  color: #f8f3ea;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.72);
+}
+
+[data-theme="light"] .page-hero--tone-ink .sub,
+[data-theme="light"] .page-hero--tone-ember .sub,
+[data-theme="light"] .page-hero--tone-ink .body,
+[data-theme="light"] .page-hero--tone-ember .body {
+  color: #dce8dc;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.72);
+}
+
 /* ============================================================
    Editorial serif headlines (Fraunces) + warm dawn/cream palette
    ============================================================ */
@@ -3891,11 +3912,12 @@ h2 em,
 /* Optical sizing + a touch of softness/wonk give Fraunces its warm,
    high-contrast editorial voice. Specificity 0 (:where) so existing
    weight/size rules still win; wght keeps tracking font-weight. */
-:where(h1, h2, h3, .minimal-hero h1, .page-hero h1, .v2-hero__title) {
+:where(h1, h2, .minimal-hero h1, .page-hero h1, .v2-hero__title) {
   font-variation-settings: "opsz" 60, "SOFT" 28, "WONK" 0;
+  font-optical-sizing: auto;
 }
 :where(h1, .minimal-hero h1, .page-hero h1, .v2-hero__title) {
-  letter-spacing: -0.012em;
+  letter-spacing: 0;
 }
 
 /* Warm the LIGHT surface tokens from cool sage toward dawn cream so the
@@ -3903,18 +3925,18 @@ h2 em,
    Lands after globals.css (later import, equal specificity) — text tokens
    stay dark for contrast. */
 :root[data-theme="light"] {
-  --deep-ink: #f5f0e6;
-  --charcoal: #e9e1d0;
-  --obsidian: #efe8da;
-  --basalt: #f3ece0;
-  --basalt-2: #ece4d4;
-  --panel: #f8f3ea;
-  --bg-1: #f4efe4;
-  --bg-2: #ece4d4;
-  --paper: #16130c;
-  --mist: #2a2618;
-  --canopy-glow: rgba(214, 158, 70, 0.22);
-  --root-glow: rgba(86, 178, 120, 0.12);
+  --deep-ink: #f4efe3;
+  --charcoal: #dfe7d9;
+  --obsidian: #f0eadf;
+  --basalt: #f7f1e6;
+  --basalt-2: #dfe8da;
+  --panel: #fffaf0;
+  --bg-1: #f4efe3;
+  --bg-2: #dde7d8;
+  --paper: #15130f;
+  --mist: #2c3025;
+  --canopy-glow: rgba(155, 110, 24, 0.2);
+  --root-glow: rgba(12, 125, 54, 0.13);
 }
 
 /* High-contrast warm ink for the big serif headlines in light mode */
@@ -3925,10 +3947,25 @@ h2 em,
   color: #1b1710;
 }
 
+[data-theme="light"] .page-hero--tone-ink h1,
+[data-theme="light"] .page-hero--tone-ember h1 {
+  color: #f8f3ea;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.72);
+}
+
+[data-theme="light"] .page-hero--tone-ink .sub,
+[data-theme="light"] .page-hero--tone-ember .sub,
+[data-theme="light"] .page-hero--tone-ink .body,
+[data-theme="light"] .page-hero--tone-ember .body {
+  color: #dce8dc;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.72);
+}
+
 /* Warm the home page body to match the cream child pages */
 [data-theme="light"] .minimal-site {
-  background-color: #f4efe4;
+  background-color: #f4efe3;
   background-image:
-    radial-gradient(1200px 720px at 86% 120%, rgba(96, 176, 122, 0.1), transparent 70%),
-    radial-gradient(900px 560px at 6% 118%, rgba(214, 168, 86, 0.12), transparent 72%);
+    radial-gradient(1200px 720px at 86% 120%, rgba(12, 125, 54, 0.1), transparent 70%),
+    radial-gradient(900px 560px at 6% 118%, rgba(155, 110, 24, 0.12), transparent 72%),
+    linear-gradient(180deg, rgba(255, 250, 240, 0.36), rgba(223, 232, 218, 0.34));
 }

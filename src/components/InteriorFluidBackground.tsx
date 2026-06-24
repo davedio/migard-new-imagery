@@ -25,15 +25,11 @@ const SecurityPageBackdrop = dynamic(() => import("./SecurityPageBackdrop"), {
  * the shared canvas off so the rune/address reference surface stays readable.
  * Drop <InteriorFluidBackground /> into the (site) layout.
  */
-/* Light-mode preview: each interior page gets a thematically-matched
-   painterly plate, deliberately varied in intensity so the direction can
-   be reviewed. Home is handled by the hero; how-it-works keeps its 3D
-   journey untouched. */
+/* Light-mode preview: only pages without their own strong art direction get a
+   painterly plate. Contracts keeps its rune hero; security keeps its page hero. */
 const LIGHT_BACKDROPS: Record<string, { name: string; variant: BackdropVariant }> = {
   "/learn": { name: "tree-canopy", variant: "soft" },
-  "/security": { name: "tree-trunk-runes", variant: "bold" },
   "/developers": { name: "tree-terraces", variant: "bold" },
-  "/contracts": { name: "tree-rune-stones", variant: "side" },
   "/faq": { name: "tree-forest-path", variant: "banner" },
   "/faqs": { name: "tree-forest-path", variant: "banner" },
 };

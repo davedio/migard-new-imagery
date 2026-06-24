@@ -69,9 +69,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/faster execution/i)).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
-  await expect(page.locator(".minimal-world-tree-stage")).toBeVisible();
-  await expect(page.locator(".minimal-world-tree-stage canvas.v2-stage__canvas")).toHaveCount(2);
-  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
+  await expect(page.locator(".hero-tree-stage")).toBeVisible();
+  await expect(page.locator(".hero-tree-stage__img")).toBeVisible();
+  await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
   await expect(page.locator(".minimal-tree")).toHaveCount(0);
   await expect(page.locator(".v2-stage canvas")).toHaveCount(0);
   const bodyText = await page.locator("body").innerText();
@@ -133,8 +133,26 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("paths.png") });
   await page.evaluate(() => window.scrollTo({ top: Math.round(window.innerHeight * 0.42), behavior: "instant" }));
   await page.waitForTimeout(300);
-  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
   await page.screenshot({ path: testInfo.outputPath("hero-scrolled.png") });
+});
+
+test("night mode keeps the animated home tree available", async ({ page }, testInfo) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("midgard:theme", "dark");
+  });
+
+  await page.goto("/");
+
+  await expect(
+    page.getByRole("heading", {
+      name: /The execution layer for UTXO finance/i,
+    }),
+  ).toBeVisible();
+  await expect(page.locator(".hero-tree-stage")).toHaveCount(0);
+  await expect(page.locator(".minimal-world-tree-stage")).toBeVisible();
+  await expect(page.locator(".minimal-world-tree-stage canvas.v2-stage__canvas")).toHaveCount(2);
+  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
+  await page.screenshot({ path: testInfo.outputPath("home-night-tree.png") });
 });
 
 test("cinematic home remains available as a preview", async ({ page }, testInfo) => {
@@ -228,9 +246,9 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
     }),
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
-  await expect(page.locator(".minimal-world-tree-stage")).toBeVisible();
-  await expect(page.locator(".minimal-world-tree-stage canvas.v2-stage__canvas")).toHaveCount(2);
-  await expectCanvasHasPaint(page, ".minimal-world-tree-stage canvas.v2-stage__canvas");
+  await expect(page.locator(".hero-tree-stage")).toBeVisible();
+  await expect(page.locator(".hero-tree-stage__img")).toBeVisible();
+  await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
   await expect(page.locator(".minimal-tree")).toHaveCount(0);
   const routeCards = page.locator(".minimal-hero-route");
   await expect(routeCards).toHaveCount(3);

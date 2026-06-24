@@ -11,6 +11,14 @@
     rgba(3, 7, 4, 0.82);
 }
 
+:global([data-theme="light"]) .reviewRoutes,
+:global([data-theme="light"]) .trustSection {
+  --text-hi: #f8f3ea;
+  --text: #dce8dc;
+  --text-dim: #adbdaf;
+  --text-faint: #7f907e;
+}
+
 .reviewRoutesInner {
   width: min(var(--maxw), 100%);
   margin: 0 auto;

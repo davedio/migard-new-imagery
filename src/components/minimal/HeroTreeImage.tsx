@@ -97,7 +97,6 @@ export function HeroTreeImage() {
             srcSet={`${V}-1280.webp 1280w, ${V}-1920.webp 1920w, ${V}-2880.webp 2880w`}
             sizes="100vw"
           />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             ref={imgRef}
             className="hero-tree-stage__img"
