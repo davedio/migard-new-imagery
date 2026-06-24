@@ -62,17 +62,17 @@
   --root-glow: rgba(32, 190, 67, 0.08);
 
   /* semantic type roles from the Midgard NEW handoff */
-  --h1-size: clamp(40px, 5vw, 82px);
+  --h1-size: clamp(38px, 4.65vw, 76px);
   --h1-line: 1.04;
   --h1-weight: 500;
   --h1-spacing: -0.01em;
   --h2-size: clamp(24px, 2.85vw, 42px);
   --h2-line: 1.12;
   --h2-weight: 500;
-  --h3-size: 19px;
+  --h3-size: 20px;
   --h3-weight: 500;
-  --lead-size: clamp(16px, 1.5vw, 20px);
-  --body-size: 16px;
+  --lead-size: clamp(17px, 1.55vw, 21px);
+  --body-size: 17px;
   --body-line: 1.55;
   --eyebrow-size: 13px;
   --eyebrow-spacing: 0.28em;
@@ -1896,13 +1896,13 @@ button.panel:hover {
 .page-hero .sub {
   margin-top: 20px;
   max-width: 680px;
-  font-size: clamp(16px, 1.6vw, 22px);
+  font-size: clamp(17px, 1.62vw, 23px);
   color: var(--text);
 }
 .page-hero .body {
   margin-top: 16px;
   max-width: 680px;
-  font-size: clamp(14px, 1.45vw, 18px);
+  font-size: clamp(15px, 1.48vw, 19px);
   color: var(--text-dim);
 }
 
@@ -1940,14 +1940,14 @@ button.panel:hover {
   gap: 14px;
 }
 .prose p {
-  font-size: clamp(15px, 1.5vw, 18px);
+  font-size: clamp(16px, 1.52vw, 19px);
   color: var(--text);
 }
 .prose p.dim {
   color: var(--text-dim);
 }
 .prose p.emph {
-  font-size: clamp(17px, 2vw, 24px);
+  font-size: clamp(18px, 2vw, 25px);
   line-height: 1.32;
   color: var(--text-hi);
 }
@@ -2012,14 +2012,14 @@ button.panel:hover {
 }
 .card p {
   margin-top: 9px;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-dim);
   flex: 1;
 }
 .card__cta {
   margin-top: 16px;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--green-bright);
 }
 .card--cta-glow {
@@ -2930,7 +2930,7 @@ button.panel:hover {
   margin-top: 16px;
   color: var(--text-hi);
   font-family: var(--font-display);
-  font-size: clamp(40px, 5.4vw, 82px);
+  font-size: clamp(38px, 5vw, 76px);
   line-height: 1.02;
   letter-spacing: -0.012em;
   font-weight: 500;
@@ -2939,7 +2939,7 @@ button.panel:hover {
   margin-top: 22px;
   max-width: 50ch;
   color: var(--text);
-  font-size: clamp(16px, 1.4vw, 20px);
+  font-size: clamp(17px, 1.45vw, 21px);
   line-height: 1.55;
 }
 
@@ -3500,7 +3500,7 @@ button.panel:hover {
   padding-bottom: clamp(28px, 4vh, 46px);
 }
 .page-hero--compact h1 {
-  font-size: clamp(34px, 4.6vw, 58px);
+  font-size: clamp(32px, 4.25vw, 54px);
 }
 .page-hero--tone-moss::before,
 .page-hero--tone-cobalt::before,

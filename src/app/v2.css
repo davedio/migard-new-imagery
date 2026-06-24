@@ -31,7 +31,7 @@
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* V2 display scale — Syne is wide, so big but not gigantic, near-flat tracking */
-  --h1-size: clamp(40px, 5.4vw, 86px);
+  --h1-size: clamp(38px, 5vw, 78px);
   --h1-line: 1.02;
   --h1-weight: 500;
   --h1-spacing: -0.012em;
@@ -438,7 +438,7 @@ h2 em,
 }
 
 .page-hero .sub {
-  font-size: clamp(16px, 1.5vw, 21px);
+  font-size: clamp(17px, 1.55vw, 22px);
   line-height: 1.45;
   color: var(--text);
   max-width: 640px;
@@ -917,7 +917,7 @@ h2 em,
 }
 .v2-hero__title {
   margin: 22px 0 0;
-  font-size: clamp(38px, 5.9vw, 104px);
+  font-size: clamp(36px, 5.35vw, 92px);
   line-height: 1.0;
   font-weight: 500;
   letter-spacing: -0.014em;
@@ -1049,7 +1049,7 @@ h2 em,
 .v2-hero__lead {
   margin-top: clamp(18px, 2.6vh, 30px);
   max-width: 560px;
-  font-size: clamp(15.5px, 1.4vw, 19px);
+  font-size: clamp(16.5px, 1.45vw, 20px);
   line-height: 1.6;
   color: var(--text);
 }
@@ -1950,7 +1950,7 @@ h2 em,
     padding-bottom: clamp(84px, 12svh, 118px);
   }
   .v2-hero__title {
-    font-size: clamp(32px, 9.6vw, 58px);
+    font-size: clamp(30px, 9vw, 52px);
     line-height: 1.04;
   }
   .v2-band--thesis {
@@ -2306,7 +2306,7 @@ h2 em,
 .minimal-hero h1,
 .minimal-page-hero h1 {
   margin: 0;
-  font-size: clamp(56px, 5.1vw, 82px);
+  font-size: clamp(50px, 4.7vw, 74px);
   line-height: 1;
   font-weight: 500;
 }
@@ -2316,7 +2316,7 @@ h2 em,
 .minimal-section__head p {
   margin: 24px 0 0;
   max-width: 660px;
-  font-size: 20px;
+  font-size: 21px;
   line-height: 1.55;
   color: var(--text);
 }
@@ -2589,7 +2589,7 @@ h2 em,
 
 .minimal-section h2 {
   margin: 0;
-  font-size: 42px;
+  font-size: 43px;
   line-height: 1.12;
   font-weight: 500;
 }
@@ -2639,12 +2639,13 @@ h2 em,
 
 .minimal-card h3 {
   margin: 0;
-  font-size: 22px;
+  font-size: 23px;
 }
 
 .minimal-card p {
   margin: 16px 0 0;
   color: var(--text-dim);
+  font-size: 16px;
   line-height: 1.55;
 }
 
@@ -2652,7 +2653,7 @@ h2 em,
   margin-top: auto;
   padding-top: 22px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--green-bright);
 }
 
@@ -2693,7 +2694,7 @@ h2 em,
 
 .minimal-channel-card > span {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
   line-height: 1.35;
   color: var(--gold-bright);
   text-transform: uppercase;
@@ -2701,13 +2702,14 @@ h2 em,
 
 .minimal-channel-card h3 {
   margin: 18px 0 0;
-  font-size: 22px;
+  font-size: 23px;
   font-weight: 500;
 }
 
 .minimal-channel-card p {
   margin: 14px 0 0;
   color: var(--text-dim);
+  font-size: 15.5px;
   line-height: 1.5;
 }
 
@@ -2715,7 +2717,7 @@ h2 em,
   margin-top: auto;
   padding-top: 22px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--green-bright);
 }
@@ -2818,7 +2820,7 @@ h2 em,
 .minimal-flow-row span,
 .minimal-metric span {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--gold-bright);
 }
 
@@ -2832,6 +2834,7 @@ h2 em,
 .minimal-metric p {
   margin: 0;
   color: var(--text-dim);
+  font-size: 15.5px;
   line-height: 1.5;
 }
 
@@ -3296,7 +3299,7 @@ h2 em,
 
   .minimal-hero h1,
   .minimal-page-hero h1 {
-    font-size: 52px;
+    font-size: 48px;
   }
 
   .minimal-card-grid--3,
@@ -3359,11 +3362,11 @@ h2 em,
 @media (max-width: 640px) {
   .minimal-hero h1,
   .minimal-page-hero h1 {
-    font-size: 42px;
+    font-size: 39px;
   }
 
   .minimal-section h2 {
-    font-size: 32px;
+    font-size: 33px;
   }
 
   .minimal-hero,

@@ -57,7 +57,7 @@
   margin: 0;
   max-width: 850px;
   color: var(--text-hi);
-  font-size: clamp(44px, 5.1vw, 76px);
+  font-size: clamp(40px, 4.7vw, 68px);
   line-height: 0.98;
   font-weight: 500;
   letter-spacing: 0;
@@ -67,7 +67,7 @@
   margin: 24px 0 0;
   max-width: 650px;
   color: var(--text);
-  font-size: clamp(17px, 1.55vw, 22px);
+  font-size: clamp(18px, 1.6vw, 23px);
   line-height: 1.45;
 }
 
