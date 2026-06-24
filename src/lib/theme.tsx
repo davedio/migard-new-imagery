@@ -26,8 +26,10 @@ export type Theme = "dark" | "light";
 
 const STORAGE_KEY = "midgard:theme";
 
-/** Runs before paint via the inline script in src/app/layout.tsx. */
-export const THEME_BOOT_SCRIPT = `try{var t=localStorage.getItem("${STORAGE_KEY}");if(t==="light")document.documentElement.dataset.theme="light";}catch(e){}`;
+/** Runs before paint via the inline script in src/app/layout.tsx.
+    Light is the default look during the new-imagery preview; only an
+    explicitly stored "dark" preference opts back into the night tree. */
+export const THEME_BOOT_SCRIPT = `try{var t=localStorage.getItem("${STORAGE_KEY}");if(t!=="dark")document.documentElement.dataset.theme="light";}catch(e){document.documentElement.dataset.theme="light";}`;
 
 /** The day/night world-tree plates — one tree, two times of day. */
 export const TREE_PLATES: Record<Theme, string> = {
@@ -44,7 +46,7 @@ type ThemeState = {
 const ThemeContext = createContext<ThemeState | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   // Hydrate the stored preference after mount (the boot script already
   // applied the attribute, so this only syncs React state — no repaint).

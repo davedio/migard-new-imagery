@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Poppins, Inter, JetBrains_Mono, Syne } from "next/font/google";
+import { Fraunces, Inter, JetBrains_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import "./v2.css";
 import { Providers } from "./providers";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
-/* Original Midgard type system: Syne/Poppins display, Inter body,
-   JetBrains Mono data — the V2 layout keeps its scale and choreography
-   but speaks in the brand's own voice. */
-const display = Poppins({
+/* Type system: Fraunces — a high-contrast "wonky" old-style serif with
+   ball terminals — sets the headlines (the new editorial direction);
+   Inter carries body copy, JetBrains Mono the data/code, and Syne is
+   retained for the Midgard wordmark lockup only. */
+const display = Fraunces({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
+  axes: ["opsz", "SOFT", "WONK"],
+  variable: "--font-fraunces",
   display: "swap",
 });
 const body = Inter({

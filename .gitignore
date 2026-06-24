@@ -43,3 +43,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .tree-work/
+
+# stray local scratch (image optimizer)
+_opt_tmp.mjs

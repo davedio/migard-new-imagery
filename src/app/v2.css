@@ -3627,3 +3627,308 @@ h2 em,
     animation: none;
   }
 }
+
+/* ============================================================
+   LIGHT-MODE PREVIEW — new painterly World Tree imagery + minimal
+   light surfaces. Scoped to [data-theme="light"] so the dark theme
+   (animated particle hero, night plates) is left untouched.
+   ============================================================ */
+
+/* -- home hero: fixed painterly tree plate that zooms + dissolves -- */
+.hero-tree-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+/* reduced motion: scroll away with the hero instead of a fixed fade */
+.hero-tree-stage[data-motion="off"] {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 100svh;
+}
+.hero-tree-stage__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.hero-tree-stage__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 64% 42%; /* keep the tree right-of-centre, canopy in view */
+  transform: scale(1.02);
+  transform-origin: 67% 36%; /* zoom toward the canopy */
+  will-change: transform, opacity;
+  filter: saturate(1.04) contrast(1.02);
+}
+.hero-tree-stage__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(248, 244, 236, 0.9) 0%,
+      rgba(248, 244, 236, 0.5) 32%,
+      rgba(248, 244, 236, 0.08) 60%,
+      transparent 80%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(248, 244, 236, 0.32) 0%,
+      transparent 20%,
+      transparent 56%,
+      rgba(240, 233, 221, 0.72) 92%,
+      rgba(240, 233, 221, 0.92) 100%
+    );
+}
+@media (max-aspect-ratio: 4 / 5) {
+  .hero-tree-stage__img {
+    object-position: 50% 30%;
+    transform-origin: 50% 26%;
+  }
+  .hero-tree-stage__scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(248, 244, 236, 0.58) 0%,
+      rgba(248, 244, 236, 0.12) 26%,
+      transparent 46%,
+      rgba(240, 233, 221, 0.82) 88%,
+      rgba(240, 233, 221, 0.95) 100%
+    );
+  }
+}
+
+/* -- light page body behind the minimal home -- */
+[data-theme="light"] .minimal-site {
+  color: var(--text);
+  background-color: #f4efe4;
+  background-image:
+    radial-gradient(1200px 720px at 86% 120%, rgba(86, 180, 120, 0.1), transparent 70%),
+    radial-gradient(900px 560px at 6% 118%, rgba(206, 170, 90, 0.09), transparent 72%);
+}
+[data-theme="light"] .minimal-site::before {
+  opacity: 0;
+}
+[data-theme="light"] .minimal-site::after {
+  mix-blend-mode: multiply;
+  opacity: 0.04;
+}
+[data-theme="light"] .minimal-world-tree-stage__vignette {
+  display: none;
+}
+
+/* -- headline holds over the bright dawn sky -- */
+[data-theme="light"] .minimal-hero h1 {
+  text-shadow: 0 1px 22px rgba(248, 244, 236, 0.62);
+}
+
+/* -- minimal surfaces become light translucent cards -- */
+[data-theme="light"] .minimal-hero-route,
+[data-theme="light"] .minimal-thesis__item,
+[data-theme="light"] .minimal-card,
+[data-theme="light"] .minimal-metric,
+[data-theme="light"] .minimal-flow-row,
+[data-theme="light"] .minimal-flow-board,
+[data-theme="light"] .minimal-channel-card,
+[data-theme="light"] .minimal-inspect-card {
+  border-color: var(--panel-edge-strong);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.3) 62%),
+    rgba(247, 250, 243, 0.6);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+[data-theme="light"] .minimal-hero-route:hover,
+[data-theme="light"] .minimal-card--link:hover,
+[data-theme="light"] .minimal-channel-card:hover,
+[data-theme="light"] .minimal-inspect-card:hover {
+  border-color: rgba(12, 125, 54, 0.5);
+  background: rgba(255, 255, 255, 0.88);
+}
+[data-theme="light"] .minimal-channel-card:first-child {
+  border-color: rgba(138, 101, 18, 0.42);
+}
+[data-theme="light"] .minimal-thesis__item span {
+  background: rgba(255, 255, 255, 0.92);
+}
+[data-theme="light"] .minimal-user-path {
+  background: rgba(20, 150, 62, 0.08);
+  border-color: rgba(12, 125, 54, 0.28);
+}
+[data-theme="light"] .minimal-user-path li {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(12, 125, 54, 0.3);
+}
+[data-theme="light"] .minimal-partners__rail {
+  background: rgba(255, 255, 255, 0.4);
+}
+[data-theme="light"] .minimal-partner {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: var(--panel-edge);
+}
+[data-theme="light"] .minimal-channel-card__icon {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: var(--panel-edge);
+}
+[data-theme="light"] .minimal-btn--primary {
+  color: #f5faf1;
+}
+[data-theme="light"] .minimal-btn--ghost:hover {
+  background: rgba(20, 60, 36, 0.06);
+  border-color: rgba(12, 125, 54, 0.45);
+}
+
+/* ============================================================
+   Interior-page painterly backdrops (light mode) — four treatments
+   ============================================================ */
+.page-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.page-backdrop__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 42%;
+}
+.page-backdrop__scrim {
+  position: absolute;
+  inset: 0;
+}
+
+/* soft — a quiet canopy that floats at the top and dissolves */
+.page-backdrop--soft .page-backdrop__img {
+  opacity: 0.5;
+  object-position: 50% 20%;
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 28%, transparent 72%);
+  mask-image: linear-gradient(180deg, #000 0, #000 28%, transparent 72%);
+}
+.page-backdrop--soft .page-backdrop__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(240, 233, 221, 0.46),
+    rgba(240, 233, 221, 0.2) 28%,
+    rgba(240, 233, 221, 0.8) 76%,
+    #f4efe4 100%
+  );
+}
+
+/* bold — full-bleed presence with a legibility wash */
+.page-backdrop--bold .page-backdrop__img {
+  opacity: 0.9;
+}
+.page-backdrop--bold .page-backdrop__scrim {
+  background:
+    linear-gradient(90deg, rgba(240, 233, 221, 0.5), rgba(240, 233, 221, 0.12) 46%, transparent 72%),
+    linear-gradient(
+      180deg,
+      rgba(240, 233, 221, 0.26),
+      rgba(240, 233, 221, 0.1) 28%,
+      rgba(240, 233, 221, 0.84) 86%,
+      #f4efe4 100%
+    );
+}
+
+/* side — anchored right; the left text column stays clean */
+.page-backdrop--side .page-backdrop__img {
+  left: auto;
+  right: 0;
+  width: clamp(46%, 56vw, 64%);
+  opacity: 0.92;
+  object-position: 50% 46%;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 36%);
+  mask-image: linear-gradient(90deg, transparent, #000 36%);
+}
+.page-backdrop--side .page-backdrop__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(240, 233, 221, 0.22),
+    rgba(240, 233, 221, 0.16) 40%,
+    rgba(240, 233, 221, 0.72) 84%,
+    #f4efe4 100%
+  );
+}
+
+/* banner — a header band that fades into the page */
+.page-backdrop--banner .page-backdrop__img {
+  height: 66vh;
+  opacity: 0.92;
+  object-position: 50% 44%;
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 54%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 54%, transparent 100%);
+}
+.page-backdrop--banner .page-backdrop__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(240, 233, 221, 0.16) 0,
+    rgba(240, 233, 221, 0.34) 38%,
+    rgba(240, 233, 221, 0.9) 64%,
+    #f4efe4 72%
+  );
+}
+
+/* interior pages: in light mode the painterly plate is the page's
+   atmosphere, so let the shared ambient tint stay faint and lift text */
+[data-theme="light"] .page-hero h1 {
+  text-shadow: 0 1px 20px rgba(248, 244, 236, 0.6);
+}
+
+/* ============================================================
+   Editorial serif headlines (Fraunces) + warm dawn/cream palette
+   ============================================================ */
+
+/* Optical sizing + a touch of softness/wonk give Fraunces its warm,
+   high-contrast editorial voice. Specificity 0 (:where) so existing
+   weight/size rules still win; wght keeps tracking font-weight. */
+:where(h1, h2, h3, .minimal-hero h1, .page-hero h1, .v2-hero__title) {
+  font-variation-settings: "opsz" 60, "SOFT" 28, "WONK" 0;
+}
+:where(h1, .minimal-hero h1, .page-hero h1, .v2-hero__title) {
+  letter-spacing: -0.012em;
+}
+
+/* Warm the LIGHT surface tokens from cool sage toward dawn cream so the
+   child-page panels/sections sit naturally under the painterly plates.
+   Lands after globals.css (later import, equal specificity) — text tokens
+   stay dark for contrast. */
+:root[data-theme="light"] {
+  --deep-ink: #f5f0e6;
+  --charcoal: #e9e1d0;
+  --obsidian: #efe8da;
+  --basalt: #f3ece0;
+  --basalt-2: #ece4d4;
+  --panel: #f8f3ea;
+  --bg-1: #f4efe4;
+  --bg-2: #ece4d4;
+  --paper: #16130c;
+  --mist: #2a2618;
+  --canopy-glow: rgba(214, 158, 70, 0.22);
+  --root-glow: rgba(86, 178, 120, 0.12);
+}
+
+/* High-contrast warm ink for the big serif headlines in light mode */
+[data-theme="light"] .minimal-hero h1,
+[data-theme="light"] .page-hero h1,
+[data-theme="light"] .minimal-section h2,
+[data-theme="light"] .section h2 {
+  color: #1b1710;
+}
+
+/* Warm the home page body to match the cream child pages */
+[data-theme="light"] .minimal-site {
+  background-color: #f4efe4;
+  background-image:
+    radial-gradient(1200px 720px at 86% 120%, rgba(96, 176, 122, 0.1), transparent 70%),
+    radial-gradient(900px 560px at 6% 118%, rgba(214, 168, 86, 0.12), transparent 72%);
+}

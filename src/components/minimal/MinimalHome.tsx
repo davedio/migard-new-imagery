@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { HeroWorldTree } from "@/components/minimal/HeroWorldTree";
+import { HeroStage } from "@/components/minimal/HeroStage";
 import { OfficialChannelIcon, OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -137,7 +137,7 @@ function EcosystemPartners() {
 export default function MinimalHome() {
   return (
     <main className="minimal-site">
-      <HeroWorldTree />
+      <HeroStage />
       <section id="top" className="minimal-hero" aria-labelledby="minimal-hero-title">
         <div className="minimal-hero__copy">
           <h1 id="minimal-hero-title">{SITE_COPY.hero.title}</h1>

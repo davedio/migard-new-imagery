@@ -2,6 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import { useTheme } from "@/lib/theme";
+import { PageBackdrop, type BackdropVariant } from "@/components/site/PageBackdrop";
 
 // Both backdrops carry canvases; keep them out of SSR AND out of the shared
 // layout chunk (the static import shipped the security backdrop everywhere).
@@ -23,8 +25,31 @@ const SecurityPageBackdrop = dynamic(() => import("./SecurityPageBackdrop"), {
  * the shared canvas off so the rune/address reference surface stays readable.
  * Drop <InteriorFluidBackground /> into the (site) layout.
  */
+/* Light-mode preview: each interior page gets a thematically-matched
+   painterly plate, deliberately varied in intensity so the direction can
+   be reviewed. Home is handled by the hero; how-it-works keeps its 3D
+   journey untouched. */
+const LIGHT_BACKDROPS: Record<string, { name: string; variant: BackdropVariant }> = {
+  "/learn": { name: "tree-canopy", variant: "soft" },
+  "/security": { name: "tree-trunk-runes", variant: "bold" },
+  "/developers": { name: "tree-terraces", variant: "bold" },
+  "/contracts": { name: "tree-rune-stones", variant: "side" },
+  "/faq": { name: "tree-forest-path", variant: "banner" },
+  "/faqs": { name: "tree-forest-path", variant: "banner" },
+};
+
 export default function InteriorFluidBackground() {
   const pathname = usePathname();
+  const { theme } = useTheme();
+
+  // Light preview — painterly per-page backdrops (dark theme is unchanged).
+  if (theme === "light") {
+    const hit = LIGHT_BACKDROPS[pathname];
+    if (hit) return <PageBackdrop name={hit.name} variant={hit.variant} />;
+    return null; // home hero + the how-it-works 3D journey own their own canvas
+  }
+
+  // Dark theme — original behaviour.
   if (
     pathname === "/" ||
     pathname === "/home" ||

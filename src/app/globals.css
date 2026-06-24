@@ -40,7 +40,8 @@
   --text-faint: #6d7f76;
 
   /* type — wired to next/font css variables */
-  --font-display: var(--font-syne), var(--font-poppins), system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-wordmark: var(--font-syne), system-ui, sans-serif;
   --font-body: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-jbmono), ui-monospace, monospace;
 
