@@ -118,11 +118,6 @@ export const DEVELOPER_COPY = {
       href: "/contracts",
     },
     {
-      label: "Whitepaper",
-      detail: "Protocol design notes",
-      href: OFFICIAL_LINKS.whitepaper,
-    },
-    {
       label: "Security",
       detail: "Trust path and assumptions",
       href: "/security",

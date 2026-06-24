@@ -48,12 +48,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
         github: true,
       },
       {
-        label: "Whitepaper",
-        href: OFFICIAL_LINKS.whitepaper,
-        description: "Protocol design notes",
-        external: true,
-      },
-      {
         label: "Intake form",
         href: OFFICIAL_LINKS.intakeForm,
         description: "Builder and Protocol Role interest",

@@ -172,6 +172,7 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   await expect(mobileMenu.getByRole("link", { name: /How it works/i })).toHaveAttribute("href", "/how-it-works");
   await expect(mobileMenu.getByRole("link", { name: /Developer overview/i })).toHaveAttribute("href", "/developers");
   await expect(mobileMenu.getByRole("link", { name: /^Contracts/i })).toHaveAttribute("href", "/contracts");
+  await expect(mobileMenu.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
   await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/security");
   await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveAttribute("href", "/security#disclosure");
   await expect(mobileMenu.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
@@ -264,6 +265,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(devDropdown.getByRole("link", { name: /Contracts/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /GitHub/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
+  await expect(devDropdown.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
 
   const security = page.getByRole("button", { name: /^Security$/i });
   await security.click();
@@ -309,8 +311,8 @@ test("developer and contracts pages render", async ({ page }, testInfo) => {
   await expect(page.getByRole("heading", { name: /Open the source, then follow the path/i })).toBeVisible();
   await expect(page.getByLabel("Developer integration path").getByText(/One app flow at a time/i)).toBeVisible();
   await expect(page.getByLabel("Developer integration path").getByRole("heading", { name: /App flow/i })).toBeVisible();
-  await expect(page.getByText(/Supporting docs/i)).toBeVisible();
-  await expect(page.getByLabel("Supporting documents").getByRole("link", { name: /Whitepaper/i })).toHaveAttribute("href", /midgard\.pdf/);
+  await expect(page.getByText(/Protocol design notes/i)).toBeVisible();
+  await expect(page.getByLabel("Supporting documents").getByRole("link", { name: /Read whitepaper/i })).toHaveAttribute("href", /midgard\.pdf/);
   await expect(page.locator("main").getByRole("heading", { name: /Protocol reviewers/i })).toBeVisible();
   await expect(page.locator("main").getByRole("heading", { name: /Midgard Stack/i })).toBeVisible();
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Review source/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);

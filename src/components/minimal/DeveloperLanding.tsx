@@ -115,9 +115,9 @@ export default function DeveloperLanding() {
               Builders, reviewers, operators, and Watchers need different proof points. Pick the link that matches the work.
             </p>
             <div className={styles.supportLinks} aria-label="Supporting documents">
-              <span>Supporting docs</span>
+              <span>Protocol design notes</span>
               <a href={OFFICIAL_LINKS.whitepaper} target="_blank" rel="noreferrer">
-                Whitepaper -&gt;
+                Read whitepaper -&gt;
               </a>
             </div>
           </div>
