@@ -29,10 +29,10 @@ const TOUR = [
     cta: "Open Contracts",
   },
   {
-    href: "/security",
-    title: "Security",
+    href: "/learn#security-overview",
+    title: "Security overview",
     detail: "Review assumptions before trusting speed.",
-    cta: "Open Security",
+    cta: "Open security",
   },
   {
     href: "/faq",

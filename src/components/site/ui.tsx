@@ -306,7 +306,7 @@ export function Bullets({ items }: { items: ReactNode[] }) {
 
 export type LayerItem = { n: string; name: string; desc: ReactNode };
 
-export function Layers({ items }: { items: LayerItem[] }) {
+export function Layers({ items }: { items: readonly LayerItem[] }) {
   return (
     <div className="layers">
       {items.map((l, i) => (

@@ -23,7 +23,7 @@ const launchpad = [
   {
     label: "Security model",
     detail: "Understand the trust path, fault-proof checks, Watcher replay, data availability, and Cardano L1 settlement.",
-    href: "/security",
+    href: "/learn#security-overview",
     cta: "Read security",
   },
   {

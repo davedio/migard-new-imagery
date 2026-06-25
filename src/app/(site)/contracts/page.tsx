@@ -277,7 +277,7 @@ export default function ContractsPage() {
             },
           ]}
         />
-        <Actions items={[{ label: "Read security", href: "/security", variant: "ghost" }]} />
+        <Actions items={[{ label: "Read security", href: "/learn#security-overview", variant: "ghost" }]} />
       </Section>
 
       <Section
@@ -312,7 +312,7 @@ console.log(\`\${utxos.length} entries at the State Queue address\`);`}</code>
         lead="Contracts, source, and security assumptions should be easy to inspect before anyone treats performance claims as meaningful."
         actions={[
           { label: "Open GitHub", href: OFFICIAL_LINKS.github, variant: "primary", icon: <GitHubIcon size={15} /> },
-          { label: "Read security", href: "/security", variant: "ghost" },
+          { label: "Read security", href: "/learn#security-overview", variant: "ghost" },
         ]}
       />
     </main>

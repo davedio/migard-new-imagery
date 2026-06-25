@@ -39,7 +39,7 @@ const INSPECTION_PATHS = [
     title: "Security model",
     body: "How fast confirmations, fault-proof checks, Watcher replay, and final Cardano L1 settlement fit together.",
     cta: "Read security",
-    href: "/security",
+    href: "/learn#security-overview",
   },
   {
     title: "Contract surface",

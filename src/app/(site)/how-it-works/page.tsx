@@ -24,7 +24,7 @@ export default function HowItWorksPage() {
           {
             label: "Read security",
             sub: "The Cardano L1 security, fault-proof, and watcher model",
-            href: "/security",
+            href: "/learn#security-overview",
           },
           {
             label: "Whitepaper",

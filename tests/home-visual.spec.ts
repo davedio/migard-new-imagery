@@ -25,7 +25,7 @@ test("shared site imagery loads on primary routes", async ({ page }) => {
     }
   });
 
-  for (const route of ["/", "/home", "/minimal", "/learn", "/security", "/contracts", "/developers", "/how-it-works", "/faq"]) {
+  for (const route of ["/", "/home", "/minimal", "/learn", "/learn#security-overview", "/contracts", "/developers", "/how-it-works", "/faq"]) {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
     await expectNoBrokenImages(page);
@@ -199,7 +199,7 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   await expect(mobileMenu.getByRole("link", { name: /Developer overview/i })).toHaveAttribute("href", "/developers");
   await expect(mobileMenu.getByRole("link", { name: /^Contracts/i })).toHaveAttribute("href", "/contracts");
   await expect(mobileMenu.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
-  await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/security");
+  await expect(mobileMenu.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/learn#security-overview");
   await expect(mobileMenu.getByRole("link", { name: /Security policy/i })).toHaveCount(0);
   await expect(mobileMenu.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(mobileMenu.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
@@ -331,7 +331,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.getByRole("heading", { name: /Inspect before you trust speed/i })).toBeVisible();
   await expect(page.locator(".minimal-proof-rail")).toContainText("Verified trust path");
   const inspectGrid = page.locator(".minimal-inspect-grid");
-  await expect(inspectGrid.getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/security");
+  await expect(inspectGrid.getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/learn#security-overview");
   await expect(inspectGrid.getByRole("link", { name: /Contract surface/i })).toHaveAttribute("href", "/contracts");
   await expect(inspectGrid.getByRole("link", { name: /Source review/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator(".minimal-channel-card")).toHaveCount(4);
@@ -339,7 +339,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
     await expect(page.locator(".minimal-channel-grid")).toHaveCSS("grid-template-columns", /px .*px/);
   }
   await expect(page.locator(".minimal-channel-card").first()).toContainText("Report something sensitive");
-  await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", "/security#disclosure");
+  await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", "/learn#disclosure");
   await expect(page.locator(".minimal-channel-card").filter({ hasText: "Intake form" })).toContainText("Protocol Roles");
   await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
@@ -347,7 +347,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await page.screenshot({ path: testInfo.outputPath("minimal-preview.png") });
 });
 
-test("developers and security menus expose key routes", async ({ page }, testInfo) => {
+test("developers and learn menus expose key routes", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop-chromium", "Desktop dropdown behavior only");
 
   await page.goto("/");
@@ -361,12 +361,13 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(devDropdown.getByRole("link", { name: /Intake form/i })).toHaveCount(0);
   await expect(devDropdown.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
 
-  const security = page.getByRole("button", { name: /^Security$/i });
-  await security.click();
-  const securityDropdown = page.locator(".site-nav__group", { has: security }).locator(".site-nav__dropdown");
-  await expect(securityDropdown.getByRole("link", { name: /Security overview/i })).toBeVisible();
-  await expect(securityDropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
-  await expect(securityDropdown.getByRole("link", { name: /Security policy/i })).toHaveCount(0);
+  const learn = page.getByRole("button", { name: /^Learn$/i });
+  await learn.click();
+  const learnDropdown = page.locator(".site-nav__group", { has: learn }).locator(".site-nav__dropdown");
+  await expect(learnDropdown.getByRole("link", { name: /Security overview/i })).toHaveAttribute("href", "/learn#security-overview");
+  await expect(learnDropdown.getByRole("link", { name: /How it works/i })).toBeVisible();
+  await expect(learnDropdown.getByRole("link", { name: /FAQ/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^Security$/i })).toHaveCount(0);
 
   await expect(page.getByRole("button", { name: /^Connect$/i })).toHaveCount(0);
   await expect(page.locator(".site-nav__chevron")).toHaveCount(0);
@@ -375,7 +376,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(nav.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
   await expect(nav.getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
 
-  await page.screenshot({ path: testInfo.outputPath("nav-developers-security-open.png") });
+  await page.screenshot({ path: testInfo.outputPath("nav-developers-learn-open.png") });
 });
 
 test("learn overview page renders the agreed language map", async ({ page }, testInfo) => {
@@ -392,6 +393,10 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
   await expect(page.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
   await expect(page.getByText(/Protocol Roles participate in the Midgard network/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Security assumptions you can inspect/i })).toBeVisible();
+  await expect(page.getByText(/Lower attack surface, not magic/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Mathematically verified contracts/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Security reporting should be boring and official/i })).toBeVisible();
 
   const bodyText = await page.locator("body").innerText();
   expect(bodyText).toContain("fault-proof");
@@ -416,7 +421,7 @@ test("developer and contracts pages render", async ({ page }, testInfo) => {
   await expect(page.locator("main").getByRole("heading", { name: /Midgard Stack/i })).toBeVisible();
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Review source/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Contract addresses/i })).toHaveAttribute("href", "/contracts");
-  await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/security");
+  await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/learn#security-overview");
   await expect(page.locator("[aria-labelledby='developer-launchpad-title']").getByRole("link", { name: /Protocol Roles/i })).toHaveAttribute("href", /docs\.google\.com\/forms/);
   await expect(page.getByRole("heading", { name: /Application builders/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i }).first()).toBeVisible();
@@ -470,13 +475,13 @@ test("how it works lifecycle language renders cleanly", async ({ page }, testInf
   await page.screenshot({ path: testInfo.outputPath("how-it-works.png") });
 });
 
-test("security and faq pages render", async ({ page }, testInfo) => {
+test("learn security section and faq pages render", async ({ page }, testInfo) => {
   await page.goto("/security");
+  await expect(page).toHaveURL(/\/learn#security-overview$/);
   await expect(page.getByRole("heading", { name: /Security assumptions you can inspect/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Inspect the trust path from multiple angles/i })).toBeVisible();
   await expect(page.getByRole("link", { name: /Inspect contracts/i })).toHaveAttribute("href", "/contracts");
-  await expect(page.getByRole("link", { name: /Report safely/i })).toHaveAttribute("href", "/security#disclosure");
-  await expect(page.getByRole("heading", { name: /Fast confirmations first/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Report safely/i })).toHaveAttribute("href", "/learn#disclosure");
+  await expect(page.getByRole("heading", { name: /Soft confirmation/i })).toBeVisible();
   await expect(page.getByText(/Lower attack surface, not magic/i)).toBeVisible();
   await expect(page.getByRole("heading", { name: /Soft confirmation/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Cardano L1 settlement", exact: true })).toBeVisible();

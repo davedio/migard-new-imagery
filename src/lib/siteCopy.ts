@@ -122,7 +122,7 @@ export const DEVELOPER_COPY = {
     {
       label: "Security",
       detail: "Trust path and assumptions",
-      href: "/security",
+      href: "/learn#security-overview",
     },
   ],
   tracks: [

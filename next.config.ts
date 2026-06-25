@@ -51,6 +51,11 @@ const nextConfig: NextConfig = {
         destination: "https://github.com/Anastasia-Labs/midgard",
         permanent: false,
       },
+      {
+        source: "/security",
+        destination: "/learn#security-overview",
+        permanent: false,
+      },
     ];
   },
 };

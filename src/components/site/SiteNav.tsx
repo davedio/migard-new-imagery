@@ -27,6 +27,11 @@ const NAV_GROUPS: readonly NavGroup[] = [
     label: "Learn",
     items: [
       { label: "Learn overview", href: "/learn", description: "Plain-language model" },
+      {
+        label: "Security overview",
+        href: "/learn#security-overview",
+        description: "Trust path and reporting route",
+      },
       { label: "How it works", href: "/how-it-works", description: "Transaction flow" },
       { label: "FAQ", href: "/faq", description: "Trust-model answers" },
     ],
@@ -36,17 +41,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { label: "Developer overview", href: "/developers", description: "Builder and Protocol Role paths" },
       { label: "Contracts", href: "/contracts", description: "Topology, addresses, scripts" },
-    ],
-  },
-  {
-    label: "Security",
-    items: [
-      {
-        label: "Security overview",
-        href: "/security",
-        description: "Trust path, assumptions, reporting route",
-      },
-      { label: "FAQ", href: "/faq", description: "L2 tradeoffs and common questions" },
     ],
   },
 ] as const;
