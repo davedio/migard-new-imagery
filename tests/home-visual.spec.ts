@@ -391,6 +391,9 @@ test("learn overview page renders the agreed language map", async ({ page }, tes
 
   const bodyText = await page.locator("body").innerText();
   expect(bodyText).toContain("fault-proof");
+  expect(bodyText).not.toContain("Current status stays explicit.");
+  expect(bodyText).not.toContain("Pre-alpha testnet is the current public boundary.");
+  expect(bodyText).not.toContain("Rewards, bonds, and partner claims appear only after parameters are approved.");
   expect(bodyText).not.toContain("fraud-proof");
   expect(bodyText).not.toContain("Bitcoin DeFi");
 

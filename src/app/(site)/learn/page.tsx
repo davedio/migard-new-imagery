@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import {
-  Callout,
   Card,
   CardGrid,
   CtaBand,
@@ -209,18 +208,6 @@ export default function LearnPage() {
             body="Current public positioning is ADA fees with no separate gas token at launch. Bonds, watcher incentives, and launch incentives should publish only after parameters are approved."
           />
         </CardGrid>
-      </Section>
-
-      <Section title="Current status stays explicit.">
-        <Callout
-          title="Pre-alpha testnet is the current public boundary."
-          body="Midgard is early. Live status, verified code, and approved parameters are the source for claims that affect users, builders, and Protocol Roles."
-          items={[
-            "Fault-proof verification is the public verification path.",
-            "Data availability and watcher assumptions are part of the security model.",
-            "Rewards, bonds, and partner claims appear only after parameters are approved.",
-          ]}
-        />
       </Section>
 
       <CtaBand
