@@ -1,4 +1,9 @@
 export default function InteriorFluidBackground() {
-  // Preview light mode is calmer without extra fixed image layers on child pages.
-  return null;
+  return (
+    <div className="interior-fluid" aria-hidden="true">
+      <span className="interior-fluid__wash interior-fluid__wash--green" />
+      <span className="interior-fluid__wash interior-fluid__wash--gold" />
+      <span className="interior-fluid__wash interior-fluid__wash--blue" />
+    </div>
+  );
 }

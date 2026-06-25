@@ -2298,6 +2298,10 @@ h2 em,
     rgba(255, 250, 240, 0.66);
   backdrop-filter: blur(14px) saturate(1.05);
   -webkit-backdrop-filter: blur(14px) saturate(1.05);
+  border-color: rgba(14, 27, 19, 0.18);
+  box-shadow:
+    0 18px 54px rgba(54, 45, 30, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
 /* light mode: the provenance body rides the dark trunk — give it the
@@ -2320,6 +2324,220 @@ h2 em,
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 42%),
     rgba(255, 250, 240, 0.66);
+}
+
+/* ---------------------------------------------------------------------------
+   Light theme atmosphere pass — keep the warm cream, add depth.
+   ------------------------------------------------------------------------- */
+.interior-fluid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.72;
+}
+.interior-fluid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(244, 241, 230, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 241, 230, 0.035) 1px, transparent 1px);
+  background-size: 86px 86px;
+  mask-image: radial-gradient(82% 68% at 50% 44%, #000, transparent 82%);
+}
+.interior-fluid__wash {
+  position: absolute;
+  display: block;
+  border-radius: 999px;
+  filter: blur(28px);
+  transform: translateZ(0);
+}
+.interior-fluid__wash--green {
+  width: min(54vw, 760px);
+  height: min(42vw, 560px);
+  right: -12vw;
+  top: 12vh;
+  background: rgba(78, 243, 131, 0.08);
+}
+.interior-fluid__wash--gold {
+  width: min(48vw, 620px);
+  height: min(36vw, 440px);
+  left: -13vw;
+  bottom: 6vh;
+  background: rgba(207, 154, 46, 0.07);
+}
+.interior-fluid__wash--blue {
+  width: min(42vw, 520px);
+  height: min(30vw, 360px);
+  left: 48vw;
+  bottom: -10vh;
+  background: rgba(78, 121, 255, 0.055);
+}
+
+[data-theme="light"] .interior-fluid {
+  opacity: 1;
+  background:
+    radial-gradient(1020px 520px at 88% 8%, rgba(12, 125, 54, 0.09), transparent 72%),
+    radial-gradient(760px 440px at 4% 82%, rgba(138, 97, 21, 0.1), transparent 74%),
+    radial-gradient(620px 360px at 54% 108%, rgba(36, 71, 184, 0.055), transparent 72%);
+}
+[data-theme="light"] .interior-fluid::before {
+  background-image:
+    linear-gradient(rgba(14, 27, 19, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 27, 19, 0.035) 1px, transparent 1px);
+  opacity: 0.42;
+}
+[data-theme="light"] .site-ambient {
+  opacity: 0.92;
+  background:
+    radial-gradient(900px 460px at 88% 24%, rgba(12, 125, 54, 0.13), transparent 70%),
+    radial-gradient(720px 420px at 10% 78%, rgba(138, 97, 21, 0.12), transparent 72%),
+    radial-gradient(680px 360px at 54% 104%, rgba(36, 71, 184, 0.07), transparent 72%);
+}
+
+[data-theme="light"] .v2-home {
+  background:
+    linear-gradient(180deg, transparent 0 92svh, rgba(244, 239, 227, 0.5) 112svh, rgba(239, 246, 235, 0.56) 100%),
+    radial-gradient(1200px 620px at 86% 42%, rgba(12, 125, 54, 0.1), transparent 70%),
+    radial-gradient(820px 520px at 8% 64%, rgba(138, 97, 21, 0.1), transparent 72%);
+}
+[data-theme="light"] .v2-band:not(.v2-band--hero) {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(255, 250, 240, 0.5)),
+    radial-gradient(940px 420px at 88% 10%, rgba(12, 125, 54, 0.085), transparent 68%),
+    radial-gradient(720px 360px at 8% 88%, rgba(138, 97, 21, 0.08), transparent 70%),
+    url("/img/watercolor/terraces.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 50% 46%;
+  border-top: 1px solid rgba(14, 27, 19, 0.08);
+}
+[data-theme="light"] .v2-band#trunk {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.76), rgba(239, 246, 235, 0.52)),
+    radial-gradient(940px 420px at 88% 10%, rgba(12, 125, 54, 0.09), transparent 68%),
+    radial-gradient(720px 360px at 8% 88%, rgba(138, 97, 21, 0.085), transparent 70%),
+    url("/img/watercolor/forest-path.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 52% 52%;
+}
+[data-theme="light"] .v2-band--thesis {
+  background:
+    linear-gradient(180deg, rgba(239, 246, 235, 0.72), rgba(255, 250, 240, 0.54)),
+    radial-gradient(980px 460px at 50% 8%, rgba(12, 125, 54, 0.12), transparent 72%),
+    radial-gradient(680px 360px at 92% 92%, rgba(36, 71, 184, 0.06), transparent 70%),
+    url("/img/watercolor/canopy-light.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 54% 44%;
+}
+[data-theme="light"] .v2-band#roots {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(239, 246, 235, 0.5)),
+    radial-gradient(980px 460px at 88% 14%, rgba(36, 71, 184, 0.07), transparent 70%),
+    radial-gradient(760px 360px at 10% 90%, rgba(12, 125, 54, 0.09), transparent 72%),
+    url("/img/watercolor/roots-glow.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 52% 52%;
+}
+[data-theme="light"] .v2-band#queue,
+[data-theme="light"] .v2-band#prov {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.76), rgba(239, 246, 235, 0.52)),
+    radial-gradient(900px 420px at 84% 12%, rgba(12, 125, 54, 0.08), transparent 70%),
+    radial-gradient(680px 360px at 8% 90%, rgba(138, 97, 21, 0.08), transparent 72%),
+    url("/img/watercolor/trunk-runes.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 54% 48%;
+}
+[data-theme="light"] .v2-explore {
+  padding-bottom: clamp(30px, 5vh, 62px);
+}
+[data-theme="light"] .v2-protocol__diagram,
+[data-theme="light"] .v2-partners__rail,
+[data-theme="light"] .v2-prov__body {
+  box-shadow:
+    0 22px 60px rgba(54, 45, 30, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+[data-theme="light"] .v2-protocol__diagram,
+[data-theme="light"] .v2-protocol__step {
+  border-color: rgba(14, 27, 19, 0.16);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.46), transparent 56%),
+    rgba(255, 250, 240, 0.72);
+}
+[data-theme="light"] .v2-protocol__rail,
+[data-theme="light"] .v2-protocol__outcome {
+  border-color: rgba(14, 27, 19, 0.12);
+}
+
+[data-theme="light"] .page-main:not(.page-main--hiw-experience) {
+  background:
+    radial-gradient(1100px 540px at 86% 24%, rgba(12, 125, 54, 0.08), transparent 72%),
+    radial-gradient(820px 420px at 8% 78%, rgba(138, 97, 21, 0.08), transparent 72%),
+    linear-gradient(180deg, rgba(244, 239, 227, 0.34), rgba(239, 246, 235, 0.36));
+}
+[data-theme="light"] .page-main:not(.page-main--hiw-experience)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(14, 27, 19, 0.038) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 27, 19, 0.03) 1px, transparent 1px),
+    radial-gradient(540px 260px at 92% 12%, rgba(12, 125, 54, 0.09), transparent 72%),
+    radial-gradient(460px 260px at 10% 48%, rgba(138, 97, 21, 0.075), transparent 74%);
+  background-size: 92px 92px, 92px 92px, auto, auto;
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 92%, transparent);
+  opacity: 0.62;
+}
+[data-theme="light"] .page-main:not(.page-main--hiw-experience) > :not(.page-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+[data-theme="light"] .page-main:not(.page-main--hiw-experience) .section {
+  border-top: 1px solid rgba(14, 27, 19, 0.075);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.22), rgba(255, 250, 240, 0.08)),
+    radial-gradient(760px 360px at 90% 0%, rgba(12, 125, 54, 0.055), transparent 68%);
+}
+[data-theme="light"] .page-main:not(.page-main--hiw-experience) .section:nth-of-type(even) {
+  background:
+    linear-gradient(180deg, rgba(239, 246, 235, 0.2), rgba(255, 250, 240, 0.1)),
+    radial-gradient(760px 360px at 10% 0%, rgba(138, 97, 21, 0.06), transparent 70%),
+    radial-gradient(620px 320px at 94% 96%, rgba(36, 71, 184, 0.045), transparent 72%);
+}
+[data-theme="light"] .card,
+[data-theme="light"] .layer-row,
+[data-theme="light"] .callout,
+[data-theme="light"] .links-table,
+[data-theme="light"] .faq-topic-rail,
+[data-theme="light"] .faq-decision-card,
+[data-theme="light"] .faq-model-card,
+[data-theme="light"] .faq-trust-path__step {
+  box-shadow:
+    0 18px 48px rgba(54, 45, 30, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.58);
+}
+[data-theme="light"] .card::after {
+  background:
+    radial-gradient(360px circle at 50% 22%, rgba(12, 125, 54, 0.15), transparent 64%),
+    linear-gradient(90deg, rgba(138, 97, 21, 0.1), transparent 58%);
+}
+[data-theme="light"] .card:hover {
+  box-shadow:
+    0 22px 62px rgba(54, 45, 30, 0.14),
+    0 0 28px rgba(12, 125, 54, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+[data-theme="light"] .cta-band {
+  border-top: 1px solid rgba(14, 27, 19, 0.08);
+  background:
+    radial-gradient(900px 420px at 50% 0%, rgba(12, 125, 54, 0.1), transparent 70%),
+    radial-gradient(720px 360px at 82% 100%, rgba(138, 97, 21, 0.1), transparent 72%),
+    linear-gradient(180deg, rgba(239, 246, 235, 0.22), rgba(255, 250, 240, 0.42));
 }
 
 /* ---------------------------------------------------------------------------
@@ -3906,13 +4124,15 @@ h2 em,
 
 /* full — the selected artwork is the page background, not a supporting panel */
 .page-backdrop--full .page-backdrop__img {
-  opacity: 0.76;
-  filter: saturate(0.94) brightness(1.04);
+  opacity: 0.88;
+  filter: saturate(1.02) contrast(1.02) brightness(1.02);
 }
 .page-backdrop--full .page-backdrop__scrim {
   background:
-    radial-gradient(120% 82% at 18% 12%, rgba(255, 250, 240, 0.7), rgba(255, 250, 240, 0.22) 42%, transparent 72%),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.12) 0%, rgba(246, 241, 232, 0.34) 58%, rgba(244, 239, 227, 0.68) 100%);
+    radial-gradient(118% 82% at 18% 12%, rgba(255, 250, 240, 0.6), rgba(255, 250, 240, 0.18) 40%, transparent 72%),
+    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.13), transparent 68%),
+    radial-gradient(64% 48% at 14% 92%, rgba(138, 97, 21, 0.13), transparent 70%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.05) 0%, rgba(246, 241, 232, 0.22) 58%, rgba(244, 239, 227, 0.54) 100%);
 }
 
 .page-main:has(.page-backdrop--full) .page-hero::before {
@@ -4086,7 +4306,55 @@ h2 em,
 [data-theme="light"] .minimal-site {
   background-color: #f4efe3;
   background-image:
-    radial-gradient(1200px 720px at 86% 120%, rgba(12, 125, 54, 0.1), transparent 70%),
-    radial-gradient(900px 560px at 6% 118%, rgba(155, 110, 24, 0.12), transparent 72%),
+    radial-gradient(1200px 720px at 86% 38%, rgba(12, 125, 54, 0.1), transparent 70%),
+    radial-gradient(900px 560px at 6% 62%, rgba(155, 110, 24, 0.12), transparent 72%),
+    radial-gradient(780px 420px at 58% 92%, rgba(36, 71, 184, 0.055), transparent 72%),
     linear-gradient(180deg, rgba(255, 250, 240, 0.36), rgba(223, 232, 218, 0.34));
+}
+[data-theme="light"] .minimal-section {
+  border-top: 1px solid rgba(14, 27, 19, 0.075);
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.48), rgba(239, 246, 235, 0.3)),
+    radial-gradient(900px 420px at 88% 0%, rgba(12, 125, 54, 0.095), transparent 70%),
+    radial-gradient(760px 360px at 8% 100%, rgba(155, 110, 24, 0.09), transparent 72%);
+  box-shadow: 0 0 0 100vmax rgba(255, 250, 240, 0.18);
+  clip-path: inset(0 -100vmax);
+}
+[data-theme="light"] .minimal-section--paths {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.76), rgba(239, 246, 235, 0.5)),
+    radial-gradient(900px 420px at 88% 4%, rgba(12, 125, 54, 0.12), transparent 70%),
+    radial-gradient(720px 340px at 10% 94%, rgba(155, 110, 24, 0.1), transparent 74%),
+    url("/img/watercolor/forest-path.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 54% 50%;
+  box-shadow: 0 0 0 100vmax rgba(244, 239, 227, 0.2);
+}
+[data-theme="light"] .minimal-section--split {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.7), rgba(239, 246, 235, 0.46)),
+    radial-gradient(980px 440px at 86% 8%, rgba(36, 71, 184, 0.065), transparent 70%),
+    radial-gradient(760px 360px at 8% 92%, rgba(12, 125, 54, 0.1), transparent 72%),
+    url("/img/watercolor/terraces.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 50% 48%;
+}
+[data-theme="light"] .minimal-section--inspect {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(239, 246, 235, 0.48)),
+    radial-gradient(900px 420px at 84% 10%, rgba(12, 125, 54, 0.09), transparent 70%),
+    radial-gradient(720px 360px at 10% 92%, rgba(155, 110, 24, 0.09), transparent 72%),
+    url("/img/watercolor/trunk-runes.avif");
+  background-size: auto, auto, auto, cover;
+  background-position: center, center, center, 54% 48%;
+}
+[data-theme="light"] .minimal-card,
+[data-theme="light"] .minimal-flow-board,
+[data-theme="light"] .minimal-flow-row,
+[data-theme="light"] .minimal-metric,
+[data-theme="light"] .minimal-channel-card,
+[data-theme="light"] .minimal-inspect-card {
+  box-shadow:
+    0 18px 48px rgba(54, 45, 30, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
