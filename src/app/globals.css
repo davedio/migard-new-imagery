@@ -2078,9 +2078,9 @@ button.panel:hover {
 
 /* ---- card grid ---- */
 .card-grid {
-  margin-top: 36px;
+  margin-top: 28px;
   display: grid;
-  gap: clamp(16px, 1.4vw, 22px);
+  gap: clamp(12px, 1.1vw, 17px);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
 }
 .card-grid--2 {
@@ -2096,7 +2096,7 @@ button.panel:hover {
   }
 }
 .card {
-  padding: clamp(22px, 1.8vw, 28px);
+  padding: clamp(18px, 1.45vw, 22px);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -2137,19 +2137,19 @@ button.panel:hover {
   color: var(--gold-bright);
 }
 .card h3 {
-  margin-top: 10px;
+  margin-top: 8px;
   color: var(--text-hi);
   font-size: var(--h3-size);
   font-weight: var(--h3-weight);
 }
 .card p {
-  margin-top: 9px;
+  margin-top: 7px;
   font-size: 15px;
   color: var(--text-dim);
   flex: 1;
 }
 .card__cta {
-  margin-top: 16px;
+  margin-top: 12px;
   font-family: var(--font-mono);
   font-size: 13px;
   color: var(--green-bright);
@@ -3199,7 +3199,7 @@ button.panel:hover {
 .hiw-explainer__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
   max-width: 1480px;
   margin: 0 auto;
 }
@@ -3207,9 +3207,9 @@ button.panel:hover {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  min-height: 360px;
-  padding: 22px;
+  gap: 12px;
+  min-height: 310px;
+  padding: 18px;
   border: 1px solid rgba(244, 241, 230, 0.12);
   border-radius: 8px;
   background:
@@ -3226,11 +3226,11 @@ button.panel:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 10px;
 }
 .hiw-explainer__card-head span {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border: 1px solid rgba(78, 243, 131, 0.48);
@@ -3256,13 +3256,13 @@ button.panel:hover {
 .hiw-explainer__card h3 {
   margin: 0;
   color: var(--text-hi);
-  font-size: 24px;
+  font-size: 23px;
   line-height: 1.14;
   font-weight: 500;
 }
 .hiw-explainer__card dl {
   display: grid;
-  gap: 14px;
+  gap: 10px;
   margin: 0;
 }
 .hiw-explainer__card div,
@@ -3271,7 +3271,7 @@ button.panel:hover {
   min-width: 0;
 }
 .hiw-explainer__card dt {
-  margin: 0 0 5px;
+  margin: 0 0 4px;
   color: var(--green-bright);
   font: 10px/1 var(--font-mono);
   letter-spacing: 0.14em;
@@ -3287,7 +3287,7 @@ button.panel:hover {
   margin: 0;
   color: var(--text-dim);
   font-size: 14.5px;
-  line-height: 1.48;
+  line-height: 1.4;
 }
 /* footer carries a translucent base globally; on the experience the scene is
    still fixed behind everything, so back it with solid darkness. */
@@ -3380,7 +3380,7 @@ button.panel:hover {
   }
   .hiw-explainer__card {
     min-height: auto;
-    padding: 18px;
+    padding: 16px;
   }
 }
 
@@ -3531,18 +3531,18 @@ button.panel:hover {
   margin: 0 auto;
 }
 .next-steps__head {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 .next-steps__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 .next-steps__card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 18px 20px;
+  gap: 5px;
+  padding: 14px 16px;
   border-radius: 12px;
   transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
 }
@@ -3568,7 +3568,7 @@ button.panel:hover {
 }
 .next-steps__sub {
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.4;
   color: var(--text-dim);
 }
 
