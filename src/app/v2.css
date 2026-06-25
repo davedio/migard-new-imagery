@@ -1167,6 +1167,7 @@ h2 em,
 .v2-hero-logo__img {
   display: block;
   width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 15px;
   object-fit: contain;
@@ -1351,6 +1352,7 @@ h2 em,
 .v2-partner__logo {
   display: block;
   width: auto;
+  height: auto;
   max-width: 88%;
   max-height: 78%;
   object-fit: contain;
@@ -3018,11 +3020,11 @@ h2 em,
   z-index: 1;
   max-width: 1700px;
   margin: 0 auto;
-  padding: 14px var(--gut) 54px;
+  padding: 8px var(--gut) 42px;
 }
 
 .minimal-partners h2 {
-  margin: 0 auto 16px;
+  margin: 0 auto 12px;
   max-width: 860px;
   color: var(--text-hi);
   font-size: clamp(20px, 1.8vw, 30px);
@@ -3033,7 +3035,7 @@ h2 em,
 
 .partner-magnet-board {
   position: relative;
-  max-width: 880px;
+  max-width: 760px;
   margin: 0 auto;
   isolation: isolate;
   perspective: 1200px;
@@ -3042,7 +3044,7 @@ h2 em,
 .partner-magnet-board__grid {
   position: relative;
   display: grid;
-  gap: 10px;
+  gap: 8px;
   justify-items: center;
   margin: 0;
   padding: 0;
@@ -3051,29 +3053,29 @@ h2 em,
 .partner-magnet-row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
 .partner-magnet-row:nth-child(even) {
-  transform: translateX(18px);
+  transform: translateX(12px);
 }
 
 .partner-magnet-row:nth-child(odd):not(:first-child) {
-  transform: translateX(-18px);
+  transform: translateX(-12px);
 }
 
 .partner-magnet-card {
   position: relative;
   z-index: 2;
-  width: clamp(152px, 13.2vw, 176px);
-  height: 92px;
+  width: clamp(130px, 11vw, 150px);
+  height: 76px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 10px 12px 8px;
+  gap: 3px;
+  padding: 8px 10px 7px;
   border: 1px solid rgba(244, 241, 230, 0.14);
   border-radius: 8px;
   background:
@@ -3146,31 +3148,31 @@ h2 em,
 .partner-magnet-card__logo {
   position: relative;
   z-index: 1;
-  flex: 1 1 auto;
-  min-height: 0;
-  width: 100%;
+  flex: 0 0 35px;
+  width: 94%;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0 auto;
 }
 
 .partner-magnet-card__logo img {
   display: block;
-  width: auto;
-  max-width: 92%;
-  max-height: 44px;
   object-fit: contain;
   image-rendering: auto;
 }
 
-.partner-magnet-card[data-logo-shape="icon"] .partner-magnet-card__logo img {
-  max-width: 46px;
-  max-height: 44px;
+.partner-magnet-card[data-logo-shape="icon"] .partner-magnet-card__logo {
+  flex-basis: 36px;
+  width: 36px;
+  height: 36px;
 }
 
-.partner-magnet-card[data-logo-shape="tall"] .partner-magnet-card__logo img {
-  max-width: 58px;
-  max-height: 48px;
+.partner-magnet-card[data-logo-shape="tall"] .partner-magnet-card__logo {
+  flex-basis: 40px;
+  width: 48px;
+  height: 40px;
 }
 
 .partner-magnet-card__name {
@@ -3181,11 +3183,11 @@ h2 em,
   min-width: 0;
   font-family: var(--font-mono);
   color: currentColor;
-  font-size: 10px;
+  font-size: 8.5px;
   line-height: 1.1;
   text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4085,13 +4087,14 @@ h2 em,
   }
 
   .partner-magnet-card {
-    width: clamp(146px, 17vw, 168px);
-    height: 90px;
-    padding-inline: 9px;
+    width: clamp(126px, 16vw, 144px);
+    height: 74px;
+    padding-inline: 8px;
   }
 
-  .partner-magnet-card__logo img {
-    max-height: 42px;
+  .partner-magnet-card__logo {
+    flex-basis: 34px;
+    height: 34px;
   }
 }
 
@@ -4243,13 +4246,13 @@ h2 em,
   }
 
   .partner-magnet-board__grid {
-    gap: 7px;
+    gap: 6px;
   }
 
   .partner-magnet-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
+    gap: 6px;
     transform: none !important;
   }
 
@@ -4259,20 +4262,22 @@ h2 em,
 
   .partner-magnet-card {
     width: 100%;
-    height: 78px;
-    padding: 8px 8px 7px;
+    height: 70px;
+    padding: 7px 7px 6px;
   }
 
-  .partner-magnet-card__logo img {
-    max-height: 42px;
+  .partner-magnet-card__logo {
+    flex-basis: 32px;
+    height: 32px;
   }
 
-  .partner-magnet-card[data-logo-shape="tall"] .partner-magnet-card__logo img {
-    max-height: 50px;
+  .partner-magnet-card[data-logo-shape="tall"] .partner-magnet-card__logo {
+    flex-basis: 36px;
+    height: 36px;
   }
 
   .partner-magnet-card__name {
-    font-size: 9px;
+    font-size: 8px;
     white-space: normal;
     text-overflow: clip;
   }

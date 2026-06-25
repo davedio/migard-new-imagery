@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { EcosystemPartner } from "@/lib/ecosystemPartners";
 
 const isSvgLogo = (logo: string) => logo.endsWith(".svg");
+const logoImageStyle = { objectFit: "contain" } as const;
 
 function getRowSizes(count: number) {
   if (count <= 4) return [count];
@@ -52,10 +53,10 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                   <Image
                     src={partner.logo}
                     alt=""
-                    width={partner.width}
-                    height={partner.height}
+                    fill
                     loading="eager"
                     sizes="180px"
+                    style={logoImageStyle}
                     unoptimized={isSvgLogo(partner.logo)}
                   />
                 </span>

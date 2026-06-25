@@ -246,27 +246,38 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.getByRole("heading", { name: /Cardano L1 settlement comes last/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Ecosystem Partners/i })).toBeVisible();
   const partnerBoard = page.getByLabel("Ecosystem partner logos");
-  await expect(partnerBoard.locator(".partner-magnet-card")).toHaveCount(9);
+  const expectedPartners = [
+    "Anastasia Labs",
+    "Artifi Labs",
+    "Input Output Global",
+    "Lace Wallet",
+    "Liqwid",
+    "Midgard",
+    "Midnight",
+    "Minswap",
+    "Modus Create",
+    "Pogun",
+    "RealFi",
+    "Sundae Labs",
+    "Tweag",
+    "USDCx",
+    "WingRiders",
+  ];
+  await expect(partnerBoard.locator(".partner-magnet-card")).toHaveCount(expectedPartners.length);
   await expect(partnerBoard.locator("a")).toHaveCount(0);
-  await expect(partnerBoard.locator(".partner-magnet-row")).toHaveCount(3);
+  await expect(partnerBoard).not.toContainText("Anvil Dev Agency");
+  await expect(partnerBoard.locator(".partner-magnet-row")).toHaveCount(4);
   await expect(partnerBoard.locator(".partner-magnet-row").nth(0).locator(".partner-magnet-card")).toHaveCount(3);
   await expect(partnerBoard.locator(".partner-magnet-row").nth(1).locator(".partner-magnet-card")).toHaveCount(4);
-  await expect(partnerBoard.locator(".partner-magnet-row").nth(2).locator(".partner-magnet-card")).toHaveCount(2);
+  await expect(partnerBoard.locator(".partner-magnet-row").nth(2).locator(".partner-magnet-card")).toHaveCount(4);
+  await expect(partnerBoard.locator(".partner-magnet-row").nth(3).locator(".partner-magnet-card")).toHaveCount(4);
   const partnerWidths = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
     [...new Set(cards.map((card) => Math.round(card.getBoundingClientRect().width)))],
   );
   expect(partnerWidths).toHaveLength(1);
-  for (const partnerName of [
-    "WingRiders",
-    "Anvil Dev Agency",
-    "Tweag",
-    "Modus Create",
-    "Minswap",
-    "Liqwid",
-    "USDCx",
-    "Midgard",
-    "Anastasia Labs",
-  ]) {
+  const renderedPartners = await partnerBoard.locator(".partner-magnet-card__name").allTextContents();
+  expect(renderedPartners).toEqual(expectedPartners);
+  for (const partnerName of expectedPartners) {
     await expect(partnerBoard.getByText(partnerName, { exact: true })).toBeVisible();
   }
 

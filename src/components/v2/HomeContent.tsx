@@ -44,6 +44,7 @@ export function Rise({
 /* ---------------------------------------------------------------------- */
 
 const PARTNERS = ECOSYSTEM_PARTNERS;
+const partnerLogoImageStyle = { width: "100%", height: "auto" } as const;
 const isSvgLogo = (logo: string) => logo.endsWith(".svg");
 
 /* ---------------------------------------------------------------------- */
@@ -72,6 +73,7 @@ export function HeroHud() {
               width={partner.width}
               height={partner.height}
               loading="eager"
+              style={partnerLogoImageStyle}
               unoptimized={isSvgLogo(partner.logo)}
             />
             <Image
@@ -82,6 +84,7 @@ export function HeroHud() {
               width={partner.width}
               height={partner.height}
               loading="eager"
+              style={partnerLogoImageStyle}
               unoptimized={isSvgLogo(lightLogo)}
             />
           </span>
@@ -149,6 +152,7 @@ function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
                   width={partner.width}
                   height={partner.height}
                   loading="eager"
+                  style={partnerLogoImageStyle}
                   unoptimized={isSvgLogo(partner.logo)}
                 />
                 <Image
@@ -159,6 +163,7 @@ function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
                   width={partner.width}
                   height={partner.height}
                   loading="eager"
+                  style={partnerLogoImageStyle}
                   unoptimized={isSvgLogo(lightLogo)}
                 />
               </span>
