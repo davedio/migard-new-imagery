@@ -42,10 +42,10 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Artifi Labs",
-    logo: "/ecosystem/artifi-labs.png",
-    logoLight: "/ecosystem/artifi-labs-light.png",
-    width: 230,
-    height: 43,
+    logo: "/ecosystem/artifi-labs.svg",
+    logoLight: "/ecosystem/artifi-labs-light.svg",
+    width: 205,
+    height: 52,
     tone: "dark",
   },
 ] as const;
