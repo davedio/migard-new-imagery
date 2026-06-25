@@ -2183,9 +2183,9 @@ h2 em,
      text, not midtones (client review 2026-06-12: "white on white") */
   --bone: #0e1b13;
   --text-hi: #0e1b13;
-  --text: #203126;
-  --text-dim: #405144;
-  --text-faint: #617064;
+  --text: #17281d;
+  --text-dim: #263d2e;
+  --text-faint: #344c3d;
   --green-bright: #0c7d36;
   --gold: #9b6e18;
   --gold-bright: #8a6115;
@@ -2517,6 +2517,10 @@ h2 em,
 [data-theme="light"] .faq-decision-card,
 [data-theme="light"] .faq-model-card,
 [data-theme="light"] .faq-trust-path__step {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.54), transparent 58%),
+    rgba(255, 250, 240, 0.9);
+  border-color: rgba(27, 23, 16, 0.16);
   box-shadow:
     0 18px 48px rgba(54, 45, 30, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.58);
@@ -4093,11 +4097,50 @@ h2 em,
   background: rgba(255, 255, 255, 0.6);
   border-color: var(--panel-edge);
 }
+[data-theme="light"] .minimal-user-path > span,
+[data-theme="light"] .minimal-card span,
+[data-theme="light"] .minimal-metric__link,
+[data-theme="light"] .minimal-inspect-card strong,
+[data-theme="light"] .minimal-channel-card strong {
+  color: #075f2b;
+}
+[data-theme="light"] .minimal-flow-row span,
+[data-theme="light"] .minimal-metric span,
+[data-theme="light"] .minimal-inspect-card span {
+  color: #6d4b0f;
+}
+[data-theme="light"] .minimal-metric em {
+  color: var(--text-faint);
+  border-color: rgba(27, 23, 16, 0.16);
+}
+[data-theme="light"] .minimal-proof-surface,
+[data-theme="light"] .minimal-proof-rail {
+  border-color: rgba(27, 23, 16, 0.16);
+  background: rgba(255, 250, 240, 0.84);
+}
+[data-theme="light"] .minimal-proof-rail span {
+  color: var(--text-dim);
+}
+[data-theme="light"] .minimal-proof-rail strong {
+  color: var(--text-hi);
+}
 [data-theme="light"] .minimal-btn--primary {
-  color: #f5faf1;
+  color: #04130a;
+  background: #13a348;
+  border-color: #13a348;
+}
+[data-theme="light"] .minimal-btn--primary:hover,
+[data-theme="light"] .minimal-btn--primary:focus-visible {
+  color: #04130a;
+  background: #14b852;
+  border-color: #0c7d36;
+}
+[data-theme="light"] .minimal-btn--ghost {
+  color: var(--text-hi);
 }
 [data-theme="light"] .minimal-btn--ghost:hover {
-  background: rgba(20, 60, 36, 0.06);
+  color: var(--text-hi);
+  background: rgba(20, 60, 36, 0.1);
   border-color: rgba(12, 125, 54, 0.45);
 }
 
@@ -4269,6 +4312,10 @@ h2 em,
   --bg-2: #dde7d8;
   --paper: #15130f;
   --mist: #2c3025;
+  --text-hi: #0e1b13;
+  --text: #17281d;
+  --text-dim: #263d2e;
+  --text-faint: #344c3d;
   --canopy-glow: rgba(155, 110, 24, 0.2);
   --root-glow: rgba(12, 125, 54, 0.13);
 }
@@ -4291,6 +4338,61 @@ h2 em,
 
 [data-theme="light"] .faq-topic-rail a {
   border-top-color: rgba(27, 23, 16, 0.1);
+}
+
+[data-theme="light"] .stage-graphic__card {
+  --sg: 7, 95, 43;
+}
+
+[data-theme="light"] .stage-graphic__card[data-layer="bridge"] {
+  --sg: 109, 75, 15;
+}
+
+[data-theme="light"] .stage-graphic__card[data-layer="l1"] {
+  --sg: 36, 71, 184;
+}
+
+[data-theme="light"] .faq-topic-rail small,
+[data-theme="light"] .faq-item .a,
+[data-theme="light"] .faq-decision-card dd,
+[data-theme="light"] .faq-model-card li,
+[data-theme="light"] .faq-trust-path__step p,
+[data-theme="light"] .comparison-chart__cell p,
+[data-theme="light"] .comparison-matrix__row p {
+  color: var(--text-dim);
+}
+
+[data-theme="light"] .faq-decision-card__label,
+[data-theme="light"] .comparison-chart__score em,
+[data-theme="light"] .faq-model-card__score span,
+[data-theme="light"] .faq-trust-path__step small {
+  color: var(--text-faint);
+}
+
+[data-theme="light"] .comparison-chart__legend span {
+  color: #07120b;
+}
+
+[data-theme="light"] .faq-decision-card dt {
+  color: #075f2b;
+}
+
+[data-theme="light"] .faq-trust-path__n {
+  color: #fffaf0;
+  background: #075f2b;
+  border-color: #075f2b;
+  box-shadow: 0 0 18px rgba(7, 95, 43, 0.18);
+}
+
+[data-theme="light"] .faq-decision-card div {
+  border-top-color: rgba(27, 23, 16, 0.12);
+}
+
+[data-theme="light"] .comparison-chart__legend,
+[data-theme="light"] .comparison-chart__row,
+[data-theme="light"] .comparison-matrix__row {
+  background: rgba(255, 250, 240, 0.88);
+  border-color: rgba(27, 23, 16, 0.15);
 }
 
 [data-theme="light"] .world-bg {

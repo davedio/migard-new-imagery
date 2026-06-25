@@ -778,7 +778,7 @@ a {
 [data-theme="light"] .chip--proof {
   background: rgba(138, 97, 21, 0.08);
   border-color: rgba(138, 97, 21, 0.32);
-  color: #8a6115;
+  color: #6d4b0f;
 }
 
 [data-theme="light"] .chip--live {
@@ -4079,9 +4079,9 @@ a.chip:hover {
   --green-ghost: rgba(20, 140, 60, 0.1);
   --green-glow: rgba(20, 150, 62, 0.28);
   --text-hi: #0e1b13;
-  --text: #1f3327;
-  --text-dim: #2e4436;
-  --text-faint: #46594c;
+  --text: #17281d;
+  --text-dim: #24392b;
+  --text-faint: #31483a;
   --bg-1: #eef3e9;
   --bg-2: #e7ede1;
   --canopy-glow: rgba(224, 163, 60, 0.2);
@@ -4142,6 +4142,14 @@ a.chip:hover {
   border-color: rgba(27, 23, 16, 0.14);
   background: rgba(255, 250, 240, 0.76);
   color: var(--text-dim);
+}
+
+[data-theme="light"] .hiw-act__beat-n {
+  color: #6d4b0f;
+}
+
+[data-theme="light"] .hiw-act__beats li[data-layer="l1"] .hiw-act__beat-n {
+  color: #2447b8;
 }
 
 [data-theme="light"] .hiw-act__lead {
@@ -4206,6 +4214,25 @@ a.chip:hover {
 
 [data-theme="light"] .stage-graphic__readout {
   border-top-color: rgba(14, 27, 19, 0.1);
+}
+
+[data-theme="light"] .stage-graphic__tag {
+  border-color: rgba(var(--sg), 0.46);
+  background: rgba(var(--sg), 0.14);
+  color: rgb(var(--sg));
+}
+
+[data-theme="light"] .stage-graphic__count,
+[data-theme="light"] .stage-graphic__readout dt {
+  color: var(--text-faint);
+}
+
+[data-theme="light"] .stage-graphic__readout[data-tone="bridge"] dd {
+  color: #6d4b0f;
+}
+
+[data-theme="light"] .stage-graphic__readout[data-tone="l1"] dd {
+  color: #2447b8;
 }
 
 [data-theme="light"] .site-ambient {
