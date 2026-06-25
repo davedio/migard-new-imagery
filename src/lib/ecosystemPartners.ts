@@ -1,21 +1,33 @@
-export const ECOSYSTEM_PARTNERS = [
+export type EcosystemPartner = {
+  name: string;
+  logo: string;
+  logoLight?: string;
+  width: number;
+  height: number;
+  tone: "dark" | "light";
+};
+
+export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   {
     name: "Liqwid",
     logo: "/ecosystem/liqwid.svg",
+    logoLight: "/ecosystem/liqwid-light.svg",
     width: 190,
     height: 60,
     tone: "dark",
   },
   {
     name: "Sundae Labs",
-    logo: "/ecosystem/sundae-labs.png",
+    logo: "/ecosystem/sundae-labs-dark.png",
+    logoLight: "/ecosystem/sundae-labs.png",
     width: 210,
     height: 36,
-    tone: "light",
+    tone: "dark",
   },
   {
     name: "Input Output",
     logo: "/ecosystem/input-output.svg",
+    logoLight: "/ecosystem/input-output-light.svg",
     width: 210,
     height: 27,
     tone: "dark",
@@ -23,6 +35,7 @@ export const ECOSYSTEM_PARTNERS = [
   {
     name: "Lace",
     logo: "/ecosystem/lace-wordmark.svg",
+    logoLight: "/ecosystem/lace-wordmark-light.svg",
     width: 150,
     height: 50,
     tone: "dark",
@@ -30,6 +43,7 @@ export const ECOSYSTEM_PARTNERS = [
   {
     name: "Artifi Labs",
     logo: "/ecosystem/artifi-labs.png",
+    logoLight: "/ecosystem/artifi-labs-light.png",
     width: 230,
     height: 43,
     tone: "dark",

@@ -44,6 +44,7 @@ export function Rise({
 /* ---------------------------------------------------------------------- */
 
 const PARTNERS = ECOSYSTEM_PARTNERS;
+const isSvgLogo = (logo: string) => logo.endsWith(".svg");
 
 /* ---------------------------------------------------------------------- */
 /*  hero partner strip                                                     */
@@ -52,18 +53,40 @@ const PARTNERS = ECOSYSTEM_PARTNERS;
 export function HeroHud() {
   return (
     <div className="v2-hero__logos" aria-label="Ecosystem partner logos">
-      {PARTNERS.map((partner) => (
-        <span className="v2-hero-logo" data-tone={partner.tone} key={partner.name}>
-          <Image
-            src={partner.logo}
-            alt={partner.name}
-            width={partner.width}
-            height={partner.height}
-            loading="eager"
-            unoptimized={partner.logo.endsWith(".svg")}
-          />
-        </span>
-      ))}
+      {PARTNERS.map((partner) => {
+        const lightLogo = partner.logoLight ?? partner.logo;
+
+        return (
+          <span
+            className="v2-hero-logo"
+            data-tone={partner.tone}
+            key={partner.name}
+            role="img"
+            aria-label={partner.name}
+          >
+            <Image
+              className="v2-hero-logo__img v2-hero-logo__img--dark"
+              src={partner.logo}
+              alt=""
+              aria-hidden="true"
+              width={partner.width}
+              height={partner.height}
+              loading="eager"
+              unoptimized={isSvgLogo(partner.logo)}
+            />
+            <Image
+              className="v2-hero-logo__img v2-hero-logo__img--light"
+              src={lightLogo}
+              alt=""
+              aria-hidden="true"
+              width={partner.width}
+              height={partner.height}
+              loading="eager"
+              unoptimized={isSvgLogo(lightLogo)}
+            />
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -106,27 +129,43 @@ export function Marquee() {
 function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
   return (
     <ul className="v2-partners__seq" aria-hidden={hidden || undefined}>
-      {PARTNERS.map((partner) => (
-        <li key={partner.name}>
-          <div
-            className="v2-partner"
-            data-tone={partner.tone}
-            role="img"
-            aria-label={partner.name}
-          >
-            <span className="v2-partner__plate">
-              <Image
-                src={partner.logo}
-                alt=""
-                width={partner.width}
-                height={partner.height}
-                loading="eager"
-                unoptimized={partner.logo.endsWith(".svg")}
-              />
-            </span>
-          </div>
-        </li>
-      ))}
+      {PARTNERS.map((partner) => {
+        const lightLogo = partner.logoLight ?? partner.logo;
+
+        return (
+          <li key={partner.name}>
+            <div
+              className="v2-partner"
+              data-tone={partner.tone}
+              role={hidden ? undefined : "img"}
+              aria-label={hidden ? undefined : partner.name}
+            >
+              <span className="v2-partner__plate">
+                <Image
+                  className="v2-partner__logo v2-partner__logo--dark"
+                  src={partner.logo}
+                  alt=""
+                  aria-hidden="true"
+                  width={partner.width}
+                  height={partner.height}
+                  loading="eager"
+                  unoptimized={isSvgLogo(partner.logo)}
+                />
+                <Image
+                  className="v2-partner__logo v2-partner__logo--light"
+                  src={lightLogo}
+                  alt=""
+                  aria-hidden="true"
+                  width={partner.width}
+                  height={partner.height}
+                  loading="eager"
+                  unoptimized={isSvgLogo(lightLogo)}
+                />
+              </span>
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }

@@ -99,23 +99,46 @@ const METRIC_STATUS = {
   Status: "Current phase",
 } as const;
 
+const isSvgLogo = (logo: string) => logo.endsWith(".svg");
+
 function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
   return (
     <ul className="minimal-partners__seq" aria-hidden={hidden || undefined}>
-      {ECOSYSTEM_PARTNERS.map((partner) => (
-        <li key={partner.name}>
-          <span className="minimal-partner" data-tone={partner.tone}>
-            <Image
-              src={partner.logo}
-              alt={hidden ? "" : partner.name}
-              width={partner.width}
-              height={partner.height}
-              loading="eager"
-              unoptimized={partner.logo.endsWith(".svg")}
-            />
-          </span>
-        </li>
-      ))}
+      {ECOSYSTEM_PARTNERS.map((partner) => {
+        const lightLogo = partner.logoLight ?? partner.logo;
+
+        return (
+          <li key={partner.name}>
+            <span
+              className="minimal-partner"
+              data-tone={partner.tone}
+              role={hidden ? undefined : "img"}
+              aria-label={hidden ? undefined : partner.name}
+            >
+              <Image
+                className="minimal-partner__logo minimal-partner__logo--dark"
+                src={partner.logo}
+                alt=""
+                aria-hidden="true"
+                width={partner.width}
+                height={partner.height}
+                loading="eager"
+                unoptimized={isSvgLogo(partner.logo)}
+              />
+              <Image
+                className="minimal-partner__logo minimal-partner__logo--light"
+                src={lightLogo}
+                alt={hidden ? "" : partner.name}
+                aria-hidden={hidden || undefined}
+                width={partner.width}
+                height={partner.height}
+                loading="eager"
+                unoptimized={isSvgLogo(lightLogo)}
+              />
+            </span>
+          </li>
+        );
+      })}
     </ul>
   );
 }
