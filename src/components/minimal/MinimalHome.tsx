@@ -116,22 +116,24 @@ export default function MinimalHome() {
         <div className="minimal-hero__copy">
           <h1 id="minimal-hero-title">{SITE_COPY.hero.title}</h1>
           <p>{SITE_COPY.hero.lead}</p>
-          <div className="minimal-actions">
-            <SmartLink className="minimal-btn minimal-btn--primary" href={SITE_COPY.hero.primaryCta.href}>
-              {SITE_COPY.hero.primaryCta.label}
-            </SmartLink>
-            <SmartLink className="minimal-btn minimal-btn--ghost" href={SITE_COPY.hero.secondaryCta.href}>
-              {SITE_COPY.hero.secondaryCta.label}
-            </SmartLink>
-          </div>
-          <nav className="minimal-hero-routes" aria-label="Fast Midgard routes">
-            {HERO_ROUTES.map((route) => (
-              <SmartLink className="minimal-hero-route" href={route.href} key={route.label}>
-                <strong>{route.label}</strong>
-                <span>{route.detail}</span>
+          <div className="minimal-hero__dock">
+            <div className="minimal-actions">
+              <SmartLink className="minimal-btn minimal-btn--primary" href={SITE_COPY.hero.primaryCta.href}>
+                {SITE_COPY.hero.primaryCta.label}
               </SmartLink>
-            ))}
-          </nav>
+              <SmartLink className="minimal-btn minimal-btn--ghost" href={SITE_COPY.hero.secondaryCta.href}>
+                {SITE_COPY.hero.secondaryCta.label}
+              </SmartLink>
+            </div>
+            <nav className="minimal-hero-routes" aria-label="Fast Midgard routes">
+              {HERO_ROUTES.map((route) => (
+                <SmartLink className="minimal-hero-route" href={route.href} key={route.label}>
+                  <strong>{route.label}</strong>
+                  <span>{route.detail}</span>
+                </SmartLink>
+              ))}
+            </nav>
+          </div>
         </div>
         <div className="minimal-hero__visual-space" aria-hidden />
       </section>

@@ -2643,6 +2643,8 @@ h2 em,
   position: relative;
   z-index: 1;
   transform: translateY(var(--hero-copy-lift));
+  transform-origin: 0 42%;
+  animation: minimal-hero-copy-settle 860ms cubic-bezier(0.16, 1, 0.3, 1) 80ms backwards;
 }
 
 .minimal-hero__visual-space {
@@ -2684,11 +2686,75 @@ h2 em,
   margin-top: 26px;
 }
 
+.minimal-hero__dock {
+  position: relative;
+  max-width: 676px;
+  margin-top: 26px;
+  padding: 8px;
+  border: 1px solid rgba(244, 241, 230, 0.12);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 64%),
+    rgba(7, 12, 8, 0.46);
+  box-shadow:
+    0 20px 54px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(10px) saturate(1.04);
+  backdrop-filter: blur(10px) saturate(1.04);
+  transform-origin: 0 0;
+  animation: minimal-hero-dock-settle 920ms cubic-bezier(0.16, 1, 0.3, 1) 180ms backwards;
+  transition:
+    transform 0.32s var(--ease),
+    border-color 0.32s var(--ease),
+    background 0.32s var(--ease),
+    box-shadow 0.32s var(--ease);
+}
+
+.minimal-hero__dock::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(78, 243, 131, 0.1) 46%, rgba(207, 154, 46, 0.08) 58%, transparent);
+  opacity: 0;
+  transform: translateX(-9%) scaleX(0.82);
+  transition: opacity 0.34s var(--ease), transform 0.52s var(--ease);
+}
+
+.minimal-hero__dock:hover,
+.minimal-hero__dock:focus-within {
+  transform: translateY(-2px) scale(1.006);
+  border-color: rgba(78, 243, 131, 0.3);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 64%),
+    rgba(7, 12, 8, 0.6);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.2),
+    0 0 30px rgba(78, 243, 131, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.minimal-hero__dock:hover::before,
+.minimal-hero__dock:focus-within::before {
+  opacity: 1;
+  transform: translateX(0) scaleX(1);
+}
+
+.minimal-hero__dock .minimal-actions {
+  margin-top: 0;
+}
+
 .minimal-hero-routes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 9px;
   margin-top: 16px;
+}
+
+.minimal-hero__dock .minimal-hero-routes {
+  margin-top: 10px;
 }
 
 .minimal-hero-route {
@@ -3718,6 +3784,35 @@ h2 em,
   }
 }
 
+@keyframes minimal-hero-copy-settle {
+  from {
+    opacity: 0.94;
+    transform: translateY(calc(var(--hero-copy-lift) + 7px)) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(var(--hero-copy-lift)) scale(1);
+  }
+}
+
+@keyframes minimal-hero-dock-settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.986);
+    filter: blur(4px);
+  }
+  62% {
+    opacity: 1;
+    transform: translateY(-1px) scale(1.008);
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
 .minimal-page {
   min-height: 100svh;
 }
@@ -3809,6 +3904,10 @@ h2 em,
   .minimal-hero-route {
     min-height: 70px;
     padding: 12px 10px;
+  }
+
+  .minimal-hero__dock {
+    max-width: 100%;
   }
 
   .minimal-hero h1,
@@ -3929,6 +4028,16 @@ h2 em,
 
   .minimal-actions {
     margin-top: 24px;
+  }
+
+  .minimal-hero__dock {
+    margin-top: 24px;
+    padding: 7px;
+    border-radius: 9px;
+  }
+
+  .minimal-hero__dock .minimal-actions {
+    margin-top: 0;
   }
 
   .minimal-hero-routes {
@@ -4070,6 +4179,18 @@ h2 em,
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .minimal-hero__copy,
+  .minimal-hero__dock {
+    animation: none;
+    filter: none;
+  }
+
+  .minimal-hero__dock,
+  .minimal-hero__dock:hover,
+  .minimal-hero__dock:focus-within {
+    transform: none;
+  }
+
   .minimal-tree__proof-loop {
     animation: none;
   }
@@ -4188,6 +4309,33 @@ h2 em,
 /* -- headline holds over the bright dawn sky -- */
 [data-theme="light"] .minimal-hero h1 {
   text-shadow: 0 1px 22px rgba(248, 244, 236, 0.62);
+}
+
+[data-theme="light"] .minimal-hero__dock {
+  border-color: rgba(27, 23, 16, 0.13);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.18) 70%),
+    rgba(255, 250, 240, 0.38);
+  box-shadow:
+    0 18px 44px rgba(54, 45, 30, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+}
+
+[data-theme="light"] .minimal-hero__dock:hover,
+[data-theme="light"] .minimal-hero__dock:focus-within {
+  border-color: rgba(12, 125, 54, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34) 70%),
+    rgba(255, 250, 240, 0.58);
+  box-shadow:
+    0 20px 50px rgba(54, 45, 30, 0.1),
+    0 0 26px rgba(12, 125, 54, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+[data-theme="light"] .minimal-hero__dock::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(12, 125, 54, 0.1) 46%, rgba(138, 97, 21, 0.08) 58%, transparent);
 }
 
 /* -- minimal surfaces become light translucent cards -- */
