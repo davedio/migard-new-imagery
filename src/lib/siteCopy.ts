@@ -4,7 +4,7 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for UTXO finance",
     lead:
-      "Midgard gives UTXO applications faster execution with mathematically verified smart contracts and Cardano L1 settlement.",
+      "Midgard gives UTXO applications faster execution with mathematically verified smart contracts and Cardano settlement.",
     primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },

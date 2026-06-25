@@ -2675,10 +2675,11 @@ h2 em,
 .minimal-page-hero p,
 .minimal-section__head p {
   margin: 20px 0 0;
-  max-width: 660px;
+  max-width: 710px;
   font-size: 21px;
   line-height: 1.55;
   color: var(--text);
+  text-wrap: pretty;
 }
 
 .minimal-actions {

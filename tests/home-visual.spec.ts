@@ -47,6 +47,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/faster execution/i)).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy")).toContainText("Cardano settlement");
+  await expect(page.locator(".minimal-hero__copy")).not.toContainText("Cardano L1 settlement");
   await expect(page.locator(".hero-tree-stage")).toBeVisible();
   await expect(page.locator(".hero-tree-stage__img")).toBeVisible();
   await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
@@ -225,6 +227,8 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
     }),
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
+  await expect(page.locator(".minimal-hero__copy")).toContainText("Cardano settlement");
+  await expect(page.locator(".minimal-hero__copy")).not.toContainText("Cardano L1 settlement");
   await expect(page.locator(".hero-tree-stage")).toBeVisible();
   await expect(page.locator(".hero-tree-stage__img")).toBeVisible();
   await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
