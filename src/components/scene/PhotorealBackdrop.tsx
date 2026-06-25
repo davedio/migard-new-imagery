@@ -407,6 +407,8 @@ export default function PhotorealBackdrop({
       const damping = 2 * Math.sqrt(stiffness); // critical
       const a = stiffness * (target - cur) - damping * vel;
       vel += a * dt;
+      const maxVel = 1.15;
+      vel = clamp(vel, -maxVel, maxVel);
       cur += vel * dt;
       cur = clamp(cur);
       panProgRef.current = cur;
@@ -823,11 +825,13 @@ export default function PhotorealBackdrop({
     const packetUV = (p: number, t: number) => {
       const e = smooth(p);
       const v = lerp(PACKET_START_V, anat.ready ? anat.vaultV - 0.01 : 0.9, e);
-      const narrow = lerp(1, 0.16, e);
+      const narrow = lerp(0.68, 0.08, e);
       const sway =
-        (Math.sin(t * 0.9 + p * 7.0) * 0.6 + Math.sin(t * 1.7 + 1.3) * 0.25) *
+        (Math.sin(p * Math.PI * 4.7 + t * 0.22) * 0.24 +
+          Math.sin(p * Math.PI * 9.2 + 1.3 + t * 0.12) * 0.08) *
         narrow;
-      const u = lerp(cAt(v) + sway * wAt(v), anat.vaultU, e * e);
+      const vaultPull = smooth(clamp((e - 0.62) / 0.38));
+      const u = lerp(cAt(v) + sway * wAt(v), anat.vaultU, vaultPull);
       return { x: u, y: v };
     };
 
@@ -1245,13 +1249,13 @@ export default function PhotorealBackdrop({
       const headPulse = 0.86 + 0.14 * Math.sin(t * 5.5);
       const block = commitT; // 0 round .. 1 block
       const coreR =
-        lerp(3.4, 5.2, headPulse) * (1 + arrival * 0.5) * (1 + block * 0.6);
+        lerp(4.3, 6.5, headPulse) * (1 + arrival * 0.5) * (1 + block * 0.6);
 
       // (a) broad soft bloom — the lush, restrained glow
       const bloomHalo = ctx.createRadialGradient(px, py, 0, px, py, coreR * 11);
-      bloomHalo.addColorStop(0, `rgba(${pkCol}, 0.55)`);
-      bloomHalo.addColorStop(0.22, `rgba(${pkCol}, 0.3)`);
-      bloomHalo.addColorStop(0.55, `rgba(${pkCol}, 0.1)`);
+      bloomHalo.addColorStop(0, `rgba(${pkCol}, 0.68)`);
+      bloomHalo.addColorStop(0.22, `rgba(${pkCol}, 0.38)`);
+      bloomHalo.addColorStop(0.55, `rgba(${pkCol}, 0.14)`);
       bloomHalo.addColorStop(1, `rgba(${pkCol}, 0)`);
       ctx.fillStyle = bloomHalo;
       ctx.beginPath();
@@ -1307,6 +1311,11 @@ export default function PhotorealBackdrop({
       ctx.beginPath();
       ctx.arc(px, py, coreR * (1 - block * 0.35), 0, Math.PI * 2);
       ctx.fill();
+      ctx.strokeStyle = `rgba(${pkCol}, ${0.62 * (1 - block * 0.35)})`;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(px, py, coreR * 1.7, 0, Math.PI * 2);
+      ctx.stroke();
 
       /* ============================================================
          STAGE 5 · SETTLE — a SLOW, satisfying confirmation BLOOM + eased

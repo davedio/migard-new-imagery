@@ -257,11 +257,16 @@ export default function StageGraphic({
     }
     if (!el) return;
     let raf = 0;
+    let lastT = performance.now();
+    let visualX: number | null = null;
+    let visualY: number | null = null;
     // hide until the packet position is real (avoids a 1-frame top-left flash
     // before PhotorealBackdrop's loop publishes the first packet position).
     let positioned = false;
     el.style.setProperty("--sg-fade", "0");
-    const tick = () => {
+    const tick = (now: number) => {
+      const dt = Math.min((now - lastT) / 1000, 0.05);
+      lastT = now;
       const pk = packetRef.current;
       if (pk && (pk.x !== 0 || pk.y !== 0)) {
         const W = window.innerWidth;
@@ -270,18 +275,28 @@ export default function StageGraphic({
         const bw = rect.width || 240;
         const bh = rect.height || 96;
         const m = 16; // viewport margin
-        // Pinned to the RIGHT of the tree: the larger HUD holds a steady
-        // right-rail x and rides vertically with the packet down the journey.
-        const left = clamp(
-          Math.max(W * 0.58, pk.x + 64),
-          W * 0.48,
-          W - bw - m,
-        );
+        // Keep the HUD on a steady right rail. It still acknowledges the
+        // packet with a small nudge, but no longer swings side-to-side with
+        // every branch in the orb path.
+        const rightMargin = clamp(W * 0.052, 22, 76);
+        const railX = W - bw - rightMargin;
+        const nudgeX = clamp((pk.x - W * 0.55) * 0.08, -18, 18);
+        const targetX = clamp(railX + nudgeX, W * 0.5, W - bw - m);
         // vertically centre the badge on the packet head
-        let top = pk.y - bh / 2;
+        let targetY = pk.y - bh / 2;
         // clamp into the viewport (top margin clears the fixed site nav)
-        top = clamp(top, m + 56, H - bh - m);
-        el.style.transform = `translate3d(${left.toFixed(1)}px, ${top.toFixed(1)}px, 0)`;
+        targetY = clamp(targetY, m + 56, H - bh - m);
+        if (visualX === null || visualY === null) {
+          visualX = targetX;
+          visualY = targetY;
+        } else {
+          const xFollow = 1 - Math.pow(0.018, dt);
+          const yFollow = 1 - Math.pow(0.0007, dt);
+          const maxYStep = H * 1.45 * dt;
+          visualX += (targetX - visualX) * xFollow;
+          visualY += clamp((targetY - visualY) * yFollow, -maxYStep, maxYStep);
+        }
+        el.style.transform = `translate3d(${visualX.toFixed(1)}px, ${visualY.toFixed(1)}px, 0)`;
         el.dataset.side = "right";
         positioned = true;
         // The badge holds back during the opening read and arrives just
