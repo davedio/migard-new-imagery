@@ -47,12 +47,13 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
   const pointRef = useRef<{ x: number; y: number } | null>(null);
 
   const setCardMotion = useCallback(
-    (card: HTMLDivElement, x = 0, y = 0, z = 0, rotation = 0, scale = 1) => {
+    (card: HTMLDivElement, x = 0, y = 0, z = 0, rotation = 0, scale = 1, opacity = 1) => {
       card.style.setProperty("--magnet-x", `${x.toFixed(2)}px`);
       card.style.setProperty("--magnet-y", `${y.toFixed(2)}px`);
       card.style.setProperty("--magnet-z", `${z.toFixed(2)}px`);
       card.style.setProperty("--magnet-r", `${rotation.toFixed(2)}deg`);
       card.style.setProperty("--magnet-scale", scale.toFixed(3));
+      card.style.setProperty("--magnet-opacity", opacity.toFixed(3));
     },
     [],
   );
@@ -126,8 +127,9 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
       const z = 18 * power;
       const rotation = Math.max(-6, Math.min(6, (-dx / Math.max(width, 1)) * 5 * power));
       const scale = 1 + 0.026 * power;
+      const opacity = 1 - 0.08 * power;
 
-      setCardMotion(element, x, y, z, rotation, scale);
+      setCardMotion(element, x, y, z, rotation, scale, opacity);
     });
   }, [setCardMotion]);
 
@@ -179,6 +181,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                 data-logo-shape={partner.logoShape ?? "wide"}
                 data-slot={index + 1}
                 data-tone={partner.tone}
+                aria-label={partner.name}
                 key={partner.name}
                 role="listitem"
               >
@@ -193,7 +196,6 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                     unoptimized={isSvgLogo(partner.logo)}
                   />
                 </span>
-                <span className="partner-magnet-card__name">{partner.name}</span>
               </div>
             ))}
           </div>

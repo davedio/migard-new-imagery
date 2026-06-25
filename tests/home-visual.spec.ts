@@ -266,6 +266,7 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(partnerBoard.locator(".partner-magnet-card")).toHaveCount(expectedPartners.length);
   await expect(partnerBoard.locator("a")).toHaveCount(0);
   await expect(partnerBoard).not.toContainText("Anvil Dev Agency");
+  await expect(partnerBoard.locator('.partner-magnet-card[aria-label="Anvil Dev Agency"]')).toHaveCount(0);
   await expect(partnerBoard.locator(".partner-magnet-row")).toHaveCount(4);
   await expect(partnerBoard.locator(".partner-magnet-row").nth(0).locator(".partner-magnet-card")).toHaveCount(3);
   await expect(partnerBoard.locator(".partner-magnet-row").nth(1).locator(".partner-magnet-card")).toHaveCount(4);
@@ -275,10 +276,13 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
     [...new Set(cards.map((card) => Math.round(card.getBoundingClientRect().width)))],
   );
   expect(partnerWidths).toHaveLength(1);
-  const renderedPartners = await partnerBoard.locator(".partner-magnet-card__name").allTextContents();
+  await expect(partnerBoard.locator(".partner-magnet-card__name")).toHaveCount(0);
+  const renderedPartners = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
+    cards.map((card) => card.getAttribute("aria-label")),
+  );
   expect(renderedPartners).toEqual(expectedPartners);
   for (const partnerName of expectedPartners) {
-    await expect(partnerBoard.getByText(partnerName, { exact: true })).toBeVisible();
+    await expect(partnerBoard.locator(`.partner-magnet-card[aria-label="${partnerName}"]`)).toHaveCount(1);
   }
   const viewport = page.viewportSize();
   if ((viewport?.width ?? 0) >= 900) {
