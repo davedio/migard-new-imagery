@@ -35,7 +35,9 @@ export function HeroTreeImage() {
     // Reduced motion: the stage is absolutely positioned (see CSS) so it
     // simply scrolls away with the hero — no zoom, no fixed-layer fade.
     if (!motionOn) {
-      img.style.transform = "scale(1.02)";
+      const style = window.getComputedStyle(img);
+      const baseLift = Number.parseFloat(style.getPropertyValue("--hero-tree-base-lift")) || 0;
+      img.style.transform = `scale(1.02) translate3d(0, ${baseLift.toFixed(2)}%, 0)`;
       stage.style.opacity = "1";
       return;
     }
@@ -49,8 +51,10 @@ export function HeroTreeImage() {
       const target = smooth01(window.scrollY / runway);
       // ease toward target so a flung scroll glides instead of snapping
       current += (target - current) * 0.12;
+      const style = window.getComputedStyle(img);
+      const baseLift = Number.parseFloat(style.getPropertyValue("--hero-tree-base-lift")) || 0;
       const scale = 1.02 + current * 0.17; // 1.02 → ~1.19, zooms into the canopy
-      const lift = current * -2.4; // gentle upward drift (%)
+      const lift = baseLift + current * -2.4; // baseline framing lift + gentle scroll drift (%)
       img.style.transform = `scale(${scale.toFixed(4)}) translate3d(0, ${lift.toFixed(2)}%, 0)`;
       // dissolve the fixed plate into the clean light page as the hero leaves
       stage.style.opacity = (1 - smooth01((current - 0.18) / 0.72)).toFixed(3);

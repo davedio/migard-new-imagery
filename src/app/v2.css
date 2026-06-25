@@ -2390,6 +2390,7 @@ h2 em,
 .minimal-hero {
   position: relative;
   z-index: 1;
+  --hero-copy-lift: clamp(-46px, -4svh, -28px);
   min-height: min(860px, 92svh);
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(430px, 1.1fr);
@@ -2404,6 +2405,7 @@ h2 em,
   max-width: 760px;
   position: relative;
   z-index: 1;
+  transform: translateY(var(--hero-copy-lift));
 }
 
 .minimal-hero__visual-space {
@@ -3475,6 +3477,7 @@ h2 em,
   }
 
   .minimal-hero {
+    --hero-copy-lift: clamp(-26px, -2.6svh, -14px);
     min-height: auto;
     padding-top: 118px;
   }
@@ -3567,6 +3570,7 @@ h2 em,
   }
 
   .minimal-hero {
+    --hero-copy-lift: -6px;
     gap: 26px;
     padding-top: 96px;
     padding-bottom: 34px;
@@ -3722,13 +3726,14 @@ h2 em,
 }
 .hero-tree-stage__img {
   position: absolute;
+  --hero-tree-base-lift: -3.8;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 64% 42%; /* keep the tree right-of-centre, canopy in view */
+  object-position: 64% 47%; /* keep the tree right-of-centre and trim excess sky */
   transform: scale(1.02);
-  transform-origin: 67% 36%; /* zoom toward the canopy */
+  transform-origin: 67% 32%; /* zoom toward the lifted canopy */
   will-change: transform, opacity;
   filter: saturate(1.04) contrast(1.02);
 }
@@ -3755,6 +3760,7 @@ h2 em,
 }
 @media (max-aspect-ratio: 4 / 5) {
   .hero-tree-stage__img {
+    --hero-tree-base-lift: -1.2;
     object-position: 50% 30%;
     transform-origin: 50% 26%;
   }
