@@ -1,7 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { HeroStage } from "@/components/minimal/HeroStage";
+import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { OfficialChannelIcon, OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -99,60 +99,11 @@ const METRIC_STATUS = {
   Status: "Current phase",
 } as const;
 
-const isSvgLogo = (logo: string) => logo.endsWith(".svg");
-
-function PartnerSequence({ hidden = false }: { hidden?: boolean }) {
-  return (
-    <ul className="minimal-partners__seq" aria-hidden={hidden || undefined}>
-      {ECOSYSTEM_PARTNERS.map((partner) => {
-        const lightLogo = partner.logoLight ?? partner.logo;
-
-        return (
-          <li key={partner.name}>
-            <span
-              className="minimal-partner"
-              data-tone={partner.tone}
-              role={hidden ? undefined : "img"}
-              aria-label={hidden ? undefined : partner.name}
-            >
-              <Image
-                className="minimal-partner__logo minimal-partner__logo--dark"
-                src={partner.logo}
-                alt=""
-                aria-hidden="true"
-                width={partner.width}
-                height={partner.height}
-                loading="eager"
-                unoptimized={isSvgLogo(partner.logo)}
-              />
-              <Image
-                className="minimal-partner__logo minimal-partner__logo--light"
-                src={lightLogo}
-                alt={hidden ? "" : partner.name}
-                aria-hidden={hidden || undefined}
-                width={partner.width}
-                height={partner.height}
-                loading="eager"
-                unoptimized={isSvgLogo(lightLogo)}
-              />
-            </span>
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
 function EcosystemPartners() {
   return (
     <section className="minimal-partners" aria-labelledby="minimal-partners-title">
       <h2 id="minimal-partners-title">Ecosystem Partners</h2>
-      <div className="minimal-partners__rail" aria-label="Ecosystem partner logos">
-        <div className="minimal-partners__track">
-          <PartnerSequence />
-          <PartnerSequence hidden />
-        </div>
-      </div>
+      <MagneticPartnerBoard partners={ECOSYSTEM_PARTNERS} />
     </section>
   );
 }

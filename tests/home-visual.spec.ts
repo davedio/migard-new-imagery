@@ -243,7 +243,22 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   await expect(page.getByRole("heading", { name: /State stays checkable/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Cardano L1 settlement comes last/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Ecosystem Partners/i })).toBeVisible();
-  await expect(page.getByLabel("Ecosystem partner logos").getByAltText("Liqwid")).toBeVisible();
+  const partnerBoard = page.getByLabel("Ecosystem partner logos");
+  await expect(partnerBoard.locator(".partner-magnet-card")).toHaveCount(9);
+  await expect(partnerBoard.locator("a")).toHaveCount(0);
+  for (const partnerName of [
+    "WingRiders",
+    "Anvil Dev Agency",
+    "Tweag",
+    "Modus Create",
+    "Minswap",
+    "Liqwid",
+    "USDCx",
+    "Midgard",
+    "Anastasia Labs",
+  ]) {
+    await expect(partnerBoard.getByText(partnerName, { exact: true })).toBeVisible();
+  }
 
   const pathSection = page.locator("#paths");
   await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
