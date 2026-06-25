@@ -10,7 +10,6 @@ import {
   type ReactNode,
 } from "react";
 import { useMotionPref } from "@/lib/motion";
-import { useTheme, TREE_PLATES } from "@/lib/theme";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 
 /* ============================================================
@@ -160,6 +159,8 @@ const EXPLAINER_STEPS = [
   },
 ] as const;
 
+const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/trunk-flow-tall.avif";
+
 function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> }) {
   return (
     <section className="hiw-act" aria-label="Transaction journey" ref={actRef}>
@@ -239,10 +240,7 @@ export default function HowItWorksExperience({
   children: ReactNode;
 }) {
   const { motionOn, toggle } = useMotionPref();
-  /* the SAME tree as home, at the theme's time of day — keyed below so a
-     theme flip re-measures the plate anatomy (centerline, canopy, vault) */
-  const { theme } = useTheme();
-  const plateSrc = TREE_PLATES[theme];
+  const plateSrc = WATER_COLOR_JOURNEY_PLATE;
 
   // desktop + motion-on gate for the heavy interaction systems
   const [finePointer, setFinePointer] = useState(false);

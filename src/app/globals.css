@@ -3057,6 +3057,7 @@ button.panel:hover {
 
 .hiw-act__intro {
   max-width: min(620px, 100%);
+  margin-left: max(0px, calc((100vw - var(--maxw)) / 2));
 }
 .hiw-act__title {
   margin-top: 16px;
@@ -4105,7 +4106,7 @@ a.chip:hover {
 
 [data-theme="light"] .plate-stage__img,
 [data-theme="light"] .plate-stage__dof-img {
-  opacity: 0.78;
+  opacity: 0.64;
   filter: contrast(1) saturate(0.94) brightness(1.06);
 }
 
@@ -4121,8 +4122,8 @@ a.chip:hover {
   background:
     radial-gradient(
       135% 110% at 2% 44%,
-      rgba(243, 247, 239, 0.55),
-      rgba(243, 247, 239, 0.26) 44%,
+      rgba(243, 247, 239, 0.68),
+      rgba(243, 247, 239, 0.3) 44%,
       transparent 72%
     );
 }
@@ -4141,6 +4142,10 @@ a.chip:hover {
   border-color: rgba(27, 23, 16, 0.14);
   background: rgba(255, 250, 240, 0.76);
   color: var(--text-dim);
+}
+
+[data-theme="light"] .hiw-act__lead {
+  opacity: 0.84;
 }
 
 [data-theme="light"] .hiw-act__beat-name {

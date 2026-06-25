@@ -89,9 +89,9 @@
   background:
     linear-gradient(90deg, rgba(246, 241, 232, 0.9) 0%, rgba(246, 241, 232, 0.68) 44%, rgba(246, 241, 232, 0.24) 78%),
     linear-gradient(180deg, rgba(246, 241, 232, 0.22), rgba(246, 241, 232, 0.78)),
-    url("/v2/stone-rune.avif") 64% 45% / cover no-repeat;
-  opacity: 0.34;
-  filter: saturate(0.7) brightness(1.18);
+    url("/img/watercolor/rune-stones.avif") 62% 45% / cover no-repeat;
+  opacity: 0.42;
+  filter: saturate(0.84) brightness(1.12);
 }
 
 :global([data-theme="light"]) .runePanel {
@@ -114,7 +114,7 @@
   background:
     linear-gradient(90deg, rgba(4, 7, 5, 0.96) 0%, rgba(4, 7, 5, 0.66) 44%, rgba(4, 7, 5, 0.22) 78%),
     linear-gradient(180deg, rgba(4, 7, 5, 0.1), rgba(4, 7, 5, 0.92)),
-    url("/v2/stone-rune.avif") 64% 45% / cover no-repeat;
+    url("/img/watercolor/rune-stones.avif") 62% 45% / cover no-repeat;
   opacity: 0.92;
   transform: scale(1.02);
 }

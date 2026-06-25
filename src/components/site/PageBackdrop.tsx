@@ -1,5 +1,7 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 /* ============================================================
    PageBackdrop — calm painterly backdrop for preview interior pages.
 
@@ -9,25 +11,29 @@
 
 export type BackdropVariant = "soft" | "bold" | "side" | "banner";
 
-const BASE = "/img/tree";
-const widthsFor = (name: string, ext: string) =>
-  `${BASE}/${name}-960.${ext} 960w, ${BASE}/${name}-1440.${ext} 1440w, ${BASE}/${name}-2200.${ext} 2200w`;
+const BASE = "/img/watercolor";
 
 export function PageBackdrop({
   name,
   variant = "soft",
+  focus = "58% 42%",
 }: {
   name: string;
   variant?: BackdropVariant;
+  focus?: string;
 }) {
   return (
-    <div className={`page-backdrop page-backdrop--${variant}`} aria-hidden="true">
+    <div
+      className={`page-backdrop page-backdrop--${variant}`}
+      style={{ "--backdrop-pos": focus } as CSSProperties}
+      aria-hidden="true"
+    >
       <picture>
-        <source type="image/avif" srcSet={widthsFor(name, "avif")} sizes="100vw" />
-        <source type="image/webp" srcSet={widthsFor(name, "webp")} sizes="100vw" />
+        <source type="image/avif" srcSet={`${BASE}/${name}.avif`} />
+        <source type="image/webp" srcSet={`${BASE}/${name}.webp`} />
         <img
           className="page-backdrop__img"
-          src={`${BASE}/${name}-1440.webp`}
+          src={`${BASE}/${name}.webp`}
           alt=""
           decoding="async"
         />
