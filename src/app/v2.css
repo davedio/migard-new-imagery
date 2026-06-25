@@ -4358,8 +4358,8 @@ h2 em,
 }
 
 /* ============================================================
-   LIGHT-MODE PREVIEW — new painterly World Tree imagery + minimal
-   light surfaces. Scoped to [data-theme="light"] for the current preview.
+   LIGHT SITE THEME — new painterly World Tree imagery + minimal
+   light surfaces. Scoped to [data-theme="light"] for the current site.
    ============================================================ */
 
 /* -- home hero: fixed painterly tree plate that zooms + dissolves -- */
@@ -4728,7 +4728,7 @@ h2 em,
   );
 }
 
-/* light preview: child-page plates become quiet atmosphere, not competing art */
+/* light site: child-page plates become quiet atmosphere, not competing art */
 [data-theme="light"] .page-hero::before {
   animation: none;
   opacity: 0.42;

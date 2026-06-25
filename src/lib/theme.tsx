@@ -13,7 +13,7 @@ const STORAGE_KEY = "midgard:theme";
 /** Runs before paint via the inline script in src/app/layout.tsx. */
 export const THEME_BOOT_SCRIPT = `try{document.documentElement.dataset.theme="light";localStorage.removeItem("${STORAGE_KEY}");}catch(e){document.documentElement.dataset.theme="light";}`;
 
-/** The current world-tree plate used across the light preview. */
+/** The current world-tree plate used across the light site. */
 export const TREE_PLATES: Record<Theme, string> = {
   light: "/plates/worldtree-day-tall.avif",
 };

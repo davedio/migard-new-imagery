@@ -25,7 +25,7 @@ test("shared site imagery loads on primary routes", async ({ page }) => {
     }
   });
 
-  for (const route of ["/", "/minimal", "/learn", "/learn#security-overview", "/contracts", "/developers", "/how-it-works", "/faq"]) {
+  for (const route of ["/", "/learn", "/learn#security-overview", "/contracts", "/developers", "/how-it-works", "/faq"]) {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
     await expectNoBrokenImages(page);
@@ -118,7 +118,7 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("hero-scrolled.png") });
 });
 
-test("preview ignores stored legacy theme preference", async ({ page }) => {
+test("site ignores stored legacy theme preference", async ({ page }) => {
   await page.addInitScript(() => {
     window.localStorage.setItem("midgard:theme", "legacy");
   });
@@ -199,135 +199,6 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
 
   await page.getByRole("button", { name: /close menu/i }).click();
   await expect(mobileMenu).toHaveAttribute("aria-hidden", "true");
-});
-
-test("minimal preview renders tree-themed routing concept", async ({ page }, testInfo) => {
-  await page.goto("/minimal");
-
-  await expect(
-    page.getByRole("heading", {
-      name: /The execution layer for UTXO finance/i,
-    }),
-  ).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy").getByText(/mathematically verified smart contracts/i)).toBeVisible();
-  await expect(page.locator(".minimal-hero__copy")).toContainText("Cardano settlement");
-  await expect(page.locator(".minimal-hero__copy")).not.toContainText("Cardano L1 settlement");
-  await expect(page.locator(".hero-tree-stage")).toBeVisible();
-  await expect(page.locator(".hero-tree-stage__img")).toBeVisible();
-  await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
-  await expect(page.locator(".minimal-tree")).toHaveCount(0);
-  const routeCards = page.locator(".minimal-hero-route");
-  await expect(routeCards).toHaveCount(3);
-  await expect(routeCards.nth(0)).toContainText("Use");
-  await expect(routeCards.nth(0)).toHaveAttribute("href", "/learn#roles");
-  await expect(routeCards.nth(1)).toContainText("Build");
-  await expect(routeCards.nth(1)).toHaveAttribute("href", "/developers");
-  await expect(routeCards.nth(2)).toContainText("Verify");
-  await expect(routeCards.nth(2)).toContainText("Independent verification");
-  await expect(routeCards.nth(2)).toHaveAttribute("href", "/developers#developer-paths");
-  await expect(page.locator(".minimal-flow-board").getByText("User sees")).toBeVisible();
-  await expect(page.locator(".minimal-user-path").getByText("Deposit")).toBeVisible();
-  await expect(page.locator(".minimal-flow-row").filter({ hasText: "Data availability" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Apps feel faster/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /State stays checkable/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Cardano L1 settlement comes last/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Ecosystem Partners/i })).toBeVisible();
-  const partnerBoard = page.getByLabel("Ecosystem partner logos");
-  const expectedPartners = [
-    "Anastasia Labs",
-    "Artifi Labs",
-    "Input Output Global",
-    "Lace Wallet",
-    "Liqwid",
-    "Midgard",
-    "Midnight",
-    "Minswap",
-    "Modus Create",
-    "Pogun",
-    "RealFi",
-    "Sundae Labs",
-    "Tweag",
-    "USDCx",
-    "WingRiders",
-  ];
-  await expect(partnerBoard.locator(".partner-magnet-card")).toHaveCount(expectedPartners.length);
-  await expect(partnerBoard.locator("a")).toHaveCount(0);
-  await expect(partnerBoard).not.toContainText("Anvil Dev Agency");
-  await expect(partnerBoard.locator('.partner-magnet-card[aria-label="Anvil Dev Agency"]')).toHaveCount(0);
-  await expect(partnerBoard.locator(".partner-magnet-row")).toHaveCount(4);
-  await expect(partnerBoard.locator(".partner-magnet-row").nth(0).locator(".partner-magnet-card")).toHaveCount(3);
-  await expect(partnerBoard.locator(".partner-magnet-row").nth(1).locator(".partner-magnet-card")).toHaveCount(4);
-  await expect(partnerBoard.locator(".partner-magnet-row").nth(2).locator(".partner-magnet-card")).toHaveCount(4);
-  await expect(partnerBoard.locator(".partner-magnet-row").nth(3).locator(".partner-magnet-card")).toHaveCount(4);
-  const partnerWidths = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
-    [...new Set(cards.map((card) => Math.round(card.getBoundingClientRect().width)))],
-  );
-  expect(partnerWidths).toHaveLength(1);
-  await expect(partnerBoard.locator(".partner-magnet-card__name")).toHaveCount(0);
-  const renderedPartners = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
-    cards.map((card) => card.getAttribute("aria-label")),
-  );
-  expect(renderedPartners).toEqual(expectedPartners);
-  for (const partnerName of expectedPartners) {
-    await expect(partnerBoard.locator(`.partner-magnet-card[aria-label="${partnerName}"]`)).toHaveCount(1);
-  }
-  const viewport = page.viewportSize();
-  if ((viewport?.width ?? 0) >= 900) {
-    const firstPartnerCard = partnerBoard.locator(".partner-magnet-card").nth(0);
-    const secondPartnerCard = partnerBoard.locator(".partner-magnet-card").nth(1);
-    const firstPartnerBox = await firstPartnerCard.boundingBox();
-    const secondPartnerBox = await secondPartnerCard.boundingBox();
-    expect(firstPartnerBox).not.toBeNull();
-    expect(secondPartnerBox).not.toBeNull();
-    if (!firstPartnerBox || !secondPartnerBox) throw new Error("Partner cards were not measurable");
-    await page.mouse.move(
-      (firstPartnerBox.x + firstPartnerBox.width + secondPartnerBox.x) / 2,
-      (firstPartnerBox.y + firstPartnerBox.height / 2 + secondPartnerBox.y + secondPartnerBox.height / 2) / 2,
-    );
-    await page.waitForTimeout(120);
-    const partnerMotion = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
-      cards.slice(0, 3).map((card) => {
-        const styles = getComputedStyle(card);
-        return {
-          x: Number.parseFloat(styles.getPropertyValue("--magnet-x")) || 0,
-          y: Number.parseFloat(styles.getPropertyValue("--magnet-y")) || 0,
-        };
-      }),
-    );
-    expect(Math.max(...partnerMotion.map(({ x, y }) => Math.hypot(x, y)))).toBeGreaterThan(8);
-  }
-
-  const pathSection = page.locator("#paths");
-  await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
-  await expect(pathSection.getByRole("heading", { name: "Users", exact: true })).toBeVisible();
-  await expect(pathSection.getByRole("heading", { name: "Builders", exact: true })).toBeVisible();
-  await expect(pathSection.getByRole("heading", { name: "Protocol Roles", exact: true })).toBeVisible();
-  await expect(pathSection.getByRole("link", { name: /Learn user path/i })).toHaveAttribute("href", "/learn#roles");
-  await expect(pathSection.getByRole("link", { name: /Explore Protocol Roles/i })).toHaveAttribute("href", "/developers#developer-paths");
-
-  await expect(page.locator(".minimal-metric")).toHaveCount(6);
-  await expect(page.locator(".minimal-metric").filter({ hasText: "Soft confirmations" })).toContainText("Benchmark");
-  const verifiedSmartContracts = page.locator(".minimal-metric").filter({ hasText: "Verified smart contracts" });
-  await expect(verifiedSmartContracts).toContainText("Formal methods");
-  await expect(verifiedSmartContracts).toContainText("mathematical security");
-  await expect(verifiedSmartContracts.getByRole("link", { name: /Read about Blaster/i })).toHaveAttribute("href", /iog\.io\/news\/automated-formal-verification/);
-  await expect(page.getByRole("heading", { name: /Inspect before you trust speed/i })).toBeVisible();
-  await expect(page.locator(".minimal-proof-rail")).toContainText("Verified trust path");
-  const inspectGrid = page.locator(".minimal-inspect-grid");
-  await expect(inspectGrid.getByRole("link", { name: /Security model/i })).toHaveAttribute("href", "/learn#security-overview");
-  await expect(inspectGrid.getByRole("link", { name: /Contract surface/i })).toHaveAttribute("href", "/contracts");
-  await expect(inspectGrid.getByRole("link", { name: /Source review/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
-  await expect(page.locator(".minimal-channel-card")).toHaveCount(4);
-  if (testInfo.project.name === "desktop-chromium") {
-    await expect(page.locator(".minimal-channel-grid")).toHaveCSS("grid-template-columns", /px .*px/);
-  }
-  await expect(page.locator(".minimal-channel-card").first()).toContainText("Report something sensitive");
-  await expect(page.locator(".minimal-channel-card").filter({ hasText: "Security policy" })).toHaveAttribute("href", "/learn#disclosure");
-  await expect(page.locator(".minimal-channel-card").filter({ hasText: "Intake form" })).toContainText("Protocol Roles");
-  await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
-  await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
-  await expect(page.locator(".minimal-channel-socials").getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
-  await page.screenshot({ path: testInfo.outputPath("minimal-preview.png") });
 });
 
 test("developers and learn menus expose key routes", async ({ page }, testInfo) => {

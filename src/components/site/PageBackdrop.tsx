@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 
 /* ============================================================
-   PageBackdrop — full-page painterly backdrop for preview interior pages.
+   PageBackdrop — full-page painterly backdrop for interior pages.
    ============================================================ */
 
 export type BackdropVariant = "full" | "soft" | "bold" | "side" | "banner";

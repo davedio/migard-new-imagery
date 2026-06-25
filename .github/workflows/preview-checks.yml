@@ -1,4 +1,4 @@
-name: Preview checks
+name: CI checks
 
 on:
   pull_request:

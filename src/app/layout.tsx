@@ -5,6 +5,8 @@ import "./v2.css";
 import { Providers } from "./providers";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
+const SITE_URL = "https://migard-new-imagery.vercel.app";
+
 /* Type system: Fraunces — a high-contrast "wonky" old-style serif with
    ball terminals — sets the headlines (the new editorial direction);
    Inter carries body copy, JetBrains Mono the data/code, and Syne is
@@ -33,7 +35,7 @@ const syne = Syne({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://midgard-gateway.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: "Midgard | The execution layer for UTXO finance",
   description:
     "Midgard is an optimistic rollup for UTXO finance: faster application execution, public fault-proof verification, and Cardano L1 settlement after verification.",
@@ -75,10 +77,10 @@ const ORG_JSONLD = {
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://midgard-gateway.vercel.app/#org",
+      "@id": `${SITE_URL}/#org`,
       name: "Midgard Labs",
-      url: "https://midgard-gateway.vercel.app",
-      logo: "https://midgard-gateway.vercel.app/midgard-icon.png",
+      url: SITE_URL,
+      logo: `${SITE_URL}/midgard-icon.png`,
       sameAs: [
         "https://github.com/Anastasia-Labs/midgard",
         "https://x.com/midgardprotocol",
@@ -88,8 +90,8 @@ const ORG_JSONLD = {
     {
       "@type": "WebSite",
       name: "Midgard",
-      url: "https://midgard-gateway.vercel.app",
-      publisher: { "@id": "https://midgard-gateway.vercel.app/#org" },
+      url: SITE_URL,
+      publisher: { "@id": `${SITE_URL}/#org` },
     },
   ],
 };
@@ -104,7 +106,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        {/* applies the light preview theme before first paint */}
+        {/* applies the light site theme before first paint */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           type="application/ld+json"

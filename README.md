@@ -21,23 +21,23 @@ Open `http://localhost:3000`.
 
 ## Validation
 
-Run both checks before pushing a preview branch:
+Run both checks before pushing a branch:
 
 ```bash
 npm run lint
 npm run build
 ```
 
-## Preview Workflow
+## Publishing Workflow
 
 Use the safe publishing flow for website changes:
 
-1. Work on a preview branch, not `main`.
+1. Work on a branch, not `main`.
 2. Push the branch to GitHub.
 3. Open a draft pull request into `main`.
-4. Let Vercel create a preview deployment from the branch or PR.
-5. Review the Vercel preview.
-6. Merge only after Dave explicitly approves the preview.
+4. Let Vercel create a deployment from the branch or PR.
+5. Review the deployment URL.
+6. Merge or promote only after Dave explicitly approves.
 
 Recommended branch pattern:
 
@@ -74,4 +74,4 @@ Canonical links are maintained in `src/lib/officialLinks.ts` and rendered on `/o
 
 ## Vercel
 
-Vercel preview deployments should be created from non-production branches or draft PRs. Production deployment happens only through the approved merge/promotion path.
+The live Vercel project is `migard-new-imagery`.

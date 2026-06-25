@@ -17,6 +17,8 @@ import {
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import styles from "@/components/site/contracts.module.css";
 
+const SITE_URL = "https://migard-new-imagery.vercel.app";
+
 export const metadata: Metadata = {
   title: "Contracts | Midgard",
   description:
@@ -32,9 +34,9 @@ const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://midgard-gateway.vercel.app/" },
-    { "@type": "ListItem", position: 2, name: "Developers", item: "https://midgard-gateway.vercel.app/developers" },
-    { "@type": "ListItem", position: 3, name: "Contracts", item: "https://midgard-gateway.vercel.app/contracts" },
+    { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+    { "@type": "ListItem", position: 2, name: "Developers", item: `${SITE_URL}/developers` },
+    { "@type": "ListItem", position: 3, name: "Contracts", item: `${SITE_URL}/contracts` },
   ],
 };
 

@@ -1,5 +1,5 @@
 export const OFFICIAL_LINKS = {
-  website: "https://midgard-gateway.vercel.app",
+  website: "https://migard-new-imagery.vercel.app",
   docs: "https://github.com/Anastasia-Labs/midgard",
   github: "https://github.com/Anastasia-Labs/midgard",
   x: "https://x.com/midgardprotocol",
