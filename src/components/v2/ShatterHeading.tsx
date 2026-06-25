@@ -116,7 +116,7 @@ export default function ShatterHeading({
     let ch = 0;
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    /* dust matches the theme's ink — bone dust on the night plate is
+    /* dust matches the theme's ink — bone dust on the tree plate is
        invisible white-on-white over the dawn plate (read once per mount;
        a theme flip re-keys the page surfaces anyway) */
     const lightTheme = document.documentElement.dataset.theme === "light";

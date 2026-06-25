@@ -39,13 +39,12 @@ import { useSmoothScroll } from "@/lib/useSmoothScroll";
 
    Because the experience mounts only on this route and unmounts on
    navigation, these systems activate ONLY on /how-it-works —
-   useSmoothScroll clears its fixed-layout hijack on unmount, so /home
-   (native) and every other route are untouched.
+   useSmoothScroll clears its fixed-layout hijack on unmount, so every
+   other route is untouched.
    ============================================================ */
 
-// The PHOTOREAL variant: instead of a WebGL JourneyScene, the backdrop is an
-// AI-generated photoreal tree PLATE that parallax-pans canopy -> roots with
-// LIVE green overlays (beams / network pulses / leaves / diamonds) on a canvas.
+// The photoreal tree plate parallax-pans canopy -> roots with live green
+// overlays on a canvas.
 const PhotorealBackdrop = dynamic(() => import("./scene/PhotorealBackdrop"), {
   ssr: false,
 });

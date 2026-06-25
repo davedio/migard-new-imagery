@@ -8,7 +8,6 @@ The site explains Midgard for users, builders, and partners. It should stay plai
 
 - Next.js App Router website for the Midgard public gateway.
 - Homepage, protocol explanation, security, testnet/status, docs bridge, FAQ, official links, and intake paths.
-- Local design handoffs under `docs/design-handoffs/`.
 - Network-status API and UI surfaces for L1/L2-facing status material.
 
 ## Local Development

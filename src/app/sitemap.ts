@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 const SITE_URL = "https://midgard-gateway.vercel.app";
 
-/* Canonical, indexable routes only. /home and /minimal are private design
-   previews, /faqs redirects, and /access is intentionally excluded. */
+/* Canonical, indexable routes only. /minimal is a private design preview,
+   /faqs redirects, and /access is intentionally excluded. */
 const ROUTES = ["", "/learn", "/developers", "/contracts", "/how-it-works", "/faq"];
 
 export default function sitemap(): MetadataRoute.Sitemap {

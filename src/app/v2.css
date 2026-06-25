@@ -1874,7 +1874,7 @@ h2 em,
    · the stage HUD badge is LARGER (client request: right of tree + bigger)
    ------------------------------------------------------------------------- */
 .plate-stage__img {
-  background-image: url("/plates/worldtree-night-tall.avif");
+  background-image: url("/plates/worldtree-day-tall.avif");
 }
 .stage-graphic__card {
   align-items: flex-start;
@@ -2178,7 +2178,7 @@ h2 em,
 /* ============================================================
    LIGHT THEME — v2 presentation tokens. Bone-on-ink inverts to
    ink-on-bone; the living-green signal deepens for contrast on the
-   dawn plate; veils become morning haze instead of night air.
+   dawn plate; veils become morning haze.
    ============================================================ */
 :root[data-theme="light"] {
   /* near-black forest ink — photographic backgrounds need editorial-dark
@@ -4359,8 +4359,7 @@ h2 em,
 
 /* ============================================================
    LIGHT-MODE PREVIEW — new painterly World Tree imagery + minimal
-   light surfaces. Scoped to [data-theme="light"] so the dark theme
-   (animated particle hero, night plates) is left untouched.
+   light surfaces. Scoped to [data-theme="light"] for the current preview.
    ============================================================ */
 
 /* -- home hero: fixed painterly tree plate that zooms + dissolves -- */

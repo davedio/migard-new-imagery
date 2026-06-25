@@ -9,8 +9,7 @@
    directed: the wide dawn vista on landscape viewports, the tall
    single tree on portrait/phones. Motion respects the reduced-
    motion preference (the same hook the particle hero uses), and the
-   whole layer is decorative (aria-hidden) — the dark theme keeps its
-   animated particle tree untouched via HeroStage.
+   whole layer is decorative (aria-hidden).
    ============================================================ */
 
 import { useEffect, useRef } from "react";

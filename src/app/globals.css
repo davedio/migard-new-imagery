@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 /* ============================================================
-   MIDGARD — Dark Ancient Tech / Trust Architecture
-   Tokens ported from the design handoff (styles/tokens.css)
+   MIDGARD — Light Tree Gateway
+   Shared production tokens
    ============================================================ */
 :root {
   /* core palette */
@@ -211,7 +211,7 @@ a {
      --plate-settle on the .plate-stage parent (see above). */
   --plate-y: 42%;
   --plate-scale: 1.06;
-  background-image: url("/plates/worldtree-night-tall.avif");
+  background-image: url("/plates/worldtree-day-tall.avif");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% var(--plate-y);
@@ -324,7 +324,7 @@ a {
 .plate-stage__dof-img {
   position: absolute;
   inset: 0;
-  background-image: url("/plates/worldtree-night-tall.avif");
+  background-image: url("/plates/worldtree-day-tall.avif");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: 50% var(--plate-y, 42%);
@@ -2976,10 +2976,10 @@ button.panel:hover {
 }
 
 /* ============================================================
-   HOW IT WORKS — flagship 3D transaction-journey experience.
+   HOW IT WORKS — transaction-journey experience.
 
    The page (HowItWorksExperience) opens with a TALL journey ACT rendered
-   transparent OVER the fixed .scene-stage (JourneyScene, portaled to
+   transparent OVER the fixed .scene-stage (photoreal backdrop, portaled to
    <body>). Scrolling the act's span drives the full canopy -> Cardano-L1
    descent, so the transaction is actually WATCHED settling within the
    act; an intro + beat legend sit pinned in a sticky viewport-tall panel
@@ -2995,8 +2995,8 @@ button.panel:hover {
    [data-scroll-content] wrapper, which makes it a stacking context. The
    fixed .scene-stage (portaled to body) sits at z-index:1, so the wrapper
    needs to win to keep page content above the 3D. Lift it only when it
-   holds the experience — scoped via :has() so /home and every other route
-   keep the original static layering untouched. */
+   holds the experience — scoped via :has() so every other route keeps the
+   original static layering untouched. */
 [data-scroll-content]:has(.page-main--hiw-experience) {
   position: relative;
   z-index: 2;
@@ -4246,9 +4246,9 @@ a.chip:hover {
    POLISH PASS (2026-06-12)
    ============================================================ */
 
-/* theme flip rides a View Transition (see src/lib/theme.tsx) — a touch
-   slower than the browser default so the dawn/night swap reads as light
-   changing, not a cut */
+/* theme application rides a View Transition (see src/lib/theme.tsx) — a touch
+   slower than the browser default so imagery changes read as light changing,
+   not a cut */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.55s;

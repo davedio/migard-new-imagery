@@ -104,7 +104,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        {/* applies the stored theme before first paint — no dark->light flash */}
+        {/* applies the light preview theme before first paint */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           type="application/ld+json"

@@ -25,7 +25,7 @@ test("shared site imagery loads on primary routes", async ({ page }) => {
     }
   });
 
-  for (const route of ["/", "/home", "/minimal", "/learn", "/learn#security-overview", "/contracts", "/developers", "/how-it-works", "/faq"]) {
+  for (const route of ["/", "/minimal", "/learn", "/learn#security-overview", "/contracts", "/developers", "/how-it-works", "/faq"]) {
     await page.goto(route);
     await page.waitForLoadState("networkidle");
     await expectNoBrokenImages(page);
@@ -118,9 +118,9 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("hero-scrolled.png") });
 });
 
-test("preview ignores stored dark theme preference", async ({ page }) => {
+test("preview ignores stored legacy theme preference", async ({ page }) => {
   await page.addInitScript(() => {
-    window.localStorage.setItem("midgard:theme", "dark");
+    window.localStorage.setItem("midgard:theme", "legacy");
   });
 
   await page.goto("/");
@@ -134,23 +134,6 @@ test("preview ignores stored dark theme preference", async ({ page }) => {
   await expect(page.locator(".theme-toggle")).toHaveCount(0);
   await expect(page.locator(".hero-tree-stage")).toBeVisible();
   await expect(page.locator(".minimal-world-tree-stage")).toHaveCount(0);
-});
-
-test("cinematic home remains available as a preview", async ({ page }, testInfo) => {
-  await page.addInitScript(() => {
-    window.localStorage.setItem("midgard:motion", "on");
-  });
-
-  await page.goto("/home");
-
-  await expect(
-    page.getByRole("heading", {
-      name: /The execution layer for UTXO finance/i,
-    }),
-  ).toBeVisible();
-  await expect(page.locator(".v2-stage canvas").first()).toBeVisible();
-  await expect(page.locator(".minimal-tree")).toHaveCount(0);
-  await page.screenshot({ path: testInfo.outputPath("cinematic-home.png") });
 });
 
 test("desktop nav opens persistent child page menu", async ({ page }, testInfo) => {

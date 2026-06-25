@@ -2,24 +2,19 @@
 
 /* ============================================================
    Preview theme — single light direction.
-
-   Dark mode is intentionally disabled for this preview branch. The dark
-   assets remain in the repo for a later pass, but no UI path should let a
-   reviewer switch modes while we tune the light visual system.
    ============================================================ */
 
 import { createContext, useContext, type ReactNode } from "react";
 
-export type Theme = "dark" | "light";
+export type Theme = "light";
 
 const STORAGE_KEY = "midgard:theme";
 
 /** Runs before paint via the inline script in src/app/layout.tsx. */
 export const THEME_BOOT_SCRIPT = `try{document.documentElement.dataset.theme="light";localStorage.removeItem("${STORAGE_KEY}");}catch(e){document.documentElement.dataset.theme="light";}`;
 
-/** The day/night world-tree plates — one tree, two times of day. */
+/** The current world-tree plate used across the light preview. */
 export const TREE_PLATES: Record<Theme, string> = {
-  dark: "/plates/worldtree-night-tall.avif",
   light: "/plates/worldtree-day-tall.avif",
 };
 

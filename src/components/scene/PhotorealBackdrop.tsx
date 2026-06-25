@@ -36,7 +36,7 @@
    inside .scene-stage by the host, so they stay viewport-fixed under
    the smooth-scroll transform):
 
-     1. THE PLATE — worldtree-tall.avif (emerald canopy -> gnarled trunk
+     1. THE PLATE — current light world-tree image (canopy -> trunk
         -> roots over mossy rock with a COBALT L1 glow at the base). As
         the page scrolls DOWN, the plate PANS + ZOOMS canopy -> roots in
         FIVE eased dwells (one per stage), coupled to the packet so you
@@ -318,7 +318,7 @@ export default function PhotorealBackdrop({
   packetRef,
   motionOn,
   wide,
-  plateSrc = "/plates/worldtree-night-tall.avif",
+  plateSrc = "/plates/worldtree-day-tall.avif",
 }: {
   /** smoothed 0..1 journey progress (same ref the scene used) */
   progressRef: RefObject<number>;
@@ -328,8 +328,7 @@ export default function PhotorealBackdrop({
   motionOn: boolean;
   /** true when the wide plate / gentler pan should be used */
   wide: boolean;
-  /** the world-tree plate — night or day, chosen by the theme. The host
-      keys this component on it so a flip re-measures the tree anatomy. */
+  /** the active world-tree plate; keyed by the host so the tree anatomy can be re-measured. */
   plateSrc?: string;
 }) {
   const plateRef = useRef<HTMLDivElement>(null);

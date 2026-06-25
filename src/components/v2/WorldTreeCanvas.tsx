@@ -9,7 +9,7 @@
    panned).
 
    The descent narrative, driven by phase values (all 0..1) computed by
-   DescentFlow from the smoothed scroll — the SAME tree carries the whole
+   the smoothed scroll — the SAME tree carries the whole
    story, start to finish:
 
      veins     orbs ride the painted green veins down the tree
@@ -53,11 +53,10 @@ export const PHASES_REST: DescentPhases = {
   zoom: 1,
 };
 
-/* The ONE world tree — the same tall night/day plate every surface uses
-   (hero, descent, how-it-works). Which time of day arrives via the `src`
-   prop from the theme; the vein field below is re-read from whichever
-   plate loads, so the orbs always ride THIS tree's painted veins. */
-const TREE_SRC = "/plates/worldtree-night-tall.avif";
+/* The ONE world tree — the same tall light plate every surface uses.
+   The vein field below is read from the active source image so the orbs
+   always ride THIS tree's painted veins. */
+const TREE_SRC = "/plates/worldtree-day-tall.avif";
 
 const GRID_W = 384;
 const SPAWN_BAND: [number, number] = [0.02, 0.58];
@@ -119,9 +118,9 @@ export default function WorldTreeCanvas({
   helixAxisOffset = 0,
 }: {
   phasesRef: React.RefObject<DescentPhases>;
-  /** DescentFlow owns the rAF; it calls tickRef.current(dt) every frame. */
+  /** The parent animation owns the rAF; it calls tickRef.current(dt) every frame. */
   tickRef: React.RefObject<((dt: number) => void) | null>;
-  /** Tree plate to draw + read veins from (theme picks night or day). */
+  /** Tree plate to draw + read veins from. */
   src?: string;
   /** Use the canvas parent box instead of the viewport. */
   fitToParent?: boolean;
@@ -203,7 +202,7 @@ export default function WorldTreeCanvas({
          the raw green walk, so measure the row-wise green centroid +
          spread (the same anatomy the HtW backdrop rides) and BAKE that
          corridor into the field. The walk then hugs the trunk even where
-         the paint is quiet, on the night and the day plate alike. ---- */
+         the paint is quiet. ---- */
       const ROWS = 96;
       const cRow = new Float32Array(ROWS);
       const wRow = new Float32Array(ROWS);
@@ -426,7 +425,7 @@ export default function WorldTreeCanvas({
     const burst: Burst = { fired: false, t: 0, parts: [] };
     let bigPulse = 0;
 
-    /* ---- the one tick, called by DescentFlow's rAF ---- */
+    /* ---- the one tick, called by the parent animation's rAF ---- */
     const tick = (dt: number) => {
       if (disposed || !treeReady || W === 0 || !field) return;
       const ph = phasesRef.current ?? PHASES_REST;

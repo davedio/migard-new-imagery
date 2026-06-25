@@ -4,9 +4,9 @@ import { Reveal } from "./Reveal";
 import { CopyField } from "./CopyField";
 
 /* =========================================================================
-   Page primitives — server components that compose the design-system CSS
-   classes defined in globals.css. Child pages import these so visual tweaks
-   propagate from a single source of truth.
+   Page primitives — server components that compose the shared CSS classes
+   defined in globals.css. Child pages import these so visual tweaks propagate
+   from a single source of truth.
    ========================================================================= */
 
 /* ---- buttons / actions ---- */

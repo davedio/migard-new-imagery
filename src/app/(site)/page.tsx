@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 /**
  * Canonical home at `/`, inside the (site) group so it shares nav + footer.
  * This branch uses the minimalist tree-themed direction as the primary
- * experience; the cinematic version remains available at `/home` for review.
+ * experience.
  */
 export default function HomePage() {
   return <MinimalHome />;
