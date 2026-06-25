@@ -3035,25 +3035,45 @@ h2 em,
 
 .partner-magnet-board {
   position: relative;
+  --cursor-x: 50%;
+  --cursor-y: 50%;
   max-width: 760px;
   margin: 0 auto;
   isolation: isolate;
   perspective: 1200px;
 }
 
+.partner-magnet-board::after {
+  content: "";
+  position: absolute;
+  inset: -42px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(170px circle at var(--cursor-x) var(--cursor-y), rgba(78, 243, 131, 0.13), transparent 72%);
+  opacity: 0;
+  transform: translateZ(0);
+  transition: opacity 0.22s var(--ease);
+}
+
+.partner-magnet-board[data-active="true"]::after {
+  opacity: 1;
+}
+
 .partner-magnet-board__grid {
   position: relative;
   display: grid;
-  gap: 8px;
+  gap: 14px;
   justify-items: center;
   margin: 0;
   padding: 0;
+  z-index: 1;
 }
 
 .partner-magnet-row {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 30px;
   width: 100%;
 }
 
@@ -3068,6 +3088,12 @@ h2 em,
 .partner-magnet-card {
   position: relative;
   z-index: 2;
+  --magnet-x: 0px;
+  --magnet-y: 0px;
+  --magnet-z: 0px;
+  --magnet-r: 0deg;
+  --magnet-scale: 1;
+  --hover-y: 0px;
   width: clamp(130px, 11vw, 150px);
   height: 76px;
   display: flex;
@@ -3089,12 +3115,25 @@ h2 em,
   color: rgba(250, 247, 235, 0.9);
   overflow: hidden;
   transform-origin: center;
-  transform: rotate(var(--card-tilt, 0deg)) translateZ(0);
+  transform:
+    translate3d(var(--magnet-x), var(--magnet-y), var(--magnet-z))
+    translateY(var(--hover-y))
+    rotate(calc(var(--card-tilt, 0deg) + var(--magnet-r)))
+    scale(var(--magnet-scale));
   transition:
     border-color 0.22s var(--ease),
     box-shadow 0.22s var(--ease),
-    transform 0.22s var(--ease),
+    transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
     background 0.22s var(--ease);
+  will-change: transform;
+}
+
+.partner-magnet-board[data-active="true"] .partner-magnet-card {
+  transition:
+    border-color 0.16s var(--ease),
+    box-shadow 0.16s var(--ease),
+    transform 76ms linear,
+    background 0.16s var(--ease);
 }
 
 .partner-magnet-card::before {
@@ -3120,7 +3159,8 @@ h2 em,
 
 .partner-magnet-card:hover,
 .partner-magnet-card:focus-within {
-  transform: translateY(-4px) rotate(0deg) scale(1.012);
+  --hover-y: -4px;
+  --card-tilt: 0deg;
   border-color: rgba(78, 243, 131, 0.36);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.13), transparent 58%),
@@ -4246,13 +4286,13 @@ h2 em,
   }
 
   .partner-magnet-board__grid {
-    gap: 6px;
+    gap: 8px;
   }
 
   .partner-magnet-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    gap: 8px;
     transform: none !important;
   }
 

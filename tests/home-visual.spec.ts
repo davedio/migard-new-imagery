@@ -280,6 +280,31 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   for (const partnerName of expectedPartners) {
     await expect(partnerBoard.getByText(partnerName, { exact: true })).toBeVisible();
   }
+  const viewport = page.viewportSize();
+  if ((viewport?.width ?? 0) >= 900) {
+    const firstPartnerCard = partnerBoard.locator(".partner-magnet-card").nth(0);
+    const secondPartnerCard = partnerBoard.locator(".partner-magnet-card").nth(1);
+    const firstPartnerBox = await firstPartnerCard.boundingBox();
+    const secondPartnerBox = await secondPartnerCard.boundingBox();
+    expect(firstPartnerBox).not.toBeNull();
+    expect(secondPartnerBox).not.toBeNull();
+    if (!firstPartnerBox || !secondPartnerBox) throw new Error("Partner cards were not measurable");
+    await page.mouse.move(
+      (firstPartnerBox.x + firstPartnerBox.width + secondPartnerBox.x) / 2,
+      (firstPartnerBox.y + firstPartnerBox.height / 2 + secondPartnerBox.y + secondPartnerBox.height / 2) / 2,
+    );
+    await page.waitForTimeout(120);
+    const partnerMotion = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
+      cards.slice(0, 3).map((card) => {
+        const styles = getComputedStyle(card);
+        return {
+          x: Number.parseFloat(styles.getPropertyValue("--magnet-x")) || 0,
+          y: Number.parseFloat(styles.getPropertyValue("--magnet-y")) || 0,
+        };
+      }),
+    );
+    expect(Math.max(...partnerMotion.map(({ x, y }) => Math.hypot(x, y)))).toBeGreaterThan(8);
+  }
 
   const pathSection = page.locator("#paths");
   await expect(pathSection.getByRole("heading", { name: /Pick the role that matches what you need/i })).toBeVisible();
