@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
-import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 /* ------------------------------------------------------------------ */
 /*  Nav model                                                           */
@@ -37,12 +36,6 @@ const NAV_GROUPS: readonly NavGroup[] = [
     items: [
       { label: "Developer overview", href: "/developers", description: "Builder and Protocol Role paths" },
       { label: "Contracts", href: "/contracts", description: "Topology, addresses, scripts" },
-      {
-        label: "Intake form",
-        href: OFFICIAL_LINKS.intakeForm,
-        description: "Builder and Protocol Role interest",
-        external: true,
-      },
     ],
   },
   {

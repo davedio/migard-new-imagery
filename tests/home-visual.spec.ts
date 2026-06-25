@@ -204,8 +204,8 @@ test("mobile menu exposes the full routing list clearly", async ({ page }, testI
   await expect(mobileMenu.getByRole("link", { name: /Open GitHub/i })).toHaveAttribute("href", /github\.com\/Anastasia-Labs\/midgard/);
   await expect(mobileMenu.getByRole("link", { name: /Follow on X/i })).toHaveAttribute("href", /x\.com\/midgardprotocol/);
   await expect(mobileMenu.getByRole("link", { name: /Join Discord/i })).toHaveAttribute("href", /discord\.gg/);
-  await expect(mobileMenu.getByRole("link", { name: /Intake form/i })).toHaveAttribute("href", /docs\.google\.com\/forms/);
-  await expect(mobileMenu).toContainText("Builder and Protocol Role interest");
+  await expect(mobileMenu.getByRole("link", { name: /Intake form/i })).toHaveCount(0);
+  await expect(mobileMenu).not.toContainText("Builder and Protocol Role interest");
   await expect(mobileMenu).not.toContainText("Connect");
 
   const box = await mobileMenu.boundingBox();
@@ -358,7 +358,7 @@ test("developers and security menus expose key routes", async ({ page }, testInf
   await expect(devDropdown.getByRole("link", { name: /Developer overview/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /Contracts/i })).toBeVisible();
   await expect(devDropdown.getByRole("link", { name: /^GitHub$/i })).toHaveCount(0);
-  await expect(devDropdown.getByRole("link", { name: /Intake form/i })).toBeVisible();
+  await expect(devDropdown.getByRole("link", { name: /Intake form/i })).toHaveCount(0);
   await expect(devDropdown.getByRole("link", { name: /Whitepaper/i })).toHaveCount(0);
 
   const security = page.getByRole("button", { name: /^Security$/i });
