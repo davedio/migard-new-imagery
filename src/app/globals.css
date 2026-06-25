@@ -4092,7 +4092,7 @@ a.chip:hover {
 }
 [data-theme="light"] .page-main--how-it-works:not(.page-main--hiw-experience),
 [data-theme="light"] .page-main--hiw-experience > *:not(.hiw-act) {
-  background-color: #f4efe3;
+  background-color: rgba(244, 239, 227, 0.84);
 }
 
 [data-theme="light"] .page-main--hiw-experience {
@@ -4155,7 +4155,7 @@ a.chip:hover {
 [data-theme="light"] .hiw-explainer {
   background:
     radial-gradient(circle at 18% 0%, rgba(12, 125, 54, 0.08), transparent 26rem),
-    linear-gradient(180deg, rgba(255, 250, 240, 0.66), #f4efe3);
+    linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(244, 239, 227, 0.86));
 }
 
 [data-theme="light"] .hiw-explainer__card {

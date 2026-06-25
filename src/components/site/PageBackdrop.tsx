@@ -3,19 +3,16 @@
 import type { CSSProperties } from "react";
 
 /* ============================================================
-   PageBackdrop — calm painterly backdrop for preview interior pages.
-
-   One component, four treatments so the new imagery can be used only where
-   it supports the page instead of competing with the content.
+   PageBackdrop — full-page painterly backdrop for preview interior pages.
    ============================================================ */
 
-export type BackdropVariant = "soft" | "bold" | "side" | "banner";
+export type BackdropVariant = "full" | "soft" | "bold" | "side" | "banner";
 
 const BASE = "/img/watercolor";
 
 export function PageBackdrop({
   name,
-  variant = "soft",
+  variant = "full",
   focus = "58% 42%",
 }: {
   name: string;

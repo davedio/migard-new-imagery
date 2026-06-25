@@ -89,7 +89,7 @@ function LaunchpadLink({ item, index }: { item: (typeof launchpad)[number]; inde
 export default function DeveloperLanding() {
   return (
     <main className={`page-main developer-page ${styles.developerPage}`}>
-      <PageBackdrop name="forest-path" variant="side" focus="58% 48%" />
+      <PageBackdrop name="forest-path" focus="54% 48%" />
       <PageHero
         compact
         tone="tree"
@@ -122,13 +122,6 @@ export default function DeveloperLanding() {
                 Read whitepaper -&gt;
               </a>
             </div>
-            <figure className={styles.developerArt}>
-              <picture>
-                <source srcSet="/img/watercolor/forest-path.avif" type="image/avif" />
-                <img src="/img/watercolor/forest-path.webp" alt="" loading="lazy" decoding="async" />
-              </picture>
-              <figcaption>Start with source, then follow one concrete integration path.</figcaption>
-            </figure>
           </div>
           <div className={styles.launchStack}>
             <div className={styles.flowPanel} aria-label="Developer integration path">

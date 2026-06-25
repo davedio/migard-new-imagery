@@ -119,7 +119,7 @@ function RouteCard({ item }: { item: ReviewRoute }) {
 export default function SecurityPage() {
   return (
     <main className={`page-main ${styles.securityPage}`}>
-      <PageBackdrop name="roots-glow" variant="side" focus="58% 50%" />
+      <PageBackdrop name="roots-glow" focus="56% 52%" />
       <PageHero
         compact
         tone="ink"
@@ -156,20 +156,11 @@ export default function SecurityPage() {
         aria-labelledby="security-mechanism-title"
       >
         <div className={styles.trustInner}>
-          <div className={styles.trustIntro}>
-            <div className={styles.trustHead}>
-              <h2 id="security-mechanism-title">Fast confirmations first. Cardano L1 settlement after verification.</h2>
-              <p>
-                Operators can make activity feel fast, but they do not custody final settlement. Finality depends on Cardano L1 settlement, data availability, verified contract logic, approved parameters, and fault-proof challenge rules.
-              </p>
-            </div>
-            <figure className={styles.trustArt}>
-              <picture>
-                <source srcSet="/img/watercolor/roots-glow.avif" type="image/avif" />
-                <img src="/img/watercolor/roots-glow.webp" alt="" loading="lazy" decoding="async" />
-              </picture>
-              <figcaption>Security is the verified path to settlement, not an operator promise.</figcaption>
-            </figure>
+          <div className={styles.trustHead}>
+            <h2 id="security-mechanism-title">Fast confirmations first. Cardano L1 settlement after verification.</h2>
+            <p>
+              Operators can make activity feel fast, but they do not custody final settlement. Finality depends on Cardano L1 settlement, data availability, verified contract logic, approved parameters, and fault-proof challenge rules.
+            </p>
           </div>
           <div className={styles.trustDiagram} aria-label="Security path from soft confirmation to Cardano L1 settlement">
             {trustPath.map((step) => (

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { CopyField } from "@/components/site/CopyField";
+import PageBackdrop from "@/components/site/PageBackdrop";
 import RuneDecode from "@/components/site/RuneDecode";
 import { Actions, CtaBand, Layers, Prose, Section } from "@/components/site/ui";
 import {
@@ -67,6 +68,7 @@ export default function ContractsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
+      <PageBackdrop name="rune-stones" focus="54% 46%" />
       <RuneDecode />
 
       <header className={styles.contractHero} data-contracts-hero>

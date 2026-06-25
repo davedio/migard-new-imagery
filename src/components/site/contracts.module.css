@@ -81,17 +81,16 @@
 
 :global([data-theme="light"]) .contractHero {
   background:
-    radial-gradient(circle at 80% 12%, rgba(138, 97, 21, 0.1), transparent 32rem),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.42), rgba(246, 241, 232, 0.9) 86%);
+    radial-gradient(circle at 80% 12%, rgba(138, 97, 21, 0.08), transparent 32rem),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.3), rgba(246, 241, 232, 0.68) 86%);
 }
 
 :global([data-theme="light"]) .contractHeroPlate {
   background:
-    linear-gradient(90deg, rgba(246, 241, 232, 0.9) 0%, rgba(246, 241, 232, 0.68) 44%, rgba(246, 241, 232, 0.24) 78%),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.22), rgba(246, 241, 232, 0.78)),
-    url("/img/watercolor/rune-stones.avif") 62% 45% / cover no-repeat;
-  opacity: 0.42;
-  filter: saturate(0.84) brightness(1.12);
+    linear-gradient(90deg, rgba(246, 241, 232, 0.72) 0%, rgba(246, 241, 232, 0.44) 44%, rgba(246, 241, 232, 0.08) 78%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.08), rgba(246, 241, 232, 0.42));
+  opacity: 0.66;
+  filter: none;
 }
 
 :global([data-theme="light"]) .runePanel {
@@ -113,8 +112,7 @@
   pointer-events: none;
   background:
     linear-gradient(90deg, rgba(4, 7, 5, 0.96) 0%, rgba(4, 7, 5, 0.66) 44%, rgba(4, 7, 5, 0.22) 78%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.1), rgba(4, 7, 5, 0.92)),
-    url("/img/watercolor/rune-stones.avif") 62% 45% / cover no-repeat;
+    linear-gradient(180deg, rgba(4, 7, 5, 0.1), rgba(4, 7, 5, 0.92));
   opacity: 0.92;
   transform: scale(1.02);
 }

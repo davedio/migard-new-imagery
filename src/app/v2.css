@@ -474,27 +474,6 @@ h2 em,
     rgba(7, 15, 10, 0.72);
 }
 
-.faq-topic-rail__art {
-  overflow: hidden;
-  margin: -6px -6px 6px;
-  border: 1px solid rgba(244, 241, 230, 0.1);
-  border-radius: 8px;
-}
-
-.faq-topic-rail__art picture,
-.faq-topic-rail__art img {
-  display: block;
-}
-
-.faq-topic-rail__art img {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: 52% 50%;
-  opacity: 0.9;
-  filter: saturate(0.9) brightness(1.05);
-}
-
 .faq-topic-rail > span {
   color: var(--gold-bright);
   font-family: var(--font-mono);
@@ -3830,6 +3809,27 @@ h2 em,
   inset: 0;
 }
 
+/* full — the selected artwork is the page background, not a supporting panel */
+.page-backdrop--full .page-backdrop__img {
+  opacity: 0.76;
+  filter: saturate(0.94) brightness(1.04);
+}
+.page-backdrop--full .page-backdrop__scrim {
+  background:
+    radial-gradient(120% 82% at 18% 12%, rgba(255, 250, 240, 0.7), rgba(255, 250, 240, 0.22) 42%, transparent 72%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.12) 0%, rgba(246, 241, 232, 0.34) 58%, rgba(244, 239, 227, 0.68) 100%);
+}
+
+.page-main:has(.page-backdrop--full) .page-hero::before {
+  opacity: 0;
+}
+
+.page-main:has(.page-backdrop--full) .page-hero::after {
+  background:
+    linear-gradient(90deg, rgba(246, 241, 232, 0.66) 0%, rgba(246, 241, 232, 0.42) 46%, rgba(246, 241, 232, 0.1) 78%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.06), rgba(246, 241, 232, 0.34));
+}
+
 /* soft — a quiet canopy that floats at the top and dissolves */
 .page-backdrop--soft .page-backdrop__img {
   opacity: 0.42;
@@ -3970,10 +3970,6 @@ h2 em,
     linear-gradient(180deg, rgba(255, 255, 255, 0.44), transparent 58%),
     rgba(255, 250, 240, 0.84);
   box-shadow: 0 16px 42px rgba(54, 45, 30, 0.08);
-}
-
-[data-theme="light"] .faq-topic-rail__art {
-  border-color: rgba(27, 23, 16, 0.1);
 }
 
 [data-theme="light"] .faq-topic-rail a {

@@ -400,7 +400,7 @@ function DecisionCard({ card }: { card: (typeof decisionGrid)[number] }) {
 export default function FaqPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="valley" variant="soft" focus="50% 38%" />
+      <PageBackdrop name="valley" focus="50% 46%" />
       <PageHero
         compact
         tone="moss"
@@ -420,12 +420,6 @@ export default function FaqPage() {
         <div className="faq-basics-shell">
           <Faq groups={faqGroups} />
           <aside className="faq-topic-rail" aria-label="FAQ topic shortcuts">
-            <figure className="faq-topic-rail__art" aria-hidden="true">
-              <picture>
-                <source srcSet="/img/watercolor/valley.avif" type="image/avif" />
-                <img src="/img/watercolor/valley.webp" alt="" loading="lazy" decoding="async" />
-              </picture>
-            </figure>
             <span>Jump to topic</span>
             {basicsRail.map((item) => (
               <a href={item.href} key={item.label}>

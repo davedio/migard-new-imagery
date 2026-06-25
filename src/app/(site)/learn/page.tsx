@@ -84,13 +84,6 @@ function CoreModel() {
           Users get a simple app flow. The protocol keeps each commitment checkable. Settlement becomes final only after verification.
         </p>
       </div>
-      <figure className={styles.coreArt}>
-        <picture>
-          <source srcSet="/img/watercolor/terraces.avif" type="image/avif" />
-          <img src="/img/watercolor/terraces.webp" alt="" loading="lazy" decoding="async" />
-        </picture>
-        <figcaption>Execution moves quickly; settlement follows the verified path.</figcaption>
-      </figure>
       <div className={styles.coreGraphic} aria-hidden="true">
         <div className={styles.coreSpine}>
           <span className={styles.corePacket} />
@@ -110,7 +103,7 @@ function CoreModel() {
 export default function LearnPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="canopy-light" variant="soft" focus="50% 24%" />
+      <PageBackdrop name="terraces" focus="50% 48%" />
       <PageHero
         compact
         tone="moss"
