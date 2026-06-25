@@ -85,6 +85,8 @@ test("home hero and path cards render cleanly", async ({ page }, testInfo) => {
   await expect(heroRoutes.getByRole("link", { name: /Use User path/i })).toHaveAttribute("href", "/learn#roles");
   await expect(heroRoutes.getByRole("link", { name: /Build Developer path/i })).toHaveAttribute("href", "/developers");
   await expect(heroRoutes.getByRole("link", { name: /Verify Independent verification/i })).toHaveAttribute("href", "/developers#developer-paths");
+  await expect(page.locator(".minimal-hero__dock")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
   await page.screenshot({ path: testInfo.outputPath("hero.png") });
 
   const pathSection = page.locator("#paths");
@@ -246,6 +248,14 @@ test("minimal preview renders tree-themed routing concept", async ({ page }, tes
   const partnerBoard = page.getByLabel("Ecosystem partner logos");
   await expect(partnerBoard.locator(".partner-magnet-card")).toHaveCount(9);
   await expect(partnerBoard.locator("a")).toHaveCount(0);
+  await expect(partnerBoard.locator(".partner-magnet-row")).toHaveCount(3);
+  await expect(partnerBoard.locator(".partner-magnet-row").nth(0).locator(".partner-magnet-card")).toHaveCount(3);
+  await expect(partnerBoard.locator(".partner-magnet-row").nth(1).locator(".partner-magnet-card")).toHaveCount(4);
+  await expect(partnerBoard.locator(".partner-magnet-row").nth(2).locator(".partner-magnet-card")).toHaveCount(2);
+  const partnerWidths = await partnerBoard.locator(".partner-magnet-card").evaluateAll((cards) =>
+    [...new Set(cards.map((card) => Math.round(card.getBoundingClientRect().width)))],
+  );
+  expect(partnerWidths).toHaveLength(1);
   for (const partnerName of [
     "WingRiders",
     "Anvil Dev Agency",
