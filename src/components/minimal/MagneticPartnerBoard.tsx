@@ -175,29 +175,33 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
             data-row={rowIndex + 1}
             key={row.map((partner) => partner.name).join("-")}
           >
-            {row.map((partner, index) => (
-              <div
-                className="partner-magnet-card"
-                data-logo-shape={partner.logoShape ?? "wide"}
-                data-slot={index + 1}
-                data-tone={partner.tone}
-                aria-label={partner.name}
-                key={partner.name}
-                role="listitem"
-              >
-                <span className="partner-magnet-card__logo" aria-hidden="true">
-                  <Image
-                    src={partner.logo}
-                    alt=""
-                    fill
-                    loading="eager"
-                    sizes="180px"
-                    style={logoImageStyle}
-                    unoptimized={isSvgLogo(partner.logo)}
-                  />
-                </span>
-              </div>
-            ))}
+            {row.map((partner, index) => {
+              const logo = partner.logoLight ?? partner.logo;
+
+              return (
+                <div
+                  className="partner-magnet-card"
+                  data-logo-shape={partner.logoShape ?? "wide"}
+                  data-slot={index + 1}
+                  data-tone={partner.tone}
+                  aria-label={partner.name}
+                  key={partner.name}
+                  role="listitem"
+                >
+                  <span className="partner-magnet-card__logo" aria-hidden="true">
+                    <Image
+                      src={logo}
+                      alt=""
+                      fill
+                      loading="eager"
+                      sizes="180px"
+                      style={logoImageStyle}
+                      unoptimized={isSvgLogo(logo)}
+                    />
+                  </span>
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

@@ -24,7 +24,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/artifi-labs-light.svg",
     width: 122,
     height: 31,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -33,7 +33,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/input-output-light.svg",
     width: 240,
     height: 31,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -42,7 +42,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/lace-wordmark-light.svg",
     width: 105,
     height: 35,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -51,16 +51,16 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/liqwid-light.svg",
     width: 2652,
     height: 841,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
     name: "Midgard",
     logo: "/midgard-logo.png",
-    logoLight: "/midgard-logo.png",
+    logoLight: "/midgard-logo-light.png",
     width: 1092,
     height: 251,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -69,7 +69,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/midnight-logo-dark.svg",
     width: 251,
     height: 55,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -93,9 +93,10 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   {
     name: "Pogun",
     logo: "/ecosystem/pogun-wordmark.svg",
+    logoLight: "/ecosystem/pogun-wordmark-light.svg",
     width: 800,
     height: 215,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -104,7 +105,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/realfi-logo-dark-text.svg",
     width: 346,
     height: 112,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -113,16 +114,16 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/sundae-labs.png",
     width: 1143,
     height: 195,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
     name: "Tweag",
     logo: "/ecosystem/tweag.png",
-    logoLight: "/ecosystem/tweag.png",
+    logoLight: "/ecosystem/tweag-light.png",
     width: 2110,
     height: 570,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
   {
@@ -140,7 +141,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/wingriders-dark.svg",
     width: 1600,
     height: 309,
-    tone: "dark",
+    tone: "light",
     logoShape: "wide",
   },
 ] as const;
