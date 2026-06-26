@@ -4932,3 +4932,95 @@ h2 em,
     0 18px 48px rgba(54, 45, 30, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
+/* ============================================================
+   DARK MODE — night watercolor imagery. Mirrors the
+   [data-theme="light"] backdrop rules with /dark night plates
+   and a light dark wash so the art reads on a dark page.
+   ============================================================ */
+[data-theme="dark"] .page-hero::before {
+  background-image: var(--hero-plate, url("/dark/v2/canopy-macro.avif"));
+  opacity: 0.85;
+}
+[data-theme="dark"] .page-hero--tone-moss {
+  --hero-plate: url("/dark/img/watercolor/canopy-light.avif");
+}
+[data-theme="dark"] .page-hero--tone-tree {
+  --hero-plate: url("/dark/img/watercolor/tree-vista-wide.avif");
+}
+[data-theme="dark"] .page-hero--tone-cobalt {
+  --hero-plate: url("/dark/img/watercolor/roots-glow.avif");
+}
+[data-theme="dark"] .page-hero--tone-ember {
+  --hero-plate: url("/dark/img/watercolor/rune-stones.avif");
+}
+[data-theme="dark"] .page-hero--tone-ink {
+  --hero-plate: url("/dark/img/watercolor/trunk-runes.avif");
+}
+[data-theme="dark"] .plate-stage__img {
+  background-image: url("/dark/plates/worldtree-day-tall.avif");
+}
+[data-theme="dark"] .minimal-tree {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.82)),
+    radial-gradient(circle at 50% 22%, rgba(78, 243, 131, 0.2), transparent 18rem),
+    url("/dark/plates/worldtree-wide-alt.jpg") center / cover,
+    linear-gradient(180deg, rgba(8, 16, 10, 0.88), rgba(4, 7, 5, 0.92));
+}
+[data-theme="dark"] .v2-band:not(.v2-band--hero) {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    url("/dark/img/watercolor/terraces.avif");
+  background-size: auto, cover;
+  background-position: center, 50% 46%;
+  border-top: 1px solid rgba(244, 241, 230, 0.06);
+}
+[data-theme="dark"] .v2-band#trunk {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    url("/dark/img/watercolor/forest-path.avif");
+  background-size: auto, cover;
+  background-position: center, 52% 52%;
+}
+[data-theme="dark"] .v2-band--thesis {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    url("/dark/img/watercolor/canopy-light.avif");
+  background-size: auto, cover;
+  background-position: center, 54% 44%;
+}
+[data-theme="dark"] .v2-band#roots {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    url("/dark/img/watercolor/roots-glow.avif");
+  background-size: auto, cover;
+  background-position: center, 52% 52%;
+}
+[data-theme="dark"] .v2-band#queue,
+[data-theme="dark"] .v2-band#prov {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    url("/dark/img/watercolor/trunk-runes.avif");
+  background-size: auto, cover;
+  background-position: center, 54% 48%;
+}
+[data-theme="dark"] .minimal-section--paths {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    url("/dark/img/watercolor/forest-path.avif");
+  background-size: auto, cover;
+  background-position: center, 54% 50%;
+}
+[data-theme="dark"] .minimal-section--split {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    url("/dark/img/watercolor/terraces.avif");
+  background-size: auto, cover;
+  background-position: center, 50% 48%;
+}
+[data-theme="dark"] .minimal-section--inspect {
+  background:
+    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    url("/dark/img/watercolor/trunk-runes.avif");
+  background-size: auto, cover;
+  background-position: center, 54% 48%;
+}

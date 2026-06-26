@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
+import { useTheme } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
 /*  Nav model                                                           */
@@ -41,6 +42,7 @@ export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
   const [scrolled, setScrolled] = useState(false);
+  const { theme, toggle: toggleTheme } = useTheme();
 
   const open = menu.open && menu.pathname === pathname;
 
@@ -113,6 +115,26 @@ export function SiteNav() {
 
         <div className="site-nav__right">
           <OfficialSocialLinks className="site-nav__social" linkClassName="site-nav__social-link" iconSize={17} />
+          <button
+            type="button"
+            className="site-nav__theme"
+            onClick={toggleTheme}
+            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            title="Toggle dark mode"
+          >
+            {theme === "dark" ? (
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="4.2" fill="currentColor" />
+                <g stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+                  <path d="M12 2.6v2.4M12 19v2.4M4.6 12H2.2M21.8 12h-2.4M5.6 5.6 7.3 7.3M16.7 16.7l1.7 1.7M18.4 5.6 16.7 7.3M7.3 16.7l-1.7 1.7" />
+                </g>
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 14.2A8 8 0 1 1 9.8 4 6.4 6.4 0 0 0 20 14.2Z" fill="currentColor" />
+              </svg>
+            )}
+          </button>
           <button
             type="button"
             className="site-nav__burger"

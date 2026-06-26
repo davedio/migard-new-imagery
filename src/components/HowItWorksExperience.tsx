@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
+import { useTheme, themedAsset } from "@/lib/theme";
 
 /* ============================================================
    HowItWorksExperience — the FLAGSHIP "ride a transaction" act,
@@ -236,7 +237,8 @@ export default function HowItWorksExperience({
   children: ReactNode;
 }) {
   const { motionOn, toggle } = useMotionPref();
-  const plateSrc = WATER_COLOR_JOURNEY_PLATE;
+  const { theme } = useTheme();
+  const plateSrc = themedAsset(WATER_COLOR_JOURNEY_PLATE, theme);
 
   // desktop + motion-on gate for the heavy interaction systems
   const [finePointer, setFinePointer] = useState(false);

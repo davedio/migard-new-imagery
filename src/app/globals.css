@@ -4274,3 +4274,57 @@ a.chip:hover {
 [data-theme="light"] .v2-statement p {
   text-shadow: 0 1px 10px rgba(241, 246, 238, 0.5);
 }
+/* ============================================================
+   DARK MODE — toggle button + night plate overrides.
+   Base chrome is already dark; these swap in /dark night imagery.
+   ============================================================ */
+.site-nav__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 241, 230, 0.16);
+  background: rgba(244, 241, 230, 0.04);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.site-nav__theme:hover {
+  background: rgba(244, 241, 230, 0.1);
+}
+.site-nav__theme:active {
+  transform: scale(0.94);
+}
+.site-nav__theme svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+[data-theme="light"] .site-nav__theme {
+  border-color: rgba(14, 27, 19, 0.16);
+  background: rgba(14, 27, 19, 0.04);
+}
+[data-theme="light"] .site-nav__theme:hover {
+  background: rgba(14, 27, 19, 0.08);
+}
+
+[data-theme="dark"] .plate-stage__img {
+  background-image: url("/dark/plates/worldtree-day-tall.avif");
+}
+[data-theme="dark"] .plate-stage__img--wide {
+  background-image: url("/dark/plates/worldtree-wide.avif");
+}
+[data-theme="dark"] .plate-stage__dof-img {
+  background-image: url("/dark/plates/worldtree-day-tall.avif");
+}
+[data-theme="dark"] .plate-stage__dof-img--wide {
+  background-image: url("/dark/plates/worldtree-wide.avif");
+}
+[data-theme="dark"] .security-backdrop {
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 4, 0.9) 0%, rgba(3, 7, 4, 0.58) 42%, rgba(3, 7, 4, 0.9) 100%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.2) 0%, #030704 94%),
+    url("/dark/backdrops/security-tree-roots.avif");
+}
