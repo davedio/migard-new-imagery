@@ -1,0 +1,344 @@
+.page {
+  min-height: 100svh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 72% 0%, rgba(78, 243, 131, 0.14), transparent 28rem),
+    radial-gradient(circle at 0% 26%, rgba(207, 154, 46, 0.12), transparent 24rem),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.88), rgba(3, 7, 4, 0.98));
+}
+
+.hero,
+.band,
+.split,
+.footerPreview {
+  position: relative;
+  z-index: 1;
+  width: min(var(--maxw), calc(100% - 2 * var(--gut)));
+  margin: 0 auto;
+}
+
+.hero {
+  min-height: 92svh;
+  display: grid;
+  align-content: center;
+  gap: clamp(36px, 6vw, 72px);
+  padding: clamp(112px, 14vh, 160px) 0 clamp(58px, 8vh, 92px);
+}
+
+.previewChrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 14px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  background: rgba(6, 12, 8, 0.62);
+  backdrop-filter: blur(10px);
+}
+
+.previewWordmark {
+  color: var(--text-hi);
+  font-family: var(--font-wordmark);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.previewNav,
+.heroActions,
+.buttonRow,
+.footerPills,
+.metricList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.previewNav {
+  justify-content: center;
+}
+
+.previewNav a,
+.heroActions a,
+.buttonRow a {
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.previewNav a {
+  padding: 8px 10px;
+}
+
+.previewNav a:hover,
+.heroActions a:hover,
+.buttonRow a:hover {
+  border-color: rgba(78, 243, 131, 0.5);
+  color: var(--text-hi);
+  background: rgba(78, 243, 131, 0.08);
+}
+
+.statusPill {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid rgba(78, 243, 131, 0.3);
+  border-radius: 999px;
+  color: var(--green-bright);
+  background: rgba(78, 243, 131, 0.08);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.38fr);
+  gap: clamp(26px, 5vw, 72px);
+  align-items: end;
+}
+
+.kicker {
+  margin: 0 0 12px;
+  color: var(--green-bright);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.hero h1,
+.sectionHead h2,
+.split h2,
+.footerPreview h2 {
+  margin: 0;
+  color: var(--text-hi);
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.hero h1 {
+  max-width: 860px;
+  font-size: clamp(48px, 7vw, 104px);
+  line-height: 0.95;
+}
+
+.heroLead {
+  max-width: 720px;
+  margin: 24px 0 0;
+  color: var(--text);
+  font-size: clamp(18px, 1.8vw, 24px);
+  line-height: 1.42;
+}
+
+.heroActions {
+  margin-top: 28px;
+}
+
+.heroActions a,
+.buttonRow a {
+  padding: 11px 14px;
+}
+
+.sourceCard,
+.cards3 article,
+.routeCard,
+.split > div,
+.footerPreview {
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.045), transparent 55%),
+    rgba(6, 12, 8, 0.72);
+}
+
+.sourceCard {
+  padding: 18px;
+}
+
+.sourceCard span,
+.cards3 span,
+.routeCard span {
+  color: var(--gold-bright);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sourceCard p,
+.copyBlock,
+.cards3 p,
+.routeCard p {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.sourceCard strong {
+  display: block;
+  margin-top: 14px;
+  color: var(--text-hi);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.band,
+.split,
+.footerPreview {
+  padding: clamp(48px, 7vw, 88px) 0;
+}
+
+.sectionHead {
+  max-width: 760px;
+  margin-bottom: 24px;
+}
+
+.sectionHead h2,
+.split h2,
+.footerPreview h2 {
+  font-size: clamp(32px, 4vw, 58px);
+  line-height: 1.02;
+}
+
+.cards3,
+.routeGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.cards3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cards3 article {
+  min-height: 210px;
+  padding: 18px;
+}
+
+.cards3 h3 {
+  margin: 16px 0 0;
+  color: var(--text-hi);
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 1.18;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.split > div {
+  padding: 22px;
+}
+
+.list {
+  display: grid;
+  gap: 9px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list li {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.list li::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 10px 2px 0;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 10px rgba(78, 243, 131, 0.45);
+}
+
+.routeGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.routeCard {
+  min-height: 220px;
+  padding: 18px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.metricList,
+.footerPills {
+  margin-top: 20px;
+}
+
+.metricList span,
+.footerPills span {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 999px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.footerPreview {
+  display: grid;
+  grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
+  gap: clamp(22px, 4vw, 58px);
+  align-items: center;
+  margin-bottom: clamp(54px, 8vw, 96px);
+  padding-inline: clamp(18px, 3vw, 34px);
+}
+
+@media (max-width: 980px) {
+  .previewChrome,
+  .heroGrid,
+  .split,
+  .footerPreview {
+    grid-template-columns: 1fr;
+  }
+
+  .previewChrome {
+    display: grid;
+    justify-items: start;
+  }
+
+  .cards3,
+  .routeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    min-height: auto;
+  }
+
+  .cards3,
+  .routeGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 44px;
+  }
+}
