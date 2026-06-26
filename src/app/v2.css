@@ -670,7 +670,7 @@ h2 em,
 .faq-model-card__score span {
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   line-height: 1;
   text-transform: uppercase;
@@ -733,7 +733,7 @@ h2 em,
   border-radius: 999px;
   background: rgba(5, 12, 8, 0.92);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--green-bright);
   box-shadow: 0 0 18px rgba(32, 190, 67, 0.16);
 }
@@ -1180,7 +1180,7 @@ h2 em,
   align-items: center;
   gap: 10px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -1247,7 +1247,7 @@ h2 em,
 .v2-marquee__seq i {
   font-style: normal;
   color: var(--gold-bright);
-  font-size: 8px;
+  font-size: 9.5px;
 }
 @keyframes v2-marquee {
   to {
@@ -1792,7 +1792,7 @@ h2 em,
 }
 .v2-duel__side[data-side="us"] li::before {
   content: "◆";
-  font-size: 8px;
+  font-size: 9.5px;
   top: 6px;
   color: var(--green-bright);
 }
@@ -2049,7 +2049,7 @@ h2 em,
   }
   .v2-band--thesis .v2-ch__index {
     gap: 12px;
-    font-size: 9.5px;
+    font-size: 11px;
     letter-spacing: 0.22em;
   }
   .v2-band--thesis .v2-ch__index .rule {
@@ -2821,7 +2821,7 @@ h2 em,
   overflow-wrap: anywhere;
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.3;
   white-space: normal;
 }
@@ -3635,7 +3635,7 @@ h2 em,
   border-radius: 999px;
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-style: normal;
   line-height: 1;
   text-transform: uppercase;
@@ -3861,7 +3861,7 @@ h2 em,
 .minimal-tree__stage-list span {
   flex: 0 0 auto;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--gold-bright);
 }
 
