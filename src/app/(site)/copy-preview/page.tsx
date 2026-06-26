@@ -33,6 +33,30 @@ const accuracyRules = [
   "Keep Cardano settlement as a feature, not the subject.",
 ] as const;
 
+const statusMetrics = [
+  { label: "Soft confirmation", value: "Seconds", live: false },
+  { label: "Settlement", value: "After verification", live: false },
+  { label: "Fraud proofs", value: "eUTXO-targeted", live: false },
+  { label: "Protocol fees", value: "ADA", live: false },
+  { label: "Status", value: "Pre-Alpha Testnet", live: true },
+] as const;
+
+const activityRows = [
+  { type: "TX", id: "8f3a...c291", status: "Soft confirmed", time: "11ms" },
+  { type: "TX", id: "2e91...7fa4", status: "Soft confirmed", time: "8ms" },
+  { type: "BLOCK", id: "Block #4 291", status: "Sealed", time: "1.2s" },
+  { type: "COMMIT", id: "Commit #4 289", status: "Queued to L1", time: "open" },
+  { type: "VERIFY", id: "Watcher replay", status: "Available", time: "live" },
+] as const;
+
+const flowSteps = [
+  { label: "Submit", detail: "App sends a UTXO transaction." },
+  { label: "Execute", detail: "Midgard gives a fast usable signal." },
+  { label: "Commit", detail: "Ordered state is posted for review." },
+  { label: "Verify", detail: "Watchers can replay and challenge." },
+  { label: "Settle", detail: "Valid state reaches Cardano settlement." },
+] as const;
+
 const pagePlan = [
   {
     title: "Learn",
@@ -60,6 +84,19 @@ const developerButtons = [
   { label: "Contracts", href: "/developers#contracts" },
   { label: "Docs", href: OFFICIAL_LINKS.docs },
   { label: "GitHub", href: OFFICIAL_LINKS.github },
+] as const;
+
+const codePanels = [
+  {
+    label: "Cardano L1",
+    endpoint: "cardano-node",
+    lines: ["const tx = await lucid.newTx()", ".payToAddress(\"addr1...\", value)", ".complete();"],
+  },
+  {
+    label: "Midgard",
+    endpoint: "midgard-rpc",
+    lines: ["const tx = await lucid.newTx()", ".payToAddress(\"addr1...\", value)", ".complete();"],
+  },
 ] as const;
 
 const howItWorksMoves = [
@@ -115,6 +152,73 @@ export default function CopyPreviewPage() {
             <p>Google change spec, Dave and Harun transcript, and Harun&apos;s Midgard website repo.</p>
             <strong>Preview only. Not wired into production copy.</strong>
           </div>
+        </div>
+      </section>
+
+      <section className={styles.widgetBand} aria-labelledby="reference-widgets-title">
+        <div className={styles.sectionHead}>
+          <p className={styles.kicker}>Network widgets</p>
+          <h2 id="reference-widgets-title">Execution, verification, and settlement in motion.</h2>
+        </div>
+
+        <div className={styles.statusRail} aria-label="Preview status metrics">
+          {statusMetrics.map((item) => (
+            <div className={styles.statusMetric} key={item.label}>
+              <span>{item.label}</span>
+              <strong>
+                {item.live ? <i className={styles.signalDot} aria-hidden="true" /> : null}
+                {item.value}
+              </strong>
+            </div>
+          ))}
+        </div>
+
+        <div className={styles.widgetGrid}>
+          <article className={styles.liveWidget} aria-labelledby="live-widget-title">
+            <div className={styles.widgetTopline}>
+              <div>
+                <span className={styles.signalDot} aria-hidden="true" />
+                <p id="live-widget-title">Midgard Node / Testnet</p>
+              </div>
+              <strong>eUTXO rules</strong>
+            </div>
+            <div className={styles.feedHeader}>
+              <span>Type</span>
+              <span>ID</span>
+              <span>Status</span>
+              <span>Time</span>
+            </div>
+            <ul className={styles.activityRows} aria-label="Simulated node activity">
+              {activityRows.map((row) => (
+                <li key={`${row.type}-${row.id}`}>
+                  <span>{row.type}</span>
+                  <span>{row.id}</span>
+                  <span>{row.status}</span>
+                  <span>{row.time}</span>
+                </li>
+              ))}
+            </ul>
+            <div className={styles.widgetFooter}>
+              <span>Simulated preview widget</span>
+              <span>Ready for live data later</span>
+            </div>
+          </article>
+
+          <article className={styles.flowWidget} aria-labelledby="flow-widget-title">
+            <p className={styles.kicker}>Transaction path</p>
+            <h3 id="flow-widget-title">Execution first. Verification before settlement.</h3>
+            <div className={styles.flowRail} aria-hidden="true">
+              <span />
+            </div>
+            <ol className={styles.flowSteps}>
+              {flowSteps.map((step) => (
+                <li key={step.label}>
+                  <strong>{step.label}</strong>
+                  <span>{step.detail}</span>
+                </li>
+              ))}
+            </ol>
+          </article>
         </div>
       </section>
 
@@ -198,6 +302,25 @@ export default function CopyPreviewPage() {
           <p className={styles.copyBlock}>
             The top of Developers should give a technical reader three clean actions before the long detail.
           </p>
+          <div className={styles.codeSwitch} aria-label="Developer endpoint preview">
+            <div className={styles.switchHeader}>
+              <span>Developer sandbox</span>
+              <strong>One endpoint change</strong>
+            </div>
+            <div className={styles.codeGrid}>
+              {codePanels.map((panel) => (
+                <div className={styles.codePanel} key={panel.label}>
+                  <div>
+                    <span>{panel.label}</span>
+                    <strong>{panel.endpoint}</strong>
+                  </div>
+                  <pre>
+                    <code>{panel.lines.join("\n")}</code>
+                  </pre>
+                </div>
+              ))}
+            </div>
+          </div>
           <div className={styles.buttonRow}>
             {developerButtons.map((item) => (
               <a href={item.href} key={item.label}>
