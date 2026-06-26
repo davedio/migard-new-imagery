@@ -5024,3 +5024,63 @@ h2 em,
   background-size: auto, cover;
   background-position: center, 54% 48%;
 }
+
+/* ------------------------------------------------------------
+   DARK MODE — page-backdrop scrims.
+   The base .page-backdrop__scrim washes are cream (built for the
+   light theme); on dark pages they read as a flat light-grey haze.
+   Re-tint every scrim variant to a dark green-black wash so the
+   night art stays dark and text keeps its legibility gradient.
+   ------------------------------------------------------------ */
+[data-theme="dark"] .page-backdrop--full .page-backdrop__img {
+  filter: saturate(1) contrast(1.02) brightness(0.92);
+}
+[data-theme="dark"] .page-backdrop--full .page-backdrop__scrim {
+  background:
+    radial-gradient(118% 82% at 18% 12%, rgba(10, 20, 14, 0.5), rgba(8, 16, 11, 0.18) 40%, transparent 72%),
+    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.1), transparent 68%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.2) 0%, rgba(4, 7, 5, 0.5) 58%, rgba(4, 7, 5, 0.82) 100%);
+}
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .page-hero::after {
+  background:
+    linear-gradient(90deg, rgba(4, 7, 5, 0.6) 0%, rgba(4, 7, 5, 0.36) 46%, rgba(4, 7, 5, 0.08) 78%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.08), rgba(4, 7, 5, 0.36));
+}
+[data-theme="dark"] .page-backdrop--soft .page-backdrop__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 13, 9, 0.4),
+    rgba(6, 13, 9, 0.16) 28%,
+    rgba(6, 13, 9, 0.6) 76%,
+    #06100b 100%
+  );
+}
+[data-theme="dark"] .page-backdrop--bold .page-backdrop__scrim {
+  background:
+    linear-gradient(90deg, rgba(6, 13, 9, 0.4), rgba(6, 13, 9, 0.1) 46%, transparent 72%),
+    linear-gradient(
+      180deg,
+      rgba(6, 13, 9, 0.2),
+      rgba(6, 13, 9, 0.08) 28%,
+      rgba(6, 13, 9, 0.66) 86%,
+      #06100b 100%
+    );
+}
+[data-theme="dark"] .page-backdrop--side .page-backdrop__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 13, 9, 0.16),
+    rgba(6, 13, 9, 0.08) 40%,
+    rgba(6, 13, 9, 0.56) 84%,
+    #06100b 100%
+  );
+}
+[data-theme="dark"] .page-backdrop--banner .page-backdrop__scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 13, 9, 0.1) 0,
+    rgba(6, 13, 9, 0.26) 38%,
+    rgba(6, 13, 9, 0.7) 64%,
+    #06100b 72%
+  );
+}
