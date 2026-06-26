@@ -132,7 +132,8 @@
   max-width: 760px;
 }
 
-.contractHeroCopy h1 {
+.contractHeroCopy h1,
+.contractHeroCopy h2 {
   margin: 0;
   max-width: 850px;
   color: var(--text-hi);

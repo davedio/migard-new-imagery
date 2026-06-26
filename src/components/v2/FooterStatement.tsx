@@ -23,12 +23,6 @@ const TOUR = [
     cta: "Open Developers",
   },
   {
-    href: "/contracts",
-    title: "Contracts",
-    detail: "Inspect preprod addresses and contract topology.",
-    cta: "Open Contracts",
-  },
-  {
     href: "/learn#security-overview",
     title: "Security overview",
     detail: "Review assumptions before trusting speed.",

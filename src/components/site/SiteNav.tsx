@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 
 /* ------------------------------------------------------------------ */
@@ -13,36 +13,15 @@ import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 type NavLink = {
   label: string;
   href: string;
-  description: string;
-  external?: boolean;
 };
 
-type NavGroup = {
-  label: string;
-  items: readonly NavLink[];
-};
-
-const NAV_GROUPS: readonly NavGroup[] = [
-  {
-    label: "Learn",
-    items: [
-      { label: "Learn overview", href: "/learn", description: "Plain-language model" },
-      {
-        label: "Security overview",
-        href: "/learn#security-overview",
-        description: "Trust path and reporting route",
-      },
-      { label: "How it works", href: "/how-it-works", description: "Transaction flow" },
-      { label: "FAQ", href: "/faq", description: "Trust-model answers" },
-    ],
-  },
-  {
-    label: "Developers",
-    items: [
-      { label: "Developer overview", href: "/developers", description: "Builder and Protocol Role paths" },
-      { label: "Contracts", href: "/contracts", description: "Topology, addresses, scripts" },
-    ],
-  },
+const NAV_LINKS: readonly NavLink[] = [
+  { label: "Home", href: "/" },
+  { label: "Learn", href: "/learn" },
+  { label: "How it works", href: "/how-it-works" },
+  { label: "Developers", href: "/developers" },
+  { label: "Security", href: "/learn#security-overview" },
+  { label: "FAQ", href: "/faq" },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -60,21 +39,10 @@ const NAV_GROUPS: readonly NavGroup[] = [
  */
 export function SiteNav() {
   const pathname = usePathname();
-  const navRef = useRef<HTMLElement>(null);
-  const hoverCloseTimer = useRef<number | null>(null);
   const [menu, setMenu] = useState({ pathname: "", open: false });
-  const [hoverGroup, setHoverGroup] = useState<string | null>(null);
-  const [pinnedGroup, setPinnedGroup] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
   const open = menu.open && menu.pathname === pathname;
-  const openGroup = pinnedGroup ?? hoverGroup;
-
-  const clearHoverClose = () => {
-    if (!hoverCloseTimer.current) return;
-    window.clearTimeout(hoverCloseTimer.current);
-    hoverCloseTimer.current = null;
-  };
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */
   useEffect(() => {
@@ -93,26 +61,16 @@ export function SiteNav() {
     return () => {
       window.cancelAnimationFrame(syncInitial);
       window.removeEventListener("scroll", onScroll);
-      clearHoverClose();
     };
   }, []);
 
   useEffect(() => {
-    const onPointerDown = (event: PointerEvent) => {
-      if (navRef.current?.contains(event.target as Node)) return;
-      setPinnedGroup(null);
-      setHoverGroup(null);
-    };
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      setPinnedGroup(null);
-      setHoverGroup(null);
       setMenu({ pathname, open: false });
     };
-    window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [pathname]);
@@ -128,6 +86,7 @@ export function SiteNav() {
   const isActive = (href: string) => {
     if (!href.startsWith("/")) return false;
     if (href.startsWith("/#")) return false;
+    if (href.includes("#")) return false;
     return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
   };
 
@@ -136,118 +95,20 @@ export function SiteNav() {
     "data-active": isActive(href),
   });
 
-  const isGroupActive = (group: NavGroup) => group.items.some((item) => isActive(item.href));
-
-  const openPinnedGroup = (label: string) => {
-    clearHoverClose();
-    setPinnedGroup((current) => (current === label ? null : label));
-    setHoverGroup(label);
-  };
-
-  const closeDropdown = () => {
-    clearHoverClose();
-    setPinnedGroup(null);
-    setHoverGroup(null);
-  };
-
-  const openHoverGroup = (label: string) => {
-    clearHoverClose();
-    setHoverGroup(label);
-  };
-
-  const scheduleHoverClose = () => {
-    if (pinnedGroup) return;
-    clearHoverClose();
-    hoverCloseTimer.current = window.setTimeout(() => {
-      setHoverGroup(null);
-      hoverCloseTimer.current = null;
-    }, 320);
-  };
-
-  const renderDropdownLink = (item: NavLink, mobile = false) => {
-    const active = isActive(item.href);
-    const content = (
-      <>
-        <span className={mobile ? "site-nav__mobile-label" : "site-nav__dropdown-label"}>
-          {item.label}
-        </span>
-        <span className={mobile ? "site-nav__mobile-desc" : "site-nav__dropdown-desc"}>
-          {item.description}
-        </span>
-      </>
-    );
-    if (item.external) {
-      return (
-        <a
-          key={item.label}
-          href={item.href}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-active={active}
-          onClick={mobile ? closeMenu : closeDropdown}
-          className={mobile ? "site-nav__mobile-child" : "site-nav__dropdown-link"}
-        >
-          {content}
-        </a>
-      );
-    }
-    return (
-      <Link
-        key={item.label}
-        href={item.href}
-        data-active={active}
-        onClick={mobile ? closeMenu : closeDropdown}
-        className={mobile ? "site-nav__mobile-child" : "site-nav__dropdown-link"}
-      >
-        {content}
-      </Link>
-    );
-  };
-
   return (
     <>
-      <nav ref={navRef} className="site-nav" data-scrolled={scrolled}>
+      <nav className="site-nav" data-scrolled={scrolled}>
         <Link href="/" className="site-nav__logo" aria-label="Midgard home">
           <Image src="/midgard-icon.png" alt="" aria-hidden width={28} height={28} priority unoptimized />
           <span className="wm">Midgard</span>
         </Link>
 
         <div className="site-nav__links">
-          <Link href="/" {...linkClass("/")}>
-            Home
-          </Link>
-          {NAV_GROUPS.map((group) => {
-            const groupOpen = openGroup === group.label;
-            return (
-              <div
-                key={group.label}
-                className="site-nav__group"
-                data-open={groupOpen}
-                onMouseEnter={() => openHoverGroup(group.label)}
-                onMouseLeave={scheduleHoverClose}
-              >
-                <button
-                  type="button"
-                  className="site-nav__link site-nav__heading"
-                  data-active={isGroupActive(group)}
-                  aria-expanded={groupOpen}
-                  aria-haspopup="true"
-                  onClick={() => openPinnedGroup(group.label)}
-                >
-                  {group.label}
-                </button>
-                <div
-                  className="site-nav__dropdown"
-                  role="menu"
-                  aria-label={`${group.label} links`}
-                  aria-hidden={!groupOpen}
-                  inert={!groupOpen}
-                >
-                  {group.items.map((item) => renderDropdownLink(item))}
-                </div>
-              </div>
-            );
-          })}
+          {NAV_LINKS.map((item) => (
+            <Link key={item.label} href={item.href} {...linkClass(item.href)}>
+              {item.label}
+            </Link>
+          ))}
         </div>
 
         <div className="site-nav__right">
@@ -266,9 +127,11 @@ export function SiteNav() {
 
       {/* Mobile menu — same page list as desktop. */}
       <div className="site-nav__mobile" data-open={open} aria-hidden={!open} inert={!open}>
-        <Link href="/" data-active={isActive("/")} onClick={closeMenu}>
-          Home
-        </Link>
+        {NAV_LINKS.map((item) => (
+          <Link key={item.label} href={item.href} data-active={isActive(item.href)} onClick={closeMenu}>
+            {item.label}
+          </Link>
+        ))}
         <OfficialSocialLinks
           className="site-nav__mobile-social"
           linkClassName="site-nav__mobile-social-link"
@@ -276,12 +139,6 @@ export function SiteNav() {
           showLabels
           onNavigate={closeMenu}
         />
-        {NAV_GROUPS.map((group) => (
-          <div className="site-nav__mobile-group" key={group.label}>
-            <div className="site-nav__mobile-title">{group.label}</div>
-            {group.items.map((item) => renderDropdownLink(item, true))}
-          </div>
-        ))}
       </div>
     </>
   );

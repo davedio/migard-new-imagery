@@ -9,7 +9,7 @@ import { SITE_COPY } from "@/lib/siteCopy";
 
 type FooterLink = {
   label: string;
-  href: string;
+  href?: string;
   external?: boolean;
   github?: boolean;
 };
@@ -21,6 +21,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "Home", href: "/" },
       { label: "Learn", href: "/learn" },
       { label: "How It Works", href: "/how-it-works" },
+      { label: "Security", href: "/learn#security-overview" },
       { label: "FAQ", href: "/faq" },
     ],
   },
@@ -28,14 +29,10 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Developers",
     links: [
       { label: "Developer Overview", href: "/developers" },
-      { label: "Contracts", href: "/contracts" },
+      { label: "Contracts", href: "/developers#contracts" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
-      {
-        label: "Whitepaper",
-        href: OFFICIAL_LINKS.whitepaper,
-        external: true,
-      },
+      { label: "Whitepaper coming soon" },
     ],
   },
   {
@@ -76,7 +73,9 @@ export function SiteFooter() {
             <ul>
               {col.links.map((l) => (
                 <li key={l.label}>
-                  {l.external ? (
+                  {!l.href ? (
+                    <span>{l.label}</span>
+                  ) : l.external ? (
                     <a
                       href={l.href}
                       target="_blank"

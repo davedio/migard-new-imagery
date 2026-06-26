@@ -117,7 +117,7 @@ export const DEVELOPER_COPY = {
     {
       label: "Contracts",
       detail: "Addresses, topology, state anchors",
-      href: "/contracts",
+      href: "/developers#contracts",
     },
     {
       label: "Security",
@@ -135,7 +135,7 @@ export const DEVELOPER_COPY = {
     {
       title: "Protocol reviewers",
       body: "Review validator topology, state anchors, reference scripts, and preprod deployment history before relying on the contract path.",
-      href: "/contracts",
+      href: "/developers#contracts",
       cta: "Inspect contracts",
     },
     {

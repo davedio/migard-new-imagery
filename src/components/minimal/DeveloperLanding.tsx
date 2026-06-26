@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import { ContractsReference } from "@/components/site/ContractsReference";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -17,7 +18,7 @@ const launchpad = [
   {
     label: "Contract addresses",
     detail: "Check validator topology, state anchors, reference scripts, and the preprod snapshot.",
-    href: "/contracts",
+    href: "/developers#contracts",
     cta: "Inspect contracts",
   },
   {
@@ -102,7 +103,7 @@ export default function DeveloperLanding() {
             variant: "primary",
             icon: <GitHubIcon size={15} />,
           },
-          { label: "Inspect contracts", href: "/contracts", variant: "ghost" },
+          { label: "Inspect contracts", href: "/developers#contracts", variant: "ghost" },
         ]}
       />
 
@@ -118,9 +119,7 @@ export default function DeveloperLanding() {
             </p>
             <div className={styles.supportLinks} aria-label="Supporting documents">
               <span>Protocol design notes</span>
-              <a href={OFFICIAL_LINKS.whitepaper} target="_blank" rel="noreferrer">
-                Read whitepaper -&gt;
-              </a>
+              <strong>Whitepaper coming soon</strong>
             </div>
           </div>
           <div className={styles.launchStack}>
@@ -169,6 +168,8 @@ export default function DeveloperLanding() {
           ))}
         </CardGrid>
       </Section>
+
+      <ContractsReference />
 
       <Section
         title="The builder checklist."

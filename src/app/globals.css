@@ -1925,10 +1925,14 @@ button.panel:hover {
   display: grid;
   gap: 9px;
 }
-.site-footer__col a {
+.site-footer__col a,
+.site-footer__col li > span {
   font-size: 13.5px;
   color: var(--text-dim);
   transition: color 0.2s var(--ease);
+}
+.site-footer__col li > span {
+  color: var(--text-faint);
 }
 .site-footer__col a:hover {
   color: var(--green-bright);
@@ -3549,6 +3553,13 @@ button.panel:hover {
 .next-steps__card:hover {
   border-color: var(--panel-edge-strong);
   transform: translateY(-2px);
+}
+.next-steps__card[aria-disabled="true"] {
+  cursor: default;
+}
+.next-steps__card[aria-disabled="true"]:hover {
+  border-color: var(--panel-edge);
+  transform: none;
 }
 .next-steps__label {
   display: inline-flex;

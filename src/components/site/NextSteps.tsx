@@ -4,7 +4,7 @@ export type NextStepItem = {
   label: string;
   /** Optional one-line supporting text under the label. */
   sub?: string;
-  href: string;
+  href?: string;
 };
 
 /**
@@ -31,20 +31,29 @@ export function NextSteps({
         </div>
         <div className="next-steps__grid">
           {items.map((item) => {
-            const external = /^https?:\/\//.test(item.href);
+            const external = item.href ? /^https?:\/\//.test(item.href) : false;
             const inner = (
               <>
                 <span className="next-steps__label">
                   {item.label}
-                  <span className="next-steps__arrow" aria-hidden>
-                    →
-                  </span>
+                  {item.href ? (
+                    <span className="next-steps__arrow" aria-hidden>
+                      →
+                    </span>
+                  ) : null}
                 </span>
                 {item.sub ? (
                   <span className="next-steps__sub">{item.sub}</span>
                 ) : null}
               </>
             );
+            if (!item.href) {
+              return (
+                <div key={item.label} className="next-steps__card panel" aria-disabled="true">
+                  {inner}
+                </div>
+              );
+            }
             return external ? (
               <a
                 key={item.href}

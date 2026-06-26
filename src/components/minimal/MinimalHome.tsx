@@ -45,7 +45,7 @@ const INSPECTION_PATHS = [
     title: "Contract surface",
     body: "Preprod validators, state anchors, reference scripts, topology, and genesis history in one place.",
     cta: "Inspect contracts",
-    href: "/contracts",
+    href: "/developers#contracts",
   },
   {
     title: "Source review",

@@ -112,7 +112,7 @@ const securityInspection = [
     title: "Inspect contracts",
     body: "Validator topology, state anchors, reference scripts, and genesis history.",
     cta: "Open contracts",
-    href: "/contracts",
+    href: "/developers#contracts",
   },
   {
     n: "03",

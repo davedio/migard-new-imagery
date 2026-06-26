@@ -27,9 +27,8 @@ export default function HowItWorksPage() {
             href: "/learn#security-overview",
           },
           {
-            label: "Whitepaper",
-            sub: "The challenge and fault-proof design that keeps operators honest",
-            href: OFFICIAL_LINKS.whitepaper,
+            label: "Whitepaper coming soon",
+            sub: "The technical writeup will return after the current claims cleanup.",
           },
           {
             label: "GitHub",
