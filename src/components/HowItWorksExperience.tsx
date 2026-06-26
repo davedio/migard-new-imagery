@@ -198,10 +198,7 @@ function HowItWorksExplainer() {
     <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
       <div className="hiw-explainer__head">
         <p>Transaction path</p>
-        <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
-        <span>
-          The animation shows the journey down the tree. This is the same path in plain language.
-        </span>
+        <h1 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h1>
       </div>
       <div className="hiw-explainer__grid">
         {EXPLAINER_STEPS.map((step) => (
