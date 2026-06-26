@@ -251,7 +251,7 @@ export default function LearnPage() {
       />
 
       <Section
-        title="One page for the core idea."
+        title="The simple model."
         lead="Midgard lets UTXO applications run faster while keeping the settlement path checkable."
       >
         <CoreModel />
