@@ -626,14 +626,14 @@ a.copyValue:hover {
 .directory {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
+  gap: 5px;
 }
 .contractRow {
   position: relative;
-  padding: 18px 20px 18px 22px;
+  padding: 11px 14px 12px 16px;
   border: 1px solid var(--panel-edge);
   border-left: 2px solid var(--panel-edge-strong);
-  border-radius: var(--r-lg);
+  border-radius: var(--r);
   background: linear-gradient(180deg, rgba(215, 226, 216, 0.02), transparent 40%), var(--panel);
 }
 .contractRow[data-accent="green"] {
@@ -645,12 +645,12 @@ a.copyValue:hover {
 .contractHead {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 .contractName {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-hi);
 }
@@ -662,25 +662,25 @@ a.copyValue:hover {
 }
 .tag {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
   border: 1px solid var(--panel-edge);
   border-radius: 999px;
-  padding: 3px 9px;
+  padding: 2px 7px;
 }
 .contractDesc {
-  margin: 9px 0 14px;
-  font-size: var(--body-size);
-  line-height: var(--body-line);
+  margin: 4px 0 8px;
+  font-size: 14px;
+  line-height: 1.36;
   color: var(--text);
 }
 .addrLine {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 12px;
+  gap: 6px;
+  padding-top: 7px;
   border-top: 1px solid var(--panel-edge);
 }
 .addrLabel {
@@ -690,6 +690,16 @@ a.copyValue:hover {
   text-transform: uppercase;
   color: var(--text-faint);
   flex: none;
+}
+.directory .copyField {
+  gap: 6px;
+}
+.directory .copyValue {
+  font-size: 11px;
+}
+.directory .copyBtn {
+  padding: 2px 6px;
+  font-size: 9px;
 }
 
 /* =========================================================================
