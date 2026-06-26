@@ -5023,7 +5023,7 @@ h2 em,
 }
 [data-theme="dark"] .v2-band--thesis {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.34), rgba(4, 7, 5, 0.58)),
     url("/dark/img/watercolor/canopy-light.avif");
   background-size: auto, cover;
   background-position: center, 54% 44%;
@@ -5045,21 +5045,21 @@ h2 em,
 }
 [data-theme="dark"] .minimal-section--paths {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.34), rgba(4, 7, 5, 0.58)),
     url("/dark/img/watercolor/forest-path.avif");
   background-size: auto, cover;
   background-position: center, 54% 50%;
 }
 [data-theme="dark"] .minimal-section--split {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.34), rgba(4, 7, 5, 0.58)),
     url("/dark/img/watercolor/terraces.avif");
   background-size: auto, cover;
   background-position: center, 50% 48%;
 }
 [data-theme="dark"] .minimal-section--inspect {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.34), rgba(4, 7, 5, 0.58)),
     url("/dark/img/watercolor/trunk-runes.avif");
   background-size: auto, cover;
   background-position: center, 54% 48%;
