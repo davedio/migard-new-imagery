@@ -167,7 +167,8 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
         <div className="hiw-act__scrim" aria-hidden />
         <div className="hiw-act__intro">
           <h1 className="hiw-act__title">
-            Fast execution first. Verification before final settlement.
+            Flow of a{" "}
+            <span style={{ color: "var(--green-bright)" }}>transaction</span>
           </h1>
           <p className="hiw-act__lead">
             For users, the path is deposit, transact, withdraw. Under the hood,
@@ -194,9 +195,13 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
 
 function HowItWorksExplainer() {
   return (
-    <section className="hiw-explainer" aria-label="Transaction path">
+    <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
       <div className="hiw-explainer__head">
         <p>Transaction path</p>
+        <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
+        <span>
+          The animation shows the journey down the tree. This is the same path in plain language.
+        </span>
       </div>
       <div className="hiw-explainer__grid">
         {EXPLAINER_STEPS.map((step) => (
