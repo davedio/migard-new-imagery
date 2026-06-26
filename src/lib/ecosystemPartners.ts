@@ -55,15 +55,6 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoShape: "wide",
   },
   {
-    name: "Midgard",
-    logo: "/midgard-logo.png",
-    logoLight: "/midgard-logo-light.png",
-    width: 1092,
-    height: 251,
-    tone: "dark",
-    logoShape: "wide",
-  },
-  {
     name: "Midnight",
     logo: "/ecosystem/midnight-logo-light.svg",
     logoLight: "/ecosystem/midnight-logo-dark.svg",
