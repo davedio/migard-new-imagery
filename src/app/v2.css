@@ -4434,6 +4434,44 @@ h2 em,
   }
 }
 
+/* ------------------------------------------------------------
+   DARK MODE — home hero tree stage. The base scrim is a near-white
+   cream wash (light theme); in dark mode it washed the whole hero
+   bright. Re-tint to a deep night veil and darken the tree image. */
+[data-theme="dark"] .hero-tree-stage__img {
+  filter: saturate(0.98) contrast(1.02) brightness(0.58);
+}
+[data-theme="dark"] .hero-tree-stage__scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(4, 7, 5, 0.85) 0%,
+      rgba(4, 7, 5, 0.52) 32%,
+      rgba(4, 7, 5, 0.14) 60%,
+      transparent 80%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(4, 7, 5, 0.42) 0%,
+      transparent 20%,
+      transparent 52%,
+      rgba(4, 7, 5, 0.86) 92%,
+      rgb(4, 7, 5) 100%
+    );
+}
+@media (max-aspect-ratio: 4 / 5) {
+  [data-theme="dark"] .hero-tree-stage__scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(4, 7, 5, 0.66) 0%,
+      rgba(4, 7, 5, 0.3) 26%,
+      rgba(4, 7, 5, 0.2) 46%,
+      rgba(4, 7, 5, 0.88) 88%,
+      rgb(4, 7, 5) 100%
+    );
+  }
+}
+
 /* -- light page body behind the minimal home -- */
 [data-theme="light"] .minimal-site {
   color: var(--text);
@@ -4940,7 +4978,8 @@ h2 em,
    ============================================================ */
 [data-theme="dark"] .page-hero::before {
   background-image: var(--hero-plate, url("/dark/v2/canopy-macro.avif"));
-  opacity: 0.85;
+  opacity: 0.62;
+  filter: brightness(0.66) saturate(0.96);
 }
 [data-theme="dark"] .page-hero--tone-moss {
   --hero-plate: url("/dark/img/watercolor/canopy-light.avif");
@@ -4962,14 +5001,14 @@ h2 em,
 }
 [data-theme="dark"] .minimal-tree {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.82)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.88)),
     radial-gradient(circle at 50% 22%, rgba(78, 243, 131, 0.2), transparent 18rem),
     url("/dark/plates/worldtree-wide-alt.jpg") center / cover,
     linear-gradient(180deg, rgba(8, 16, 10, 0.88), rgba(4, 7, 5, 0.92));
 }
 [data-theme="dark"] .v2-band:not(.v2-band--hero) {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.5), rgba(4, 7, 5, 0.74)),
     url("/dark/img/watercolor/terraces.avif");
   background-size: auto, cover;
   background-position: center, 50% 46%;
@@ -4977,21 +5016,21 @@ h2 em,
 }
 [data-theme="dark"] .v2-band#trunk {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.5), rgba(4, 7, 5, 0.74)),
     url("/dark/img/watercolor/forest-path.avif");
   background-size: auto, cover;
   background-position: center, 52% 52%;
 }
 [data-theme="dark"] .v2-band--thesis {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
     url("/dark/img/watercolor/canopy-light.avif");
   background-size: auto, cover;
   background-position: center, 54% 44%;
 }
 [data-theme="dark"] .v2-band#roots {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.5), rgba(4, 7, 5, 0.74)),
     url("/dark/img/watercolor/roots-glow.avif");
   background-size: auto, cover;
   background-position: center, 52% 52%;
@@ -4999,28 +5038,28 @@ h2 em,
 [data-theme="dark"] .v2-band#queue,
 [data-theme="dark"] .v2-band#prov {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.5), rgba(4, 7, 5, 0.74)),
     url("/dark/img/watercolor/trunk-runes.avif");
   background-size: auto, cover;
   background-position: center, 54% 48%;
 }
 [data-theme="dark"] .minimal-section--paths {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
     url("/dark/img/watercolor/forest-path.avif");
   background-size: auto, cover;
   background-position: center, 54% 50%;
 }
 [data-theme="dark"] .minimal-section--split {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
     url("/dark/img/watercolor/terraces.avif");
   background-size: auto, cover;
   background-position: center, 50% 48%;
 }
 [data-theme="dark"] .minimal-section--inspect {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.48), rgba(4, 7, 5, 0.72)),
     url("/dark/img/watercolor/trunk-runes.avif");
   background-size: auto, cover;
   background-position: center, 54% 48%;
@@ -5034,15 +5073,14 @@ h2 em,
    night art stays dark and text keeps its legibility gradient.
    ------------------------------------------------------------ */
 [data-theme="dark"] .page-backdrop--full .page-backdrop__img {
-  filter: saturate(1) contrast(1.02) brightness(0.92);
+  filter: saturate(0.95) contrast(1.02) brightness(0.5);
 }
 [data-theme="dark"] .page-backdrop--full .page-backdrop__scrim {
   /* full-bleed art with text floating over it at every scroll position, so a
-     gentle, fairly even veil (not a heavy bottom fade) keeps copy readable
-     wherever it lands while the night scene still shows through. */
+     fairly even veil keeps copy readable wherever it lands. Deep night tone. */
   background:
-    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.07), transparent 68%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.3) 0%, rgba(4, 7, 5, 0.42) 50%, rgba(4, 7, 5, 0.52) 100%);
+    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.06), transparent 68%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.46) 0%, rgba(4, 7, 5, 0.56) 50%, rgba(4, 7, 5, 0.64) 100%);
 }
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .page-hero::after {
   background:
