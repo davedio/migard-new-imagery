@@ -1148,7 +1148,7 @@ button.panel:hover {
 .lifecycle-rail text {
   fill: rgba(59, 232, 99, 0.82);
   font-family: var(--font-mono);
-  font-size: 8.5px;
+  font-size: 10px;
 }
 
 .lifecycle-rail text.is-muted {
@@ -1226,7 +1226,7 @@ button.panel:hover {
 .lifecycle-rail__arrow {
   fill: var(--green-bright);
   font-family: system-ui, sans-serif;
-  font-size: 7px;
+  font-size: 9px;
 }
 
 .lifecycle__main {
@@ -1796,7 +1796,7 @@ button.panel:hover {
   .site-nav__mobile-title {
     margin-top: 2px;
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--gold-bright);
@@ -2443,7 +2443,7 @@ button.panel:hover {
 .faq-decision-card dt {
   color: var(--green-bright);
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
@@ -2553,7 +2553,7 @@ button.panel:hover {
 .comparison-chart__score em {
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-style: normal;
   line-height: 1;
   text-transform: uppercase;
@@ -3357,7 +3357,7 @@ button.panel:hover {
     min-width: 0;
     padding: 7px 9px;
     align-items: flex-start;
-    font-size: 9px;
+    font-size: 10.5px;
     letter-spacing: 0.06em;
   }
   .hiw-act__beat-name {
@@ -3485,7 +3485,7 @@ button.panel:hover {
   color: var(--text-dim);
 }
 .network-chip__sim {
-  font-size: 10.5px;
+  font-size: 11.5px;
   letter-spacing: 0.12em;
   padding: 2px 5px;
   border: 1px solid var(--panel-edge);
@@ -3945,7 +3945,7 @@ a.chip:hover {
 }
 .changelog__tag {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 3px 8px;
@@ -4273,4 +4273,58 @@ a.chip:hover {
 [data-theme="light"] .hiw-act__lead,
 [data-theme="light"] .v2-statement p {
   text-shadow: 0 1px 10px rgba(241, 246, 238, 0.5);
+}
+/* ============================================================
+   DARK MODE — toggle button + night plate overrides.
+   Base chrome is already dark; these swap in /dark night imagery.
+   ============================================================ */
+.site-nav__theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(244, 241, 230, 0.16);
+  background: rgba(244, 241, 230, 0.04);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.site-nav__theme:hover {
+  background: rgba(244, 241, 230, 0.1);
+}
+.site-nav__theme:active {
+  transform: scale(0.94);
+}
+.site-nav__theme svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+}
+[data-theme="light"] .site-nav__theme {
+  border-color: rgba(14, 27, 19, 0.16);
+  background: rgba(14, 27, 19, 0.04);
+}
+[data-theme="light"] .site-nav__theme:hover {
+  background: rgba(14, 27, 19, 0.08);
+}
+
+[data-theme="dark"] .plate-stage__img {
+  background-image: url("/dark/plates/worldtree-day-tall.avif");
+}
+[data-theme="dark"] .plate-stage__img--wide {
+  background-image: url("/dark/plates/worldtree-wide.avif");
+}
+[data-theme="dark"] .plate-stage__dof-img {
+  background-image: url("/dark/plates/worldtree-day-tall.avif");
+}
+[data-theme="dark"] .plate-stage__dof-img--wide {
+  background-image: url("/dark/plates/worldtree-wide.avif");
+}
+[data-theme="dark"] .security-backdrop {
+  background-image:
+    linear-gradient(90deg, rgba(3, 7, 4, 0.9) 0%, rgba(3, 7, 4, 0.58) 42%, rgba(3, 7, 4, 0.9) 100%),
+    linear-gradient(180deg, rgba(3, 7, 4, 0.2) 0%, #030704 94%),
+    url("/dark/backdrops/security-tree-roots.avif");
 }

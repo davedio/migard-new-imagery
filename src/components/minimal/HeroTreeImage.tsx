@@ -14,6 +14,7 @@
 
 import { useEffect, useRef } from "react";
 import { useMotionPref } from "@/lib/motion";
+import { useTheme } from "@/lib/theme";
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const smooth01 = (v: number) => {
@@ -23,6 +24,7 @@ const smooth01 = (v: number) => {
 
 export function HeroTreeImage() {
   const { motionOn } = useMotionPref();
+  const { theme } = useTheme();
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
@@ -64,8 +66,9 @@ export function HeroTreeImage() {
     return () => cancelAnimationFrame(raf);
   }, [motionOn]);
 
-  const V = "/img/tree/tree-hero-vista";
-  const P = "/img/tree/tree-hero-portrait";
+  const pfx = theme === "dark" ? "/dark" : "";
+  const V = `${pfx}/img/tree/tree-hero-vista`;
+  const P = `${pfx}/img/tree/tree-hero-portrait`;
 
   return (
     <div

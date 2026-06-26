@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useTheme } from "@/lib/theme";
 
 /* ============================================================
    PageBackdrop — full-page painterly backdrop for interior pages.
@@ -8,7 +9,6 @@ import type { CSSProperties } from "react";
 
 export type BackdropVariant = "full" | "soft" | "bold" | "side" | "banner";
 
-const BASE = "/img/watercolor";
 
 export function PageBackdrop({
   name,
@@ -19,6 +19,8 @@ export function PageBackdrop({
   variant?: BackdropVariant;
   focus?: string;
 }) {
+  const { theme } = useTheme();
+  const base = theme === "dark" ? "/dark/img/watercolor" : "/img/watercolor";
   return (
     <div
       className={`page-backdrop page-backdrop--${variant}`}
@@ -26,11 +28,11 @@ export function PageBackdrop({
       aria-hidden="true"
     >
       <picture>
-        <source type="image/avif" srcSet={`${BASE}/${name}.avif`} />
-        <source type="image/webp" srcSet={`${BASE}/${name}.webp`} />
+        <source type="image/avif" srcSet={`${base}/${name}.avif`} />
+        <source type="image/webp" srcSet={`${base}/${name}.webp`} />
         <img
           className="page-backdrop__img"
-          src={`${BASE}/${name}.webp`}
+          src={`${base}/${name}.webp`}
           alt=""
           decoding="async"
         />

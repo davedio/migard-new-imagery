@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef } from "react";
 import type { EcosystemPartner } from "@/lib/ecosystemPartners";
+import { useTheme } from "@/lib/theme";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 const isSvgLogo = (logo: string) => logo.endsWith(".svg");
@@ -40,6 +41,7 @@ function chunkPartners(partners: readonly EcosystemPartner[]) {
 }
 
 export function MagneticPartnerBoard({ partners }: { partners: readonly EcosystemPartner[] }) {
+  const { theme } = useTheme();
   const rows = chunkPartners(partners);
   const boardRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<CardSnapshot[]>([]);
@@ -176,7 +178,10 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
             key={row.map((partner) => partner.name).join("-")}
           >
             {row.map((partner, index) => {
-              const logo = partner.logoLight ?? partner.logo;
+              // Dark site: use the light-colored logo (partner.logo) so it reads
+              // on a dark chip. Light site: use the dark-ink logoLight variant.
+              const logo =
+                theme === "dark" ? partner.logo : partner.logoLight ?? partner.logo;
 
               return (
                 <div
