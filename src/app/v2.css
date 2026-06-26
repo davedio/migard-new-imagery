@@ -4536,17 +4536,18 @@ h2 em,
   background: rgba(255, 255, 255, 0.86);
   border-color: rgba(12, 125, 54, 0.3);
 }
+/* Light site: every partner chip is a warm cream plate (logos are dark-ink
+   logoLight variants), regardless of the partner's dark-mode tone. */
 [data-theme="light"] .partner-magnet-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(246, 240, 226, 0.58)),
+    rgba(250, 247, 238, 0.92);
   border-color: rgba(15, 35, 23, 0.12);
   box-shadow:
     0 16px 30px rgba(54, 45, 30, 0.12),
     0 3px 0 rgba(73, 55, 23, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.78);
-}
-[data-theme="light"] .partner-magnet-card[data-tone="dark"] {
-  background:
-    linear-gradient(180deg, rgba(15, 28, 19, 0.82), rgba(7, 13, 9, 0.86)),
-    rgba(6, 11, 7, 0.86);
+  color: rgba(17, 27, 20, 0.74);
 }
 [data-theme="light"] .minimal-channel-card__icon {
   background: rgba(255, 255, 255, 0.6);
@@ -4968,7 +4969,7 @@ h2 em,
 }
 [data-theme="dark"] .v2-band:not(.v2-band--hero) {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
     url("/dark/img/watercolor/terraces.avif");
   background-size: auto, cover;
   background-position: center, 50% 46%;
@@ -4976,21 +4977,21 @@ h2 em,
 }
 [data-theme="dark"] .v2-band#trunk {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
     url("/dark/img/watercolor/forest-path.avif");
   background-size: auto, cover;
   background-position: center, 52% 52%;
 }
 [data-theme="dark"] .v2-band--thesis {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
     url("/dark/img/watercolor/canopy-light.avif");
   background-size: auto, cover;
   background-position: center, 54% 44%;
 }
 [data-theme="dark"] .v2-band#roots {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
     url("/dark/img/watercolor/roots-glow.avif");
   background-size: auto, cover;
   background-position: center, 52% 52%;
@@ -4998,28 +4999,28 @@ h2 em,
 [data-theme="dark"] .v2-band#queue,
 [data-theme="dark"] .v2-band#prov {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.42), rgba(4, 7, 5, 0.58)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.16), rgba(4, 7, 5, 0.44)),
     url("/dark/img/watercolor/trunk-runes.avif");
   background-size: auto, cover;
   background-position: center, 54% 48%;
 }
 [data-theme="dark"] .minimal-section--paths {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
     url("/dark/img/watercolor/forest-path.avif");
   background-size: auto, cover;
   background-position: center, 54% 50%;
 }
 [data-theme="dark"] .minimal-section--split {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
     url("/dark/img/watercolor/terraces.avif");
   background-size: auto, cover;
   background-position: center, 50% 48%;
 }
 [data-theme="dark"] .minimal-section--inspect {
   background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.4), rgba(4, 7, 5, 0.56)),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.14), rgba(4, 7, 5, 0.42)),
     url("/dark/img/watercolor/trunk-runes.avif");
   background-size: auto, cover;
   background-position: center, 54% 48%;
@@ -5036,10 +5037,12 @@ h2 em,
   filter: saturate(1) contrast(1.02) brightness(0.92);
 }
 [data-theme="dark"] .page-backdrop--full .page-backdrop__scrim {
+  /* full-bleed art with text floating over it at every scroll position, so a
+     gentle, fairly even veil (not a heavy bottom fade) keeps copy readable
+     wherever it lands while the night scene still shows through. */
   background:
-    radial-gradient(118% 82% at 18% 12%, rgba(10, 20, 14, 0.5), rgba(8, 16, 11, 0.18) 40%, transparent 72%),
-    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.1), transparent 68%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.2) 0%, rgba(4, 7, 5, 0.5) 58%, rgba(4, 7, 5, 0.82) 100%);
+    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.07), transparent 68%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.3) 0%, rgba(4, 7, 5, 0.42) 50%, rgba(4, 7, 5, 0.52) 100%);
 }
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .page-hero::after {
   background:
@@ -5049,38 +5052,50 @@ h2 em,
 [data-theme="dark"] .page-backdrop--soft .page-backdrop__scrim {
   background: linear-gradient(
     180deg,
-    rgba(6, 13, 9, 0.4),
-    rgba(6, 13, 9, 0.16) 28%,
-    rgba(6, 13, 9, 0.6) 76%,
+    rgba(6, 13, 9, 0.18),
+    rgba(6, 13, 9, 0.06) 28%,
+    rgba(6, 13, 9, 0.4) 76%,
     #06100b 100%
   );
 }
 [data-theme="dark"] .page-backdrop--bold .page-backdrop__scrim {
   background:
-    linear-gradient(90deg, rgba(6, 13, 9, 0.4), rgba(6, 13, 9, 0.1) 46%, transparent 72%),
+    linear-gradient(90deg, rgba(6, 13, 9, 0.22), rgba(6, 13, 9, 0.06) 46%, transparent 72%),
     linear-gradient(
       180deg,
-      rgba(6, 13, 9, 0.2),
-      rgba(6, 13, 9, 0.08) 28%,
-      rgba(6, 13, 9, 0.66) 86%,
+      rgba(6, 13, 9, 0.1),
+      transparent 28%,
+      rgba(6, 13, 9, 0.46) 86%,
       #06100b 100%
     );
 }
 [data-theme="dark"] .page-backdrop--side .page-backdrop__scrim {
   background: linear-gradient(
     180deg,
-    rgba(6, 13, 9, 0.16),
-    rgba(6, 13, 9, 0.08) 40%,
-    rgba(6, 13, 9, 0.56) 84%,
+    rgba(6, 13, 9, 0.08),
+    transparent 40%,
+    rgba(6, 13, 9, 0.4) 84%,
     #06100b 100%
   );
 }
 [data-theme="dark"] .page-backdrop--banner .page-backdrop__scrim {
   background: linear-gradient(
     180deg,
-    rgba(6, 13, 9, 0.1) 0,
-    rgba(6, 13, 9, 0.26) 38%,
-    rgba(6, 13, 9, 0.7) 64%,
+    transparent 0,
+    rgba(6, 13, 9, 0.14) 38%,
+    rgba(6, 13, 9, 0.5) 64%,
     #06100b 72%
   );
+}
+
+/* Now that the washes are lighter, intro copy that floats directly over the
+   night art (no solid panel behind it) gets a soft shadow instead of a wash —
+   keeps it legible without graying the page. Invisible on solid sections. */
+[data-theme="dark"] .section__head h2,
+[data-theme="dark"] .section__head .lead,
+[data-theme="dark"] [class*="coreCopy"] h3,
+[data-theme="dark"] [class*="coreCopy"] p {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.5),
+    0 2px 16px rgba(0, 0, 0, 0.34);
 }

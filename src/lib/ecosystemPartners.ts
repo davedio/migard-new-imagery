@@ -24,7 +24,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/artifi-labs-light.svg",
     width: 122,
     height: 31,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -33,7 +33,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/input-output-light.svg",
     width: 240,
     height: 31,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -42,7 +42,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/lace-wordmark-light.svg",
     width: 105,
     height: 35,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -51,7 +51,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/liqwid-light.svg",
     width: 2652,
     height: 841,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -60,7 +60,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/midgard-logo-light.png",
     width: 1092,
     height: 251,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -69,7 +69,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/midnight-logo-dark.svg",
     width: 251,
     height: 55,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -78,7 +78,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/minswap-dark.png",
     width: 96,
     height: 96,
-    tone: "light",
+    tone: "dark",
     logoShape: "icon",
   },
   {
@@ -96,7 +96,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/pogun-wordmark-light.svg",
     width: 800,
     height: 215,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -105,7 +105,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/realfi-logo-dark-text.svg",
     width: 346,
     height: 112,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -114,7 +114,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/sundae-labs.png",
     width: 1143,
     height: 195,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -123,7 +123,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/tweag-light.png",
     width: 2110,
     height: 570,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -132,7 +132,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/usdcx.png",
     width: 330,
     height: 331,
-    tone: "light",
+    tone: "dark",
     logoShape: "icon",
   },
   {
@@ -141,7 +141,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/wingriders-dark.svg",
     width: 1600,
     height: 309,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
 ] as const;
