@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FocusEvent } from "react";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { useTheme } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
@@ -14,13 +15,48 @@ import { useTheme } from "@/lib/theme";
 type NavLink = {
   label: string;
   href: string;
+  children?: readonly NavChild[];
+};
+
+type NavChild = {
+  label: string;
+  description: string;
+  href: string;
+  external?: boolean;
 };
 
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Learn", href: "/learn" },
-  { label: "Developers", href: "/developers" },
-  { label: "Participate", href: "/participate" },
+  {
+    label: "Learn",
+    href: "/learn",
+    children: [
+      { label: "Overview", description: "Start with the plain-language protocol map.", href: "/learn" },
+      { label: "How it works", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
+      { label: "FAQ", description: "Common questions about roles, settlement, and security.", href: "/faq" },
+      { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/glossary" },
+    ],
+  },
+  {
+    label: "Developers",
+    href: "/developers",
+    children: [
+      { label: "Developer overview", description: "Source, docs, contracts, and review paths.", href: "/developers" },
+      { label: "Contracts", description: "Preprod validators, anchors, scripts, and topology.", href: "/developers#contracts" },
+      { label: "Docs", description: "Current public source and documentation.", href: OFFICIAL_LINKS.docs, external: true },
+      { label: "GitHub", description: "Repository, issues, and implementation history.", href: OFFICIAL_LINKS.github, external: true },
+    ],
+  },
+  {
+    label: "Participate",
+    href: "/participate",
+    children: [
+      { label: "Overview", description: "Operator, Watcher, and ecosystem participation paths.", href: "/participate" },
+      { label: "Operators and Watchers", description: "Network roles that order activity and verify state.", href: "/participate#roles" },
+      { label: "Security", description: "Commitments, challenges, and settlement checks.", href: "/participate#security" },
+      { label: "Economics", description: "Fees, rewards, bonds, and network incentives.", href: "/participate#economics" },
+    ],
+  },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -30,15 +66,15 @@ const NAV_LINKS: readonly NavLink[] = [
 /**
  * Fixed top navigation shared across every page in the (site) route group.
  *
- * Desktop: the real first-level pages are all exposed as plain links so the
- * site map can be reviewed directly. A scrim fades in once the page is
- * scrolled (data-scrolled).
+ * Desktop: first-level pages stay visible, with dropdowns for their subpages.
+ * A scrim fades in once the page is scrolled (data-scrolled).
  *
- * Mobile: burger menu with the same page list.
+ * Mobile: burger menu with the same grouped page list.
  */
 export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
+  const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
 
@@ -81,6 +117,10 @@ export function SiteNav() {
       pathname,
       open: state.pathname === pathname ? !state.open : true,
     }));
+  const closeDesktopDropdown = (event: FocusEvent<HTMLDivElement>) => {
+    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+    setDesktopDropdown(null);
+  };
 
   /* Home is active only on exactly "/" — every route starts with "/". */
   const isActive = (href: string) => {
@@ -90,8 +130,11 @@ export function SiteNav() {
     return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  const linkClass = (href: string) => ({
-    className: "site-nav__link",
+  const isNavItemActive = (item: NavLink) =>
+    isActive(item.href) || item.children?.some((child) => isActive(child.href)) === true;
+
+  const linkClass = (href: string, className = "site-nav__link") => ({
+    className,
     "data-active": isActive(href),
   });
 
@@ -104,11 +147,49 @@ export function SiteNav() {
         </Link>
 
         <div className="site-nav__links">
-          {NAV_LINKS.map((item) => (
-            <Link key={item.label} href={item.href} {...linkClass(item.href)}>
-              {item.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((item) =>
+            item.children ? (
+              <div
+                key={item.label}
+                className="site-nav__group"
+                data-open={desktopDropdown === item.label}
+                onMouseEnter={() => setDesktopDropdown(item.label)}
+                onMouseLeave={() => setDesktopDropdown(null)}
+                onFocus={() => setDesktopDropdown(item.label)}
+                onBlur={closeDesktopDropdown}
+              >
+                <Link href={item.href} className="site-nav__link site-nav__heading" data-active={isNavItemActive(item)}>
+                  {item.label}
+                </Link>
+                <div className="site-nav__dropdown" role="menu" aria-label={`${item.label} links`}>
+                  {item.children.map((child) =>
+                    child.external ? (
+                      <a
+                        key={child.label}
+                        href={child.href}
+                        className="site-nav__dropdown-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        role="menuitem"
+                      >
+                        <span className="site-nav__dropdown-label">{child.label}</span>
+                        <span className="site-nav__dropdown-desc">{child.description}</span>
+                      </a>
+                    ) : (
+                      <Link key={child.label} href={child.href} {...linkClass(child.href, "site-nav__dropdown-link")} role="menuitem">
+                        <span className="site-nav__dropdown-label">{child.label}</span>
+                        <span className="site-nav__dropdown-desc">{child.description}</span>
+                      </Link>
+                    ),
+                  )}
+                </div>
+              </div>
+            ) : (
+              <Link key={item.label} href={item.href} {...linkClass(item.href)}>
+                {item.label}
+              </Link>
+            ),
+          )}
         </div>
 
         <div className="site-nav__right">
@@ -145,13 +226,52 @@ export function SiteNav() {
         </div>
       </nav>
 
-      {/* Mobile menu — same page list as desktop. */}
+      {/* Mobile menu — same grouped page list as desktop. */}
       <div className="site-nav__mobile" data-open={open} aria-hidden={!open} inert={!open}>
-        {NAV_LINKS.map((item) => (
-          <Link key={item.label} href={item.href} data-active={isActive(item.href)} onClick={closeMenu}>
-            {item.label}
-          </Link>
-        ))}
+        {NAV_LINKS.map((item) =>
+          item.children ? (
+            <div key={item.label} className="site-nav__mobile-group">
+              <Link
+                href={item.href}
+                className="site-nav__mobile-title"
+                data-active={isNavItemActive(item)}
+                onClick={closeMenu}
+              >
+                {item.label}
+              </Link>
+              {item.children.map((child) =>
+                child.external ? (
+                  <a
+                    key={child.label}
+                    href={child.href}
+                    className="site-nav__mobile-child"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={closeMenu}
+                  >
+                    <span className="site-nav__mobile-label">{child.label}</span>
+                    <span className="site-nav__mobile-desc">{child.description}</span>
+                  </a>
+                ) : (
+                  <Link
+                    key={child.label}
+                    href={child.href}
+                    className="site-nav__mobile-child"
+                    data-active={isActive(child.href)}
+                    onClick={closeMenu}
+                  >
+                    <span className="site-nav__mobile-label">{child.label}</span>
+                    <span className="site-nav__mobile-desc">{child.description}</span>
+                  </Link>
+                ),
+              )}
+            </div>
+          ) : (
+            <Link key={item.label} href={item.href} data-active={isActive(item.href)} onClick={closeMenu}>
+              {item.label}
+            </Link>
+          ),
+        )}
         <OfficialSocialLinks
           className="site-nav__mobile-social"
           linkClassName="site-nav__mobile-social-link"
