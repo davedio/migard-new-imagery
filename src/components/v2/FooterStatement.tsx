@@ -13,7 +13,7 @@ const TOUR = [
   {
     href: "/learn",
     title: "Learn Midgard",
-    detail: "Start with the plain-language model.",
+    detail: "Start with the plain-language index.",
     cta: "Open Learn",
   },
   {
@@ -23,16 +23,10 @@ const TOUR = [
     cta: "Open Developers",
   },
   {
-    href: "/learn#security-overview",
-    title: "Security overview",
-    detail: "Review assumptions before trusting speed.",
-    cta: "Open security",
-  },
-  {
-    href: "/faq",
-    title: "FAQ",
-    detail: "Compare trust models and common questions.",
-    cta: "Open FAQ",
+    href: "/participate",
+    title: "Participate",
+    detail: "Review Operators, Watchers, security, and economics.",
+    cta: "Open Participate",
   },
 ] as const;
 

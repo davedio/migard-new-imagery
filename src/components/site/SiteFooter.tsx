@@ -20,9 +20,8 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Home", href: "/" },
       { label: "Learn", href: "/learn" },
-      { label: "How It Works", href: "/how-it-works" },
-      { label: "Security", href: "/learn#security-overview" },
-      { label: "FAQ", href: "/faq" },
+      { label: "Developers", href: "/developers" },
+      { label: "Participate", href: "/participate" },
     ],
   },
   {
@@ -30,6 +29,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Developer Overview", href: "/developers" },
       { label: "Contracts", href: "/developers#contracts" },
+      { label: "Docs", href: OFFICIAL_LINKS.docs, external: true, github: true },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
       { label: "Whitepaper coming soon" },
@@ -38,9 +38,11 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
   {
     title: "Learn",
     links: [
-      { label: "Security overview", href: "/learn#security-overview" },
-      { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy },
+      { label: "How it works", href: "/how-it-works" },
       { label: "FAQ", href: "/faq" },
+      { label: "Glossary", href: "/glossary" },
+      { label: "Trust / Trust in Utility", href: "/participate#security" },
+      { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy },
     ],
   },
 ];
