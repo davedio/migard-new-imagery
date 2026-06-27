@@ -39,7 +39,7 @@ const INSPECTION_PATHS = [
     title: "Security model",
     body: "How fast confirmations, fault-proof checks, Watcher replay, and final Cardano L1 settlement fit together.",
     cta: "Read security",
-    href: "/learn#security-overview",
+    href: "/participate#security",
   },
   {
     title: "Contract surface",
@@ -76,28 +76,19 @@ const HERO_ROUTES = [
   {
     label: "Use",
     detail: "User path",
-    href: "/learn#roles",
+    href: "/learn",
   },
   {
-    label: "Build",
+    label: "Developers",
     detail: "Developer path",
     href: "/developers",
   },
   {
     label: "Verify",
     detail: "Independent verification",
-    href: "/developers#developer-paths",
+    href: "/participate",
   },
 ] as const;
-
-const METRIC_STATUS = {
-  "Soft confirmations": "Benchmark",
-  "Settlement security": "Trust path",
-  "Execution model": "Architecture",
-  "Verified smart contracts": "Formal methods",
-  "Independent verification": "Challenge path",
-  Status: "Current phase",
-} as const;
 
 function EcosystemPartners() {
   return (
@@ -156,17 +147,16 @@ export default function MinimalHome() {
       <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
         <div className="minimal-section__head">
           <h2 id="minimal-paths-title">Choose your path.</h2>
-          <p>Users learn the flow. Builders inspect source and contracts. Protocol Roles participate in the network.</p>
+          <p>Users learn the flow. Developers inspect source and contracts. Protocol Roles participate in the network.</p>
         </div>
-        <div className="minimal-card-grid minimal-card-grid--3">
+        <nav className="minimal-hero-routes" aria-label="Midgard path shortcuts">
           {SITE_COPY.paths.map((path) => (
-            <SmartLink key={path.title} className="minimal-card minimal-card--link" href={path.href}>
-              <h3>{path.title}</h3>
-              <p>{path.body}</p>
-              <span>{path.cta} -&gt;</span>
+            <SmartLink key={path.title} className="minimal-hero-route" href={path.href}>
+              <strong>{path.title}</strong>
+              <span>{path.cta}</span>
             </SmartLink>
           ))}
-        </div>
+        </nav>
       </section>
 
       <section className="minimal-section minimal-section--split" aria-labelledby="minimal-mechanism-title">
@@ -195,30 +185,6 @@ export default function MinimalHome() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="minimal-section" aria-labelledby="minimal-proof-title">
-        <div className="minimal-section__head">
-          <h2 id="minimal-proof-title">Track the claims people can verify.</h2>
-          <p>Publish the indicators that reduce guesswork: speed, settlement, UTXO fit, verification coverage, and status.</p>
-        </div>
-        <div className="minimal-metrics">
-          {SITE_COPY.proofPoints.map((item) => (
-            <div className="minimal-metric" key={item.k}>
-              <div>
-                <span>{item.k}</span>
-                <em>{METRIC_STATUS[item.k]}</em>
-              </div>
-              <strong>{item.v}</strong>
-              <p>{item.s}</p>
-              {"href" in item ? (
-                <a className="minimal-metric__link" href={item.href} target="_blank" rel="noopener noreferrer">
-                  {item.cta} -&gt;
-                </a>
-              ) : null}
-            </div>
-          ))}
         </div>
       </section>
 

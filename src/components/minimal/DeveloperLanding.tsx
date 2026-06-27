@@ -9,29 +9,24 @@ import styles from "@/components/site/developer.module.css";
 
 const launchpad = [
   {
-    label: "Review source",
-    detail: "Open the node code, contract implementation, and public issues.",
-    href: OFFICIAL_LINKS.github,
-    cta: "Open GitHub",
-    github: true,
-  },
-  {
-    label: "Contract addresses",
+    label: "Contracts",
     detail: "Check validator topology, state anchors, reference scripts, and the preprod snapshot.",
     href: "/developers#contracts",
     cta: "Inspect contracts",
   },
   {
-    label: "Security model",
-    detail: "Understand the trust path, fault-proof checks, Watcher replay, data availability, and Cardano L1 settlement.",
-    href: "/learn#security-overview",
-    cta: "Read security",
+    label: "Docs",
+    detail: "Use the current source documentation and repository material.",
+    href: OFFICIAL_LINKS.docs,
+    cta: "Open docs",
+    github: true,
   },
   {
-    label: "Protocol Roles",
-    detail: "Run Operator or Watcher nodes, register infrastructure interest, or follow the current testnet participation path.",
-    href: OFFICIAL_LINKS.intakeForm,
-    cta: "Open intake form",
+    label: "GitHub",
+    detail: "Open the node code, contract implementation, and public issues.",
+    href: OFFICIAL_LINKS.github,
+    cta: "Open GitHub",
+    github: true,
   },
 ] as const;
 
@@ -97,13 +92,14 @@ export default function DeveloperLanding() {
         title={DEVELOPER_COPY.hero.title}
         sub={DEVELOPER_COPY.hero.lead}
         actions={[
+          { label: "Contracts", href: "/developers#contracts", variant: "primary" },
+          { label: "Docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
           {
-            label: "Open GitHub",
+            label: "GitHub",
             href: OFFICIAL_LINKS.github,
-            variant: "primary",
+            variant: "ghost",
             icon: <GitHubIcon size={15} />,
           },
-          { label: "Inspect contracts", href: "/developers#contracts", variant: "ghost" },
         ]}
       />
 
@@ -115,7 +111,7 @@ export default function DeveloperLanding() {
           <div className={styles.launchCopy}>
             <h2 id="developer-launchpad-title">Open the source, then follow the path.</h2>
             <p>
-              Builders, reviewers, operators, and Watchers need different proof points. Pick the link that matches the work.
+              Builders and reviewers need the source, docs, and contract path first.
             </p>
             <div className={styles.supportLinks} aria-label="Supporting documents">
               <span>Protocol design notes</span>

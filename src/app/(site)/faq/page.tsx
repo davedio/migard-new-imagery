@@ -519,7 +519,7 @@ export default function FaqPage() {
             title="Review security"
             body="Inspect the trust path, security guarantees, watcher role, and responsible-disclosure route."
             cta="Read security"
-            href="/learn#security-overview"
+            href="/participate#security"
           />
           <Card
             title="Inspect the source"
@@ -563,7 +563,7 @@ export default function FaqPage() {
         lead="The right question is not only whether Midgard is faster. It is what has to be trusted after Midgard makes UTXO execution faster."
         actions={[
           { label: "Read how it works", href: "/how-it-works", variant: "primary" },
-          { label: "Read security", href: "/learn#security-overview", variant: "ghost" },
+          { label: "Read security", href: "/participate#security", variant: "ghost" },
         ]}
       />
     </main>

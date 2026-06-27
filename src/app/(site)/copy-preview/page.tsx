@@ -17,7 +17,7 @@ const previewNav = [
   { label: "Home", href: "/" },
   { label: "Learn", href: "/learn" },
   { label: "Developers", href: "/developers" },
-  { label: "Participate", href: "#participate-preview" },
+  { label: "Participate", href: "/participate" },
 ] as const;
 
 const heroRemovals = [

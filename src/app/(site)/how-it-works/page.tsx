@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
 import { NextSteps } from "@/components/site/NextSteps";
+import { Actions, Card, CardGrid, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { SITE_COPY } from "@/lib/siteCopy";
 
 export const metadata: Metadata = {
   title: "How Midgard Works",
@@ -19,12 +21,48 @@ export default function HowItWorksPage() {
   // animation lives on the home ledger chapter.)
   return (
     <HowItWorksExperience>
+      <Section
+        id="proof-metrics"
+        title="Proof metrics."
+        lead="Track the indicators that reduce guesswork: speed, settlement, UTXO fit, verification coverage, and current status."
+      >
+        <CardGrid cols={3}>
+          {SITE_COPY.proofPoints.map((item) => (
+            <Card
+              key={item.k}
+              title={item.k}
+              body={item.s}
+              cta={"href" in item ? item.cta : undefined}
+              href={"href" in item ? item.href : undefined}
+            />
+          ))}
+          <Card
+            title="Fees"
+            body="Fees in ADA belong here and in operator or watcher economics, not in the homepage hero."
+          />
+        </CardGrid>
+      </Section>
+
+      <Section title="Security and economics live with participation." tight>
+        <Actions
+          items={[
+            { label: "Security", href: "/participate#security", variant: "primary" },
+            { label: "Economics", href: "/participate#economics", variant: "ghost" },
+          ]}
+        />
+      </Section>
+
       <NextSteps
         items={[
           {
-            label: "Read security",
-            sub: "The Cardano L1 security, fault-proof, and watcher model",
-            href: "/learn#security-overview",
+            label: "Security",
+            sub: "Operator commitments, Watcher replay, and challenge path",
+            href: "/participate#security",
+          },
+          {
+            label: "Economics",
+            sub: "Operator and watcher incentives, bonds, rewards, and ADA fees",
+            href: "/participate#economics",
           },
           {
             label: "Whitepaper coming soon",

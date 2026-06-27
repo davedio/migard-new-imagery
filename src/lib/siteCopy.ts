@@ -4,7 +4,7 @@ export const SITE_COPY = {
   hero: {
     title: "The execution layer for UTXO finance",
     lead:
-      "Midgard gives UTXO applications faster execution with mathematically verified smart contracts and Cardano settlement.",
+      "Midgard is an optimistic rollup that makes applications faster with verified smart contracts and Cardano settlement.",
     primaryCta: { label: "Choose your path", href: "#paths" },
     secondaryCta: { label: "See how it works", href: "/how-it-works" },
   },
@@ -13,7 +13,7 @@ export const SITE_COPY = {
       title: "Users",
       body: "Deposit, transact, withdraw. Use the app while final settlement completes after verification.",
       cta: "Learn user path",
-      href: "/learn#roles",
+      href: "/learn",
     },
     {
       title: "Builders",
@@ -25,7 +25,7 @@ export const SITE_COPY = {
       title: "Protocol Roles",
       body: "Participate in the Midgard network. Run Operator or Watcher nodes to verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement.",
       cta: "Explore Protocol Roles",
-      href: "/developers#developer-paths",
+      href: "/participate",
     },
   ],
   lifecycle: [
@@ -110,19 +110,19 @@ export const DEVELOPER_COPY = {
   },
   entryPoints: [
     {
-      label: "GitHub",
-      detail: "Source, contracts, node code",
-      href: OFFICIAL_LINKS.github,
-    },
-    {
       label: "Contracts",
       detail: "Addresses, topology, state anchors",
       href: "/developers#contracts",
     },
     {
-      label: "Security",
-      detail: "Trust path and assumptions",
-      href: "/learn#security-overview",
+      label: "Docs",
+      detail: "Current source documentation",
+      href: OFFICIAL_LINKS.docs,
+    },
+    {
+      label: "GitHub",
+      detail: "Source, contracts, node code",
+      href: OFFICIAL_LINKS.github,
     },
   ],
   tracks: [
@@ -141,8 +141,8 @@ export const DEVELOPER_COPY = {
     {
       title: "Protocol Roles",
       body: "Participate in the Midgard network. Run Operator or Watcher nodes to verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement. Register interest when the current testnet phase matches your role.",
-      href: OFFICIAL_LINKS.intakeForm,
-      cta: "Register interest",
+      href: "/participate",
+      cta: "Open Participate",
     },
     {
       title: "Midgard Stack",
