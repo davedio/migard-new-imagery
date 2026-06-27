@@ -5073,19 +5073,19 @@ h2 em,
    night art stays dark and text keeps its legibility gradient.
    ------------------------------------------------------------ */
 [data-theme="dark"] .page-backdrop--full .page-backdrop__img {
-  filter: saturate(0.95) contrast(1.02) brightness(0.5);
+  opacity: 0.94;
+  filter: saturate(1.02) contrast(1.03) brightness(0.74);
 }
 [data-theme="dark"] .page-backdrop--full .page-backdrop__scrim {
-  /* full-bleed art with text floating over it at every scroll position, so a
-     fairly even veil keeps copy readable wherever it lands. Deep night tone. */
   background:
-    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.06), transparent 68%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.46) 0%, rgba(4, 7, 5, 0.56) 50%, rgba(4, 7, 5, 0.64) 100%);
+    radial-gradient(78% 56% at 90% 24%, rgba(78, 243, 131, 0.08), transparent 70%),
+    radial-gradient(92% 68% at 18% 10%, rgba(4, 7, 5, 0.24), transparent 72%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.2) 0%, rgba(4, 7, 5, 0.28) 52%, rgba(4, 7, 5, 0.36) 100%);
 }
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .page-hero::after {
   background:
-    linear-gradient(90deg, rgba(4, 7, 5, 0.6) 0%, rgba(4, 7, 5, 0.36) 46%, rgba(4, 7, 5, 0.08) 78%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.08), rgba(4, 7, 5, 0.36));
+    linear-gradient(90deg, rgba(4, 7, 5, 0.48) 0%, rgba(4, 7, 5, 0.24) 46%, rgba(4, 7, 5, 0.04) 78%),
+    linear-gradient(180deg, rgba(4, 7, 5, 0.04), rgba(4, 7, 5, 0.2));
 }
 [data-theme="dark"] .page-backdrop--soft .page-backdrop__scrim {
   background: linear-gradient(
@@ -5124,6 +5124,61 @@ h2 em,
     rgba(6, 13, 9, 0.5) 64%,
     #06100b 72%
   );
+}
+
+[data-theme="dark"] .page-main:has(.page-backdrop--full) {
+  --text: #d2ddd4;
+  --text-dim: #b6c6bc;
+  --text-faint: #9aafa2;
+  --panel-edge: rgba(244, 241, 230, 0.16);
+  --panel-edge-strong: rgba(244, 241, 230, 0.24);
+}
+
+[data-theme="dark"] .page-main:not(.page-main--hiw-experience) > :not(.page-backdrop) {
+  position: relative;
+  z-index: 1;
+}
+
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .section {
+  border-top: 1px solid rgba(244, 241, 230, 0.065);
+  background:
+    linear-gradient(180deg, rgba(5, 12, 8, 0.18), rgba(5, 12, 8, 0.1)),
+    radial-gradient(760px 360px at 88% 0%, rgba(78, 243, 131, 0.045), transparent 70%);
+}
+
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .section:nth-of-type(even) {
+  background:
+    linear-gradient(180deg, rgba(7, 15, 10, 0.16), rgba(5, 12, 8, 0.08)),
+    radial-gradient(760px 360px at 10% 0%, rgba(207, 154, 46, 0.04), transparent 70%),
+    radial-gradient(620px 320px at 94% 96%, rgba(78, 121, 255, 0.04), transparent 72%);
+}
+
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .section__head {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.66),
+    0 8px 24px rgba(0, 0, 0, 0.46);
+}
+
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .card,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .layer-row,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .callout,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .links-table,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-topic-rail,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-decision-card,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-model-card,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-trust-path__step,
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .glossary__row {
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.05), transparent 58%),
+    rgba(5, 12, 8, 0.82);
+  border-color: rgba(244, 241, 230, 0.17);
+  box-shadow:
+    0 22px 58px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-item {
+  border-top-color: rgba(244, 241, 230, 0.14);
 }
 
 /* Now that the washes are lighter, intro copy that floats directly over the
