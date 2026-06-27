@@ -42,11 +42,11 @@ const statusMetrics = [
 ] as const;
 
 const activityRows = [
-  { type: "TX", id: "8f3a...c291", status: "Soft confirmed", time: "11ms" },
-  { type: "TX", id: "2e91...7fa4", status: "Soft confirmed", time: "8ms" },
-  { type: "BLOCK", id: "Block #4 291", status: "Sealed", time: "1.2s" },
-  { type: "COMMIT", id: "Commit #4 289", status: "Queued to L1", time: "open" },
-  { type: "VERIFY", id: "Watcher replay", status: "Available", time: "live" },
+  { type: "TX", id: "8f3a...c291", status: "Soft confirmed", time: "11ms", symbol: "T" },
+  { type: "TX", id: "2e91...7fa4", status: "Soft confirmed", time: "8ms", symbol: "T" },
+  { type: "BLOCK", id: "Block #4 291", status: "Sealed", time: "1.2s", symbol: "B" },
+  { type: "COMMIT", id: "Commit #4 289", status: "Queued to L1", time: "open", symbol: "C" },
+  { type: "VERIFY", id: "Watcher replay", status: "Available", time: "live", symbol: "V" },
 ] as const;
 
 const flowSteps = [
@@ -90,13 +90,22 @@ const codePanels = [
   {
     label: "Cardano L1",
     endpoint: "cardano-node",
-    lines: ["const tx = await lucid.newTx()", ".payToAddress(\"addr1...\", value)", ".complete();"],
+    endpointLine: "const endpoint = \"cardano-node\";",
+    sharedLines: ["const tx = await lucid.newTx()", ".payToAddress(\"addr1...\", value)", ".complete();"],
   },
   {
     label: "Midgard",
     endpoint: "midgard-rpc",
-    lines: ["const tx = await lucid.newTx()", ".payToAddress(\"addr1...\", value)", ".complete();"],
+    endpointLine: "const endpoint = \"midgard-rpc\";",
+    sharedLines: ["const tx = await lucid.newTx()", ".payToAddress(\"addr1...\", value)", ".complete();"],
   },
+] as const;
+
+const verificationPath = [
+  { label: "Operator", detail: "Posts ordered commitments." },
+  { label: "Watcher", detail: "Replays state independently." },
+  { label: "Challenge", detail: "Invalid state can be contested." },
+  { label: "Settlement", detail: "Valid state settles on Cardano." },
 ] as const;
 
 const howItWorksMoves = [
@@ -163,7 +172,7 @@ export default function CopyPreviewPage() {
 
         <div className={styles.statusRail} aria-label="Preview status metrics">
           {statusMetrics.map((item) => (
-            <div className={styles.statusMetric} key={item.label}>
+            <div className={styles.statusMetric} data-live={item.live ? "true" : "false"} key={item.label}>
               <span>{item.label}</span>
               <strong>
                 {item.live ? <i className={styles.signalDot} aria-hidden="true" /> : null}
@@ -190,8 +199,11 @@ export default function CopyPreviewPage() {
             </div>
             <ul className={styles.activityRows} aria-label="Simulated node activity">
               {activityRows.map((row) => (
-                <li key={`${row.type}-${row.id}`}>
-                  <span>{row.type}</span>
+                <li key={`${row.type}-${row.id}`} data-type={row.type}>
+                  <span>
+                    <i aria-hidden="true">{row.symbol}</i>
+                    {row.type}
+                  </span>
                   <span>{row.id}</span>
                   <span>{row.status}</span>
                   <span>{row.time}</span>
@@ -207,8 +219,15 @@ export default function CopyPreviewPage() {
           <article className={styles.flowWidget} aria-labelledby="flow-widget-title">
             <p className={styles.kicker}>Transaction path</p>
             <h3 id="flow-widget-title">Execution first. Verification before settlement.</h3>
-            <div className={styles.flowRail} aria-hidden="true">
-              <span />
+            <div className={styles.flowDiagram} aria-hidden="true">
+              <div className={styles.flowRail}>
+                <span />
+              </div>
+              <div className={styles.flowNodes}>
+                {flowSteps.map((step) => (
+                  <span key={step.label}>{step.label}</span>
+                ))}
+              </div>
             </div>
             <ol className={styles.flowSteps}>
               {flowSteps.map((step) => (
@@ -296,7 +315,7 @@ export default function CopyPreviewPage() {
             ))}
           </div>
         </div>
-        <div>
+        <div className={styles.developerPanel}>
           <p className={styles.kicker}>Developers</p>
           <h2>Make the hub obvious.</h2>
           <p className={styles.copyBlock}>
@@ -307,6 +326,11 @@ export default function CopyPreviewPage() {
               <span>Developer sandbox</span>
               <strong>One endpoint change</strong>
             </div>
+            <div className={styles.endpointRail} aria-hidden="true">
+              <span>same transaction body</span>
+              <i />
+              <span>different endpoint</span>
+            </div>
             <div className={styles.codeGrid}>
               {codePanels.map((panel) => (
                 <div className={styles.codePanel} key={panel.label}>
@@ -315,7 +339,11 @@ export default function CopyPreviewPage() {
                     <strong>{panel.endpoint}</strong>
                   </div>
                   <pre>
-                    <code>{panel.lines.join("\n")}</code>
+                    <code>
+                      <span className={styles.changedLine}>{panel.endpointLine}</span>
+                      {"\n"}
+                      {panel.sharedLines.join("\n")}
+                    </code>
                   </pre>
                 </div>
               ))}
@@ -352,6 +380,20 @@ export default function CopyPreviewPage() {
             <h3>Explain incentives in context.</h3>
             <p>Fees, rewards, bonds, and participation rules belong beside the roles they affect.</p>
           </article>
+        </div>
+        <div className={styles.roleSecurity} aria-labelledby="role-security-title">
+          <div>
+            <p className={styles.kicker}>Role security graphic</p>
+            <h3 id="role-security-title">Operator work stays independently checkable.</h3>
+          </div>
+          <ol className={styles.securityPath}>
+            {verificationPath.map((step) => (
+              <li key={step.label}>
+                <strong>{step.label}</strong>
+                <span>{step.detail}</span>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

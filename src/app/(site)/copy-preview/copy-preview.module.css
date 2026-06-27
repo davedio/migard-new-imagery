@@ -219,15 +219,32 @@
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1px;
   overflow: hidden;
-  border: 1px solid var(--panel-edge);
+  border: 1px solid rgba(12, 33, 22, 0.16);
   border-radius: 10px;
-  background: var(--panel-edge);
+  background: rgba(12, 33, 22, 0.16);
 }
 
 .statusMetric {
+  position: relative;
+  overflow: hidden;
   min-height: 76px;
   padding: 16px;
-  background: rgba(6, 12, 8, 0.82);
+  background: rgba(252, 250, 240, 0.82);
+}
+
+.statusMetric::after {
+  content: "";
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  left: 14px;
+  height: 1px;
+  background: rgba(244, 241, 230, 0.14);
+}
+
+.statusMetric[data-live="true"]::after {
+  background: linear-gradient(90deg, var(--green-bright), rgba(78, 243, 131, 0.12));
+  animation: statusBreath 3.8s ease-in-out infinite;
 }
 
 .statusMetric span,
@@ -235,7 +252,7 @@
 .widgetFooter span,
 .switchHeader span,
 .codePanel > div span {
-  color: var(--text-dim);
+  color: rgba(13, 36, 24, 0.62);
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.09em;
@@ -247,7 +264,7 @@
   align-items: center;
   gap: 7px;
   margin-top: 9px;
-  color: var(--text-hi);
+  color: #0c2116;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 600;
@@ -274,11 +291,11 @@
 .liveWidget,
 .flowWidget {
   overflow: hidden;
-  border: 1px solid var(--panel-edge);
+  border: 1px solid rgba(12, 33, 22, 0.16);
   border-radius: 10px;
   background:
-    linear-gradient(180deg, rgba(244, 241, 230, 0.045), transparent 56%),
-    rgba(6, 12, 8, 0.78);
+    linear-gradient(180deg, rgba(78, 243, 131, 0.07), transparent 56%),
+    rgba(252, 250, 240, 0.82);
 }
 
 .widgetTopline,
@@ -294,7 +311,7 @@
 .feedHeader,
 .widgetFooter {
   padding: 13px 16px;
-  border-bottom: 1px solid var(--panel-edge);
+  border-bottom: 1px solid rgba(12, 33, 22, 0.14);
 }
 
 .widgetTopline > div {
@@ -308,7 +325,7 @@
 .switchHeader strong,
 .codePanel > div strong {
   margin: 0;
-  color: var(--text-hi);
+  color: #0c2116;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
@@ -340,10 +357,12 @@
 }
 
 .activityRows li {
-  color: var(--text);
+  position: relative;
+  color: #0c2116;
   font-family: var(--font-mono);
   font-size: 12px;
-  animation: feedGlow 6s ease-in-out infinite;
+  opacity: 0.56;
+  animation: feedRowCycle 7.5s ease-in-out infinite;
 }
 
 .activityRows li:nth-child(2) {
@@ -364,13 +383,51 @@
 
 .activityRows li span:first-child,
 .activityRows li span:nth-child(3) {
-  color: var(--green-bright);
   text-transform: uppercase;
+}
+
+.activityRows li span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.activityRows li span:first-child i {
+  display: inline-grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  flex: none;
+  border: 1px solid currentcolor;
+  border-radius: 6px;
+  font-style: normal;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.activityRows li[data-type="TX"] span:first-child,
+.activityRows li[data-type="TX"] span:nth-child(3) {
+  color: var(--green-bright);
+}
+
+.activityRows li[data-type="BLOCK"] span:first-child,
+.activityRows li[data-type="BLOCK"] span:nth-child(3) {
+  color: #8ec5ff;
+}
+
+.activityRows li[data-type="COMMIT"] span:first-child,
+.activityRows li[data-type="COMMIT"] span:nth-child(3) {
+  color: var(--gold-bright);
+}
+
+.activityRows li[data-type="VERIFY"] span:first-child,
+.activityRows li[data-type="VERIFY"] span:nth-child(3) {
+  color: #c9f0d1;
 }
 
 .activityRows li span:nth-child(2) {
   overflow: hidden;
-  color: var(--text-dim);
+  color: rgba(13, 36, 24, 0.62);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -381,7 +438,7 @@
 }
 
 .widgetFooter {
-  border-top: 1px solid var(--panel-edge);
+  border-top: 1px solid rgba(12, 33, 22, 0.14);
   border-bottom: 0;
 }
 
@@ -392,19 +449,23 @@
 .flowWidget h3 {
   max-width: 520px;
   margin: 0;
-  color: var(--text-hi);
+  color: #0c2116;
   font-size: clamp(26px, 3vw, 42px);
   font-weight: 500;
   line-height: 1.04;
 }
 
+.flowDiagram {
+  margin: 30px 0 20px;
+}
+
 .flowRail {
   position: relative;
   height: 2px;
-  margin: 28px 0 22px;
+  margin: 0;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(244, 241, 230, 0.16);
+  background: rgba(12, 33, 22, 0.14);
 }
 
 .flowRail::before {
@@ -430,6 +491,66 @@
   animation: railDot 3.4s ease-in-out infinite;
 }
 
+.flowNodes {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.flowNodes span {
+  position: relative;
+  display: grid;
+  min-height: 34px;
+  place-items: center;
+  border: 1px solid rgba(12, 33, 22, 0.14);
+  border-radius: 8px;
+  color: rgba(13, 36, 24, 0.62);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: flowNodeActive 8.5s ease-in-out infinite;
+}
+
+.flowNodes span::before {
+  content: "";
+  position: absolute;
+  top: -21px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(12, 33, 22, 0.2);
+  border-radius: 50%;
+  background: rgb(252, 250, 240);
+  transform: translateX(-50%);
+  animation: flowNodeDot 8.5s ease-in-out infinite;
+}
+
+.flowNodes span:nth-child(2),
+.flowNodes span:nth-child(2)::before,
+.flowSteps li:nth-child(2) {
+  animation-delay: 1.7s;
+}
+
+.flowNodes span:nth-child(3),
+.flowNodes span:nth-child(3)::before,
+.flowSteps li:nth-child(3) {
+  animation-delay: 3.4s;
+}
+
+.flowNodes span:nth-child(4),
+.flowNodes span:nth-child(4)::before,
+.flowSteps li:nth-child(4) {
+  animation-delay: 5.1s;
+}
+
+.flowNodes span:nth-child(5),
+.flowNodes span:nth-child(5)::before,
+.flowSteps li:nth-child(5) {
+  animation-delay: 6.8s;
+}
+
 .flowSteps {
   display: grid;
   gap: 11px;
@@ -444,7 +565,8 @@
   gap: 12px;
   align-items: baseline;
   padding: 11px 0;
-  border-bottom: 1px solid rgba(244, 241, 230, 0.1);
+  border-bottom: 1px solid rgba(12, 33, 22, 0.12);
+  animation: flowStepActive 8.5s ease-in-out infinite;
 }
 
 .flowSteps li:last-child {
@@ -460,7 +582,7 @@
 }
 
 .flowSteps span {
-  color: var(--text-dim);
+  color: rgba(13, 36, 24, 0.68);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -496,6 +618,26 @@
 
 .split > div {
   padding: 22px;
+}
+
+.split > .developerPanel {
+  border-color: rgba(12, 33, 22, 0.16);
+  background:
+    linear-gradient(180deg, rgba(78, 243, 131, 0.07), transparent 55%),
+    rgba(252, 250, 240, 0.82);
+}
+
+.developerPanel h2 {
+  color: #0c2116;
+}
+
+.developerPanel .copyBlock {
+  color: rgba(13, 36, 24, 0.68);
+}
+
+.developerPanel .buttonRow a {
+  border-color: rgba(12, 33, 22, 0.16);
+  color: #0c2116;
 }
 
 .list {
@@ -556,11 +698,41 @@
 .codeSwitch {
   margin-top: 20px;
   padding-top: 18px;
-  border-top: 1px solid rgba(244, 241, 230, 0.12);
+  border-top: 1px solid rgba(12, 33, 22, 0.14);
 }
 
 .switchHeader {
   margin-bottom: 12px;
+}
+
+.endpointRail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  color: rgba(13, 36, 24, 0.62);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.endpointRail i {
+  position: relative;
+  display: block;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(12, 33, 22, 0.18);
+}
+
+.endpointRail i::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 50%;
+  background: linear-gradient(90deg, transparent, var(--green-bright));
+  animation: endpointSweep 2.8s ease-in-out infinite;
 }
 
 .codeGrid {
@@ -571,9 +743,9 @@
 
 .codePanel {
   overflow: hidden;
-  border: 1px solid rgba(244, 241, 230, 0.12);
+  border: 1px solid rgba(12, 33, 22, 0.22);
   border-radius: 8px;
-  background: rgba(3, 7, 4, 0.58);
+  background: #07100b;
 }
 
 .codePanel > div {
@@ -582,17 +754,31 @@
   justify-content: space-between;
   gap: 10px;
   padding: 10px 12px;
-  border-bottom: 1px solid rgba(244, 241, 230, 0.12);
+  border-bottom: 1px solid rgba(244, 241, 230, 0.14);
+}
+
+.codePanel > div span {
+  color: rgba(230, 246, 225, 0.58);
+}
+
+.codePanel > div strong {
+  color: var(--green-bright);
 }
 
 .codePanel pre {
   margin: 0;
   padding: 12px;
   overflow: auto;
-  color: var(--text);
+  color: rgba(230, 246, 225, 0.74);
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.6;
+}
+
+.changedLine {
+  display: inline-block;
+  color: var(--gold-bright);
+  animation: endpointLinePulse 3.2s ease-in-out infinite;
 }
 
 .codePanel:nth-child(2) {
@@ -602,6 +788,104 @@
 
 .codePanel:nth-child(2) pre {
   color: var(--green-bright);
+}
+
+.roleSecurity {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.34fr) minmax(0, 1fr);
+  gap: clamp(18px, 3vw, 36px);
+  align-items: center;
+  margin-top: 12px;
+  padding: 22px;
+  border: 1px solid rgba(12, 33, 22, 0.16);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(78, 243, 131, 0.07), transparent 55%),
+    rgba(252, 250, 240, 0.82);
+}
+
+.roleSecurity h3 {
+  margin: 0;
+  color: #0c2116;
+  font-size: clamp(25px, 3vw, 42px);
+  font-weight: 500;
+  line-height: 1.05;
+}
+
+.securityPath {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.securityPath::before {
+  content: "";
+  position: absolute;
+  top: 25px;
+  right: 8%;
+  left: 8%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(78, 243, 131, 0.2), rgba(207, 154, 46, 0.55), rgba(78, 243, 131, 0.2));
+}
+
+.securityPath li {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  min-height: 142px;
+  padding: 52px 12px 12px;
+  border: 1px solid rgba(12, 33, 22, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 253, 246, 0.58);
+  animation: securityStepActive 7.2s ease-in-out infinite;
+}
+
+.securityPath li::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--green-bright);
+  border-radius: 50%;
+  background: rgb(252, 250, 240);
+  box-shadow: 0 0 0 rgba(78, 243, 131, 0);
+  transform: translateX(-50%);
+  animation: securityDot 7.2s ease-in-out infinite;
+}
+
+.securityPath li:nth-child(2),
+.securityPath li:nth-child(2)::before {
+  animation-delay: 1.8s;
+}
+
+.securityPath li:nth-child(3),
+.securityPath li:nth-child(3)::before {
+  animation-delay: 3.6s;
+}
+
+.securityPath li:nth-child(4),
+.securityPath li:nth-child(4)::before {
+  animation-delay: 5.4s;
+}
+
+.securityPath strong {
+  color: var(--green-bright);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.securityPath span {
+  color: rgba(13, 36, 24, 0.68);
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .footerPreview {
@@ -626,16 +910,121 @@
   }
 }
 
-@keyframes feedGlow {
+@keyframes statusBreath {
   0%,
   100% {
-    opacity: 0.58;
+    opacity: 0.38;
+    transform: scaleX(0.55);
+    transform-origin: left;
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@keyframes feedRowCycle {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translateY(5px);
+  }
+
+  16%,
+  36% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes flowNodeActive {
+  0%,
+  100% {
+    border-color: rgba(12, 33, 22, 0.14);
+    color: var(--text-dim);
+    background: transparent;
+  }
+
+  10%,
+  24% {
+    border-color: rgba(78, 243, 131, 0.5);
+    color: var(--text-hi);
+    background: rgba(78, 243, 131, 0.08);
+  }
+}
+
+@keyframes flowNodeDot {
+  0%,
+  100% {
+    border-color: rgba(12, 33, 22, 0.2);
+    box-shadow: 0 0 0 rgba(78, 243, 131, 0);
+  }
+
+  10%,
+  24% {
+    border-color: var(--green-bright);
+    box-shadow: 0 0 18px rgba(78, 243, 131, 0.65);
+  }
+}
+
+@keyframes flowStepActive {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+
+  10%,
+  24% {
+    opacity: 1;
+  }
+}
+
+@keyframes endpointSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+@keyframes endpointLinePulse {
+  0%,
+  100% {
+    opacity: 0.78;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes securityStepActive {
+  0%,
+  100% {
+    border-color: rgba(12, 33, 22, 0.14);
     transform: translateY(0);
   }
 
-  28% {
-    opacity: 1;
-    transform: translateY(-1px);
+  12%,
+  30% {
+    border-color: rgba(78, 243, 131, 0.42);
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes securityDot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(78, 243, 131, 0);
+  }
+
+  12%,
+  30% {
+    box-shadow: 0 0 18px rgba(78, 243, 131, 0.65);
   }
 }
 
@@ -663,6 +1052,7 @@
   .previewChrome,
   .heroGrid,
   .widgetGrid,
+  .roleSecurity,
   .split,
   .footerPreview {
     grid-template-columns: 1fr;
@@ -678,6 +1068,14 @@
   .statusRail {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .securityPath {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .securityPath::before {
+    display: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -688,7 +1086,9 @@
   .cards3,
   .routeGrid,
   .statusRail,
-  .codeGrid {
+  .codeGrid,
+  .flowNodes,
+  .securityPath {
     grid-template-columns: 1fr;
   }
 
@@ -698,7 +1098,7 @@
 
   .feedHeader,
   .activityRows li {
-    grid-template-columns: 58px minmax(0, 1fr) 74px;
+    grid-template-columns: 78px minmax(0, 1fr) 64px;
   }
 
   .feedHeader span:nth-child(3),
@@ -709,5 +1109,22 @@
   .flowSteps li {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .flowDiagram {
+    margin-top: 22px;
+  }
+
+  .flowRail {
+    display: none;
+  }
+
+  .flowNodes span::before {
+    display: none;
+  }
+
+  .securityPath li {
+    min-height: auto;
+    padding-top: 44px;
   }
 }
