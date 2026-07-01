@@ -2478,7 +2478,7 @@ h2 em,
   background:
     radial-gradient(1100px 540px at 86% 24%, rgba(12, 125, 54, 0.08), transparent 72%),
     radial-gradient(820px 420px at 8% 78%, rgba(138, 97, 21, 0.08), transparent 72%),
-    linear-gradient(180deg, rgba(244, 239, 227, 0.34), rgba(239, 246, 235, 0.36));
+    linear-gradient(180deg, rgba(244, 239, 227, 0.24), rgba(239, 246, 235, 0.26));
 }
 [data-theme="light"] .page-main:not(.page-main--hiw-experience)::before {
   content: "";
@@ -2493,7 +2493,7 @@ h2 em,
     radial-gradient(460px 260px at 10% 48%, rgba(138, 97, 21, 0.075), transparent 74%);
   background-size: 92px 92px, 92px 92px, auto, auto;
   mask-image: linear-gradient(180deg, transparent, #000 12%, #000 92%, transparent);
-  opacity: 0.62;
+  opacity: 0.34;
 }
 [data-theme="light"] .page-main:not(.page-main--hiw-experience) > :not(.page-backdrop) {
   position: relative;
@@ -4942,15 +4942,15 @@ h2 em,
 
 /* full — the selected artwork is the page background, not a supporting panel */
 .page-backdrop--full .page-backdrop__img {
-  opacity: 0.88;
+  opacity: 0.95;
   filter: saturate(1.02) contrast(1.02) brightness(1.02);
 }
 .page-backdrop--full .page-backdrop__scrim {
   background:
-    radial-gradient(118% 82% at 18% 12%, rgba(255, 250, 240, 0.6), rgba(255, 250, 240, 0.18) 40%, transparent 72%),
-    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.13), transparent 68%),
-    radial-gradient(64% 48% at 14% 92%, rgba(138, 97, 21, 0.13), transparent 70%),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.05) 0%, rgba(246, 241, 232, 0.22) 58%, rgba(244, 239, 227, 0.54) 100%);
+    radial-gradient(118% 82% at 18% 12%, rgba(255, 250, 240, 0.32), rgba(255, 250, 240, 0.09) 40%, transparent 72%),
+    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.1), transparent 68%),
+    radial-gradient(64% 48% at 14% 92%, rgba(138, 97, 21, 0.1), transparent 70%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.03) 0%, rgba(246, 241, 232, 0.13) 58%, rgba(244, 239, 227, 0.34) 100%);
 }
 
 .page-main:has(.page-backdrop--full) .page-hero::before {
@@ -4959,8 +4959,8 @@ h2 em,
 
 .page-main:has(.page-backdrop--full) .page-hero::after {
   background:
-    linear-gradient(90deg, rgba(246, 241, 232, 0.66) 0%, rgba(246, 241, 232, 0.42) 46%, rgba(246, 241, 232, 0.1) 78%),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.06), rgba(246, 241, 232, 0.34));
+    linear-gradient(90deg, rgba(246, 241, 232, 0.46) 0%, rgba(246, 241, 232, 0.28) 46%, rgba(246, 241, 232, 0.06) 78%),
+    linear-gradient(180deg, rgba(246, 241, 232, 0.04), rgba(246, 241, 232, 0.2));
 }
 
 /* soft — a quiet canopy that floats at the top and dissolves */
