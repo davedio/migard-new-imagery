@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
+import { TrustFlowAnimation } from "@/components/minimal/TrustFlowAnimation";
 import { OfficialChannelIcon, OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -136,7 +137,7 @@ export default function MinimalHome() {
         </nav>
       </section>
 
-      <section className="minimal-section minimal-section--split" aria-labelledby="minimal-mechanism-title">
+      <section className="minimal-section minimal-section--trust" aria-labelledby="minimal-mechanism-title">
         <div className="minimal-section__head">
           <h2 id="minimal-mechanism-title">Fast execution first. Verification before final settlement.</h2>
           <p>
@@ -144,25 +145,11 @@ export default function MinimalHome() {
             challengeable, and settled only after verification.
           </p>
         </div>
-        <div className="minimal-flow-board" aria-label="Midgard user and protocol flow">
-          <div className="minimal-user-path" aria-label="User experience">
-            <span>User sees</span>
-            <ol>
-              {USER_FLOW.map((step) => (
-                <li key={step}>{step}</li>
-              ))}
-            </ol>
-          </div>
-          <div className="minimal-flow-list" aria-label="Protocol verification path">
-            {SITE_COPY.lifecycle.map(([label, body], i) => (
-              <div className="minimal-flow-row" data-zone={i < 3 ? "speed" : "verify"} key={label}>
-                <span>{String(i + 1).padStart(2, "0")}</span>
-                <strong>{label}</strong>
-                <p>{body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        <TrustFlowAnimation
+          steps={SITE_COPY.lifecycle}
+          userSteps={USER_FLOW}
+          copy={SITE_COPY.trustFlow}
+        />
       </section>
 
       <section className="minimal-section minimal-section--inspect" aria-labelledby="minimal-inspect-title">

@@ -37,6 +37,30 @@ export const SITE_COPY = {
     ["Watch", "Watchers replay committed blocks; a valid fault proof keeps bad state from settling."],
     ["Settle", "If no valid fault proof succeeds, verified state settles through Cardano L1."],
   ],
+  trustFlow: {
+    kicker: "Transaction path",
+    title: "You only ever see three steps.",
+    lead: "Deposit. Transact. Withdraw. Everything else is the pipeline working underneath.",
+    resolved: {
+      kicker: "Why that's safe",
+      title: "You don't have to watch the pipeline. It watches itself.",
+      body: "Operators sequence and commit your activity in seconds — that's the speed you feel. Every commitment stays open to challenge during data availability, and it only takes one honest Watcher, out of any number, to catch and stop a bad block before it settles. If no valid fault proof succeeds, state settles through Cardano's own L1 consensus.",
+    },
+    badges: [
+      {
+        label: "Operators",
+        detail: "Sequence and commit every transaction, fast.",
+      },
+      {
+        label: "Watchers",
+        detail: "Only one honest watcher, out of any number, is enough to catch a fault.",
+      },
+      {
+        label: "Cardano L1",
+        detail: "Final settlement lands on the same base layer securing all of Cardano.",
+      },
+    ],
+  },
   proofPoints: [
     {
       k: "Soft confirmations",

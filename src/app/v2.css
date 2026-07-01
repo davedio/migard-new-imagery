@@ -3269,13 +3269,6 @@ h2 em,
   height: 48px;
 }
 
-.minimal-section--split {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.76fr) minmax(0, 1fr);
-  gap: 48px;
-  align-items: start;
-}
-
 .minimal-section--inspect {
   display: grid;
   grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.08fr);
@@ -3309,8 +3302,7 @@ h2 em,
 }
 
 .minimal-card,
-.minimal-metric,
-.minimal-flow-row {
+.minimal-metric {
   border: 1px solid var(--panel-edge-strong);
   border-radius: 8px;
   background:
@@ -3478,48 +3470,271 @@ h2 em,
   color: var(--green-bright);
 }
 
-.minimal-flow-board {
+.minimal-metric span {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--gold-bright);
+}
+
+.minimal-metric strong {
+  color: var(--text-hi);
+  font-weight: 500;
+}
+
+.minimal-metric p {
+  margin: 0;
+  color: var(--text-dim);
+  font-size: 15.5px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   TRUST FLOW — full-bleed home-page animation. The 6-step
+   protocol pipeline collapses into a glowing "trust band" (why
+   the abstraction is safe) out of which the 3 user-facing steps
+   (Deposit/Transact/Withdraw) crystallize. Scroll-triggered via
+   IntersectionObserver + a single `.is-collapsed` class toggle
+   (see TrustFlowAnimation.tsx) — reversible, so scrolling back up
+   re-opens it. Respects useMotionPref (collapsed renders instantly,
+   no transition, when motion is off).
+   ============================================================ */
+.minimal-section--trust {
+  overflow-x: clip;
+}
+.minimal-section--trust .minimal-section__head {
+  max-width: 720px;
+}
+
+.trust-flow {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+  margin-top: 44px;
+  padding: 0 var(--gut) 4px;
+}
+
+.trust-flow__pipeline {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.trust-flow__step {
   position: relative;
   display: grid;
-  gap: 14px;
-  padding: 16px;
+  align-content: start;
+  gap: 8px;
+  padding: 16px 14px;
   border: 1px solid var(--panel-edge-strong);
   border-radius: 8px;
   background:
-    radial-gradient(circle at 20% 0%, rgba(78, 243, 131, 0.12), transparent 20rem),
-    radial-gradient(circle at 86% 100%, rgba(207, 154, 46, 0.12), transparent 20rem),
-    rgba(4, 7, 5, 0.56);
+    linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 52%),
+    rgba(7, 12, 8, 0.76);
+  transform-origin: 50% 100%;
+  transition: transform 0.5s var(--ease), opacity 0.5s var(--ease), filter 0.5s var(--ease);
+}
+.trust-flow__step[data-zone="verify"] {
+  transition-delay: calc(var(--zi, 0) * 40ms);
+}
+.trust-flow__step[data-zone="speed"] {
+  transition-delay: calc(90ms + var(--zi, 0) * 40ms);
 }
 
-.minimal-user-path {
+.trust-flow__step span {
+  width: 30px;
+  height: 30px;
   display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid rgba(78, 243, 131, 0.2);
-  border-radius: 8px;
-  background: rgba(78, 243, 131, 0.055);
+  place-items: center;
+  border: 1px solid rgba(78, 243, 131, 0.5);
+  border-radius: 999px;
+  color: var(--green-bright);
+  background: rgba(4, 7, 5, 0.9);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.trust-flow__step[data-zone="verify"] span {
+  border-color: rgba(207, 154, 46, 0.56);
+  color: var(--gold-bright);
 }
 
-.minimal-user-path > span {
+.trust-flow__step strong {
+  color: var(--text-hi);
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.trust-flow__step p {
+  margin: 0;
+  max-height: 140px;
+  overflow: hidden;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  line-height: 1.45;
+  transition: max-height 0.4s var(--ease), opacity 0.32s var(--ease), margin 0.32s var(--ease);
+}
+.trust-flow__step[data-zone="verify"] p {
+  transition-delay: calc(var(--zi, 0) * 40ms);
+}
+.trust-flow__step[data-zone="speed"] p {
+  transition-delay: calc(90ms + var(--zi, 0) * 40ms);
+}
+
+.is-collapsed .trust-flow__step {
+  transform: scale(0.58) translateY(6px);
+  opacity: 0.44;
+  filter: saturate(0.8);
+}
+.is-collapsed .trust-flow__step p {
+  max-height: 0;
+  opacity: 0;
+  margin-top: -8px;
+}
+
+.trust-flow__band {
+  position: relative;
+  margin: -6px auto 0;
+  max-width: 880px;
+  padding: 18px 26px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid rgba(78, 243, 131, 0.16);
+  background: rgba(7, 12, 8, 0.4);
+  transform: scaleY(0.42);
+  opacity: 0.55;
+  transition:
+    transform 0.55s var(--ease) 260ms,
+    opacity 0.55s var(--ease) 260ms,
+    background 0.4s var(--ease) 260ms,
+    border-color 0.4s var(--ease) 260ms,
+    box-shadow 0.4s var(--ease) 260ms;
+}
+.is-collapsed .trust-flow__band {
+  transform: scaleY(1);
+  opacity: 1;
+  border-color: rgba(78, 243, 131, 0.4);
+  background:
+    radial-gradient(120% 160% at 50% 50%, rgba(78, 243, 131, 0.16), transparent 70%),
+    rgba(7, 12, 8, 0.62);
+  box-shadow: 0 0 40px rgba(78, 243, 131, 0.12);
+}
+
+.trust-flow__band-rail {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 0;
+  height: 1px;
+  overflow: visible;
+}
+.trust-flow__band-rail i {
+  position: absolute;
+  top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--green-bright);
+  box-shadow: 0 0 14px rgba(78, 243, 131, 0.6);
+  opacity: 0;
+}
+.is-collapsed .trust-flow__band-rail i {
+  opacity: 1;
+  animation: minimal-thesis-packet 5.4s var(--ease) infinite;
+}
+
+.trust-flow__kicker {
+  margin: 0 0 8px;
   font-family: var(--font-mono);
   font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--green-bright);
   text-transform: uppercase;
 }
 
-.minimal-user-path ol {
-  position: relative;
+.trust-flow__band h3 {
+  margin: 0 0 10px;
+  font-size: clamp(19px, 2vw, 25px);
+  line-height: 1.24;
+  font-weight: 500;
+}
+
+.trust-flow__band-body {
+  margin: 0 auto;
+  max-width: 620px;
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.trust-flow__badges {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 18px;
+}
+
+.trust-flow__badge {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid rgba(244, 241, 230, 0.12);
+  border-radius: 10px;
+  background: rgba(4, 7, 5, 0.4);
+  text-align: left;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.42s var(--ease), transform 0.42s var(--ease);
+  transition-delay: calc(420ms + var(--i, 0) * 110ms);
+}
+.is-collapsed .trust-flow__badge {
+  opacity: 1;
+  transform: none;
+}
+
+.trust-flow__badge strong {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--gold-bright);
+  text-transform: uppercase;
+}
+
+.trust-flow__badge span {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  line-height: 1.42;
+}
+
+.trust-flow__result {
+  max-width: 900px;
+  margin: 34px auto 0;
+  text-align: center;
+}
+
+.trust-flow__result h3 {
+  margin: 0 0 8px;
+  font-size: clamp(22px, 2.4vw, 30px);
+}
+
+.trust-flow__result-lead {
+  margin: 0 auto 22px;
+  max-width: 560px;
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.trust-flow__user-steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.minimal-user-path ol::before {
+.trust-flow__user-steps::before {
   content: "";
   position: absolute;
   left: 12%;
@@ -3527,71 +3742,42 @@ h2 em,
   top: 50%;
   height: 1px;
   background: linear-gradient(90deg, rgba(78, 243, 131, 0.16), rgba(78, 243, 131, 0.7), rgba(78, 243, 131, 0.16));
+  transform: scaleX(0);
+  transition: transform 0.5s var(--ease) 520ms;
+}
+.is-collapsed .trust-flow__user-steps::before {
+  transform: scaleX(1);
 }
 
-.minimal-user-path li {
+.trust-flow__user-steps li {
   position: relative;
   z-index: 1;
-  min-height: 42px;
+  min-height: 84px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(78, 243, 131, 0.24);
-  border-radius: 6px;
-  color: var(--text-hi);
-  background: rgba(4, 7, 5, 0.88);
-}
-
-.minimal-flow-list {
-  display: grid;
-  gap: 10px;
-}
-
-.minimal-flow-row {
-  position: relative;
-  display: grid;
-  grid-template-columns: 52px 132px minmax(0, 1fr);
-  gap: 18px;
-  align-items: center;
-  padding: 16px 18px;
-}
-
-.minimal-flow-row::before {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  transform: translateY(-50%);
-  background: var(--green-bright);
-  box-shadow: 0 0 16px rgba(78, 243, 131, 0.55);
-}
-
-.minimal-flow-row[data-zone="verify"]::before {
-  background: var(--gold-bright);
-  box-shadow: 0 0 16px rgba(207, 154, 46, 0.5);
-}
-
-.minimal-flow-row span,
-.minimal-metric span {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--gold-bright);
-}
-
-.minimal-flow-row strong,
-.minimal-metric strong {
-  color: var(--text-hi);
+  padding: 18px;
+  border: 1px solid rgba(78, 243, 131, 0.22);
+  border-radius: 12px;
+  background: rgba(4, 7, 5, 0.86);
+  font-size: clamp(19px, 2vw, 24px);
   font-weight: 500;
+  color: var(--text-hi);
+  opacity: 0.5;
+  transform: scale(0.86) translateY(10px);
+  transition: opacity 0.5s var(--ease), transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: calc(560ms + var(--i, 0) * 90ms);
+}
+.is-collapsed .trust-flow__user-steps li {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
 
-.minimal-flow-row p,
-.minimal-metric p {
-  margin: 0;
-  color: var(--text-dim);
-  font-size: 15.5px;
-  line-height: 1.5;
+@media (prefers-reduced-motion: reduce) {
+  .trust-flow,
+  .trust-flow * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 .minimal-metrics {
@@ -4077,9 +4263,17 @@ h2 em,
 @media (max-width: 980px) {
   .minimal-hero,
   .minimal-page-hero,
-  .minimal-section--split,
   .minimal-section--inspect {
     grid-template-columns: 1fr;
+  }
+
+  .trust-flow__pipeline {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .trust-flow__step p {
+    max-height: 200px;
   }
 
   .minimal-hero {
@@ -4247,27 +4441,34 @@ h2 em,
     padding: 14px;
   }
 
-  .minimal-flow-row {
-    grid-template-columns: 44px 1fr;
+  .trust-flow {
+    margin-top: 32px;
   }
 
-  .minimal-flow-row p {
-    grid-column: 2;
+  .trust-flow__pipeline {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
-  .minimal-flow-board {
-    padding: 12px;
+  .trust-flow__step p {
+    max-height: 160px;
   }
 
-  .minimal-user-path {
+  .trust-flow__band {
+    padding: 16px 18px;
+    border-radius: 16px;
+  }
+
+  .trust-flow__badges {
     grid-template-columns: 1fr;
   }
 
-  .minimal-user-path ol {
+  .trust-flow__user-steps {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .minimal-user-path ol::before {
+  .trust-flow__user-steps::before {
     display: none;
   }
 
@@ -4559,8 +4760,7 @@ h2 em,
 [data-theme="light"] .minimal-thesis__item,
 [data-theme="light"] .minimal-card,
 [data-theme="light"] .minimal-metric,
-[data-theme="light"] .minimal-flow-row,
-[data-theme="light"] .minimal-flow-board,
+[data-theme="light"] .trust-flow__step,
 [data-theme="light"] .minimal-channel-card,
 [data-theme="light"] .minimal-inspect-card {
   border-color: var(--panel-edge-strong);
@@ -4595,11 +4795,27 @@ h2 em,
 [data-theme="light"] .minimal-thesis__item span {
   background: rgba(255, 255, 255, 0.92);
 }
-[data-theme="light"] .minimal-user-path {
-  background: rgba(20, 150, 62, 0.08);
-  border-color: rgba(12, 125, 54, 0.28);
+[data-theme="light"] .trust-flow__step span {
+  background: rgba(255, 255, 255, 0.92);
 }
-[data-theme="light"] .minimal-user-path li {
+[data-theme="light"] .trust-flow__band {
+  border-color: rgba(12, 125, 54, 0.24);
+  background:
+    radial-gradient(120% 160% at 50% 50%, rgba(12, 125, 54, 0.09), transparent 70%),
+    rgba(255, 250, 240, 0.62);
+}
+[data-theme="light"] .is-collapsed .trust-flow__band {
+  border-color: rgba(12, 125, 54, 0.4);
+  background:
+    radial-gradient(120% 160% at 50% 50%, rgba(12, 125, 54, 0.14), transparent 70%),
+    rgba(255, 250, 240, 0.78);
+  box-shadow: 0 0 40px rgba(12, 125, 54, 0.1);
+}
+[data-theme="light"] .trust-flow__badge {
+  border-color: rgba(27, 23, 16, 0.14);
+  background: rgba(255, 250, 240, 0.5);
+}
+[data-theme="light"] .trust-flow__user-steps li {
   background: rgba(255, 255, 255, 0.86);
   border-color: rgba(12, 125, 54, 0.3);
 }
@@ -4620,14 +4836,12 @@ h2 em,
   background: rgba(255, 255, 255, 0.6);
   border-color: var(--panel-edge);
 }
-[data-theme="light"] .minimal-user-path > span,
 [data-theme="light"] .minimal-card span,
 [data-theme="light"] .minimal-metric__link,
 [data-theme="light"] .minimal-inspect-card strong,
 [data-theme="light"] .minimal-channel-card strong {
   color: #075f2b;
 }
-[data-theme="light"] .minimal-flow-row span,
 [data-theme="light"] .minimal-metric span,
 [data-theme="light"] .minimal-inspect-card span {
   color: #6d4b0f;
@@ -4993,15 +5207,6 @@ h2 em,
   background-position: center, center, center, 54% 50%;
   box-shadow: 0 0 0 100vmax rgba(244, 239, 227, 0.2);
 }
-[data-theme="light"] .minimal-section--split {
-  background:
-    linear-gradient(180deg, rgba(255, 250, 240, 0.7), rgba(239, 246, 235, 0.46)),
-    radial-gradient(980px 440px at 86% 8%, rgba(36, 71, 184, 0.065), transparent 70%),
-    radial-gradient(760px 360px at 8% 92%, rgba(12, 125, 54, 0.1), transparent 72%),
-    url("/img/watercolor/terraces.avif");
-  background-size: auto, auto, auto, cover;
-  background-position: center, center, center, 50% 48%;
-}
 [data-theme="light"] .minimal-section--inspect {
   background:
     linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(239, 246, 235, 0.48)),
@@ -5012,8 +5217,10 @@ h2 em,
   background-position: center, center, center, 54% 48%;
 }
 [data-theme="light"] .minimal-card,
-[data-theme="light"] .minimal-flow-board,
-[data-theme="light"] .minimal-flow-row,
+[data-theme="light"] .trust-flow__step,
+[data-theme="light"] .trust-flow__band,
+[data-theme="light"] .trust-flow__badge,
+[data-theme="light"] .trust-flow__user-steps li,
 [data-theme="light"] .minimal-metric,
 [data-theme="light"] .minimal-channel-card,
 [data-theme="light"] .minimal-inspect-card {
@@ -5099,13 +5306,6 @@ h2 em,
     url("/dark/img/watercolor/forest-path.avif");
   background-size: auto, cover;
   background-position: center, 54% 50%;
-}
-[data-theme="dark"] .minimal-section--split {
-  background:
-    linear-gradient(180deg, rgba(4, 7, 5, 0.34), rgba(4, 7, 5, 0.58)),
-    url("/dark/img/watercolor/terraces.avif");
-  background-size: auto, cover;
-  background-position: center, 50% 48%;
 }
 [data-theme="dark"] .minimal-section--inspect {
   background:
