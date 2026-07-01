@@ -4389,11 +4389,11 @@ h2 em,
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 61% 44%; /* tree right-of-centre; reveal more valley + sky headroom for the copy */
+  object-position: 53% 46%; /* pulled-back vista: centre the tree, full canopy in frame, open sky-left for copy */
   transform: scale(1.02);
-  transform-origin: 67% 32%; /* zoom toward the lifted canopy */
+  transform-origin: 60% 34%; /* zoom toward the canopy */
   will-change: transform, opacity;
-  filter: saturate(1.04) contrast(1.02);
+  filter: saturate(1.12) contrast(1.05);
 }
 .hero-tree-stage__scrim {
   position: absolute;
