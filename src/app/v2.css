@@ -4389,7 +4389,7 @@ h2 em,
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 64% 47%; /* keep the tree right-of-centre and trim excess sky */
+  object-position: 61% 44%; /* tree right-of-centre; reveal more valley + sky headroom for the copy */
   transform: scale(1.02);
   transform-origin: 67% 32%; /* zoom toward the lifted canopy */
   will-change: transform, opacity;
