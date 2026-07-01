@@ -6,7 +6,7 @@ export const SITE_COPY = {
     lead:
       "Midgard is an optimistic rollup that makes applications faster with verified smart contracts and Cardano settlement.",
     primaryCta: { label: "How it works", href: "/how-it-works" },
-    secondaryCta: { label: "Learn more", href: "/learn" },
+    secondaryCta: { label: "Learn the basics", href: "/learn" },
     tertiaryCta: { label: "Choose your path", href: "#paths" },
   },
   paths: [
