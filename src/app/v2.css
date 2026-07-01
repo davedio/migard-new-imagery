@@ -2749,6 +2749,15 @@ h2 em,
   margin-top: 0;
 }
 
+/* Desktop: trim the capsule to hug the 3-button row (no dead space on the right).
+   Tablet/mobile keep their full-width dock. */
+@media (min-width: 981px) {
+  .minimal-hero__dock {
+    width: -moz-fit-content;
+    width: fit-content;
+  }
+}
+
 .minimal-hero-routes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
