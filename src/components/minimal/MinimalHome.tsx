@@ -72,24 +72,6 @@ const VALUE_STEPS = [
   },
 ] as const;
 
-const HERO_ROUTES = [
-  {
-    label: "Use",
-    detail: "User path",
-    href: "/learn",
-  },
-  {
-    label: "Developers",
-    detail: "Developer path",
-    href: "/developers",
-  },
-  {
-    label: "Verify",
-    detail: "Independent verification",
-    href: "/participate",
-  },
-] as const;
-
 function EcosystemPartners() {
   return (
     <section className="minimal-partners" aria-labelledby="minimal-partners-title">
@@ -115,15 +97,10 @@ export default function MinimalHome() {
               <SmartLink className="minimal-btn minimal-btn--ghost" href={SITE_COPY.hero.secondaryCta.href}>
                 {SITE_COPY.hero.secondaryCta.label}
               </SmartLink>
+              <SmartLink className="minimal-btn minimal-btn--quiet" href={SITE_COPY.hero.tertiaryCta.href}>
+                {SITE_COPY.hero.tertiaryCta.label}
+              </SmartLink>
             </div>
-            <nav className="minimal-hero-routes" aria-label="Fast Midgard routes">
-              {HERO_ROUTES.map((route) => (
-                <SmartLink className="minimal-hero-route" href={route.href} key={route.label}>
-                  <strong>{route.label}</strong>
-                  <span>{route.detail}</span>
-                </SmartLink>
-              ))}
-            </nav>
           </div>
         </div>
         <div className="minimal-hero__visual-space" aria-hidden />

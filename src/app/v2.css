@@ -2895,6 +2895,23 @@ h2 em,
     inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
+.minimal-btn--quiet {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-hi);
+}
+.minimal-btn--quiet::before {
+  opacity: 0;
+}
+.minimal-btn--quiet:hover {
+  transform: translateY(-3px);
+  color: var(--bone);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(244, 241, 230, 0.28);
+  box-shadow: none;
+}
+
 .minimal-btn:active {
   transform: translateY(0);
   box-shadow:
@@ -4193,6 +4210,8 @@ h2 em,
 
   .minimal-hero__dock .minimal-actions {
     margin-top: 0;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .minimal-hero-routes {
@@ -4651,6 +4670,18 @@ h2 em,
     linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(20, 60, 36, 0.1)),
     rgba(255, 250, 240, 0.5);
   border-color: rgba(12, 125, 54, 0.45);
+}
+[data-theme="light"] .minimal-btn--quiet {
+  color: var(--text-hi);
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+[data-theme="light"] .minimal-btn--quiet:hover {
+  color: var(--text-hi);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 250, 240, 0.28));
+  border-color: rgba(12, 125, 54, 0.32);
 }
 
 /* ============================================================
