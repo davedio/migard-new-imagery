@@ -1,10 +1,13 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 export type NextStepItem = {
   label: string;
   /** Optional one-line supporting text under the label. */
   sub?: string;
   href?: string;
+  /** Optional icon rendered inline before the label (e.g. GitHubIcon). */
+  icon?: ReactNode;
 };
 
 /**
@@ -35,6 +38,7 @@ export function NextSteps({
             const inner = (
               <>
                 <span className="next-steps__label">
+                  {item.icon}
                   {item.label}
                   {item.href ? (
                     <span className="next-steps__arrow" aria-hidden>

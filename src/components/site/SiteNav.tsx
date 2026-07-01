@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type FocusEvent } from "react";
+import { useEffect, useState, type FocusEvent, type ReactNode } from "react";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { useTheme } from "@/lib/theme";
@@ -23,6 +24,7 @@ type NavChild = {
   description: string;
   href: string;
   external?: boolean;
+  icon?: ReactNode;
 };
 
 const NAV_LINKS: readonly NavLink[] = [
@@ -43,8 +45,13 @@ const NAV_LINKS: readonly NavLink[] = [
     children: [
       { label: "Developer overview", description: "Source, docs, contracts, and review paths.", href: "/developers" },
       { label: "Contracts", description: "Preprod validators, anchors, scripts, and topology.", href: "/developers#contracts" },
-      { label: "Docs", description: "Current public source and documentation.", href: OFFICIAL_LINKS.docs, external: true },
-      { label: "GitHub", description: "Repository, issues, and implementation history.", href: OFFICIAL_LINKS.github, external: true },
+      {
+        label: "GitHub",
+        description: "Repository, issues, and implementation history.",
+        href: OFFICIAL_LINKS.github,
+        external: true,
+        icon: <GitHubIcon size={14} aria-hidden />,
+      },
     ],
   },
   {
@@ -172,12 +179,18 @@ export function SiteNav() {
                         rel="noopener noreferrer"
                         role="menuitem"
                       >
-                        <span className="site-nav__dropdown-label">{child.label}</span>
+                        <span className="site-nav__dropdown-label">
+                          {child.icon}
+                          {child.label}
+                        </span>
                         <span className="site-nav__dropdown-desc">{child.description}</span>
                       </a>
                     ) : (
                       <Link key={child.label} href={child.href} {...linkClass(child.href, "site-nav__dropdown-link")} role="menuitem">
-                        <span className="site-nav__dropdown-label">{child.label}</span>
+                        <span className="site-nav__dropdown-label">
+                          {child.icon}
+                          {child.label}
+                        </span>
                         <span className="site-nav__dropdown-desc">{child.description}</span>
                       </Link>
                     ),
@@ -249,7 +262,10 @@ export function SiteNav() {
                     rel="noopener noreferrer"
                     onClick={closeMenu}
                   >
-                    <span className="site-nav__mobile-label">{child.label}</span>
+                    <span className="site-nav__mobile-label">
+                      {child.icon}
+                      {child.label}
+                    </span>
                     <span className="site-nav__mobile-desc">{child.description}</span>
                   </a>
                 ) : (

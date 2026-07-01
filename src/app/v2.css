@@ -3462,6 +3462,9 @@ h2 em,
 }
 
 .minimal-channel-card strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-top: auto;
   padding-top: 16px;
   font-family: var(--font-mono);
@@ -3978,6 +3981,9 @@ h2 em,
 }
 
 .minimal-inspect-card strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: var(--green-bright);
   white-space: nowrap;
 }

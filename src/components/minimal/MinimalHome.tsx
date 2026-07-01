@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { TrustFlowAnimation } from "@/components/minimal/TrustFlowAnimation";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialChannelIcon, OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -171,7 +172,10 @@ export default function MinimalHome() {
                 <span>{String(i + 1).padStart(2, "0")}</span>
                 <h3>{item.title}</h3>
                 <p>{item.body}</p>
-                <strong>{item.cta} -&gt;</strong>
+                <strong>
+                  {item.cta === "Open GitHub" ? <GitHubIcon size={14} aria-hidden /> : null}
+                  {item.cta} -&gt;
+                </strong>
               </SmartLink>
             ))}
           </div>
@@ -200,7 +204,10 @@ export default function MinimalHome() {
               </div>
               <h3>{channel.title}</h3>
               <p>{channel.body}</p>
-              <strong>{channel.cta} -&gt;</strong>
+              <strong>
+                {channel.cta === "Open GitHub" ? <GitHubIcon size={14} aria-hidden /> : null}
+                {channel.cta} -&gt;
+              </strong>
             </SmartLink>
           ))}
         </div>

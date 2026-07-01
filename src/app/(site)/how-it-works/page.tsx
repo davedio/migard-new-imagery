@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
+import { GitHubIcon } from "@/components/site/BrandIcons";
 import { NextSteps } from "@/components/site/NextSteps";
 import { Actions, Card, CardGrid, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -72,6 +73,7 @@ export default function HowItWorksPage() {
             label: "GitHub",
             sub: "The protocol is open — verify it yourself on GitHub",
             href: OFFICIAL_LINKS.github,
+            icon: <GitHubIcon size={14} aria-hidden />,
           },
         ]}
       />
