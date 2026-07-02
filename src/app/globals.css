@@ -3302,10 +3302,111 @@ a.card:hover {
   font-weight: 500;
 }
 
-/* the lifecycle track spans the full content width under the head */
-.hiw-explainer__track {
-  max-width: 1480px;
+/* the lifecycle grid — plain, static, always fully readable. Every step's
+   what + why is in normal document flow (no absolute positioning, no
+   timers) so it can never escape its container or cover other sections. */
+.hiw-explainer__grid {
+  list-style: none;
   margin: 0 auto;
+  padding: 0;
+  max-width: 1480px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.hiw-explainer__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 22px 24px;
+  border: 1px solid var(--panel-edge-strong);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.04), transparent 46%),
+    rgba(7, 12, 8, 0.82);
+}
+.hiw-explainer__card[data-tone="green"] {
+  border-top: 2px solid rgba(78, 243, 131, 0.5);
+}
+.hiw-explainer__card[data-tone="gold"] {
+  border-top: 2px solid rgba(207, 154, 46, 0.55);
+}
+.hiw-explainer__card[data-tone="cobalt"] {
+  border-top: 2px solid rgba(120, 185, 255, 0.5);
+}
+.hiw-explainer__card-n {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+.hiw-explainer__card[data-tone="green"] .hiw-explainer__card-n {
+  color: var(--green-bright);
+}
+.hiw-explainer__card[data-tone="gold"] .hiw-explainer__card-n {
+  color: var(--gold-bright);
+}
+.hiw-explainer__card[data-tone="cobalt"] .hiw-explainer__card-n {
+  color: #9cc8ff;
+}
+.hiw-explainer__card-layer {
+  margin-top: -4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.hiw-explainer__card-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--text-hi);
+}
+.hiw-explainer__card-what {
+  margin: 2px 0 0;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.hiw-explainer__card-why {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+@media (max-width: 980px) {
+  .hiw-explainer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .hiw-explainer__grid {
+    grid-template-columns: 1fr;
+  }
+}
+[data-theme="light"] .hiw-explainer__card {
+  border-color: rgba(14, 27, 19, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 46%),
+    rgba(252, 248, 240, 0.9);
+}
+[data-theme="light"] .hiw-explainer__card[data-tone="green"] {
+  border-top-color: rgba(12, 125, 54, 0.5);
+}
+[data-theme="light"] .hiw-explainer__card[data-tone="gold"] {
+  border-top-color: rgba(138, 97, 21, 0.5);
+}
+[data-theme="light"] .hiw-explainer__card[data-tone="cobalt"] {
+  border-top-color: rgba(43, 108, 176, 0.5);
+}
+[data-theme="light"] .hiw-explainer__card[data-tone="green"] .hiw-explainer__card-n {
+  color: #0c7d36;
+}
+[data-theme="light"] .hiw-explainer__card[data-tone="gold"] .hiw-explainer__card-n {
+  color: #8a6115;
+}
+[data-theme="light"] .hiw-explainer__card[data-tone="cobalt"] .hiw-explainer__card-n {
+  color: #2b6cb0;
 }
 /* footer carries a translucent base globally; on the experience the scene is
    still fixed behind everything, so back it with solid darkness. */
@@ -4098,9 +4199,15 @@ a.chip:hover {
 [data-theme="light"] .world-grain {
   opacity: 0.22;
 }
-[data-theme="light"] .page-main--how-it-works:not(.page-main--hiw-experience),
-[data-theme="light"] .page-main--hiw-experience > *:not(.hiw-act) {
+[data-theme="light"] .page-main--how-it-works:not(.page-main--hiw-experience) {
   background-color: rgba(244, 239, 227, 0.84);
+}
+/* MUST be fully opaque, not a wash — this backdrop exists to fully cover
+   the fixed scene-stage art still rendering behind it (see the dark-theme
+   #030704 rule this mirrors); at 0.84 alpha, 16% of that busy background
+   showed through every section past the journey act. */
+[data-theme="light"] .page-main--hiw-experience > *:not(.hiw-act) {
+  background-color: #f4efe3;
 }
 
 [data-theme="light"] .page-main--hiw-experience {

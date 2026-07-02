@@ -11,7 +11,6 @@ import {
   type ReactNode,
 } from "react";
 import JourneyHud from "@/components/scene/JourneyHud";
-import PipelineDeck from "@/components/minimal/PipelineDeck";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -221,35 +220,32 @@ function JourneyAct({
 
 function HowItWorksExplainer() {
   /* the site's ONE textual telling of the pipeline (the journey act above
-     tells it cinematically; home only trails it) — the fanned card deck
-     auto-plays continuously (no click required, at every width) and
-     carries the full what + why of every step */
+     tells it cinematically; home only trails it) — a plain static grid,
+     every step's what + why always visible, no interaction required */
   return (
     <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
       <div className="hiw-explainer__head">
         <p>Transaction path</p>
         <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
       </div>
-      <div className="hiw-explainer__track">
-        <PipelineDeck
-          ariaLabel="Transaction lifecycle, step by step"
-          steps={EXPLAINER_STEPS.map((step) => ({
-            title: step.title,
-            layer: step.layer,
-            body: (
-              <>
-                {step.what}
-                <em>{step.why}</em>
-              </>
-            ),
-            tone: step.layer.includes("L1")
-              ? ("cobalt" as const)
-              : step.layer === "Challenge" || step.layer === "Availability"
-                ? ("gold" as const)
-                : ("green" as const),
-          }))}
-        />
-      </div>
+      <ol className="hiw-explainer__grid" aria-label="Transaction lifecycle, step by step">
+        {EXPLAINER_STEPS.map((step) => {
+          const tone = step.layer.includes("L1")
+            ? "cobalt"
+            : step.layer === "Challenge" || step.layer === "Availability"
+              ? "gold"
+              : "green";
+          return (
+            <li key={step.title} className="hiw-explainer__card" data-tone={tone}>
+              <span className="hiw-explainer__card-n">{step.n}</span>
+              <span className="hiw-explainer__card-layer">{step.layer}</span>
+              <strong className="hiw-explainer__card-title">{step.title}</strong>
+              <p className="hiw-explainer__card-what">{step.what}</p>
+              <p className="hiw-explainer__card-why">{step.why}</p>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
