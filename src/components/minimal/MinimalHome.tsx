@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import ShatterHeading from "@/components/v2/ShatterHeading";
+import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
+import FireflyField from "@/components/minimal/FireflyField";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { TrustFlowAnimation } from "@/components/minimal/TrustFlowAnimation";
@@ -79,6 +81,7 @@ function EcosystemPartners() {
   return (
     <section className="minimal-partners" aria-labelledby="minimal-partners-title">
       <h2 id="minimal-partners-title">Ecosystem Partners</h2>
+      <p className="minimal-partners__intro">{SITE_COPY.partnersIntro}</p>
       <MagneticPartnerBoard partners={ECOSYSTEM_PARTNERS} />
     </section>
   );
@@ -89,9 +92,26 @@ export default function MinimalHome() {
     <main className="minimal-site">
       <HeroStage />
       <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
+        {/* live-activity fireflies over the night plate (dark theme only) */}
+        <FireflyField count={16} className="minimal-hero__fireflies" />
         <div className="minimal-hero__copy">
-          <ShatterHeading as="h1" lines={[SITE_COPY.hero.title]} />
+          <span className="minimal-status-chip">
+            <i aria-hidden />
+            {SITE_COPY.hero.status}
+          </span>
+          <ShatterHeading as="h1" lines={[...SITE_COPY.hero.titleLines]} />
           <p>{SITE_COPY.hero.lead}</p>
+          <dl className="minimal-hero-stats" aria-label="Midgard at a glance">
+            {SITE_COPY.stats.map((stat) => (
+              <div className="minimal-hero-stat" key={stat.k}>
+                <dt>{stat.k}</dt>
+                <dd>
+                  {stat.v}
+                  <span>{stat.s}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
           <div className="minimal-hero__dock">
             <div className="minimal-actions">
               <SmartLink className="minimal-btn minimal-btn--primary" href={SITE_COPY.hero.primaryCta.href}>
@@ -100,43 +120,25 @@ export default function MinimalHome() {
               <SmartLink className="minimal-btn minimal-btn--ghost" href={SITE_COPY.hero.secondaryCta.href}>
                 {SITE_COPY.hero.secondaryCta.label}
               </SmartLink>
-              <SmartLink className="minimal-btn minimal-btn--quiet" href={SITE_COPY.hero.tertiaryCta.href}>
-                {SITE_COPY.hero.tertiaryCta.label}
-              </SmartLink>
             </div>
           </div>
         </div>
         <div className="minimal-hero__visual-space" aria-hidden />
       </section>
 
+      {/* The three value steps highlight in sync with the hero tree's
+          canopy → trunk → roots descent (body[data-descent-stage]). */}
       <section className="minimal-thesis" aria-label="Midgard at a glance">
         <div className="minimal-thesis__rail" aria-hidden="true">
           <span />
         </div>
         {VALUE_STEPS.map((step, index) => (
-          <article className="minimal-thesis__item" key={step.title}>
+          <article className="minimal-thesis__item" data-step={index} key={step.title}>
             <span>{String(index + 1).padStart(2, "0")}</span>
             <h2>{step.title}</h2>
             <p>{step.body}</p>
           </article>
         ))}
-      </section>
-
-      <EcosystemPartners />
-
-      <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
-        <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Choose your path.</h2>
-          <p>Users learn the flow. Developers inspect source and contracts. Protocol Roles participate in the network.</p>
-        </div>
-        <nav className="minimal-hero-routes" aria-label="Midgard path shortcuts">
-          {SITE_COPY.paths.map((path) => (
-            <SmartLink key={path.title} className="minimal-hero-route" href={path.href}>
-              <strong>{path.title}</strong>
-              <span>{path.cta}</span>
-            </SmartLink>
-          ))}
-        </nav>
       </section>
 
       <section className="minimal-section minimal-section--trust" aria-labelledby="minimal-mechanism-title">
@@ -153,6 +155,40 @@ export default function MinimalHome() {
           copy={SITE_COPY.trustFlow}
         />
       </section>
+
+      <section className="minimal-section minimal-section--descent" aria-labelledby="minimal-descent-title">
+        <div className="minimal-section__head">
+          <h2 id="minimal-descent-title">Watch a transaction travel the tree.</h2>
+          <p>
+            Execution in the canopy, verification in the trunk, settlement at the roots —
+            the same journey every Midgard transaction makes.
+          </p>
+        </div>
+        <div className="minimal-descent-stage">
+          <DescentPreviewLoop>
+            <SmartLink className="minimal-btn minimal-btn--ghost" href="/how-it-works">
+              Watch it happen -&gt;
+            </SmartLink>
+          </DescentPreviewLoop>
+        </div>
+      </section>
+
+      <section id="paths" className="minimal-section minimal-section--paths" aria-labelledby="minimal-paths-title">
+        <div className="minimal-section__head">
+          <h2 id="minimal-paths-title">Choose your path.</h2>
+          <p>Users learn the flow. Developers inspect source and contracts. Protocol Roles participate in the network.</p>
+        </div>
+        <nav className="minimal-hero-routes" aria-label="Midgard path shortcuts">
+          {SITE_COPY.paths.map((path) => (
+            <SmartLink key={path.title} className="minimal-hero-route" href={path.href}>
+              <strong>{path.title}</strong>
+              <span>{path.cta}</span>
+            </SmartLink>
+          ))}
+        </nav>
+      </section>
+
+      <EcosystemPartners />
 
       <section className="minimal-section minimal-section--inspect" aria-labelledby="minimal-inspect-title">
         <div className="minimal-section__head">

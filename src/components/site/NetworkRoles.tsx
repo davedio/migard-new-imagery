@@ -76,7 +76,7 @@ export function NetworkRoles() {
               target="_blank"
               rel="noreferrer"
             >
-              Review watcher requirements →
+              Review Watcher requirements →
             </a>
           </div>
         </Reveal>

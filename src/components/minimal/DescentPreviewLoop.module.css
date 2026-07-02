@@ -1,0 +1,141 @@
+/* ============================================================
+   DescentPreviewLoop — co-located styles.
+   The component fills its parent: the parent supplies the size,
+   this wrapper is position:relative with everything absolute in it.
+   ============================================================ */
+
+.root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px; /* graceful floor if the parent forgets a height */
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--r-lg, 4px);
+  background: #060a07; /* void behind the plate while it loads */
+}
+:global([data-theme="light"]) .root {
+  background: #e9eee3;
+}
+
+.plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* whisper of contrast for the labels / CTA, top and bottom */
+.veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(4, 7, 5, 0.18),
+    transparent 28%,
+    transparent 62%,
+    rgba(4, 7, 5, 0.42)
+  );
+}
+:global([data-theme="light"]) .veil {
+  background: linear-gradient(
+    180deg,
+    rgba(246, 241, 232, 0.12),
+    transparent 28%,
+    transparent 66%,
+    rgba(246, 241, 232, 0.4)
+  );
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---- stage readout (Execute · Verify · Settle) ---- */
+
+.stages {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.stageLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-faint, #6f7d72);
+  opacity: 0.6;
+  transition:
+    color 400ms ease,
+    opacity 400ms ease;
+}
+.dot {
+  font-style: normal;
+  color: var(--text-faint, #6f7d72);
+  opacity: 0.5;
+}
+
+/* stage accents — execution / verification / settlement */
+.stageLabel[data-on="true"] {
+  opacity: 1;
+}
+.sGreen[data-on="true"] {
+  color: #4ade80;
+}
+.sGold[data-on="true"] {
+  color: #ffc840;
+}
+.sCobalt[data-on="true"] {
+  color: #78b9ff;
+}
+/* deeper accents for legibility over the daylight plate */
+:global([data-theme="light"]) .sGreen[data-on="true"] {
+  color: #0c7d36;
+}
+:global([data-theme="light"]) .sGold[data-on="true"] {
+  color: #8a6115;
+}
+:global([data-theme="light"]) .sCobalt[data-on="true"] {
+  color: #2447b8;
+}
+
+/* ---- CTA slot (bottom-right) ---- */
+
+.cta {
+  position: absolute;
+  right: 16px;
+  bottom: 14px;
+  z-index: 2;
+}
+
+/* ---- a11y ---- */
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

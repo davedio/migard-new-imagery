@@ -15,27 +15,19 @@ export const GLOSSARY = {
   },
   "challenge-window": {
     term: "challenge window",
-    def: "The dispute period after a state commitment lands on Cardano during which watchers can submit a fault proof against it.",
-  },
-  batcher: {
-    term: "batcher",
-    def: "The operator role that gathers Layer 2 transactions, orders them into a block, and commits the result to Cardano.",
+    def: "The dispute period after a state commitment lands on Cardano during which Watchers can submit a fault proof against it.",
   },
   watcher: {
-    term: "watcher",
+    term: "Watcher",
     def: "An independent node that re-executes committed blocks and raises a fault proof if a commitment does not match the rules.",
   },
   operator: {
-    term: "operator",
-    def: "A bonded participant who runs Midgard infrastructure, posting collateral that can be slashed for invalid commitments.",
+    term: "Operator",
+    def: "A bonded participant who runs Midgard infrastructure — ordering transactions into blocks and committing them to Cardano — posting collateral that can be slashed for invalid commitments.",
   },
   settlement: {
     term: "settlement",
     def: "The point at which Layer 2 state becomes final on Cardano: the challenge window closes with no successful dispute.",
-  },
-  "fraud-proof": {
-    term: "fault proof",
-    def: "An on-chain proof that a committed state transition is invalid, built by re-executing only the disputed transaction's inputs.",
   },
   "fault-proof": {
     term: "fault proof",
@@ -43,7 +35,7 @@ export const GLOSSARY = {
   },
   "state-commitment": {
     term: "state commitment",
-    def: "A compact cryptographic summary of Layer 2 state that the batcher posts to Cardano for anyone to verify or challenge.",
+    def: "A compact cryptographic summary of Layer 2 state that an Operator posts to Cardano for anyone to verify or challenge.",
   },
   "layer-2": {
     term: "Layer 2",

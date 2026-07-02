@@ -29,8 +29,8 @@ const DUEL = {
     points: [
       "Large data footprint",
       "Expensive L1 verification",
-      "Heavier hardware for watchers",
-      "Fewer independent watchers",
+      "Heavier hardware for Watchers",
+      "Fewer independent Watchers",
     ],
   },
 };

@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import JourneyHud from "@/components/scene/JourneyHud";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -344,6 +345,8 @@ export default function HowItWorksExperience({
             packetRef={packetRef}
             enabled={advanced}
           />
+          {/* spine rail + live Watcher readout — desktop, motion-on only */}
+          {advanced ? <JourneyHud progress={springProgress} /> : null}
         </div>
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>

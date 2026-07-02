@@ -1,0 +1,98 @@
+/* ============================================================
+   TreeSpine — co-located styles.
+   Only stroke-dashoffset / opacity / transform ever transition;
+   the pulse is a compositor-cheap scale+fade on a tiny circle.
+   Node color arrives per-node as --nc (set inline by the TSX).
+   ============================================================ */
+
+.spine {
+  display: block;
+  width: 56px;
+  height: auto;
+  overflow: visible;
+}
+
+/* dormant rail — theme-aware hairline */
+.rail {
+  stroke: var(--panel-edge-strong, rgba(244, 241, 230, 0.14));
+}
+
+/* lit sap vein fills toward the active node */
+.vein {
+  transition: stroke-dashoffset 900ms var(--ease, cubic-bezier(0.22, 0.61, 0.36, 1));
+}
+.spine[data-motion="off"] .vein {
+  transition: none;
+}
+
+/* ---- nodes ---- */
+
+.glow {
+  fill: var(--nc, #4ade80);
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+.nodeG[data-state="lit"] .glow,
+.nodeG[data-state="active"] .glow {
+  opacity: 0.16;
+}
+
+.core {
+  fill: transparent;
+  stroke: var(--panel-edge-strong, rgba(244, 241, 230, 0.2));
+  stroke-width: 1.2;
+  transition:
+    fill 450ms ease,
+    stroke 450ms ease;
+}
+.nodeG[data-state="lit"] .core,
+.nodeG[data-state="active"] .core {
+  fill: var(--nc, #4ade80);
+  stroke: transparent;
+}
+
+/* ---- active halo ---- */
+
+.halo {
+  fill: none;
+  stroke: var(--nc, #4ade80);
+  stroke-width: 1.25;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.haloPulse {
+  animation: spine-pulse 2.4s ease-in-out infinite;
+}
+
+/* motion off — steady, no loop */
+.haloStill {
+  opacity: 0.4;
+}
+
+@keyframes spine-pulse {
+  0% {
+    transform: scale(0.55);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.55;
+  }
+  75%,
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vein {
+    transition: none;
+  }
+  .haloPulse {
+    animation: none;
+    transform: none;
+    opacity: 0.4;
+  }
+}

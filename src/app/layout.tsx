@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Fraunces, Inter, JetBrains_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import "./v2.css";
+import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "./providers";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
@@ -115,6 +116,7 @@ export default function RootLayout({
         <div className="world-bg" aria-hidden />
         <Providers>{children}</Providers>
         <div className="world-grain" aria-hidden />
+        <Analytics />
       </body>
     </html>
   );

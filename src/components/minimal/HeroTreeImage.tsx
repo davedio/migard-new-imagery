@@ -47,23 +47,34 @@ export function HeroTreeImage() {
     let current = 0;
 
     const frame = () => {
-      // progress over the first ~1.2 screens of scroll
-      const runway = Math.max(1, window.innerHeight * 1.2);
+      // progress over the first ~1.6 screens of scroll — long enough that the
+      // descent is still running while the three value cards pass the viewport
+      const runway = Math.max(1, window.innerHeight * 1.6);
       const target = smooth01(window.scrollY / runway);
       // ease toward target so a flung scroll glides instead of snapping
       current += (target - current) * 0.12;
       const style = window.getComputedStyle(img);
       const baseLift = Number.parseFloat(style.getPropertyValue("--hero-tree-base-lift")) || 0;
-      const scale = 1.02 + current * 0.17; // 1.02 → ~1.19, zooms into the canopy
+      const scale = 1.02 + current * 0.2; // 1.02 → ~1.22, zooms along the tree
       const lift = baseLift + current * -2.4; // baseline framing lift + gentle scroll drift (%)
       img.style.transform = `scale(${scale.toFixed(4)}) translate3d(0, ${lift.toFixed(2)}%, 0)`;
-      // dissolve the fixed plate into the clean light page as the hero leaves
-      stage.style.opacity = (1 - smooth01((current - 0.18) / 0.72)).toFixed(3);
+      // travel DOWN the tree as we zoom: canopy → trunk → roots
+      img.style.transformOrigin = `50% ${(24 + current * 52).toFixed(1)}%`;
+      // dissolve the fixed plate into the page as the descent completes
+      stage.style.opacity = (1 - smooth01((current - 0.55) / 0.45)).toFixed(3);
+      // one descent stage per third — the value cards below highlight in sync
+      const stageIdx = current < 0.33 ? "0" : current < 0.66 ? "1" : "2";
+      if (document.body.dataset.descentStage !== stageIdx) {
+        document.body.dataset.descentStage = stageIdx;
+      }
       raf = requestAnimationFrame(frame);
     };
 
     raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    return () => {
+      cancelAnimationFrame(raf);
+      delete document.body.dataset.descentStage;
+    };
   }, [motionOn]);
 
   const pfx = theme === "dark" ? "/dark" : "";

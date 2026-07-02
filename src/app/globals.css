@@ -4246,12 +4246,13 @@ a.chip:hover {
    POLISH PASS (2026-06-12)
    ============================================================ */
 
-/* theme application rides a View Transition (see src/lib/theme.tsx) — a touch
-   slower than the browser default so imagery changes read as light changing,
-   not a cut */
+/* theme application rides a View Transition (see src/lib/theme.tsx) — slow
+   enough that the identical day/night plates read as the LIGHT changing over
+   one painting (dusk falling / dawn breaking), never a cut */
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 0.55s;
+  animation-duration: 0.95s;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.2, 1);
 }
 
 /* light mode: the live fx canvas screen-blends to nothing over the bright

@@ -39,7 +39,7 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
               text: "Midgard is built by Midgard Labs for UTXO applications that need faster execution and Cardano L1 settlement.",
             },
             {
-              text: "The protocol is open and the code can be inspected. Public claims should stay tied to live status, measured benchmarks, and approved protocol parameters.",
+              text: "The protocol is open and the code can be inspected — every claim on this site is checkable against live status, measured benchmarks, and approved parameters.",
               variant: "dim",
             },
           ]}

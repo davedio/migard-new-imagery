@@ -1,0 +1,95 @@
+/* ============================================================
+   JumpChips — co-located styles.
+   Sticky under the fixed site nav (nav: top 0, z-index 60 in
+   v2.css); this bar sits at top 76px, z-index 40. Transitions are
+   color/background only — no layout thrash on the active swap.
+   ============================================================ */
+
+.bar {
+  position: sticky;
+  top: 76px;
+  z-index: 40;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  /* the bar itself never blocks clicks beside the pill panel */
+  pointer-events: none;
+}
+
+.panel {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 5px;
+  overflow-x: auto;
+  border-radius: 999px;
+  border: 1px solid var(--panel-edge, rgba(244, 241, 230, 0.09));
+  background: rgba(6, 10, 7, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  /* hidden scrollbar, still swipeable on mobile */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.panel::-webkit-scrollbar {
+  display: none;
+}
+:global([data-theme="light"]) .panel {
+  background: rgba(246, 241, 232, 0.72);
+}
+
+.chip {
+  appearance: none;
+  flex-shrink: 0;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 999px;
+  padding: 9px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim, #93a094);
+  transition:
+    color 250ms ease,
+    background-color 250ms ease,
+    border-color 250ms ease;
+}
+
+.chip:hover {
+  color: var(--text-hi, #f4f1e6);
+  border-color: var(--panel-edge-strong, rgba(244, 241, 230, 0.17));
+}
+
+/* active pill fills with the theme accent; ink flips for contrast.
+   Dark theme: bright green (#4ef383) → near-black ink.
+   Light theme: --green-bright is a deep green (#0c7d36) → bone text. */
+.chipActive,
+.chipActive:hover {
+  background: var(--green-bright, #4ef383);
+  border-color: transparent;
+  color: #06110a;
+}
+:global([data-theme="light"]) .chipActive,
+:global([data-theme="light"]) .chipActive:hover {
+  color: #f4f1ec;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .bar {
+    justify-content: flex-start;
+    padding: 0 12px;
+  }
+}

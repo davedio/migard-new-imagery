@@ -1,0 +1,87 @@
+/* ============================================================
+   FireflyField — co-located styles.
+   Transform + opacity only in the animations (compositor-safe);
+   the glow is a static radial-gradient paint, never re-rastered.
+   ============================================================ */
+
+.field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* telemetry → tempo. Multiplies every animation-duration below:
+     busier network = shorter cycles = livelier fireflies. */
+  --activity: 1;
+}
+.field[data-activity="low"] {
+  --activity: 1.4;
+}
+.field[data-activity="high"] {
+  --activity: 0.6;
+}
+
+.fly {
+  position: absolute;
+  left: var(--fx, 50%);
+  top: var(--fy, 50%);
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  /* warm-green ember: hot centre, mossy falloff */
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(236, 255, 224, 0.95),
+    rgba(150, 244, 166, 0.55) 34%,
+    rgba(74, 222, 128, 0.2) 62%,
+    rgba(74, 222, 128, 0) 74%
+  );
+  opacity: 0;
+  transform: translate3d(0, 0, 0) scale(var(--s, 1));
+  will-change: transform, opacity;
+  animation:
+    firefly-drift calc(var(--dur, 12s) * var(--activity)) ease-in-out infinite
+      alternate,
+    firefly-blink calc(var(--blink, 5s) * var(--activity)) ease-in-out infinite;
+  animation-delay: var(--d1, 0s), var(--d2, 0s);
+}
+
+@keyframes firefly-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(var(--s, 1));
+  }
+  to {
+    transform: translate3d(var(--dx, 24px), var(--dy, -18px), 0)
+      scale(var(--s, 1));
+  }
+}
+
+@keyframes firefly-blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.18;
+  }
+  45% {
+    opacity: var(--peak, 0.85);
+  }
+  62% {
+    opacity: 0.22;
+  }
+}
+
+/* motion off (manual toggle) — static final state: faint resting motes */
+.field[data-motion="off"] .fly {
+  animation: none;
+  opacity: 0.45;
+}
+
+/* OS-level reduced motion, belt and braces over the JS flag */
+@media (prefers-reduced-motion: reduce) {
+  .fly {
+    animation: none;
+    opacity: 0.45;
+  }
+}
