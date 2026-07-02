@@ -164,13 +164,11 @@ export function Section({
     >
       <div className="section__inner">
         {hasHead ? (
-          <Reveal>
-            <div className="section__head">
-              {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
-              {title ? <h2>{title}</h2> : null}
-              {lead ? <p className="lead">{lead}</p> : null}
-            </div>
-          </Reveal>
+          <div className="section__head">
+            {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
+            {title ? <h2>{title}</h2> : null}
+            {lead ? <p className="lead">{lead}</p> : null}
+          </div>
         ) : null}
         {children}
       </div>
@@ -187,18 +185,16 @@ export type ProseItem = {
 
 export function Prose({ items }: { items: ProseItem[] }) {
   return (
-    <Reveal>
-      <div className="prose">
-        {items.map((p, i) => (
-          <p
-            key={i}
-            className={p.variant && p.variant !== "default" ? p.variant : undefined}
-          >
-            {p.text}
-          </p>
-        ))}
-      </div>
-    </Reveal>
+    <div className="prose">
+      {items.map((p, i) => (
+        <p
+          key={i}
+          className={p.variant && p.variant !== "default" ? p.variant : undefined}
+        >
+          {p.text}
+        </p>
+      ))}
+    </div>
   );
 }
 
@@ -290,15 +286,13 @@ export function Card({
 
 export function Bullets({ items }: { items: ReactNode[] }) {
   return (
-    <Reveal>
-      <ul className="bullets">
-        {items.map((it, i) => (
-          <li key={i}>
-            <span>{it}</span>
-          </li>
-        ))}
-      </ul>
-    </Reveal>
+    <ul className="bullets">
+      {items.map((it, i) => (
+        <li key={i}>
+          <span>{it}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -309,14 +303,12 @@ export type LayerItem = { n: string; name: string; desc: ReactNode };
 export function Layers({ items }: { items: readonly LayerItem[] }) {
   return (
     <div className="layers">
-      {items.map((l, i) => (
-        <Reveal key={l.name} delay={i * 50}>
-          <div className="layer-row panel">
-            <div className="n">{l.n}</div>
-            <div className="name">{l.name}</div>
-            <div className="desc">{l.desc}</div>
-          </div>
-        </Reveal>
+      {items.map((l) => (
+        <div className="layer-row panel" key={l.name}>
+          <div className="n">{l.n}</div>
+          <div className="name">{l.name}</div>
+          <div className="desc">{l.desc}</div>
+        </div>
       ))}
     </div>
   );
