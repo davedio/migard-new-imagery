@@ -139,6 +139,8 @@ export function Section({
   lead,
   tight,
   glow,
+  cols,
+  aside,
   children,
 }: {
   id?: string;
@@ -148,9 +150,14 @@ export function Section({
   tight?: boolean;
   /** Add a soft ambient corner glow behind the section to fill below-fold voids. */
   glow?: "green" | "gold";
+  /** ≥1200px: head (plus aside) sits in a left column beside the content —
+      spends desktop width instead of scroll. Stacks normally below. */
+  cols?: boolean;
+  /** Extra content rendered inside the head column (Statement, StepRail, Prose). */
+  aside?: ReactNode;
   children?: ReactNode;
 }) {
-  const hasHead = eyebrow || title || lead;
+  const hasHead = eyebrow || title || lead || aside;
   const glowClass =
     glow === "green"
       ? " section--glow"
@@ -162,15 +169,16 @@ export function Section({
       id={id}
       className={`section${tight ? " section--tight" : ""}${glowClass}`}
     >
-      <div className="section__inner">
+      <div className={`section__inner${cols ? " section__inner--cols" : ""}`}>
         {hasHead ? (
           <div className="section__head">
             {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
             {title ? <h2>{title}</h2> : null}
             {lead ? <p className="lead">{lead}</p> : null}
+            {aside}
           </div>
         ) : null}
-        {children}
+        {cols ? <div className="section__body">{children}</div> : children}
       </div>
     </section>
   );

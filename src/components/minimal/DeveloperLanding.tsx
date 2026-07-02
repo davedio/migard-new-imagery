@@ -52,11 +52,14 @@ export default function DeveloperLanding() {
         title="Choose your developer path."
         lead="One sequence for everyone, then four tracks with different next steps."
         glow="green"
+        cols
+        aside={
+          <StepRail
+            ariaLabel="Developer integration path"
+            steps={DEVELOPER_COPY.integrationPath}
+          />
+        }
       >
-        <StepRail
-          ariaLabel="Developer integration path"
-          steps={DEVELOPER_COPY.integrationPath}
-        />
         <CardGrid cols={2}>
           {DEVELOPER_COPY.tracks.map((track, i) => (
             <Card
@@ -78,8 +81,9 @@ export default function DeveloperLanding() {
         id="security"
         title={DEVELOPER_COPY.security.title}
         lead={DEVELOPER_COPY.security.lead}
+        cols
+        aside={<Prose items={DEVELOPER_COPY.security.prose.map((text) => ({ text }))} />}
       >
-        <Prose items={DEVELOPER_COPY.security.prose.map((text) => ({ text }))} />
         <DataRows
           ariaLabel="Audit status and responsible disclosure"
           rows={DEVELOPER_COPY.security.rows.map((row) => ({

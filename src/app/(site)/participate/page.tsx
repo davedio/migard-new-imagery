@@ -66,15 +66,22 @@ export default function ParticipatePage() {
         ]}
       />
 
-      <Section id="roles" title="Operators and Watchers.">
-        <Statement
-          kicker="Why one honest node is enough"
-          line={
-            <>
-              <em>One honest Watcher</em> is enough to stop a bad block.
-            </>
-          }
-        />
+      <Section
+        id="roles"
+        title="Operators and Watchers."
+        cols
+        aside={
+          <Statement
+            align="left"
+            kicker="Why one honest node is enough"
+            line={
+              <>
+                <em>One honest Watcher</em> is enough to stop a bad block.
+              </>
+            }
+          />
+        }
+      >
         <CardGrid cols={2}>
           <Card
             title="Operator"
@@ -102,9 +109,18 @@ export default function ParticipatePage() {
         </p>
       </Section>
 
-      <Section id="economics" title="Economics.">
+      <Section
+        id="economics"
+        title="Economics."
+        cols
+        aside={
+          <Statement
+            align="left"
+            line="A slashed bond costs more than honest sequencing ever earns."
+          />
+        }
+      >
         <StepRail steps={economicsSteps} ariaLabel="How network economics fit together" />
-        <Statement line="A slashed bond costs more than honest sequencing ever earns." />
       </Section>
 
       <div id="register">

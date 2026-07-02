@@ -136,23 +136,30 @@ export default function MinimalHome() {
 
       {/* The pipeline — the six lifecycle beats at full size on one connected
           line, closed by the line the section exists to say. */}
-      <section className="minimal-section minimal-section--pipeline" aria-labelledby="minimal-pipeline-title">
+      <section
+        className="minimal-section minimal-section--pipeline minimal-section--cols"
+        aria-labelledby="minimal-pipeline-title"
+      >
         <div className="minimal-section__head">
           <h2 id="minimal-pipeline-title">Fast execution first. Verification before final settlement.</h2>
           <p>
             You only ever see three steps — deposit, transact, withdraw. This is the
             pipeline working underneath.
           </p>
+          <Statement
+            align="left"
+            kicker={SITE_COPY.trustFlow.resolved.kicker}
+            line={SITE_COPY.trustFlow.resolved.title}
+            sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
+          />
         </div>
         <StepRail steps={PIPELINE_STEPS} ariaLabel="Transaction lifecycle" />
-        <Statement
-          kicker={SITE_COPY.trustFlow.resolved.kicker}
-          line={SITE_COPY.trustFlow.resolved.title}
-          sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
-        />
       </section>
 
-      <section className="minimal-section minimal-section--descent" aria-labelledby="minimal-descent-title">
+      <section
+        className="minimal-section minimal-section--descent minimal-section--descent-cols"
+        aria-labelledby="minimal-descent-title"
+      >
         <div className="minimal-section__head">
           <h2 id="minimal-descent-title">Watch a transaction travel the tree.</h2>
           <p>
@@ -173,7 +180,11 @@ export default function MinimalHome() {
 
       {/* Verify & connect — the quiet closer: proof surfaces and official
           channels as one flat directory. */}
-      <section id="channels" className="minimal-section minimal-section--verify" aria-labelledby="minimal-verify-title">
+      <section
+        id="channels"
+        className="minimal-section minimal-section--verify minimal-section--cols"
+        aria-labelledby="minimal-verify-title"
+      >
         <div className="minimal-section__head">
           <h2 id="minimal-verify-title">Inspect the claims.</h2>
           <p>

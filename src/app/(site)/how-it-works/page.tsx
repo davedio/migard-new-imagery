@@ -83,7 +83,7 @@ export default function HowItWorksPage() {
       </Section>
 
       {/* D — one outbound footer: where each thread continues */}
-      <Section id="next" title="Security and economics, in depth." tight>
+      <Section id="next" title="Security and economics, in depth." tight cols>
         <DataRows
           ariaLabel="Where to go next"
           rows={[
@@ -121,6 +121,7 @@ export default function HowItWorksPage() {
         title="Glossary."
         lead="Short definitions for the protocol terms used across Midgard."
         tight
+        cols
       >
         <GlossaryList />
       </Section>
