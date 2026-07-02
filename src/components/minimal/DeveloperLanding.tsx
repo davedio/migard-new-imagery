@@ -1,90 +1,24 @@
-import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { ContractsReference } from "@/components/site/ContractsReference";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
+import IntegrationSteps from "@/components/site/IntegrationSteps";
+import { DataRows } from "@/components/site/rhythm";
+import { Card, CardGrid, CtaBand, PageHero, Prose, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
-import styles from "@/components/site/developer.module.css";
 
-const launchpad = [
-  {
-    label: "Contracts",
-    detail: "Check validator topology, state anchors, reference scripts, and the preprod snapshot.",
-    href: "/developers#contracts",
-    cta: "Inspect contracts",
-  },
-  {
-    label: "Security",
-    detail: "Trust path, fault proofs, responsible disclosure, and audit status.",
-    href: "/developers#security",
-    cta: "Read security",
-  },
-  {
-    label: "GitHub",
-    detail: "Open the node code, contract implementation, and public issues.",
-    href: OFFICIAL_LINKS.github,
-    cta: "Open GitHub",
-    github: true,
-  },
-] as const;
-
-const integrationPath = [
-  {
-    label: "Source",
-    detail: "Read node and contract code.",
-  },
-  {
-    label: "Contracts",
-    detail: "Check topology and state anchors.",
-  },
-  {
-    label: "App flow",
-    detail: "Map wallet action, app interaction, data availability, fallback.",
-  },
-  {
-    label: "Trust path",
-    detail: "Verify fault proofs, Watchers, data availability, settlement.",
-  },
-] as const;
-
-function isExternal(href: string) {
-  return /^https?:\/\//.test(href);
-}
-
-function LaunchpadLink({ item, index }: { item: (typeof launchpad)[number]; index: number }) {
-  const isGitHubCard = "github" in item && item.github;
-  const inner = (
-    <>
-      <span>{String(index + 1).padStart(2, "0")}</span>
-      <h3>
-        {isGitHubCard ? <GitHubIcon size={18} aria-hidden /> : null}
-        {item.label}
-      </h3>
-      <p>{item.detail}</p>
-      <strong>{item.cta} -&gt;</strong>
-    </>
-  );
-
-  if (isExternal(item.href)) {
-    return (
-      <a className={styles.launchCard} href={item.href} target="_blank" rel="noreferrer">
-        {inner}
-      </a>
-    );
-  }
-
-  return (
-    <Link className={styles.launchCard} href={item.href}>
-      {inner}
-    </Link>
-  );
-}
+/* /developers — reading-rhythm layout (see .review/card-rhythm-redesign-2026-07-02.md):
+   hero (the one telling of the wallet-action…fallback sentence) → ONE sticky
+   JumpChips bar tracking the whole page → ONE Grid (developer paths, with the
+   integration-path stepper as the page's single path telling) → contracts
+   reference (header band, topology set-piece, table of record, genesis, query)
+   → security (Prose + two data rows) → one closing CTA band.
+   Motion: the Grid keeps its group entrance; everything else is static. */
 
 export default function DeveloperLanding() {
   return (
-    <main className={`page-main developer-page ${styles.developerPage}`}>
+    <main className="page-main developer-page">
       <PageBackdrop name="forest-path" focus="54% 48%" />
       <PageHero
         compact
@@ -103,62 +37,29 @@ export default function DeveloperLanding() {
         ]}
       />
 
+      {/* The page's ONE sticky nav — tracks the whole page, including the
+          contracts reference (which no longer carries its own toc). */}
       <JumpChips
         items={[
-          { id: "start", label: "Start" },
-          { id: "developer-paths", label: "Paths" },
+          { id: "start", label: "Paths" },
           { id: "contracts", label: "Contracts" },
+          { id: "query", label: "Query" },
           { id: "security", label: "Security" },
         ]}
       />
 
-      <section
-        id="start"
-        className={styles.launchpad}
-        aria-labelledby="developer-launchpad-title"
-      >
-        <div className={styles.launchInner}>
-          <div className={styles.launchCopy}>
-            <h2 id="developer-launchpad-title">Open the source, then follow the path.</h2>
-            <p>
-              Builders and reviewers need the source, docs, and contract path first.
-            </p>
-            <div className={styles.supportLinks} aria-label="Supporting documents">
-              <span>Protocol design notes</span>
-              <strong>Whitepaper ships with mainnet preparation (estimated)</strong>
-            </div>
-          </div>
-          <div className={styles.launchStack}>
-            <div className={styles.flowPanel} aria-label="Developer integration path">
-              <div className={styles.flowHeader}>
-                <span>Integration path</span>
-                <strong>One app flow at a time</strong>
-              </div>
-              <ol className={styles.flowSteps}>
-                {integrationPath.map((step, i) => (
-                  <li key={step.label}>
-                    <span>{String(i + 1).padStart(2, "0")}</span>
-                    <h3>{step.label}</h3>
-                    <p>{step.detail}</p>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <div className={styles.launchGrid}>
-              {launchpad.map((item, i) => (
-                <LaunchpadLink key={item.label} item={item} index={i} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <Section
-        id="developer-paths"
+        id="start"
         title="Choose your developer path."
-        lead="Application builders, protocol reviewers, Protocol Roles, and stack partners need different next steps."
+        lead="One sequence for everyone, then four tracks with different next steps."
         glow="green"
       >
+        <div className="motion-band">
+          <IntegrationSteps
+            ariaLabel="Developer integration path"
+            steps={DEVELOPER_COPY.integrationPath}
+          />
+        </div>
         <CardGrid cols={2}>
           {DEVELOPER_COPY.tracks.map((track, i) => (
             <Card
@@ -167,9 +68,8 @@ export default function DeveloperLanding() {
               title={track.title}
               body={track.body}
               cta={track.cta}
-              ctaIcon={track.href === OFFICIAL_LINKS.github ? <GitHubIcon size={14} /> : undefined}
               href={track.href}
-              ctaGlow
+              delay={i * 50}
             />
           ))}
         </CardGrid>
@@ -181,38 +81,23 @@ export default function DeveloperLanding() {
         id="security"
         title={DEVELOPER_COPY.security.title}
         lead={DEVELOPER_COPY.security.lead}
+        cols
+        aside={<Prose items={DEVELOPER_COPY.security.prose.map((text) => ({ text }))} />}
       >
-        <CardGrid cols={2}>
-          {DEVELOPER_COPY.security.cards.map((card) => (
-            <Card
-              key={card.title}
-              title={card.title}
-              body={card.body}
-              cta={"cta" in card ? card.cta : undefined}
-              href={"href" in card ? card.href : undefined}
-            />
-          ))}
-        </CardGrid>
-      </Section>
-
-      <Section
-        title="The builder checklist."
-        lead="Use this as the first review path before a deeper integration conversation."
-        tight
-      >
-        <Layers
-          items={[
-            { n: "01", name: "Read", desc: "Start with GitHub and the plain-language overview." },
-            { n: "02", name: "Inspect", desc: "Open the contract addresses, topology, and state anchors." },
-            { n: "03", name: "Model", desc: "Map your flow to wallet action, app interaction, data availability, and fallback behavior." },
-            { n: "04", name: "Verify", desc: "Review the fault-proof path, Watcher role, data availability assumption, and Cardano L1 settlement path." },
-          ]}
+        <DataRows
+          ariaLabel="Audit status and responsible disclosure"
+          rows={DEVELOPER_COPY.security.rows.map((row) => ({
+            label: row.label,
+            body: row.body,
+            href: "href" in row ? row.href : undefined,
+            external: "href" in row ? /^https?:\/\//.test(row.href) : undefined,
+          }))}
         />
       </Section>
 
       <CtaBand
         title="Bring a concrete flow."
-        lead="The fastest useful developer conversation starts with a wallet action, dApp interaction, indexer need, or protocol path that can be mapped to Midgard."
+        lead="Bring the flow your app depends on — it can be mapped and tested on preprod today. Bring the one your app depends on and it can be mapped, tested on preprod, and challenged in the open."
         actions={[
           {
             label: "Open GitHub",

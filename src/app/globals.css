@@ -1027,6 +1027,26 @@ button.panel:hover {
 .reveal--stagger.in > *:nth-child(4) { transition-delay: 240ms; }
 .reveal--stagger.in > *:nth-child(5) { transition-delay: 320ms; }
 .reveal--stagger.in > *:nth-child(6) { transition-delay: 400ms; }
+
+/* ---- per-page card entrances: one identical rise everywhere read as
+   copy-paste, so each grid gets its own concept (2026-07-02).
+   · /participate roles: the Operator/Watcher PAIR slides in from
+     opposite sides — two roles meeting in one system. Gated on
+     html[data-motion="on"] so reduced-motion / no-JS never see offsets.
+   · /developers #start: the stepper above owns that section's entrance;
+     the track cards are simply present.
+   · the /how-it-works compare grid keeps the classic rise (sole user). */
+[data-motion="on"] #roles .card-grid > .reveal:nth-child(1):not(.in) {
+  transform: translateX(-30px);
+}
+[data-motion="on"] #roles .card-grid > .reveal:nth-child(2):not(.in) {
+  transform: translateX(30px);
+}
+#start .card-grid > .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .reveal--stagger > * {
@@ -1051,9 +1071,13 @@ button.panel:hover {
   html {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  /* the site's manual motion toggle (html[data-motion="on"], set by
+     MotionProvider) deliberately overrides OS reduced-motion — the JS
+     already honors that contract, so the CSS must too. Pre-hydration and
+     no-JS documents carry no data-motion attribute and stay fully static. */
+  html:not([data-motion="on"]) *,
+  html:not([data-motion="on"]) *::before,
+  html:not([data-motion="on"]) *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -2049,6 +2073,51 @@ button.panel:hover {
 .section__head {
   max-width: 760px;
 }
+
+/* ---- split sections (Section cols prop) — ≥1200px the head column sits
+   beside the content, so tall rails/rows spend width instead of scroll.
+   Below 1200px the grid never engages and everything stacks as before. */
+@media (min-width: 1200px) {
+  .section__inner--cols {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1.28fr);
+    gap: clamp(40px, 4.5vw, 96px);
+    align-items: start;
+  }
+  .section__inner--cols > .section__head {
+    max-width: none;
+    position: sticky;
+    top: 104px;
+  }
+  .section__inner--cols > .section__head .statement {
+    margin: 24px 0 0;
+    padding: 0;
+    text-align: left;
+  }
+  .section__inner--cols > .section__head .statement__line {
+    font-size: clamp(21px, 1.75vw, 30px);
+  }
+  .section__inner--cols > .section__head .statement__sub {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .section__inner--cols > .section__head .prose {
+    max-width: none;
+  }
+  .section__inner--cols .section__body > .datarows {
+    margin: 4px 0 0;
+    max-width: none;
+  }
+  .section__inner--cols .section__body > .card-grid {
+    margin-top: 4px;
+  }
+}
+/* left-aligned Statement: sub copy hugs the left edge everywhere */
+.statement--left .statement__sub {
+  margin-left: 0;
+  margin-right: 0;
+}
+
 .section h2 {
   font-size: var(--h2-size);
   line-height: var(--h2-line);
@@ -2129,7 +2198,7 @@ button.panel:hover {
   opacity: var(--card-glow, 0);
   transition: opacity 0.45s var(--ease);
 }
-.card:hover {
+a.card:hover {
   --card-glow: 1;
   box-shadow: 0 8px 34px -16px var(--green-glow),
     0 0 22px -6px rgba(32, 190, 67, 0.18);
@@ -3184,7 +3253,7 @@ button.panel:hover {
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
-.hiw-explainer__head h1 {
+.hiw-explainer__head h2 {
   margin: 0;
   color: var(--text-hi);
   font-family: var(--font-display);
@@ -3192,98 +3261,11 @@ button.panel:hover {
   line-height: 1.02;
   font-weight: 500;
 }
-.hiw-explainer__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+
+/* the lifecycle track spans the full content width under the head */
+.hiw-explainer__track {
   max-width: 1480px;
   margin: 0 auto;
-}
-.hiw-explainer__card {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 310px;
-  padding: 18px;
-  border: 1px solid rgba(244, 241, 230, 0.12);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 52%),
-    rgba(7, 14, 9, 0.78);
-}
-.hiw-explainer__card[data-layer="bridge"] {
-  border-color: rgba(207, 154, 46, 0.24);
-}
-.hiw-explainer__card[data-layer="l1"] {
-  border-color: rgba(111, 224, 255, 0.22);
-}
-.hiw-explainer__card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.hiw-explainer__card-head span {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(78, 243, 131, 0.48);
-  border-radius: 999px;
-  color: var(--green-bright);
-  font: 11px/1 var(--font-mono);
-}
-.hiw-explainer__card[data-layer="bridge"] .hiw-explainer__card-head span {
-  border-color: rgba(207, 154, 46, 0.5);
-  color: var(--gold-bright);
-}
-.hiw-explainer__card[data-layer="l1"] .hiw-explainer__card-head span {
-  border-color: rgba(111, 224, 255, 0.52);
-  color: #6fe0ff;
-}
-.hiw-explainer__card-head em {
-  color: var(--text-faint);
-  font: 10px/1 var(--font-mono);
-  font-style: normal;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.hiw-explainer__card h3 {
-  margin: 0;
-  color: var(--text-hi);
-  font-size: 23px;
-  line-height: 1.14;
-  font-weight: 500;
-}
-.hiw-explainer__card dl {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-}
-.hiw-explainer__card div,
-.hiw-explainer__card dt,
-.hiw-explainer__card dd {
-  min-width: 0;
-}
-.hiw-explainer__card dt {
-  margin: 0 0 4px;
-  color: var(--green-bright);
-  font: 10px/1 var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.hiw-explainer__card[data-layer="bridge"] dt {
-  color: var(--gold-bright);
-}
-.hiw-explainer__card[data-layer="l1"] dt {
-  color: #6fe0ff;
-}
-.hiw-explainer__card dd {
-  margin: 0;
-  color: var(--text-dim);
-  font-size: 14.5px;
-  line-height: 1.4;
 }
 /* footer carries a translucent base globally; on the experience the scene is
    still fixed behind everything, so back it with solid darkness. */
@@ -3323,17 +3305,8 @@ button.panel:hover {
   .hiw-act__lead {
     font-size: 16px;
   }
-  .hiw-explainer__grid {
-    grid-template-columns: 1fr;
-  }
   .hiw-explainer__head {
     text-align: left;
-  }
-}
-
-@media (max-width: 980px) {
-  .hiw-explainer__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -3367,13 +3340,6 @@ button.panel:hover {
   }
   .hiw-explainer {
     padding-inline: 24px;
-  }
-  .hiw-explainer__grid {
-    grid-template-columns: 1fr;
-  }
-  .hiw-explainer__card {
-    min-height: auto;
-    padding: 16px;
   }
 }
 
@@ -4106,15 +4072,17 @@ a.chip:hover {
 
 [data-theme="light"] .plate-stage__img,
 [data-theme="light"] .plate-stage__dof-img {
-  opacity: 0.64;
-  filter: contrast(1) saturate(0.94) brightness(1.06);
+  /* the painting IS the page here — near-full strength; legibility comes
+     from the localized scrim behind the copy, not a global wash */
+  opacity: 0.92;
+  filter: contrast(1.01) saturate(1) brightness(1.02);
 }
 
 [data-theme="light"] .plate-stage__grade {
   background:
     radial-gradient(120% 60% at 50% 8%, rgba(255, 238, 190, 0.12), transparent 60%),
     radial-gradient(120% 56% at 50% 100%, rgba(47, 156, 255, calc(0.06 * var(--plate-settle))), transparent 62%),
-    linear-gradient(180deg, rgba(255, 250, 240, 0.22) 0%, rgba(255, 250, 240, 0.06) 36%, rgba(244, 239, 227, 0.32) 100%);
+    linear-gradient(180deg, rgba(255, 250, 240, 0.1) 0%, rgba(255, 250, 240, 0.03) 36%, rgba(244, 239, 227, 0.14) 100%);
   mix-blend-mode: normal;
 }
 
@@ -4164,18 +4132,6 @@ a.chip:hover {
   background:
     radial-gradient(circle at 18% 0%, rgba(12, 125, 54, 0.08), transparent 26rem),
     linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(244, 239, 227, 0.86));
-}
-
-[data-theme="light"] .hiw-explainer__card {
-  border-color: rgba(27, 23, 16, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.44), transparent 58%),
-    rgba(255, 250, 240, 0.84);
-}
-
-[data-theme="light"] .hiw-explainer__card[data-layer="l1"] .hiw-explainer__card-head span,
-[data-theme="light"] .hiw-explainer__card[data-layer="l1"] dt {
-  color: #2447b8;
 }
 
 [data-theme="light"] .hiw-act::after {

@@ -65,7 +65,7 @@
     opacity: 0.18;
   }
   45% {
-    opacity: var(--peak, 0.85);
+    opacity: calc(var(--peak, 0.85) * var(--peak-scale, 1));
   }
   62% {
     opacity: 0.22;
@@ -84,4 +84,22 @@
     animation: none;
     opacity: 0.45;
   }
+}
+
+/* pollen variant (light theme) — sunlit dust instead of embers: warmer,
+   smaller, quieter; same drift/blink engine */
+.field[data-variant="pollen"] .fly {
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(255, 250, 235, 0.9),
+    rgba(233, 200, 130, 0.5) 36%,
+    rgba(196, 158, 90, 0.18) 62%,
+    rgba(196, 158, 90, 0) 74%
+  );
+  filter: none;
+}
+.field[data-variant="pollen"] {
+  --peak-scale: 0.6;
 }

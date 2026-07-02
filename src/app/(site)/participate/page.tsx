@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
+import EconomicsCycle from "@/components/site/EconomicsCycle";
+import { Statement } from "@/components/site/rhythm";
+import { Actions, Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import styles from "./participate.module.css";
 
 export const metadata: Metadata = {
   title: "Participate | Midgard",
@@ -16,26 +20,26 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/og/security.jpg"] },
 };
 
-const roleSteps = [
+/* Reading rhythm (see .review/card-rhythm-redesign-2026-07-02.md):
+   hero → chips → Statement + the page's ONE Grid (roles) → the economics
+   loop (three cards circulating value, closed by the Statement) → CtaBand.
+   The register band is the page's only glowing ask. */
+
+const economicsSteps = [
   {
-    n: "01",
-    name: "Operator",
-    desc: "Orders activity and posts commitments that other parties can check.",
+    title: "Fees fund the network",
+    body: "Users pay fees in plain ADA — estimated at a fraction of L1 cost. Those fees fund the Operators and Watchers who keep the network running and checkable.",
+    tone: "green",
   },
   {
-    n: "02",
-    name: "Watcher",
-    desc: "Replays committed state and challenges invalid commitments before settlement.",
+    title: "Roles earn for the work",
+    body: "Operators earn for sequencing and committing blocks; Watchers earn for verifying them. Reward parameters are finalized during testnet.",
+    tone: "gold",
   },
   {
-    n: "03",
-    name: "Security",
-    desc: "Keeps the trust path inspectable before production value depends on it.",
-  },
-  {
-    n: "04",
-    name: "Economics",
-    desc: "Connects fees, rewards, bonds, and participation rules to the roles they affect.",
+    title: "Bonds punish faults",
+    body: "Operators post bonds that are forfeited if a fault proof succeeds against a block they committed.",
+    tone: "cobalt",
   },
 ] as const;
 
@@ -62,61 +66,54 @@ export default function ParticipatePage() {
         ]}
       />
 
-      <Section title="Protocol Roles.">
-        <Layers items={roleSteps} />
-      </Section>
-
-      <Section id="roles" title="Operators and Watchers.">
-        <CardGrid cols={2}>
-          <Card
-            title="Operators"
-            body="Operators run the active path: order activity, post commitments, and keep state moving through the verification path."
-            cta="Register interest"
-            href={OFFICIAL_LINKS.intakeForm}
-          />
-          <Card
-            title="Watchers"
-            body="Watchers keep state contestable by replaying commitments and challenging invalid state before it can settle."
-            cta="Register interest"
-            href={OFFICIAL_LINKS.intakeForm}
-          />
-        </CardGrid>
-      </Section>
-
-      {/* The full security model moved to /developers#security — this section
-          stays as a pointer (and a landing pad for older #security links). */}
       <Section
-        id="security"
-        title="Security."
-        lead="The trust path, fault proofs, audit status, and disclosure route live with the developer documentation."
-        tight
+        id="roles"
+        title="Operators and Watchers."
+        cols
+        aside={
+          <Statement
+            align="left"
+            kicker="Why one honest node is enough"
+            line={
+              <>
+                <em>One honest Watcher</em> is enough to stop a bad block.
+              </>
+            }
+          />
+        }
       >
         <CardGrid cols={2}>
           <Card
-            title="Read the security model"
-            body="One honest Watcher is enough to stop a bad block. Inspect the full trust path — commitments, challenges, and Cardano L1 settlement — on the Developers page."
-            cta="Open security"
-            href="/developers#security"
-            ctaGlow
+            title="Operator"
+            body="The bonded role. Operators sequence transactions and commit blocks to Cardano L1 — and they stake a bond to do it. If a fault proof succeeds against a block they committed, that bond is slashed. In exchange, Operators earn sequencing rewards for the blocks they commit."
+          />
+          <Card
+            title="Watcher"
+            delay={60}
+            body="The permissionless role. No bond, no selection — anyone can run a Watcher. Watchers replay committed blocks against the posted data and submit a fault proof when a commitment doesn't hold; one honest Watcher is enough. Watchers earn verification rewards for the checks they run."
           />
         </CardGrid>
+        <div className={styles.rolesCta}>
+          <Actions
+            center
+            items={[
+              { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+            ]}
+          />
+        </div>
+        {/* Absorbs the old Security section; id kept for stale #security links. */}
+        <p id="security" className={styles.securityPointer}>
+          The full security model — trust path, fault proofs, audit status, and the
+          disclosure route — lives with the developer documentation.{" "}
+          <Link href="/developers#security">Read the security model →</Link>
+        </p>
       </Section>
 
       <Section id="economics" title="Economics.">
-        <CardGrid cols={3}>
-          <Card
-            title="Fees"
-            body="Users pay fees in plain ADA — estimated at a fraction of L1 cost. Fees fund the Operators and Watchers who run the network."
-          />
-          <Card
-            title="Rewards"
-            body="Operators earn for sequencing and committing blocks; Watchers earn for verifying them. Reward parameters are finalized during testnet."
-          />
-          <Card
-            title="Bonds"
-            body="Operators post bonds that are forfeited if a fault proof succeeds against their block — misbehavior costs more than honesty pays."
-          />
-        </CardGrid>
+        <div className="motion-band">
+          <EconomicsCycle steps={economicsSteps} ariaLabel="How network economics fit together" />
+        </div>
+        <Statement line="A slashed bond costs more than honest sequencing ever earns." />
       </Section>
 
       <div id="register">

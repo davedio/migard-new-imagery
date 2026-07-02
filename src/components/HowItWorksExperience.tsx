@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import JourneyHud from "@/components/scene/JourneyHud";
+import PipelineAccordion from "@/components/minimal/PipelineAccordion";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -174,8 +175,8 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
           </h1>
           <p className="hiw-act__lead">
             For users, the path is deposit, transact, withdraw. Under the hood,
-            Midgard routes activity through sequencing, commitment, data
-            availability, Watcher replay, fault proofs, and Cardano L1 settlement.
+            one pipeline does the checking — follow a transaction all the way
+            down to Cardano.
           </p>
           <ol className="hiw-act__beats" aria-hidden>
             {ACT_BEATS.map((b) => (
@@ -196,36 +197,34 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
 }
 
 function HowItWorksExplainer() {
+  /* the site's ONE textual telling of the pipeline (the journey act above
+     tells it cinematically; home only trails it) — the collapsing-slat
+     band carries the full what + why of every step */
   return (
     <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
       <div className="hiw-explainer__head">
         <p>Transaction path</p>
-        <h1 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h1>
+        <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
       </div>
-      <div className="hiw-explainer__grid">
-        {EXPLAINER_STEPS.map((step) => (
-          <article className="hiw-explainer__card" data-layer={step.layer.includes("L1") ? "l1" : step.layer === "Challenge" || step.layer === "Availability" ? "bridge" : "l2"} key={step.title}>
-            <div className="hiw-explainer__card-head">
-              <span>{step.n}</span>
-              <em>{step.layer}</em>
-            </div>
-            <h3>{step.title}</h3>
-            <dl>
-              <div>
-                <dt>What happens</dt>
-                <dd>{step.what}</dd>
-              </div>
-              <div>
-                <dt>Who checks it</dt>
-                <dd>{step.check}</dd>
-              </div>
-              <div>
-                <dt>Why it matters</dt>
-                <dd>{step.why}</dd>
-              </div>
-            </dl>
-          </article>
-        ))}
+      <div className="hiw-explainer__track">
+        <PipelineAccordion
+          ariaLabel="Transaction lifecycle, step by step"
+          steps={EXPLAINER_STEPS.map((step) => ({
+            title: step.title,
+            layer: step.layer,
+            body: (
+              <>
+                {step.what}
+                <em>{step.why}</em>
+              </>
+            ),
+            tone: step.layer.includes("L1")
+              ? ("cobalt" as const)
+              : step.layer === "Challenge" || step.layer === "Availability"
+                ? ("gold" as const)
+                : ("green" as const),
+          }))}
+        />
       </div>
     </section>
   );

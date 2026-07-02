@@ -25,7 +25,7 @@ import { useMotionPref } from "@/lib/motion";
 
 type Accent = "green" | "gold";
 
-const FIELD_R = 110; // px — cursor influence radius
+const FIELD_R = 60; // px — cursor influence radius (kept tight so the headline stays readable while pointing near it)
 const SPRING_K = 92; // spring stiffness toward home
 const SPRING_D = 11; // damping
 const REPEL = 3300; // cursor repulsion strength
@@ -43,7 +43,7 @@ type Letter = {
   p1: number;
 };
 
-const RESTORE_FADE_S = 0.5; // dust dissolve / glyph fade-in duration
+const RESTORE_FADE_S = 0.3; // dust dissolve / glyph fade-in duration — quick, so words reassemble before you miss them
 
 export default function ShatterHeading({
   as: Tag = "h2",

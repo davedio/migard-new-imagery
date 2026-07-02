@@ -139,6 +139,8 @@ export function Section({
   lead,
   tight,
   glow,
+  cols,
+  aside,
   children,
 }: {
   id?: string;
@@ -148,9 +150,14 @@ export function Section({
   tight?: boolean;
   /** Add a soft ambient corner glow behind the section to fill below-fold voids. */
   glow?: "green" | "gold";
+  /** ≥1200px: head (plus aside) sits in a left column beside the content —
+      spends desktop width instead of scroll. Stacks normally below. */
+  cols?: boolean;
+  /** Extra content rendered inside the head column (Statement, Prose). */
+  aside?: ReactNode;
   children?: ReactNode;
 }) {
-  const hasHead = eyebrow || title || lead;
+  const hasHead = eyebrow || title || lead || aside;
   const glowClass =
     glow === "green"
       ? " section--glow"
@@ -162,17 +169,16 @@ export function Section({
       id={id}
       className={`section${tight ? " section--tight" : ""}${glowClass}`}
     >
-      <div className="section__inner">
+      <div className={`section__inner${cols ? " section__inner--cols" : ""}`}>
         {hasHead ? (
-          <Reveal>
-            <div className="section__head">
-              {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
-              {title ? <h2>{title}</h2> : null}
-              {lead ? <p className="lead">{lead}</p> : null}
-            </div>
-          </Reveal>
+          <div className="section__head">
+            {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
+            {title ? <h2>{title}</h2> : null}
+            {lead ? <p className="lead">{lead}</p> : null}
+            {aside}
+          </div>
         ) : null}
-        {children}
+        {cols ? <div className="section__body">{children}</div> : children}
       </div>
     </section>
   );
@@ -187,18 +193,16 @@ export type ProseItem = {
 
 export function Prose({ items }: { items: ProseItem[] }) {
   return (
-    <Reveal>
-      <div className="prose">
-        {items.map((p, i) => (
-          <p
-            key={i}
-            className={p.variant && p.variant !== "default" ? p.variant : undefined}
-          >
-            {p.text}
-          </p>
-        ))}
-      </div>
-    </Reveal>
+    <div className="prose">
+      {items.map((p, i) => (
+        <p
+          key={i}
+          className={p.variant && p.variant !== "default" ? p.variant : undefined}
+        >
+          {p.text}
+        </p>
+      ))}
+    </div>
   );
 }
 
@@ -290,15 +294,13 @@ export function Card({
 
 export function Bullets({ items }: { items: ReactNode[] }) {
   return (
-    <Reveal>
-      <ul className="bullets">
-        {items.map((it, i) => (
-          <li key={i}>
-            <span>{it}</span>
-          </li>
-        ))}
-      </ul>
-    </Reveal>
+    <ul className="bullets">
+      {items.map((it, i) => (
+        <li key={i}>
+          <span>{it}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -309,14 +311,12 @@ export type LayerItem = { n: string; name: string; desc: ReactNode };
 export function Layers({ items }: { items: readonly LayerItem[] }) {
   return (
     <div className="layers">
-      {items.map((l, i) => (
-        <Reveal key={l.name} delay={i * 50}>
-          <div className="layer-row panel">
-            <div className="n">{l.n}</div>
-            <div className="name">{l.name}</div>
-            <div className="desc">{l.desc}</div>
-          </div>
-        </Reveal>
+      {items.map((l) => (
+        <div className="layer-row panel" key={l.name}>
+          <div className="n">{l.n}</div>
+          <div className="name">{l.name}</div>
+          <div className="desc">{l.desc}</div>
+        </div>
       ))}
     </div>
   );

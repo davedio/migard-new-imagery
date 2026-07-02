@@ -1,0 +1,46 @@
+/* ============================================================
+   GlossaryList — flat two-column definition rows (rhythm D).
+   Hairline separators only; tokens match the .datarows rows in
+   v2.css. Collapses to one column on narrow screens. Static.
+   ============================================================ */
+
+.list {
+  columns: 2;
+  column-gap: 56px;
+  max-width: 980px;
+  margin: 18px auto 0;
+  border-top: 1px solid rgba(244, 241, 230, 0.14);
+}
+
+.row {
+  break-inside: avoid;
+  padding: 13px 2px 15px;
+  border-bottom: 1px solid rgba(244, 241, 230, 0.12);
+  scroll-margin-top: 110px;
+}
+
+.row dt {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-hi);
+}
+
+.row dd {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+[data-theme="light"] .list {
+  border-top-color: rgba(14, 27, 19, 0.16);
+}
+[data-theme="light"] .row {
+  border-bottom-color: rgba(14, 27, 19, 0.12);
+}
+
+@media (max-width: 720px) {
+  .list {
+    columns: 1;
+  }
+}

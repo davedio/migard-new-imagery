@@ -104,6 +104,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const attr = document.documentElement.dataset.theme;
     if (attr === "dark" || attr === "light") {
       themeRef.current = attr;
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time post-hydration sync to the boot script's attribute; a lazy initializer would hydration-mismatch
       setThemeState(attr);
     }
   }, []);

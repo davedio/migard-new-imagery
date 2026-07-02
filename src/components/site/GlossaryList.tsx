@@ -1,19 +1,22 @@
 import { GLOSSARY } from "@/lib/glossary";
+import styles from "./GlossaryList.module.css";
 
 /* =========================================================================
-   GlossaryList — the shared protocol glossary rendered as a tight
-   definition grid (the existing .glossary / .glossary__row classes from
-   globals.css). Formerly the /glossary page; now mounted as the #glossary
-   anchor section on /how-it-works. Server component, presentational only.
+   GlossaryList — the shared protocol glossary as a flat two-column
+   definition list (rhythm pattern D: rows, hairline separators, no boxes).
+   Replaces the old boxed .glossary panel grid from globals.css per the
+   reading-rhythm redesign (2026-07-02). Formerly the /glossary page; now
+   mounted as the quiet #glossary reference block ending /how-it-works.
+   Server component, presentational only, no entrance animation.
    ========================================================================= */
 
 const terms = Object.values(GLOSSARY);
 
 export default function GlossaryList() {
   return (
-    <dl className="glossary">
+    <dl className={styles.list}>
       {terms.map((item) => (
-        <div className="glossary__row" key={item.term}>
+        <div className={styles.row} key={item.term}>
           <dt>{item.term}</dt>
           <dd>{item.def}</dd>
         </div>

@@ -62,19 +62,11 @@ export function HeroTreeImage() {
       img.style.transformOrigin = `50% ${(24 + current * 52).toFixed(1)}%`;
       // dissolve the fixed plate into the page as the descent completes
       stage.style.opacity = (1 - smooth01((current - 0.55) / 0.45)).toFixed(3);
-      // one descent stage per third — the value cards below highlight in sync
-      const stageIdx = current < 0.33 ? "0" : current < 0.66 ? "1" : "2";
-      if (document.body.dataset.descentStage !== stageIdx) {
-        document.body.dataset.descentStage = stageIdx;
-      }
       raf = requestAnimationFrame(frame);
     };
 
     raf = requestAnimationFrame(frame);
-    return () => {
-      cancelAnimationFrame(raf);
-      delete document.body.dataset.descentStage;
-    };
+    return () => cancelAnimationFrame(raf);
   }, [motionOn]);
 
   const pfx = theme === "dark" ? "/dark" : "";

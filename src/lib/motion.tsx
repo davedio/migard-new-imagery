@@ -81,6 +81,14 @@ export function MotionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const motionOn = manual ? manual === "on" : !osReduced;
+
+  // Reflect the resolved preference on <html> so ambient CSS-only loops
+  // (hero breath, backdrop drift, rail pulse) can be disabled via
+  // [data-motion="off"] without JS in every component.
+  useEffect(() => {
+    document.documentElement.dataset.motion = motionOn ? "on" : "off";
+  }, [motionOn]);
+
   const toggle = useCallback(
     () => setManual(motionOn ? "off" : "on"),
     [motionOn, setManual],

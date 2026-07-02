@@ -24,11 +24,14 @@
 
 import { useId, useMemo } from "react";
 import { useMotionPref } from "@/lib/motion";
+import { useTheme } from "@/lib/theme";
 import styles from "./TreeSpine.module.css";
 
-const GREEN = "#4ade80"; // execution
-const GOLD = "#ffc840"; // verification / watch
-const COBALT = "#78b9ff"; // settlement
+const PALETTE = {
+  dark: { green: "#4ade80", gold: "#ffc840", cobalt: "#78b9ff" },
+  /* deep tones — the light theme renders this over a bright cream plate */
+  light: { green: "#0c7d36", gold: "#8a6115", cobalt: "#2b6cb0" },
+} as const;
 
 /* viewBox geometry */
 const VB_W = 56;
@@ -37,11 +40,15 @@ const PAD = 26; // breathing room above the first / below the last node
 const GAP = 64; // vertical space between nodes
 
 /** execution → verification → settlement mapping per node index */
-function nodeColor(i: number, count: number): string {
+function nodeColor(
+  i: number,
+  count: number,
+  pal: (typeof PALETTE)[keyof typeof PALETTE],
+): string {
   const cobaltFrom = count - Math.max(1, Math.round(count / 5));
-  if (i >= cobaltFrom) return COBALT;
-  if (i < Math.ceil(count * 0.5)) return GREEN;
-  return GOLD;
+  if (i >= cobaltFrom) return pal.cobalt;
+  if (i < Math.ceil(count * 0.5)) return pal.green;
+  return pal.gold;
 }
 
 /** gentle deterministic sway so the vein reads organic, not ruled */
@@ -58,6 +65,8 @@ export default function TreeSpine({
   activeIndex: number;
   className?: string;
 }) {
+  const { theme } = useTheme();
+  const pal = PALETTE[theme === "light" ? "light" : "dark"];
   const { motionOn } = useMotionPref();
   /* useId can contain «» / : — strip to a safe SVG reference id */
   const gradId = `spine-g-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -97,9 +106,9 @@ export default function TreeSpine({
       <defs>
         {/* execution → verification → settlement, top to bottom */}
         <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={GREEN} />
-          <stop offset="52%" stopColor={GOLD} />
-          <stop offset="100%" stopColor={COBALT} />
+          <stop offset="0%" stopColor={pal.green} />
+          <stop offset="52%" stopColor={pal.gold} />
+          <stop offset="100%" stopColor={pal.cobalt} />
         </linearGradient>
       </defs>
 
@@ -129,7 +138,7 @@ export default function TreeSpine({
 
       {points.map((p, i) => {
         const state = i < active ? "lit" : i === active ? "active" : "idle";
-        const color = nodeColor(i, n);
+        const color = nodeColor(i, n, pal);
         return (
           <g
             key={i}

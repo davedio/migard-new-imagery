@@ -33,7 +33,7 @@ const NAV_LINKS: readonly NavLink[] = [
     label: "How it works",
     href: "/how-it-works",
     children: [
-      { label: "The journey", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
+      { label: "Flow of a transaction", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
       { label: "Questions", description: "Common questions about roles, settlement, and security.", href: "/how-it-works#faq" },
       { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/how-it-works#glossary" },
     ],

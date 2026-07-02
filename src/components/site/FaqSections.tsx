@@ -1,12 +1,18 @@
-import { Faq, faqGroupId, Section } from "@/components/site/ui";
+import { Reveal } from "@/components/site/Reveal";
+import { faqGroupId, Section } from "@/components/site/ui";
 
 /* =========================================================================
    FaqSections — the grouped Q&A (formerly the /faq page) mounted as the
    #faq anchor section on /how-it-works, plus a single compact
-   "How Midgard compares" block (the decision grid — the strongest of the
-   old FAQ comparison visualizations; the rest were dropped deliberately
-   per design review). Server component; styles come from the existing
-   .faq-*, .faq-basics-shell, and .faq-decision-* classes.
+   "How Midgard compares" block (the page's ONE card grid).
+
+   Reading-rhythm redesign (2026-07-02): pruned from 17 questions to 12 —
+   the duplicated / self-referential ones are gone (fees now live in the
+   proof-metrics strip; "who is it for" / "where do builders start" /
+   "what do Protocol Roles do" restated the page or other answers). Rows
+   render statically — no reveal slabs; the decision grid gets the page's
+   single group entrance. Styles come from the existing .faq-*,
+   .faq-basics-shell, and .faq-decision-* classes.
    ========================================================================= */
 
 const faqGroups = [
@@ -18,16 +24,16 @@ const faqGroups = [
         a: "Midgard is an optimistic rollup for UTXO finance. Applications execute faster, while verified state settles through Cardano L1.",
       },
       {
-        q: "Why does Midgard matter?",
-        a: "UTXO applications should not have to choose between speed and security. Midgard gives them a faster execution path without abandoning the security model that makes the base layer valuable.",
-      },
-      {
         q: "Is Midgard live?",
         a: "Midgard is live on a public pre-alpha testnet — not mainnet yet. Check GitHub for current parameters and status before integrating.",
       },
       {
         q: "Is Midgard a sidechain?",
         a: "No. Midgard is a rollup: L2 execution, committed state, fault-proof verification, and settlement through Cardano L1.",
+      },
+      {
+        q: "Can existing UTXO apps use Midgard?",
+        a: "That is the goal: give UTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
       },
       {
         q: "What does LayerZero or another bridge change?",
@@ -48,7 +54,7 @@ const faqGroups = [
       },
       {
         q: "What do Watchers do?",
-        a: "Watchers inspect committed blocks, replay the relevant state transition, and submit a fault proof if an operator submits invalid state. Midgard safety requires at least one honest Watcher with the data needed to check the block.",
+        a: "Watchers inspect committed blocks, replay the relevant state transition, and raise a fault proof if an Operator commits invalid state. Midgard safety requires at least one honest Watcher with the data needed to check the block.",
       },
       {
         q: "Why does UTXO matter?",
@@ -57,33 +63,8 @@ const faqGroups = [
     ],
   },
   {
-    title: "Users and builders",
-    items: [
-      {
-        q: "Who is Midgard for?",
-        a: "Users, builders, and Protocol Roles. Operators and Watchers are grouped together because both keep Midgard running and verifiable.",
-      },
-      {
-        q: "Can existing UTXO apps use Midgard?",
-        a: "That is the goal: give UTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
-      },
-      {
-        q: "Where should builders start?",
-        a: "Start with the source, the transaction journey above, and one concrete flow you want to make faster.",
-      },
-      {
-        q: "How are fees paid?",
-        a: "Fees are paid in plain ADA, estimated at a fraction of Cardano L1 cost.",
-      },
-    ],
-  },
-  {
     title: "Protocol Roles and status",
     items: [
-      {
-        q: "What do Protocol Roles do?",
-        a: "Protocol Roles participate in the Midgard network. Operators order L2 activity, produce blocks, and commit state. Watchers inspect commitments, challenge invalid state, and help secure the path to Cardano L1 settlement.",
-      },
       {
         q: "Can anyone run an Operator or Watcher today?",
         a: "Midgard is pre-alpha. Participation is staged: initial operation is internal-team-led, with broader Operator and Watcher registration opened as parameters mature.",
@@ -104,7 +85,7 @@ const basicsRail = [
   {
     label: "Product status",
     href: `#${faqGroupId("Product status")}`,
-    detail: "What Midgard is, why it matters, and current public status.",
+    detail: "What Midgard is, current status, and whether existing apps fit.",
   },
   {
     label: "Security",
@@ -112,14 +93,9 @@ const basicsRail = [
     detail: "Claims, attack surface, Watchers, and UTXO fit.",
   },
   {
-    label: "Users and builders",
-    href: `#${faqGroupId("Users and builders")}`,
-    detail: "Who it is for, where builders start, and fee positioning.",
-  },
-  {
     label: "Protocol Roles",
     href: `#${faqGroupId("Protocol Roles and status")}`,
-    detail: "Operators, Watchers, current checks, and reporting route.",
+    detail: "Who runs the network today, what to check, and where to report.",
   },
 ] as const;
 
@@ -178,11 +154,31 @@ export default function FaqSections() {
     <>
       <Section
         id="faq"
-        title="Questions, answered plainly."
-        lead="Short answers on what Midgard is, why it matters, how security works, and where to inspect the claims."
+        title="Questions."
+        lead="Short answers on what Midgard is, how its security works, and what to check before relying on it."
       >
         <div className="faq-basics-shell">
-          <Faq groups={faqGroups} />
+          {/* flat static rows — no reveal slabs (rhythm rule: Rows are simply there) */}
+          <div className="faq">
+            {faqGroups.map((g) => (
+              <div
+                className="faq-group"
+                id={faqGroupId(g.title)}
+                style={{ scrollMarginTop: 110 }}
+                key={g.title}
+              >
+                <h3>{g.title}</h3>
+                <div className="faq-list">
+                  {g.items.map((qa) => (
+                    <div className="faq-item" key={qa.q}>
+                      <div className="q">{qa.q}</div>
+                      <div className="a">{qa.a}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
           <aside className="faq-topic-rail" aria-label="FAQ topic shortcuts">
             <span>Jump to topic</span>
             {basicsRail.map((item) => (
@@ -198,14 +194,17 @@ export default function FaqSections() {
       <Section
         id="comparison"
         title="How Midgard compares."
-        lead="Compare five things: execution model, settlement anchor, data availability, who can challenge bad state, and who can change the rules."
+        lead="Three common paths side by side: what each is best for, its main caution, and what to inspect before you commit."
         tight
       >
-        <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
-          {decisionGrid.map((card) => (
-            <DecisionCard key={card.label} card={card} />
-          ))}
-        </div>
+        {/* the page's one card grid — and its one scroll entrance */}
+        <Reveal>
+          <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
+            {decisionGrid.map((card) => (
+              <DecisionCard key={card.label} card={card} />
+            ))}
+          </div>
+        </Reveal>
       </Section>
     </>
   );
