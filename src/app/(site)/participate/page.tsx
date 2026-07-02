@@ -3,7 +3,8 @@ import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Statement, StepRail } from "@/components/site/rhythm";
+import EconomicsCycle from "@/components/site/EconomicsCycle";
+import { Statement } from "@/components/site/rhythm";
 import { Actions, Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import styles from "./participate.module.css";
@@ -20,10 +21,9 @@ export const metadata: Metadata = {
 };
 
 /* Reading rhythm (see .review/card-rhythm-redesign-2026-07-02.md):
-   hero → chips → Statement + the page's ONE Grid (roles) → StepRail +
-   closing Statement (economics) → CtaBand. The only scroll motion is the
-   grid's single group entrance and the rail's one draw-in; the register
-   band is the page's only glowing ask. */
+   hero → chips → Statement + the page's ONE Grid (roles) → the economics
+   loop (three cards circulating value, closed by the Statement) → CtaBand.
+   The register band is the page's only glowing ask. */
 
 const economicsSteps = [
   {
@@ -109,18 +109,11 @@ export default function ParticipatePage() {
         </p>
       </Section>
 
-      <Section
-        id="economics"
-        title="Economics."
-        cols
-        aside={
-          <Statement
-            align="left"
-            line="A slashed bond costs more than honest sequencing ever earns."
-          />
-        }
-      >
-        <StepRail steps={economicsSteps} ariaLabel="How network economics fit together" />
+      <Section id="economics" title="Economics.">
+        <div className="motion-band">
+          <EconomicsCycle steps={economicsSteps} ariaLabel="How network economics fit together" />
+        </div>
+        <Statement line="A slashed bond costs more than honest sequencing ever earns." />
       </Section>
 
       <div id="register">

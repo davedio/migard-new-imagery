@@ -1051,9 +1051,13 @@ button.panel:hover {
   html {
     scroll-behavior: auto;
   }
-  *,
-  *::before,
-  *::after {
+  /* the site's manual motion toggle (html[data-motion="on"], set by
+     MotionProvider) deliberately overrides OS reduced-motion — the JS
+     already honors that contract, so the CSS must too. Pre-hydration and
+     no-JS documents carry no data-motion attribute and stay fully static. */
+  html:not([data-motion="on"]) *,
+  html:not([data-motion="on"]) *::before,
+  html:not([data-motion="on"]) *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
@@ -2065,14 +2069,6 @@ button.panel:hover {
     position: sticky;
     top: 104px;
   }
-  /* a rail in the head column is content, not a label — don't pin it */
-  .section__inner--cols > .section__head:has(.steprail) {
-    position: static;
-  }
-  .section__inner--cols > .section__head .steprail {
-    margin: 28px 0 0;
-    max-width: none;
-  }
   .section__inner--cols > .section__head .statement {
     margin: 24px 0 0;
     padding: 0;
@@ -2088,7 +2084,6 @@ button.panel:hover {
   .section__inner--cols > .section__head .prose {
     max-width: none;
   }
-  .section__inner--cols .section__body > .steprail,
   .section__inner--cols .section__body > .datarows {
     margin: 4px 0 0;
     max-width: none;
@@ -3247,125 +3242,10 @@ a.card:hover {
   font-weight: 500;
 }
 
-/* ≥1200px: the explainer reads head-beside-rail — the six-step rail no
-   longer stacks under a full-width heading. 1fr outers keep the dark
-   full-bleed background while the content stays centered. */
-@media (min-width: 1200px) {
-  .hiw-explainer {
-    display: grid;
-    grid-template-columns: 1fr minmax(320px, 460px) minmax(0, 820px) 1fr;
-    column-gap: clamp(44px, 4vw, 96px);
-    align-items: start;
-  }
-  .hiw-explainer__head {
-    grid-column: 2;
-    margin: 0;
-    max-width: none;
-    text-align: left;
-    position: sticky;
-    top: 110px;
-  }
-  .hiw-explainer__head h2 {
-    font-size: clamp(34px, 3.4vw, 56px);
-  }
-  .hiw-explainer > .steprail {
-    grid-column: 3;
-    margin: 6px 0 0;
-    max-width: none;
-  }
-}
-.hiw-explainer__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+/* the lifecycle track spans the full content width under the head */
+.hiw-explainer__track {
   max-width: 1480px;
   margin: 0 auto;
-}
-.hiw-explainer__card {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 310px;
-  padding: 18px;
-  border: 1px solid rgba(244, 241, 230, 0.12);
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(244, 241, 230, 0.035), transparent 52%),
-    rgba(7, 14, 9, 0.78);
-}
-.hiw-explainer__card[data-layer="bridge"] {
-  border-color: rgba(207, 154, 46, 0.24);
-}
-.hiw-explainer__card[data-layer="l1"] {
-  border-color: rgba(111, 224, 255, 0.22);
-}
-.hiw-explainer__card-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.hiw-explainer__card-head span {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(78, 243, 131, 0.48);
-  border-radius: 999px;
-  color: var(--green-bright);
-  font: 11px/1 var(--font-mono);
-}
-.hiw-explainer__card[data-layer="bridge"] .hiw-explainer__card-head span {
-  border-color: rgba(207, 154, 46, 0.5);
-  color: var(--gold-bright);
-}
-.hiw-explainer__card[data-layer="l1"] .hiw-explainer__card-head span {
-  border-color: rgba(111, 224, 255, 0.52);
-  color: #6fe0ff;
-}
-.hiw-explainer__card-head em {
-  color: var(--text-faint);
-  font: 10px/1 var(--font-mono);
-  font-style: normal;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.hiw-explainer__card h3 {
-  margin: 0;
-  color: var(--text-hi);
-  font-size: 23px;
-  line-height: 1.14;
-  font-weight: 500;
-}
-.hiw-explainer__card dl {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-}
-.hiw-explainer__card div,
-.hiw-explainer__card dt,
-.hiw-explainer__card dd {
-  min-width: 0;
-}
-.hiw-explainer__card dt {
-  margin: 0 0 4px;
-  color: var(--green-bright);
-  font: 10px/1 var(--font-mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-.hiw-explainer__card[data-layer="bridge"] dt {
-  color: var(--gold-bright);
-}
-.hiw-explainer__card[data-layer="l1"] dt {
-  color: #6fe0ff;
-}
-.hiw-explainer__card dd {
-  margin: 0;
-  color: var(--text-dim);
-  font-size: 14.5px;
-  line-height: 1.4;
 }
 /* footer carries a translucent base globally; on the experience the scene is
    still fixed behind everything, so back it with solid darkness. */
@@ -3405,17 +3285,8 @@ a.card:hover {
   .hiw-act__lead {
     font-size: 16px;
   }
-  .hiw-explainer__grid {
-    grid-template-columns: 1fr;
-  }
   .hiw-explainer__head {
     text-align: left;
-  }
-}
-
-@media (max-width: 980px) {
-  .hiw-explainer__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -3449,13 +3320,6 @@ a.card:hover {
   }
   .hiw-explainer {
     padding-inline: 24px;
-  }
-  .hiw-explainer__grid {
-    grid-template-columns: 1fr;
-  }
-  .hiw-explainer__card {
-    min-height: auto;
-    padding: 16px;
   }
 }
 
@@ -4248,18 +4112,6 @@ a.chip:hover {
   background:
     radial-gradient(circle at 18% 0%, rgba(12, 125, 54, 0.08), transparent 26rem),
     linear-gradient(180deg, rgba(255, 250, 240, 0.72), rgba(244, 239, 227, 0.86));
-}
-
-[data-theme="light"] .hiw-explainer__card {
-  border-color: rgba(27, 23, 16, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.44), transparent 58%),
-    rgba(255, 250, 240, 0.84);
-}
-
-[data-theme="light"] .hiw-explainer__card[data-layer="l1"] .hiw-explainer__card-head span,
-[data-theme="light"] .hiw-explainer__card[data-layer="l1"] dt {
-  color: #2447b8;
 }
 
 [data-theme="light"] .hiw-act::after {

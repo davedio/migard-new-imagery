@@ -3219,7 +3219,7 @@ h2 em,
 }
 .minimal-section--trust .minimal-section__head {
   max-width: 720px;
-}@media (prefers-reduced-motion: reduce) {}
+}
 
 .minimal-metrics {
   display: grid;
@@ -4733,107 +4733,6 @@ h2 em,
   color: var(--text-dim);
 }
 
-/* ---- StepRail — numbered items on one connected line ---- */
-.steprail {
-  position: relative;
-  max-width: 760px;
-  margin: 26px auto 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 30px;
-}
-.steprail::before {
-  /* the connecting vein — draws in once via scaleY */
-  content: "";
-  position: absolute;
-  left: 17px;
-  top: 18px;
-  bottom: 18px;
-  width: 2px;
-  border-radius: 2px;
-  background: linear-gradient(
-    180deg,
-    rgba(78, 243, 131, 0.55),
-    rgba(207, 154, 46, 0.5) 62%,
-    rgba(120, 185, 255, 0.55)
-  );
-  transform-origin: 50% 0;
-  transform: scaleY(0);
-  transition: transform 0.4s var(--ease);
-}
-.steprail[data-drawn="true"]::before,
-.steprail[data-motion="off"]::before {
-  transform: scaleY(1);
-}
-.steprail__step {
-  position: relative;
-  display: grid;
-  grid-template-columns: 36px 1fr;
-  gap: 16px;
-  align-items: start;
-}
-.steprail__node {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  border: 1px solid rgba(78, 243, 131, 0.5);
-  color: var(--green-bright);
-  background: rgba(4, 7, 5, 0.92);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  z-index: 1;
-  opacity: 0;
-  transform: scale(0.7);
-  transition: opacity 0.28s var(--ease), transform 0.28s var(--ease);
-  transition-delay: calc(var(--ri, 0) * 60ms);
-}
-.steprail__step[data-tone="gold"] .steprail__node {
-  border-color: rgba(207, 154, 46, 0.58);
-  color: var(--gold-bright);
-}
-.steprail__step[data-tone="cobalt"] .steprail__node {
-  border-color: rgba(120, 185, 255, 0.55);
-  color: #9cc8ff;
-}
-.steprail[data-drawn="true"] .steprail__node,
-.steprail[data-motion="off"] .steprail__node {
-  opacity: 1;
-  transform: scale(1);
-}
-.steprail__copy {
-  display: grid;
-  gap: 4px;
-  padding-top: 4px;
-}
-.steprail__copy strong {
-  color: var(--text-hi);
-  font-size: 17px;
-  font-weight: 500;
-}
-.steprail__copy p {
-  margin: 0;
-  color: var(--text-dim);
-  font-size: 15px;
-  line-height: 1.5;
-  max-width: 62ch;
-}
-[data-theme="light"] .steprail__node {
-  background: rgba(246, 241, 232, 0.92);
-  border-color: rgba(12, 125, 54, 0.44);
-  color: #0c7d36;
-}
-[data-theme="light"] .steprail__step[data-tone="gold"] .steprail__node {
-  border-color: rgba(138, 97, 21, 0.5);
-  color: #8a6115;
-}
-[data-theme="light"] .steprail__step[data-tone="cobalt"] .steprail__node {
-  border-color: rgba(43, 108, 176, 0.5);
-  color: #2b6cb0;
-}
-
 /* ---- DataRows — flat directory rows, hairline separators ---- */
 .datarows {
   max-width: 880px;
@@ -4894,18 +4793,15 @@ h2 em,
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .steprail::before,
-  .steprail__node {
-    transition: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-  }
-}
-
-/* ---- home pipeline section (StepRail + closing Statement) ---- */
+/* ---- home pipeline section (accordion band + closing Statement) ---- */
 .minimal-section--pipeline {
   padding-top: 46px;
+}
+
+/* spacing shim for the bespoke motion structures (accordion / stepper /
+   cycle) mounted directly after a section head */
+.motion-band {
+  margin-top: 30px;
 }
 
 /* ---- split home sections (≥1200px): the head (and its Statement) sits
@@ -4926,7 +4822,6 @@ h2 em,
   .minimal-section--cols .minimal-section__head h2 {
     font-size: clamp(30px, 2.3vw, 40px);
   }
-  .minimal-section--cols > .steprail,
   .minimal-section--cols > .datarows {
     margin: 6px 0 0;
     max-width: none;
@@ -4994,14 +4889,6 @@ h2 em,
     width: 100%;
   }
 }
-.steprail__copy em {
-  display: block;
-  margin-top: 2px;
-  font-style: normal;
-  color: var(--text-faint);
-  font-size: 13.5px;
-}
-
 /* the theme z-index normalizers above force every .page-main child to
    position:relative, which silently killed JumpChips' stickiness — restore
    it (equal specificity, later in the sheet wins) */
@@ -5050,46 +4937,8 @@ h2 em,
   will-change: transform;
 }
 
-/* 3 · sap pulse — a small light travels the StepRail's vein on a loop,
-   the pipeline visibly flowing even when nobody scrolls. */
-@keyframes steprail-sap {
-  0% {
-    top: 2%;
-    opacity: 0;
-  }
-  8% {
-    opacity: 1;
-  }
-  88% {
-    opacity: 1;
-  }
-  100% {
-    top: 97%;
-    opacity: 0;
-  }
-}
-.steprail::after {
-  content: "";
-  position: absolute;
-  left: 18px;
-  top: 2%;
-  width: 6px;
-  height: 6px;
-  margin-left: -3px;
-  border-radius: 999px;
-  background: var(--green-bright);
-  box-shadow: 0 0 12px rgba(78, 243, 131, 0.7);
-  opacity: 0;
-  z-index: 1;
-}
-[data-motion="on"] .steprail[data-drawn="true"]::after {
-  animation: steprail-sap 8s cubic-bezier(0.4, 0.1, 0.5, 0.9) infinite;
-  animation-delay: 1.2s;
-}
-[data-theme="light"] .steprail::after {
-  background: #0c7d36;
-  box-shadow: 0 0 10px rgba(12, 125, 54, 0.55);
-}
+/* 3 · (retired) the StepRail sap pulse — replaced by the bespoke motion
+   structures, each of which carries its own loop. */
 
 /* 4 · statement accent glow — the one highlighted phrase breathes. */
 @keyframes statement-glow {
@@ -5168,7 +5017,6 @@ h2 em,
 /* master kill-switches */
 [data-motion="off"] .hero-tree-stage__frame,
 [data-motion="off"] .page-backdrop__img,
-[data-motion="off"] .steprail::after,
 [data-motion="off"] .statement__line em,
 [data-motion="off"] .minimal-btn--primary::after {
   animation: none !important;
@@ -5176,7 +5024,6 @@ h2 em,
 @media (prefers-reduced-motion: reduce) {
   .hero-tree-stage__frame,
   .page-backdrop__img,
-  .steprail::after,
   .statement__line em,
   .minimal-btn--primary::after {
     animation: none !important;
@@ -5184,14 +5031,6 @@ h2 em,
 }
 
 /* light-theme completions from the 2026-07-02 theme audit */
-[data-theme="light"] .steprail::before {
-  background: linear-gradient(
-    180deg,
-    rgba(12, 125, 54, 0.55),
-    rgba(138, 97, 21, 0.5) 62%,
-    rgba(43, 108, 176, 0.55)
-  );
-}
 [data-theme="light"] .v2-footer-statement__cta {
   border-color: rgba(12, 125, 54, 0.35);
 }

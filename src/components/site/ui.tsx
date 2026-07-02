@@ -153,7 +153,7 @@ export function Section({
   /** ≥1200px: head (plus aside) sits in a left column beside the content —
       spends desktop width instead of scroll. Stacks normally below. */
   cols?: boolean;
-  /** Extra content rendered inside the head column (Statement, StepRail, Prose). */
+  /** Extra content rendered inside the head column (Statement, Prose). */
   aside?: ReactNode;
   children?: ReactNode;
 }) {

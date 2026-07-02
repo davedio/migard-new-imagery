@@ -2,7 +2,8 @@ import { GitHubIcon } from "@/components/site/BrandIcons";
 import { ContractsReference } from "@/components/site/ContractsReference";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { DataRows, StepRail } from "@/components/site/rhythm";
+import IntegrationSteps from "@/components/site/IntegrationSteps";
+import { DataRows } from "@/components/site/rhythm";
 import { Card, CardGrid, CtaBand, PageHero, Prose, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
@@ -10,7 +11,7 @@ import { DEVELOPER_COPY } from "@/lib/siteCopy";
 /* /developers — reading-rhythm layout (see .review/card-rhythm-redesign-2026-07-02.md):
    hero (the one telling of the wallet-action…fallback sentence) → ONE sticky
    JumpChips bar tracking the whole page → ONE Grid (developer paths, with the
-   integration-path StepRail as the page's single path telling) → contracts
+   integration-path stepper as the page's single path telling) → contracts
    reference (header band, topology set-piece, table of record, genesis, query)
    → security (Prose + two data rows) → one closing CTA band.
    Motion: the Grid keeps its group entrance; everything else is static. */
@@ -52,14 +53,13 @@ export default function DeveloperLanding() {
         title="Choose your developer path."
         lead="One sequence for everyone, then four tracks with different next steps."
         glow="green"
-        cols
-        aside={
-          <StepRail
+      >
+        <div className="motion-band">
+          <IntegrationSteps
             ariaLabel="Developer integration path"
             steps={DEVELOPER_COPY.integrationPath}
           />
-        }
-      >
+        </div>
         <CardGrid cols={2}>
           {DEVELOPER_COPY.tracks.map((track, i) => (
             <Card

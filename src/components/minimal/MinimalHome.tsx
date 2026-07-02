@@ -5,8 +5,9 @@ import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
 import FireflyField from "@/components/minimal/FireflyField";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
+import PipelineAccordion, { type AccordionStep } from "@/components/minimal/PipelineAccordion";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
-import { DataRows, Statement, StepRail, type DataRow, type RailStep } from "@/components/site/rhythm";
+import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { SITE_COPY } from "@/lib/siteCopy";
@@ -38,9 +39,10 @@ function SmartLink({
   );
 }
 
-/* The six lifecycle beats on one connected line — the page's single telling
-   of the pipeline (rhythm rule: every fact gets one display treatment). */
-const PIPELINE_STEPS: readonly RailStep[] = SITE_COPY.lifecycle.map(([title, body], i) => ({
+/* The six lifecycle beats as one horizontal band of collapsing slats —
+   the page's single telling of the pipeline (rhythm rule: every fact gets
+   one display treatment). */
+const PIPELINE_STEPS: readonly AccordionStep[] = SITE_COPY.lifecycle.map(([title, body], i) => ({
   title,
   body,
   tone: i < 3 ? "green" : i < 5 ? "gold" : "cobalt",
@@ -134,10 +136,10 @@ export default function MinimalHome() {
         <div className="minimal-hero__visual-space" aria-hidden />
       </section>
 
-      {/* The pipeline — the six lifecycle beats at full size on one connected
-          line, closed by the line the section exists to say. */}
+      {/* The pipeline — the six lifecycle beats as one horizontal band of
+          collapsing slats, closed by the line the section exists to say. */}
       <section
-        className="minimal-section minimal-section--pipeline minimal-section--cols"
+        className="minimal-section minimal-section--pipeline"
         aria-labelledby="minimal-pipeline-title"
       >
         <div className="minimal-section__head">
@@ -146,14 +148,15 @@ export default function MinimalHome() {
             You only ever see three steps — deposit, transact, withdraw. This is the
             pipeline working underneath.
           </p>
-          <Statement
-            align="left"
-            kicker={SITE_COPY.trustFlow.resolved.kicker}
-            line={SITE_COPY.trustFlow.resolved.title}
-            sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
-          />
         </div>
-        <StepRail steps={PIPELINE_STEPS} ariaLabel="Transaction lifecycle" />
+        <div className="motion-band">
+          <PipelineAccordion steps={PIPELINE_STEPS} ariaLabel="Transaction lifecycle" />
+        </div>
+        <Statement
+          kicker={SITE_COPY.trustFlow.resolved.kicker}
+          line={SITE_COPY.trustFlow.resolved.title}
+          sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
+        />
       </section>
 
       <section

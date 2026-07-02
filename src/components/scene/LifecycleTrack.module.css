@@ -1,0 +1,526 @@
+/* ============================================================
+   LifecycleTrack — co-located styles.
+   The conveyor: a 2px tri-tone line, solid-fill station rings,
+   and a luminous packet that glides UNDER the rings (transform
+   + color transitions only). Cards spotlight via the
+   grid-template-rows 0fr → 1fr technique.
+
+   Tone plumbing: each toned node carries data-tone, which routes
+   one --t rgb-triplet; the light theme swaps the triplets to the
+   deep accent set so every rgba(var(--t), x) re-tints itself.
+
+   Motion discipline: the packet, ring pulse, and reveals all die
+   under [data-motion="off"] (the root mirrors the JS flag, and
+   the html-level kill-switch matches the same descendant
+   selectors) and under prefers-reduced-motion.
+   ============================================================ */
+
+.root {
+  position: relative;
+  /* dark-theme accent triplets (sitewide families) */
+  --tone-green: 78, 243, 131;
+  --tone-gold: 255, 200, 64;
+  --tone-cobalt: 120, 185, 255;
+  /* solid ring fill so the line never shows through the digits */
+  --ring-fill: #081009;
+  --hairline: rgba(244, 241, 230, 0.13);
+  --card-edge: var(--panel-edge-strong);
+}
+
+:global([data-theme="light"]) .root {
+  /* deep accents on cream */
+  --tone-green: 12, 125, 54;
+  --tone-gold: 138, 97, 21;
+  --tone-cobalt: 43, 108, 176;
+  --ring-fill: #f6f1e8;
+  --hairline: rgba(14, 27, 19, 0.14);
+  --card-edge: rgba(14, 27, 19, 0.16);
+}
+
+/* tone routing — ring / packet / card each read rgb(var(--t)) */
+.root [data-tone="green"] {
+  --t: var(--tone-green);
+}
+.root [data-tone="gold"] {
+  --t: var(--tone-gold);
+}
+.root [data-tone="cobalt"] {
+  --t: var(--tone-cobalt);
+}
+
+/* ============================================================
+   THE TRACK (desktop ≥980px only)
+   ============================================================ */
+.track {
+  position: relative;
+  display: none;
+  height: 46px;
+  margin-bottom: 18px;
+}
+
+@media (min-width: 980px) {
+  .track {
+    display: block;
+  }
+}
+
+/* full-width 2px line, quiet green → gold → cobalt journey */
+.line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--tone-green), 0.38),
+    rgba(var(--tone-gold), 0.34) 50%,
+    rgba(var(--tone-cobalt), 0.38)
+  );
+}
+
+/* station ring — solid fill, mono digit, tone border. Centering is done
+   with margins (not transform) so the arrival pulse can own transform. */
+.ring {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(var(--t, var(--tone-green)), 0.38);
+  border-radius: 999px;
+  background: var(--ring-fill);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  /* the 1.05s delay ≈ the packet's 1.1s travel: rings light on ARRIVAL */
+  transition:
+    border-color 0.4s var(--ease) 1.05s,
+    color 0.4s var(--ease) 1.05s,
+    box-shadow 0.4s var(--ease) 1.05s;
+}
+
+.ring[data-active="true"] {
+  border-color: rgba(var(--t, var(--tone-green)), 0.95);
+  color: rgb(var(--t, var(--tone-green)));
+  box-shadow: 0 0 16px -2px rgba(var(--t, var(--tone-green)), 0.55);
+  animation: ring-pulse 0.7s var(--ease) 1.05s both;
+}
+
+@keyframes ring-pulse {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* the packet — a 9px luminous core that slides UNDER the rings.
+   Glow + tail ride currentColor, so the 1.1s color transition eases the
+   whole glow toward the next station's tone while it travels. */
+.packet {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 1; /* below the rings — never covers the digits */
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  color: rgb(var(--t, var(--tone-green)));
+  background: radial-gradient(
+    circle at 42% 36%,
+    rgba(255, 255, 255, 0.95),
+    currentColor 72%
+  );
+  box-shadow:
+    0 0 9px 2px color-mix(in srgb, currentColor 70%, transparent),
+    0 0 26px 9px color-mix(in srgb, currentColor 26%, transparent);
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 1.1s cubic-bezier(0.6, 0.05, 0.27, 1),
+    color 1.1s var(--ease),
+    opacity 0.4s var(--ease);
+  will-change: transform;
+}
+
+/* soft gradient tail trailing the direction of travel */
+.packet::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 3px;
+  width: 44px;
+  height: 3px;
+  margin-top: -1.5px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, currentColor);
+  opacity: 0.45;
+}
+
+/* diffuse halo around the core */
+.packet::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, currentColor 30%, transparent),
+    transparent 70%
+  );
+}
+
+/* hidden until the track width has been measured — no jump from x=0 */
+.packet[data-ready="false"] {
+  transition: none;
+  opacity: 0;
+}
+
+:global([data-theme="light"]) .packet {
+  background: radial-gradient(
+    circle at 42% 36%,
+    rgba(255, 255, 255, 0.9),
+    currentColor 78%
+  );
+}
+
+/* ============================================================
+   THE CARD ROW
+   ============================================================ */
+.row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.card {
+  position: relative;
+  z-index: 0; /* stacking context so the ::after tint can sit behind content */
+  display: block;
+  border: 1px solid var(--card-edge);
+  border-radius: 8px;
+  /* CARD_CHROME_PX in the TSX = this 16px padding-bottom + 2px borders */
+  padding: 0 0 16px;
+  background:
+    linear-gradient(180deg, rgba(215, 226, 216, 0.035), rgba(215, 226, 216, 0.01)),
+    rgba(7, 14, 9, 0.72);
+  box-shadow: 0 16px 44px -30px rgba(0, 0, 0, 0.6);
+  transition:
+    transform 0.5s var(--ease),
+    border-color 0.5s var(--ease),
+    box-shadow 0.5s var(--ease);
+}
+
+/* tone tint that fades in — gradients can't transition, opacity can */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    180deg,
+    rgba(var(--t, var(--tone-green)), 0.08),
+    rgba(var(--t, var(--tone-green)), 0.015) 70%
+  );
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  pointer-events: none;
+}
+
+.card[data-active="true"] {
+  transform: translateY(-4px);
+  border-color: rgba(var(--t, var(--tone-green)), 0.55);
+  box-shadow:
+    0 22px 54px -30px rgba(0, 0, 0, 0.7),
+    0 0 28px -10px rgba(var(--t, var(--tone-green)), 0.4);
+}
+
+.card[data-active="true"]::after {
+  opacity: 1;
+}
+
+:global([data-theme="light"]) .card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%),
+    rgba(255, 250, 240, 0.85);
+  box-shadow: 0 14px 34px -26px rgba(54, 45, 30, 0.45);
+}
+
+:global([data-theme="light"]) .card[data-active="true"] {
+  box-shadow:
+    0 20px 44px -26px rgba(54, 45, 30, 0.5),
+    0 0 26px -12px rgba(var(--t, var(--tone-green)), 0.5);
+}
+
+:global([data-theme="light"]) .card::after {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--t, var(--tone-green)), 0.07),
+    rgba(var(--t, var(--tone-green)), 0.01) 70%
+  );
+}
+
+/* card head — a real button; the always-visible n / chip / title */
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  padding: 16px 16px 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.head:focus-visible {
+  outline: 2px solid rgb(var(--t, var(--tone-green)));
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+  transition: color 0.4s var(--ease);
+}
+
+.card[data-active="true"] .num {
+  color: rgb(var(--t, var(--tone-green)));
+}
+
+.chip {
+  padding: 3px 8px;
+  border: 1px solid rgba(var(--t, var(--tone-green)), 0.34);
+  border-radius: 999px;
+  background: rgba(var(--t, var(--tone-green)), 0.08);
+  color: rgb(var(--t, var(--tone-green)));
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 15.5px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--text-hi);
+}
+
+/* ---- the reveal: what → why, 0fr → 1fr ----
+   The collapsed state is keyed on html[data-motion] EXISTING — the
+   attribute is only ever set post-hydration by MotionProvider, so
+   server HTML, no-JS visitors, and the pre-hydration frame all read
+   every card fully expanded (matching the aria-expanded="true" the
+   server renders) instead of shipping clipped copy. Desktop-scoped:
+   below 980px the carousel is always fully expanded. */
+.reveal {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.55s var(--ease);
+}
+
+.revealInner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 16px;
+  opacity: 1;
+  transition:
+    opacity 0.35s var(--ease),
+    transform 0.35s var(--ease);
+}
+
+@media (min-width: 980px) {
+  :global(html[data-motion]) .reveal {
+    grid-template-rows: 0fr;
+  }
+
+  :global(html[data-motion]) .card[data-active="true"] .reveal {
+    grid-template-rows: 1fr;
+  }
+
+  :global(html[data-motion]) .revealInner {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  :global(html[data-motion]) .card[data-active="true"] .revealInner {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.card[data-active="true"] .revealInner {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.12s;
+}
+
+.what {
+  margin: 0;
+  padding-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.why {
+  margin: 8px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+
+/* ============================================================
+   MOBILE <980px — static scroll-snap carousel, everything open,
+   no track, no timers (the JS gates on the same breakpoint)
+   ============================================================ */
+@media (max-width: 979.98px) {
+  .row {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 4px 2px 10px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 8px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .card {
+    flex: 0 0 78vw;
+    scroll-snap-align: center;
+  }
+
+  .reveal {
+    grid-template-rows: 1fr;
+  }
+
+  .revealInner {
+    opacity: 1;
+    transform: none;
+  }
+
+  .head {
+    cursor: default;
+  }
+}
+
+/* ============================================================
+   MOTION OFF — matches BOTH the root's own data-motion flag and
+   the html-level [data-motion="off"] kill-switch (either is an
+   ancestor of these nodes). Fully static, fully readable.
+   ============================================================ */
+[data-motion="off"] .packet {
+  display: none;
+}
+
+[data-motion="off"] .ring {
+  transition: none;
+  animation: none;
+  /* stations all faintly lit */
+  border-color: rgba(var(--t, var(--tone-green)), 0.5);
+  color: rgb(var(--t, var(--tone-green)));
+  box-shadow: 0 0 12px -5px rgba(var(--t, var(--tone-green)), 0.4);
+}
+
+[data-motion="off"] .card,
+[data-motion="off"] .card::after,
+[data-motion="off"] .num,
+[data-motion="off"] .reveal,
+[data-motion="off"] .revealInner {
+  transition: none;
+}
+
+[data-motion="off"] .reveal {
+  grid-template-rows: 1fr;
+}
+
+[data-motion="off"] .revealInner {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 980px) {
+  /* six steps → a calm 3×2 grid, everything expanded */
+  [data-motion="off"] .row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+}
+
+/* ============================================================
+   OS-LEVEL REDUCED MOTION — belt and braces over the JS flag.
+   Gated on html:not([data-motion="on"]) so the site's manual
+   motion-ON toggle overrides OS PRM here exactly as it does in
+   JS; pre-hydration / no-JS documents carry no data-motion
+   attribute and stay fully static + expanded.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  :global(html:not([data-motion="on"])) .packet {
+    display: none;
+  }
+
+  :global(html:not([data-motion="on"])) .ring,
+  :global(html:not([data-motion="on"])) .card,
+  :global(html:not([data-motion="on"])) .card::after,
+  :global(html:not([data-motion="on"])) .num,
+  :global(html:not([data-motion="on"])) .reveal,
+  :global(html:not([data-motion="on"])) .revealInner {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  :global(html:not([data-motion="on"])) .reveal {
+    grid-template-rows: 1fr;
+  }
+
+  :global(html:not([data-motion="on"])) .revealInner {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 980px) {
+  :global(html:not([data-motion="on"])) .row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+  }
+}

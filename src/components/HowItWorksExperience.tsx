@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import JourneyHud from "@/components/scene/JourneyHud";
-import { StepRail } from "@/components/site/rhythm";
+import LifecycleTrack from "@/components/scene/LifecycleTrack";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -203,23 +203,23 @@ function HowItWorksExplainer() {
         <p>Transaction path</p>
         <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
       </div>
-      <StepRail
-        ariaLabel="Transaction lifecycle, step by step"
-        steps={EXPLAINER_STEPS.map((step) => ({
-          title: step.title,
-          body: (
-            <>
-              {step.what}
-              <em>{step.why}</em>
-            </>
-          ),
-          tone: step.layer.includes("L1")
-            ? ("cobalt" as const)
-            : step.layer === "Challenge" || step.layer === "Availability"
-              ? ("gold" as const)
-              : ("green" as const),
-        }))}
-      />
+      <div className="hiw-explainer__track">
+        <LifecycleTrack
+          ariaLabel="Transaction lifecycle, step by step"
+          steps={EXPLAINER_STEPS.map((step) => ({
+            n: step.n,
+            title: step.title,
+            layer: step.layer,
+            what: step.what,
+            why: step.why,
+            tone: step.layer.includes("L1")
+              ? ("cobalt" as const)
+              : step.layer === "Challenge" || step.layer === "Availability"
+                ? ("gold" as const)
+                : ("green" as const),
+          }))}
+        />
+      </div>
     </section>
   );
 }

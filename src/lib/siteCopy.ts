@@ -150,7 +150,8 @@ export const DEVELOPER_COPY = {
       "Start with the source, inspect the contract path, then map one UTXO flow to Midgard: wallet action, app interaction, data availability, fallback.",
   },
   /** The page's SINGLE telling of the source → contracts → app flow →
-      trust path sequence, rendered as the StepRail beside the track grid. */
+      trust path sequence, rendered as the horizontal IntegrationSteps
+      stepper above the track grid. */
   integrationPath: [
     {
       title: "Source",

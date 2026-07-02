@@ -4,11 +4,12 @@
 
    Statement  one full-width display line, no box — the sentence a
               section exists to say.
-   StepRail   numbered items on one connected vertical line — for
-              anything sequential. The line + nodes ARE the graphic;
-              no boxes. Draws in once on first view (motion-gated).
    DataRows   flat directory/table rows with hairline separators —
               reference and routing content.
+
+   (Sequential content now gets a bespoke horizontal motion structure
+   per page: PipelineAccordion, LifecycleTrack, IntegrationSteps,
+   EconomicsCycle — one animation language each.)
 
    Pacing law lives in the doc: never two identical patterns
    adjacent · one loud moment per page · facts get one display
@@ -17,7 +18,6 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { StepRailClient } from "./StepRailClient";
 
 /* ---- Statement ---- */
 
@@ -40,26 +40,6 @@ export function Statement({
       {sub ? <p className="statement__sub">{sub}</p> : null}
     </div>
   );
-}
-
-/* ---- StepRail ---- */
-
-export type RailStep = {
-  title: string;
-  body: ReactNode;
-  /** node accent; defaults to green. Use gold for verification beats,
-      cobalt for settlement beats. */
-  tone?: "green" | "gold" | "cobalt";
-};
-
-export function StepRail({
-  steps,
-  ariaLabel,
-}: {
-  steps: readonly RailStep[];
-  ariaLabel?: string;
-}) {
-  return <StepRailClient steps={steps} ariaLabel={ariaLabel} />;
 }
 
 /* ---- DataRows ---- */

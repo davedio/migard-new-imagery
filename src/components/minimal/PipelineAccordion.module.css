@@ -1,0 +1,365 @@
+/* ============================================================
+   PipelineAccordion — co-located styles.
+   The side-to-side collapse is a flex-grow transition; everything
+   else animated is opacity / transform only. The 2px progress fill
+   doubles as the auto-advance clock (animationend in the TSX), so
+   pausing it via animation-play-state pauses the timer too.
+   ============================================================ */
+
+.band {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  height: clamp(300px, 38vh, 380px);
+}
+
+/* ---- slat — one step, a real button ---- */
+.slat {
+  /* tone accent as a comma list so rgba(var(--tone), a) composes,
+     plus a solid for text (stage-graphic idiom). Dark families. */
+  --tone: 78, 243, 131;
+  --tone-solid: #4ade80;
+
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  margin: 0;
+  padding: 18px;
+  border: 1px solid var(--panel-edge-strong);
+  border-radius: 10px;
+  background: rgba(7, 12, 8, 0.72);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* THE collapse — flex-grow only (allowed), .6s house ease */
+  transition: flex-grow 0.6s var(--ease);
+}
+.slat[data-tone="gold"] {
+  --tone: 207, 154, 46;
+  --tone-solid: #ffc840;
+}
+.slat[data-tone="cobalt"] {
+  --tone: 120, 185, 255;
+  --tone-solid: #78b9ff;
+}
+.slat[data-active="true"] {
+  flex-grow: 3.6;
+}
+
+/* tone accent: 2px inner top border (clipped to the radius by overflow) */
+.slat::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: rgba(var(--tone), 0.62);
+  opacity: 0.7;
+  pointer-events: none;
+  transition: opacity 0.45s var(--ease);
+}
+.slat[data-active="true"]::before {
+  opacity: 1;
+}
+
+/* active brightening + faint inner top highlight — an overlay faded via
+   opacity so the surface itself never animates background-color */
+.slat::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), transparent 32%),
+    linear-gradient(180deg, rgba(215, 226, 216, 0.05), rgba(215, 226, 216, 0.015));
+  opacity: 0;
+  transition: opacity 0.45s var(--ease);
+}
+.slat[data-active="true"]::after {
+  opacity: 1;
+}
+
+.slat:focus-visible {
+  outline: 2px solid var(--tone-solid);
+  outline-offset: 3px;
+}
+/* quiet hover cue on collapsed slats — a snap, not an animation */
+.slat:not([data-active="true"]):hover .titleVertical {
+  color: var(--text);
+}
+
+/* ---- mono step number, top-left, tone-colored ---- */
+.num {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  z-index: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--tone-solid);
+}
+
+/* ---- collapsed spine title (vertical, dim, near the bottom) ---- */
+.titleVertical {
+  position: absolute;
+  left: 15px;
+  bottom: 18px;
+  z-index: 1;
+  writing-mode: vertical-rl;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  color: var(--text-dim);
+  opacity: 1;
+  transition: opacity 0.3s var(--ease);
+}
+.slat[data-active="true"] .titleVertical {
+  opacity: 0;
+}
+
+/* ---- expanded copy block, bottom-anchored ---- */
+.content {
+  position: relative;
+  z-index: 1;
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* horizontal title — crossfades in against the vertical one (two
+   elements, opacity-switched; nothing rotates or jumps) */
+.title {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: nowrap;
+  color: var(--text-hi);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.slat[data-active="true"] .title {
+  opacity: 1;
+  transition-delay: 0.12s;
+}
+
+/* body — fades/slides in ~.22s after the slat starts expanding */
+.body {
+  display: block;
+  margin-top: 10px;
+  max-width: 46ch;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.34s var(--ease), transform 0.34s var(--ease);
+}
+.slat[data-active="true"] .body {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.22s;
+}
+
+/* ---- auto-advance progress: 2px fill along the active slat's bottom.
+   Its animationend IS the advance tick; data-paused freezes both. ---- */
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 2px;
+  pointer-events: none;
+  background: rgba(var(--tone), 0.9);
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: progress-fill 4200ms linear forwards;
+}
+@keyframes progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.band[data-paused="true"] .progress {
+  animation-play-state: paused;
+}
+
+/* ============================================================
+   MOTION OFF (JS flag → data-static) — fully static, fully readable:
+   equal flex, auto height, every title + body shown, no progress.
+   ============================================================ */
+.band[data-static="true"] {
+  height: auto;
+  align-items: stretch;
+}
+.band[data-static="true"] .slat {
+  flex-grow: 1;
+  justify-content: flex-start;
+  padding-top: 46px; /* clear the number */
+}
+.band[data-static="true"] .slat,
+.band[data-static="true"] .slat::before,
+.band[data-static="true"] .slat::after,
+.band[data-static="true"] .titleVertical,
+.band[data-static="true"] .title,
+.band[data-static="true"] .body {
+  transition: none;
+}
+.band[data-static="true"] .slat::after {
+  opacity: 0; /* uniform, calm surfaces */
+}
+.band[data-static="true"] .titleVertical {
+  display: none;
+}
+.band[data-static="true"] .title {
+  opacity: 1;
+  white-space: normal;
+}
+.band[data-static="true"] .body {
+  opacity: 1;
+  transform: none;
+}
+
+/* CSS kill-switch (manual toggle), belt and braces over the JS flag */
+:global([data-motion="off"]) .band {
+  height: auto;
+}
+:global([data-motion="off"]) .slat,
+:global([data-motion="off"]) .slat::before,
+:global([data-motion="off"]) .slat::after,
+:global([data-motion="off"]) .titleVertical,
+:global([data-motion="off"]) .title,
+:global([data-motion="off"]) .body {
+  transition: none;
+}
+:global([data-motion="off"]) .titleVertical {
+  display: none;
+}
+:global([data-motion="off"]) .title {
+  opacity: 1;
+  white-space: normal;
+}
+:global([data-motion="off"]) .body {
+  opacity: 1;
+  transform: none;
+}
+:global([data-motion="off"]) .progress {
+  display: none;
+  animation: none !important;
+}
+
+/* OS-level reduced motion — same static, readable state. Gated on
+   html:not([data-motion="on"]) so the site's manual motion-ON toggle
+   overrides OS PRM here exactly as it does in JS (pre-hydration and
+   no-JS documents carry no data-motion attribute and stay static).
+   `animation: none` (name none) also defuses the global 0.001ms PRM
+   duration rule, which would otherwise fire animationend instantly
+   and strobe the auto-advance. */
+@media (prefers-reduced-motion: reduce) {
+  :global(html:not([data-motion="on"])) .band {
+    height: auto;
+  }
+  :global(html:not([data-motion="on"])) .slat,
+  :global(html:not([data-motion="on"])) .slat::before,
+  :global(html:not([data-motion="on"])) .slat::after,
+  :global(html:not([data-motion="on"])) .titleVertical,
+  :global(html:not([data-motion="on"])) .title,
+  :global(html:not([data-motion="on"])) .body {
+    transition: none;
+  }
+  :global(html:not([data-motion="on"])) .titleVertical {
+    display: none;
+  }
+  :global(html:not([data-motion="on"])) .title {
+    opacity: 1;
+    white-space: normal;
+  }
+  :global(html:not([data-motion="on"])) .body {
+    opacity: 1;
+    transform: none;
+  }
+  :global(html:not([data-motion="on"])) .progress {
+    display: none;
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   MOBILE <900px — simple static stack, all bodies visible. The
+   progress bar is display:none, so its animation never starts and
+   auto-advance is naturally inert (no JS branch needed).
+   ============================================================ */
+@media (max-width: 899.98px) {
+  .band {
+    flex-direction: column;
+    height: auto;
+  }
+  .slat {
+    flex: none;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 44px 18px 18px;
+    transition: none;
+  }
+  .slat::after {
+    opacity: 0;
+    transition: none;
+  }
+  .titleVertical {
+    display: none;
+  }
+  .title {
+    opacity: 1;
+    white-space: normal;
+    transition: none;
+  }
+  .body {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .progress {
+    display: none;
+  }
+}
+
+/* ============================================================
+   LIGHT THEME — cream slats, ink hairlines, deep accents.
+   ============================================================ */
+:global([data-theme="light"]) .slat {
+  --tone: 12, 125, 54;
+  --tone-solid: #0c7d36;
+  background: rgba(246, 241, 232, 0.72);
+  border-color: rgba(14, 27, 19, 0.14);
+}
+:global([data-theme="light"]) .slat[data-tone="gold"] {
+  --tone: 138, 97, 21;
+  --tone-solid: #8a6115;
+}
+:global([data-theme="light"]) .slat[data-tone="cobalt"] {
+  --tone: 43, 108, 176;
+  --tone-solid: #2b6cb0;
+}
+:global([data-theme="light"]) .slat::after {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), transparent 32%),
+    linear-gradient(180deg, rgba(255, 252, 245, 0.55), rgba(255, 252, 245, 0.2));
+}
+:global([data-theme="light"]) .slat::before {
+  background: rgba(var(--tone), 0.55);
+}
+:global([data-theme="light"]) .progress {
+  background: rgba(var(--tone), 0.85);
+}
