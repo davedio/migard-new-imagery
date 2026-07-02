@@ -24,9 +24,14 @@
   position: absolute;
   left: var(--fx, 50%);
   top: var(--fy, 50%);
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
+  /* depth 0 = near (bigger, sharper, brighter); depth 1 = far (smaller,
+     softer, dimmer) — one variable, so the field reads as a volume of
+     motes at different distances rather than a flat sprinkle */
+  --depth: 0.5;
+  width: calc(4px + (1 - var(--depth)) * 5px);
+  height: calc(4px + (1 - var(--depth)) * 5px);
+  margin: calc((4px + (1 - var(--depth)) * 5px) / -2) 0 0
+    calc((4px + (1 - var(--depth)) * 5px) / -2);
   border-radius: 50%;
   /* warm-green ember: hot centre, mossy falloff */
   background: radial-gradient(
@@ -36,6 +41,7 @@
     rgba(74, 222, 128, 0.2) 62%,
     rgba(74, 222, 128, 0) 74%
   );
+  filter: blur(calc(var(--depth) * 1.4px));
   opacity: 0;
   transform: translate3d(0, 0, 0) scale(var(--s, 1));
   will-change: transform, opacity;
@@ -46,11 +52,17 @@
   animation-delay: var(--d1, 0s), var(--d2, 0s);
 }
 
+/* a gentle 3-point arc (a midpoint pulled toward a second random
+   direction) instead of a straight there-and-back slide — reads as
+   wandering, not mechanical */
 @keyframes firefly-drift {
-  from {
+  0% {
     transform: translate3d(0, 0, 0) scale(var(--s, 1));
   }
-  to {
+  50% {
+    transform: translate3d(var(--mx, 12px), var(--my, -8px), 0) scale(var(--s, 1));
+  }
+  100% {
     transform: translate3d(var(--dx, 24px), var(--dy, -18px), 0)
       scale(var(--s, 1));
   }
@@ -87,10 +99,12 @@
 }
 
 /* pollen variant (light theme) — sunlit dust instead of embers: warmer,
-   smaller, quieter; same drift/blink engine */
+   smaller, quieter; same drift/blink/depth engine, one size step down */
 .field[data-variant="pollen"] .fly {
-  width: 5px;
-  height: 5px;
+  width: calc(3px + (1 - var(--depth)) * 4px);
+  height: calc(3px + (1 - var(--depth)) * 4px);
+  margin: calc((3px + (1 - var(--depth)) * 4px) / -2) 0 0
+    calc((3px + (1 - var(--depth)) * 4px) / -2);
   background: radial-gradient(
     circle at 50% 42%,
     rgba(255, 250, 235, 0.9),
@@ -98,7 +112,7 @@
     rgba(196, 158, 90, 0.18) 62%,
     rgba(196, 158, 90, 0) 74%
   );
-  filter: none;
+  filter: blur(calc(var(--depth) * 1.1px));
 }
 .field[data-variant="pollen"] {
   --peak-scale: 0.6;

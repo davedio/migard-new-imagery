@@ -1,0 +1,251 @@
+/* ============================================================
+   PipelineDeck — a fanned card stack that auto-plays continuously.
+   Depth-based positioning (translate/rotate/scale/opacity, all
+   driven by the --depth custom property) does the stacking; a
+   dedicated [data-exiting] transform flies the front card out
+   before the stack re-settles one step forward. Perf: only
+   transform/opacity are ever animated.
+
+   --depth MUST be a registered custom property: an unregistered one
+   is a "token stream", not a <number>, so calc(var(--depth) * ...)
+   cannot be smoothly interpolated — the transition engine gets stuck
+   mid-flight instead of animating to the new depth. @property fixes
+   this (supported in every browser this site targets).
+   ============================================================ */
+@property --depth {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.deck {
+  position: relative;
+  outline: none;
+}
+
+.stage {
+  position: relative;
+  height: clamp(360px, 44vh, 450px);
+  margin: 0 auto;
+  max-width: 640px;
+  padding: 0 70px;
+}
+
+.card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 26px 28px 24px;
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid var(--panel-edge-strong);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(244, 241, 230, 0.045), transparent 46%),
+    rgba(7, 12, 8, 0.86);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
+  color: inherit;
+  font: inherit;
+
+  /* fan direction alternates by physical card (nth-child), not by current
+     depth — so a card's lean is stable and doesn't flip as it cycles
+     through the stack */
+  --fan-dir: 1;
+  --depth-x: calc(var(--depth, 0) * 27px * var(--fan-dir));
+  --depth-y: calc(var(--depth, 0) * 15px);
+  --depth-r: calc(var(--depth, 0) * 4.4deg * var(--fan-dir));
+  --depth-s: calc(1 - var(--depth, 0) * 0.055);
+  transform: translate(var(--depth-x), var(--depth-y)) rotate(var(--depth-r)) scale(var(--depth-s));
+  transform-origin: 50% 108%;
+  z-index: calc(60 - var(--depth, 0));
+  opacity: 1;
+  transition:
+    transform 0.5s var(--ease),
+    opacity 0.5s var(--ease),
+    border-color 0.22s var(--ease),
+    box-shadow 0.22s var(--ease);
+}
+.card:nth-child(even) {
+  --fan-dir: -1;
+}
+.card[data-depth="1"] { opacity: 0.86; }
+.card[data-depth="2"] { opacity: 0.66; }
+.card[data-depth="3"] { opacity: 0.46; }
+.card[data-depth="4"] { opacity: 0.3; }
+.card[data-depth="5"] { opacity: 0.18; }
+
+.card[data-front="true"] {
+  cursor: default;
+  box-shadow: 0 26px 60px -20px rgba(0, 0, 0, 0.6);
+}
+.card[data-tone="green"] { border-top: 2px solid rgba(78, 243, 131, 0.55); }
+.card[data-tone="gold"] { border-top: 2px solid rgba(207, 154, 46, 0.6); }
+.card[data-tone="cobalt"] { border-top: 2px solid rgba(120, 185, 255, 0.55); }
+
+/* the front card flying off-stage — overrides depth positioning entirely
+   while it plays, then the element quietly resettles at the back */
+.card[data-exiting="true"] {
+  transition: transform 0.52s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.4s ease-in;
+  transform: translate(-58%, 14%) rotate(-16deg) scale(0.88);
+  opacity: 0;
+  z-index: 61;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+}
+.card[data-tone="green"] .num { color: var(--green-bright); }
+.card[data-tone="gold"] .num { color: var(--gold-bright); }
+.card[data-tone="cobalt"] .num { color: #9cc8ff; }
+
+.layer {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.card[data-front="true"] .layer {
+  opacity: 0.85;
+  transition-delay: 0.1s;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--text-hi);
+}
+
+.body {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  max-width: 46ch;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+}
+.card[data-front="true"] .body {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.12s;
+}
+.body em {
+  display: block;
+  margin-top: 8px;
+  font-style: normal;
+  font-size: 13.5px;
+  color: var(--text-faint);
+}
+
+/* ---- auto-advance progress: fills over one tick, its animationend IS
+   the advance. data-paused freezes it (play-state), never resets it. ---- */
+@keyframes deck-progress-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.progress {
+  display: block;
+  max-width: 720px;
+  margin: 20px auto 0;
+  height: 2px;
+  border-radius: 2px;
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--green-bright), var(--gold-bright), #78b9ff);
+  /* duration comes from the inline style (single JS source of truth, TICK_MS) */
+  animation-name: deck-progress-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+}
+.deck[data-paused="true"] .progress {
+  animation-play-state: paused;
+}
+
+/* ---- motion off / prefers-reduced-motion: a plain readable list ---- */
+.deck[data-static="true"] .stage {
+  height: auto;
+  display: grid;
+  gap: 12px;
+}
+.deck[data-static="true"] .card {
+  position: static;
+  transform: none !important;
+  opacity: 1 !important;
+  transition: none;
+  cursor: default;
+}
+.deck[data-static="true"] .layer,
+.deck[data-static="true"] .body {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+/* ---- light theme ---- */
+:global([data-theme="light"]) .card {
+  border-color: rgba(14, 27, 19, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent 46%),
+    rgba(252, 248, 240, 0.92);
+  box-shadow: 0 18px 40px -20px rgba(54, 45, 30, 0.25);
+}
+:global([data-theme="light"]) .card[data-tone="green"] { border-top-color: rgba(12, 125, 54, 0.5); }
+:global([data-theme="light"]) .card[data-tone="gold"] { border-top-color: rgba(138, 97, 21, 0.5); }
+:global([data-theme="light"]) .card[data-tone="cobalt"] { border-top-color: rgba(43, 108, 176, 0.5); }
+:global([data-theme="light"]) .card[data-tone="green"] .num { color: #0c7d36; }
+:global([data-theme="light"]) .card[data-tone="gold"] .num { color: #8a6115; }
+:global([data-theme="light"]) .card[data-tone="cobalt"] .num { color: #2b6cb0; }
+
+/* ---- mobile: shrink the stage, tighten the fan ---- */
+@media (max-width: 640px) {
+  .stage {
+    height: clamp(300px, 56vh, 420px);
+  }
+  .card {
+    padding: 22px 20px 20px;
+    --depth-x: calc(var(--depth, 0) * 9px);
+    --depth-y: calc(var(--depth, 0) * 8px);
+    --depth-r: calc(var(--depth, 0) * 1.6deg);
+  }
+  .title {
+    font-size: 19px;
+  }
+  .body {
+    font-size: 14px;
+  }
+}
+
+/* ---- OS-level reduced motion — belt and braces (manual motion-ON
+   overrides it, matching the site's PRM contract) ---- */
+@media (prefers-reduced-motion: reduce) {
+  :global(html:not([data-motion="on"])) .stage {
+    height: auto;
+    display: grid;
+    gap: 12px;
+  }
+  :global(html:not([data-motion="on"])) .card {
+    position: static;
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none;
+  }
+  :global(html:not([data-motion="on"])) .layer,
+  :global(html:not([data-motion="on"])) .body {
+    opacity: 1;
+    transform: none;
+  }
+  :global(html:not([data-motion="on"])) .progress {
+    display: none;
+  }
+}

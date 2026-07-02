@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import JourneyHud from "@/components/scene/JourneyHud";
-import PipelineAccordion from "@/components/minimal/PipelineAccordion";
+import PipelineDeck from "@/components/minimal/PipelineDeck";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -198,8 +198,9 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
 
 function HowItWorksExplainer() {
   /* the site's ONE textual telling of the pipeline (the journey act above
-     tells it cinematically; home only trails it) — the collapsing-slat
-     band carries the full what + why of every step */
+     tells it cinematically; home only trails it) — the fanned card deck
+     auto-plays continuously (no click required, at every width) and
+     carries the full what + why of every step */
   return (
     <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
       <div className="hiw-explainer__head">
@@ -207,7 +208,7 @@ function HowItWorksExplainer() {
         <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
       </div>
       <div className="hiw-explainer__track">
-        <PipelineAccordion
+        <PipelineDeck
           ariaLabel="Transaction lifecycle, step by step"
           steps={EXPLAINER_STEPS.map((step) => ({
             title: step.title,

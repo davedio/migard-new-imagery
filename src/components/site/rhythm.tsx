@@ -8,7 +8,7 @@
               reference and routing content.
 
    (Sequential content now gets a bespoke motion structure per page:
-   PipelineAccordion, IntegrationSteps, EconomicsCycle — one animation
+   PipelineDeck, IntegrationSteps, EconomicsCycle — one animation
    language each, and the pipeline text is told ONCE, on /how-it-works.)
 
    Pacing law lives in the doc: never two identical patterns
