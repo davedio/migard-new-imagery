@@ -8,7 +8,7 @@ export const SITE_COPY = {
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
     titleLines: ["The execution layer", "for UTXO finance"],
     lead:
-      "Midgard is an optimistic rollup for Cardano — the speed of a Layer 2, with every block settling back to the base layer.",
+      "Midgard is an optimistic rollup for Cardano: transactions confirm in seconds, fees stay in plain ADA, and every block settles back to Cardano L1.",
     primaryCta: { label: "See how it works", href: "/how-it-works" },
     secondaryCta: { label: "Start building", href: "/developers" },
     tertiaryCta: { label: "Participate", href: "/participate" },
