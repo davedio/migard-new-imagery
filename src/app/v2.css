@@ -3850,7 +3850,11 @@ h2 em,
    cream wash (light theme); in dark mode it washed the whole hero
    bright. Re-tint to a deep night veil and darken the tree image. */
 [data-theme="dark"] .hero-tree-stage__img {
-  filter: saturate(0.98) contrast(1.02) brightness(0.58);
+  /* was brightness(0.58) — crushed the tree's own detail everywhere,
+     not just where the scrim needs it; the scrim already carries the
+     copy-side legibility darkening, this filter only needs to set a
+     night mood, not black the canopy out */
+  filter: saturate(1.04) contrast(1.06) brightness(0.88);
 }
 [data-theme="dark"] .hero-tree-stage__scrim {
   background:

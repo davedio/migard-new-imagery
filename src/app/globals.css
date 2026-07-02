@@ -3129,7 +3129,7 @@ a.card:hover {
 }
 
 .hiw-act__intro {
-  max-width: min(620px, 100%);
+  max-width: min(660px, 100%);
   margin-left: max(0px, calc((100vw - var(--maxw)) / 2));
 }
 .hiw-act__title {
@@ -3149,45 +3149,85 @@ a.card:hover {
   line-height: 1.55;
 }
 
-/* the five beats the descent walks through — a quiet legend that mirrors
-   the HUD rail + the lifecycle sections below. */
+/* the six beats the descent walks through — real jump-to-stage buttons
+   that mirror the HUD rail + the lifecycle sections below. One line on
+   desktop always (nowrap + overflow-x as a safety net, never a second
+   row); the active beat (written each frame, see HowItWorksExperience's
+   rAF tick) gets a filled highlight so this reads as a live position
+   indicator, not a static legend. */
 .hiw-act__beats {
   list-style: none;
   margin: clamp(26px, 4vh, 40px) 0 0;
-  padding: 0;
+  padding: 0 0 4px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px 12px;
+  flex-wrap: nowrap;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.hiw-act__beats::-webkit-scrollbar {
+  display: none;
 }
 .hiw-act__beats li {
+  flex: none;
+}
+.hiw-act__beat-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 12px 7px 10px;
+  gap: 6px;
+  flex: none;
+  white-space: nowrap;
+  padding: 6px 10px 6px 8px;
   border: 1px solid var(--panel-edge);
   border-radius: 999px;
   background: rgba(5, 11, 8, 0.42);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  font: 10.5px/1 var(--font-mono);
-  letter-spacing: 0.14em;
+  font: 10px/1 var(--font-mono);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.hiw-act__beats li[data-layer="bridge"] {
+.hiw-act__beat-btn:hover,
+.hiw-act__beat-btn:focus-visible {
+  color: var(--text-hi);
+  border-color: rgba(78, 243, 131, 0.4);
+  background: rgba(5, 11, 8, 0.68);
+  transform: translateY(-1px);
+}
+.hiw-act__beat-btn[data-layer="bridge"] {
   border-color: rgba(207, 154, 46, 0.34);
 }
-.hiw-act__beats li[data-layer="l1"] {
+.hiw-act__beat-btn[data-layer="l1"] {
   border-color: rgba(47, 156, 255, 0.4);
 }
 .hiw-act__beat-n {
   color: var(--gold-bright);
 }
-.hiw-act__beats li[data-layer="l1"] .hiw-act__beat-n {
+.hiw-act__beat-btn[data-layer="l1"] .hiw-act__beat-n {
   color: #6fe0ff;
 }
 .hiw-act__beat-name {
   color: var(--text-hi);
+}
+
+/* the live-active beat — filled, not just outlined, so the row doubles
+   as a position readout while the journey scrolls */
+.hiw-act__beats[data-active] li .hiw-act__beat-btn {
+  opacity: 0.72;
+}
+.hiw-act__beats[data-active="0"] li:nth-child(1) .hiw-act__beat-btn,
+.hiw-act__beats[data-active="1"] li:nth-child(2) .hiw-act__beat-btn,
+.hiw-act__beats[data-active="2"] li:nth-child(3) .hiw-act__beat-btn,
+.hiw-act__beats[data-active="3"] li:nth-child(4) .hiw-act__beat-btn,
+.hiw-act__beats[data-active="4"] li:nth-child(5) .hiw-act__beat-btn,
+.hiw-act__beats[data-active="5"] li:nth-child(6) .hiw-act__beat-btn {
+  opacity: 1;
+  color: var(--text-hi);
+  border-color: rgba(78, 243, 131, 0.55);
+  background: rgba(78, 243, 131, 0.14);
 }
 
 /* scroll cue — mirrors the home hero's descending-node rail */
@@ -3325,8 +3365,10 @@ a.card:hover {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
+    overflow-x: visible;
   }
-  .hiw-act__beats li {
+  .hiw-act__beat-btn {
+    width: 100%;
     min-width: 0;
     padding: 7px 9px;
     align-items: flex-start;
@@ -4106,17 +4148,22 @@ a.chip:hover {
   mix-blend-mode: normal;
 }
 
-[data-theme="light"] .hiw-act__beats li {
+[data-theme="light"] .hiw-act__beat-btn {
   border-color: rgba(27, 23, 16, 0.14);
   background: rgba(255, 250, 240, 0.76);
   color: var(--text-dim);
+}
+[data-theme="light"] .hiw-act__beat-btn:hover,
+[data-theme="light"] .hiw-act__beat-btn:focus-visible {
+  background: rgba(255, 250, 240, 0.96);
+  border-color: rgba(12, 125, 54, 0.4);
 }
 
 [data-theme="light"] .hiw-act__beat-n {
   color: #6d4b0f;
 }
 
-[data-theme="light"] .hiw-act__beats li[data-layer="l1"] .hiw-act__beat-n {
+[data-theme="light"] .hiw-act__beat-btn[data-layer="l1"] .hiw-act__beat-n {
   color: #2447b8;
 }
 
@@ -4126,6 +4173,16 @@ a.chip:hover {
 
 [data-theme="light"] .hiw-act__beat-name {
   color: var(--text-hi);
+}
+
+[data-theme="light"] .hiw-act__beats[data-active="0"] li:nth-child(1) .hiw-act__beat-btn,
+[data-theme="light"] .hiw-act__beats[data-active="1"] li:nth-child(2) .hiw-act__beat-btn,
+[data-theme="light"] .hiw-act__beats[data-active="2"] li:nth-child(3) .hiw-act__beat-btn,
+[data-theme="light"] .hiw-act__beats[data-active="3"] li:nth-child(4) .hiw-act__beat-btn,
+[data-theme="light"] .hiw-act__beats[data-active="4"] li:nth-child(5) .hiw-act__beat-btn,
+[data-theme="light"] .hiw-act__beats[data-active="5"] li:nth-child(6) .hiw-act__beat-btn {
+  border-color: rgba(12, 125, 54, 0.5);
+  background: rgba(12, 125, 54, 0.14);
 }
 
 [data-theme="light"] .hiw-explainer {
