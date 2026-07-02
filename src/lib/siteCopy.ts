@@ -4,9 +4,9 @@ export const SITE_COPY = {
   hero: {
     /** Honest state-of-the-network chip shown above the H1. */
     status: "Pre-alpha public testnet",
-    title: "Built for speed. Settled on Cardano.",
+    title: "The execution layer for UTXO finance",
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
-    titleLines: ["Built for speed.", "Settled on Cardano."],
+    titleLines: ["The execution layer", "for UTXO finance"],
     lead:
       "Midgard is an optimistic rollup for Cardano: transactions confirm in seconds, fees stay in plain ADA, and every block settles back to Cardano L1.",
     primaryCta: { label: "See how it works", href: "/how-it-works" },
