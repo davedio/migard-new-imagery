@@ -240,13 +240,24 @@ h2 em,
 .site-nav__group {
   position: relative;
 }
+/* the invisible hover bridge — MUST match the dropdown's own footprint
+   (min-width 322px, centered under the trigger) or a mouse moving
+   diagonally toward a side item crosses dead space and the menu closes
+   before it's reached. Widened + centered the same way the dropdown is. */
 .site-nav__group::after {
   content: "";
   position: absolute;
-  left: -18px;
-  right: -18px;
+  left: 50%;
   top: 100%;
-  height: 18px;
+  transform: translateX(-50%);
+  width: 360px;
+  height: 20px;
+}
+.site-nav__group:last-child::after {
+  left: auto;
+  right: -12px;
+  transform: none;
+  width: 340px;
 }
 .site-nav__heading {
   display: inline-flex;
@@ -279,8 +290,8 @@ h2 em,
   -webkit-backdrop-filter: blur(18px) saturate(1.04);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -6px);
-  transition: opacity 0.18s var(--ease), transform 0.18s var(--ease);
+  transform: translate(-50%, -6px) scale(0.98);
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
 }
 .site-nav__dropdown::before,
 .site-nav__dropdown::after {
@@ -305,15 +316,15 @@ h2 em,
 .site-nav__group:last-child .site-nav__dropdown {
   left: auto;
   right: 0;
-  transform: translate(0, -6px);
+  transform: translate(0, -6px) scale(0.98);
 }
 .site-nav__group[data-open="true"] .site-nav__dropdown {
   opacity: 1;
   pointer-events: auto;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, 0) scale(1);
 }
 .site-nav__group:last-child[data-open="true"] .site-nav__dropdown {
-  transform: translate(0, 0);
+  transform: translate(0, 0) scale(1);
 }
 .site-nav__dropdown-link {
   position: relative;
@@ -327,11 +338,22 @@ h2 em,
   border-radius: 18px 13px 20px 14px / 14px 19px 13px 21px;
   color: #29281c;
   text-decoration: none;
+  opacity: 0;
+  transform: translateY(6px);
   transition:
     background 0.18s var(--ease),
     border-color 0.18s var(--ease),
     color 0.18s var(--ease),
-    transform 0.18s var(--ease);
+    opacity 0.24s var(--ease),
+    transform 0.24s var(--ease);
+  transition-delay: 0s;
+}
+/* staggered reveal — each link fades/slides in a beat after the last,
+   so opening the menu reads as a deliberate cascade, not a flat pop */
+.site-nav__group[data-open="true"] .site-nav__dropdown-link {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: calc(var(--i, 0) * 45ms);
 }
 .site-nav__dropdown-link:hover,
 .site-nav__dropdown-link:focus-visible,
@@ -3828,7 +3850,11 @@ h2 em,
    cream wash (light theme); in dark mode it washed the whole hero
    bright. Re-tint to a deep night veil and darken the tree image. */
 [data-theme="dark"] .hero-tree-stage__img {
-  filter: saturate(0.98) contrast(1.02) brightness(0.58);
+  /* was brightness(0.58) — crushed the tree's own detail everywhere,
+     not just where the scrim needs it; the scrim already carries the
+     copy-side legibility darkening, this filter only needs to set a
+     night mood, not black the canopy out */
+  filter: saturate(1.04) contrast(1.06) brightness(0.88);
 }
 [data-theme="dark"] .hero-tree-stage__scrim {
   background:
@@ -4011,22 +4037,32 @@ h2 em,
   opacity: 0.95;
   filter: saturate(1.02) contrast(1.02) brightness(1.02);
 }
+/* ONE coordinated wash (was 4 stacked radials + a separate hero::after
+   pair reaching for near-identical cream tones at slightly different
+   stops — the mismatch between them was the visible "fade bar" seam).
+   A single radial pool for hero-copy legibility, a single vertical fade
+   with enough intermediate stops that the eye can't find the seam. */
 .page-backdrop--full .page-backdrop__scrim {
   background:
-    radial-gradient(118% 82% at 18% 12%, rgba(255, 250, 240, 0.32), rgba(255, 250, 240, 0.09) 40%, transparent 72%),
-    radial-gradient(74% 54% at 92% 26%, rgba(12, 125, 54, 0.1), transparent 68%),
-    radial-gradient(64% 48% at 14% 92%, rgba(138, 97, 21, 0.1), transparent 70%),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.03) 0%, rgba(246, 241, 232, 0.13) 58%, rgba(244, 239, 227, 0.34) 100%);
+    radial-gradient(100% 72% at 20% 10%, rgba(255, 250, 240, 0.3), rgba(255, 250, 240, 0.1) 46%, transparent 66%),
+    linear-gradient(
+      180deg,
+      rgba(246, 241, 232, 0.02) 0%,
+      rgba(246, 241, 232, 0.06) 34%,
+      rgba(246, 241, 232, 0.14) 58%,
+      rgba(246, 241, 232, 0.24) 78%,
+      rgba(244, 239, 227, 0.34) 100%
+    );
 }
 
 .page-main:has(.page-backdrop--full) .page-hero::before {
   opacity: 0;
 }
 
+/* the scrim above already carries the hero-copy legibility pool — this
+   layer now only needs to be gone, not a second competing wash */
 .page-main:has(.page-backdrop--full) .page-hero::after {
-  background:
-    linear-gradient(90deg, rgba(246, 241, 232, 0.46) 0%, rgba(246, 241, 232, 0.28) 46%, rgba(246, 241, 232, 0.06) 78%),
-    linear-gradient(180deg, rgba(246, 241, 232, 0.04), rgba(246, 241, 232, 0.2));
+  opacity: 0;
 }
 
 /* soft — a quiet canopy that floats at the top and dissolves */

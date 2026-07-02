@@ -28,7 +28,7 @@ import styles from "./JumpChips.module.css";
 
 export type JumpChipItem = { id: string; label: string };
 
-const SCROLL_MARGIN = "96px";
+const NAV_OFFSET = 96;
 /* ignore observer updates briefly after a click, so the chip the user
    chose doesn't flicker through intermediate sections mid-scroll */
 const CLICK_LOCK_MS = 900;
@@ -114,17 +114,22 @@ export default function JumpChips({
     (id: string) => {
       const el = document.getElementById(id);
       if (!el) return;
-      /* scroll-margin compensation for the fixed nav — only when the
-         target doesn't already declare its own (v2.css sets one on
-         some sections) */
-      if (getComputedStyle(el).scrollMarginTop === "0px") {
-        el.style.scrollMarginTop = SCROLL_MARGIN;
-      }
+      /* window.scrollTo, not el.scrollIntoView — /how-it-works runs a
+         custom smooth-scroll hook that position:fixed + transforms the
+         [data-scroll-content] wrapper, which breaks scrollIntoView's
+         scrollable-ancestor walk (it would silently no-op there). A
+         viewport-rect-based target works on every page because it only
+         ever reads the CURRENT rendered position, transform or not —
+         the same technique the journey act's own beat-jump uses. */
       setActiveId(id);
       lockUntilRef.current = performance.now() + CLICK_LOCK_MS;
-      el.scrollIntoView({
-        behavior: motionOn ? "smooth" : "auto",
-        block: "start",
+      const targetY = Math.max(
+        0,
+        el.getBoundingClientRect().top + window.scrollY - NAV_OFFSET,
+      );
+      window.scrollTo({
+        top: targetY,
+        behavior: motionOn ? "smooth" : "instant",
       });
       window.history.replaceState(null, "", `#${id}`);
     },

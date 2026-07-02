@@ -72,10 +72,17 @@ export default function FireflyField({
   const theme = useDocTheme();
   const fieldRef = useRef<HTMLDivElement>(null);
 
-  /* mote specs — computed ONCE per count, deterministic per index */
+  /* mote specs — computed ONCE per count, deterministic per index.
+     Each mote also gets a continuous --depth (0 = near, 1 = far) that
+     drives size/blur/speed/brightness together, so the field reads as
+     a volume of motes at different distances rather than a flat layer
+     of identical dots — and drifts along a gentle 3-point arc (a
+     midpoint offset in a different random direction than the endpoint)
+     instead of sliding back and forth on a straight line. */
   const fireflies = useMemo<FireflySpec[]>(() => {
     const list: FireflySpec[] = [];
     for (let i = 0; i < count; i++) {
+      const depth = hash01(i, 11);
       list.push({
         key: i,
         style: {
@@ -85,12 +92,15 @@ export default function FireflyField({
              wake-up blink on mount */
           "--d1": `${(-hash01(i, 3) * 16).toFixed(2)}s`,
           "--d2": `${(-hash01(i, 4) * 9).toFixed(2)}s`,
-          "--dur": `${(10 + hash01(i, 5) * 9).toFixed(2)}s`,
+          "--dur": `${((10 + hash01(i, 5) * 9) * (1 + depth * 0.55)).toFixed(2)}s`,
           "--blink": `${(3.6 + hash01(i, 6) * 4.2).toFixed(2)}s`,
           "--s": (0.7 + hash01(i, 7) * 0.9).toFixed(3),
           "--dx": `${((hash01(i, 8) * 2 - 1) * 34).toFixed(1)}px`,
           "--dy": `${((hash01(i, 9) * 2 - 1) * 26).toFixed(1)}px`,
-          "--peak": (0.55 + hash01(i, 10) * 0.4).toFixed(3),
+          "--mx": `${((hash01(i, 12) * 2 - 1) * 20).toFixed(1)}px`,
+          "--my": `${((hash01(i, 13) * 2 - 1) * 16).toFixed(1)}px`,
+          "--peak": ((0.55 + hash01(i, 10) * 0.4) * (1 - depth * 0.35)).toFixed(3),
+          "--depth": depth.toFixed(3),
         } as CSSProperties,
       });
     }

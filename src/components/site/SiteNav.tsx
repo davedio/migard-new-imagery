@@ -3,7 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type FocusEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type FocusEvent,
+  type ReactNode,
+} from "react";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -83,6 +90,26 @@ export function SiteNav() {
   const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
+  /* the dropdown panel is much wider than its trigger, so a mouse moving
+     diagonally toward a side item can cross a sliver of dead space between
+     them — a closeTimer grace period (not an instant close) survives that
+     without requiring a pixel-perfect hover path */
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearCloseTimer = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+  const openDropdown = (label: string) => {
+    clearCloseTimer();
+    setDesktopDropdown(label);
+  };
+  const scheduleCloseDropdown = () => {
+    clearCloseTimer();
+    closeTimer.current = setTimeout(() => setDesktopDropdown(null), 260);
+  };
+  useEffect(() => clearCloseTimer, []);
 
   const open = menu.open && menu.pathname === pathname;
 
@@ -125,6 +152,7 @@ export function SiteNav() {
     }));
   const closeDesktopDropdown = (event: FocusEvent<HTMLDivElement>) => {
     if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
+    clearCloseTimer();
     setDesktopDropdown(null);
   };
 
@@ -159,16 +187,16 @@ export function SiteNav() {
                 key={item.label}
                 className="site-nav__group"
                 data-open={desktopDropdown === item.label}
-                onMouseEnter={() => setDesktopDropdown(item.label)}
-                onMouseLeave={() => setDesktopDropdown(null)}
-                onFocus={() => setDesktopDropdown(item.label)}
+                onMouseEnter={() => openDropdown(item.label)}
+                onMouseLeave={scheduleCloseDropdown}
+                onFocus={() => openDropdown(item.label)}
                 onBlur={closeDesktopDropdown}
               >
                 <Link href={item.href} className="site-nav__link site-nav__heading" data-active={isNavItemActive(item)}>
                   {item.label}
                 </Link>
                 <div className="site-nav__dropdown" role="menu" aria-label={`${item.label} links`}>
-                  {item.children.map((child) =>
+                  {item.children.map((child, i) =>
                     child.external ? (
                       <a
                         key={child.label}
@@ -177,6 +205,7 @@ export function SiteNav() {
                         target="_blank"
                         rel="noopener noreferrer"
                         role="menuitem"
+                        style={{ "--i": i } as CSSProperties}
                       >
                         <span className="site-nav__dropdown-label">
                           {child.icon}
@@ -185,7 +214,13 @@ export function SiteNav() {
                         <span className="site-nav__dropdown-desc">{child.description}</span>
                       </a>
                     ) : (
-                      <Link key={child.label} href={child.href} {...linkClass(child.href, "site-nav__dropdown-link")} role="menuitem">
+                      <Link
+                        key={child.label}
+                        href={child.href}
+                        {...linkClass(child.href, "site-nav__dropdown-link")}
+                        role="menuitem"
+                        style={{ "--i": i } as CSSProperties}
+                      >
                         <span className="site-nav__dropdown-label">
                           {child.icon}
                           {child.label}

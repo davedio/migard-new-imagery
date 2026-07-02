@@ -4,13 +4,13 @@ import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
 import { useSpring } from "motion/react";
 import {
+  useCallback,
   useEffect,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 import JourneyHud from "@/components/scene/JourneyHud";
-import PipelineAccordion from "@/components/minimal/PipelineAccordion";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -101,14 +101,18 @@ function BodyPortal({ children }: { children: ReactNode }) {
    they stay pinned and centred while the descent plays behind them, then
    release into the content. A legibility scrim keeps the (left-anchored)
    copy readable while leaving the tree visible. */
+/* "Availability" (not the full "Data availability check") — the same
+   short form EXPLAINER_STEPS[3].layer already uses below, reused here
+   so this compact chip row fits on one line without inventing a term. */
 const ACT_BEATS: { stage: string; name: string; layer: string }[] = [
   { stage: "01", name: "Submit", layer: "l2" },
   { stage: "02", name: "Sequence", layer: "l2" },
   { stage: "03", name: "Commit", layer: "l2" },
-  { stage: "04", name: "Data availability check", layer: "bridge" },
+  { stage: "04", name: "Availability", layer: "bridge" },
   { stage: "05", name: "Watch", layer: "bridge" },
   { stage: "06", name: "Settle", layer: "l1" },
 ];
+const ACT_BEAT_COUNT = ACT_BEATS.length;
 
 const EXPLAINER_STEPS = [
   {
@@ -163,7 +167,17 @@ const EXPLAINER_STEPS = [
 
 const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/trunk-flow-tall.avif";
 
-function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> }) {
+function JourneyAct({
+  actRef,
+  beatsRef,
+  onJumpToBeat,
+}: {
+  actRef: React.RefObject<HTMLElement | null>;
+  /** written each frame (parent's rAF) with the currently active beat index — a
+      DOM ref, not React state, so the 6 buttons don't re-render every frame */
+  beatsRef: React.RefObject<HTMLOListElement | null>;
+  onJumpToBeat: (index: number) => void;
+}) {
   return (
     <section className="hiw-act" aria-label="Transaction journey" ref={actRef}>
       <div className="hiw-act__viewport">
@@ -178,11 +192,19 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
             one pipeline does the checking — follow a transaction all the way
             down to Cardano.
           </p>
-          <ol className="hiw-act__beats" aria-hidden>
-            {ACT_BEATS.map((b) => (
+          <ol className="hiw-act__beats" ref={beatsRef} aria-label="Jump to a stage in the journey">
+            {ACT_BEATS.map((b, i) => (
               <li key={b.name} data-layer={b.layer}>
-                <span className="hiw-act__beat-n">{b.stage}</span>
-                <span className="hiw-act__beat-name">{b.name}</span>
+                <button
+                  type="button"
+                  className="hiw-act__beat-btn"
+                  data-layer={b.layer}
+                  onClick={() => onJumpToBeat(i)}
+                  aria-label={`Jump to ${b.name}`}
+                >
+                  <span className="hiw-act__beat-n">{b.stage}</span>
+                  <span className="hiw-act__beat-name">{b.name}</span>
+                </button>
               </li>
             ))}
           </ol>
@@ -198,34 +220,32 @@ function JourneyAct({ actRef }: { actRef: React.RefObject<HTMLElement | null> })
 
 function HowItWorksExplainer() {
   /* the site's ONE textual telling of the pipeline (the journey act above
-     tells it cinematically; home only trails it) — the collapsing-slat
-     band carries the full what + why of every step */
+     tells it cinematically; home only trails it) — a plain static grid,
+     every step's what + why always visible, no interaction required */
   return (
     <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
       <div className="hiw-explainer__head">
         <p>Transaction path</p>
         <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
       </div>
-      <div className="hiw-explainer__track">
-        <PipelineAccordion
-          ariaLabel="Transaction lifecycle, step by step"
-          steps={EXPLAINER_STEPS.map((step) => ({
-            title: step.title,
-            layer: step.layer,
-            body: (
-              <>
-                {step.what}
-                <em>{step.why}</em>
-              </>
-            ),
-            tone: step.layer.includes("L1")
-              ? ("cobalt" as const)
-              : step.layer === "Challenge" || step.layer === "Availability"
-                ? ("gold" as const)
-                : ("green" as const),
-          }))}
-        />
-      </div>
+      <ol className="hiw-explainer__grid" aria-label="Transaction lifecycle, step by step">
+        {EXPLAINER_STEPS.map((step) => {
+          const tone = step.layer.includes("L1")
+            ? "cobalt"
+            : step.layer === "Challenge" || step.layer === "Availability"
+              ? "gold"
+              : "green";
+          return (
+            <li key={step.title} className="hiw-explainer__card" data-tone={tone}>
+              <span className="hiw-explainer__card-n">{step.n}</span>
+              <span className="hiw-explainer__card-layer">{step.layer}</span>
+              <strong className="hiw-explainer__card-title">{step.title}</strong>
+              <p className="hiw-explainer__card-what">{step.what}</p>
+              <p className="hiw-explainer__card-why">{step.why}</p>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
@@ -291,6 +311,10 @@ export default function HowItWorksExperience({
   // 1 once its bottom has scrolled up to the viewport bottom.
   const actRef = useRef<HTMLElement | null>(null);
   const journeyProgressRef = useRef(0);
+  /* the beat-chip row — its active/current beat is written directly each
+     frame below (matches the --journey-p pattern), not React state, so
+     the 6 buttons don't re-render on every scroll tick */
+  const beatsRef = useRef<HTMLOListElement | null>(null);
 
   // Live packet screen position (px), written each frame by PhotorealBackdrop
   // and read by the floating StageGraphic badge so it stays anchored to the
@@ -313,6 +337,16 @@ export default function HowItWorksExperience({
         // drives the intro/cue fade-out in CSS — the scroll cue must clear
         // long before the released panel can slide under the nav logo.
         act.style.setProperty("--journey-p", journeyProgressRef.current.toFixed(4));
+        const beats = beatsRef.current;
+        if (beats) {
+          const active = Math.min(
+            ACT_BEAT_COUNT - 1,
+            Math.max(0, Math.floor(journeyProgressRef.current * ACT_BEAT_COUNT)),
+          );
+          if (beats.dataset.active !== String(active)) {
+            beats.dataset.active = String(active);
+          }
+        }
       }
       springProgress.set(journeyProgressRef.current);
       raf = requestAnimationFrame(tick);
@@ -320,6 +354,21 @@ export default function HowItWorksExperience({
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [springProgress]);
+
+  // Jump the (real, native) scroll position so the act lands on beat i's
+  // midpoint. The smooth-scroll hook above already lerps window.scrollY into
+  // a buttery transform, so a plain scrollTo here inherits that easing for
+  // free — no separate animation path to keep in sync.
+  const jumpToBeat = useCallback((index: number) => {
+    const act = actRef.current;
+    if (!act) return;
+    const rect = act.getBoundingClientRect();
+    const span = Math.max(1, rect.height - window.innerHeight);
+    const currentProgress = clamp(-rect.top / span);
+    const targetProgress = clamp((index + 0.5) / ACT_BEAT_COUNT);
+    const deltaY = (targetProgress - currentProgress) * span;
+    window.scrollTo({ top: window.scrollY + deltaY, behavior: "smooth" });
+  }, []);
 
   return (
     <>
@@ -355,7 +404,7 @@ export default function HowItWorksExperience({
           The journey act is transparent over the fixed plate; the detailed
           sections below stay opaque. */}
       <main className="page-main page-main--how-it-works page-main--hiw-experience">
-        <JourneyAct actRef={actRef} />
+        <JourneyAct actRef={actRef} beatsRef={beatsRef} onJumpToBeat={jumpToBeat} />
         <HowItWorksExplainer />
         {children}
       </main>
