@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -7,12 +8,12 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "Participate | Midgard",
   description:
-    "Operator and Watcher roles, network security, and economics for participating in Midgard.",
+    "Operator and Watcher roles, network economics, and how to register interest in participating in Midgard.",
   openGraph: {
     title: "Participate | Midgard",
-    images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
+    images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],
   },
-  twitter: { card: "summary_large_image", images: ["/og/home.jpg"] },
+  twitter: { card: "summary_large_image", images: ["/og/security.jpg"] },
 };
 
 const roleSteps = [
@@ -46,10 +47,18 @@ export default function ParticipatePage() {
         compact
         tone="tree"
         title="Participate in Midgard."
-        sub="Operators, Watchers, security, and economics belong in one place."
+        sub="Operators, Watchers, and the economics that keep the network verifiable."
         actions={[
           { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
           { label: "Open GitHub", href: OFFICIAL_LINKS.github, variant: "ghost", icon: <GitHubIcon size={15} /> },
+        ]}
+      />
+
+      <JumpChips
+        items={[
+          { id: "roles", label: "Roles" },
+          { id: "economics", label: "Economics" },
+          { id: "register", label: "Register" },
         ]}
       />
 
@@ -74,21 +83,21 @@ export default function ParticipatePage() {
         </CardGrid>
       </Section>
 
-      <Section id="security" title="Security.">
-        <CardGrid cols={3}>
+      {/* The full security model moved to /developers#security — this section
+          stays as a pointer (and a landing pad for older #security links). */}
+      <Section
+        id="security"
+        title="Security."
+        lead="The trust path, fault proofs, audit status, and disclosure route live with the developer documentation."
+        tight
+      >
+        <CardGrid cols={2}>
           <Card
-            title="Commitments"
-            body="Operator work remains checkable because committed state can be replayed."
-          />
-          <Card
-            title="Challenges"
-            body="Invalid state can be contested before it becomes settled state."
-          />
-          <Card
-            title="Reporting"
-            body="Sensitive findings belong in the official security policy with evidence preserved."
-            cta="Security policy"
-            href={OFFICIAL_LINKS.securityPolicy}
+            title="Read the security model"
+            body="One honest Watcher is enough to stop a bad block. Inspect the full trust path — commitments, challenges, and Cardano L1 settlement — on the Developers page."
+            cta="Open security"
+            href="/developers#security"
+            ctaGlow
           />
         </CardGrid>
       </Section>
@@ -97,27 +106,29 @@ export default function ParticipatePage() {
         <CardGrid cols={3}>
           <Card
             title="Fees"
-            body="Fees in ADA belong in role and mechanism context, not in the homepage hero."
+            body="Users pay fees in plain ADA — estimated at a fraction of L1 cost. Fees fund the Operators and Watchers who run the network."
           />
           <Card
             title="Rewards"
-            body="Rewards should connect to the work Operators and Watchers perform."
+            body="Operators earn for sequencing and committing blocks; Watchers earn for verifying them. Reward parameters are finalized during testnet."
           />
           <Card
             title="Bonds"
-            body="Bonding and challenge rules should be explained beside the roles they affect."
+            body="Operators post bonds that are forfeited if a fault proof succeeds against their block — misbehavior costs more than honesty pays."
           />
         </CardGrid>
       </Section>
 
-      <CtaBand
-        title="Use the official path."
-        lead="Register interest for operator, watcher, infrastructure, or deeper testnet participation."
-        actions={[
-          { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
-          { label: "Open GitHub", href: OFFICIAL_LINKS.github, variant: "ghost", icon: <GitHubIcon size={15} /> },
-        ]}
-      />
+      <div id="register">
+        <CtaBand
+          title="Use the official path."
+          lead="Register interest for Operator, Watcher, infrastructure, or deeper testnet participation."
+          actions={[
+            { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
+            { label: "Open GitHub", href: OFFICIAL_LINKS.github, variant: "ghost", icon: <GitHubIcon size={15} /> },
+          ]}
+        />
+      </div>
     </main>
   );
 }

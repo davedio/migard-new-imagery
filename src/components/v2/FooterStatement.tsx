@@ -11,10 +11,10 @@ const TOUR = [
     cta: "Back to home",
   },
   {
-    href: "/learn",
-    title: "Learn Midgard",
-    detail: "Start with the plain-language index.",
-    cta: "Open Learn",
+    href: "/how-it-works",
+    title: "How it works",
+    detail: "Ride a transaction from submit to Cardano settlement.",
+    cta: "Open How it works",
   },
   {
     href: "/developers",

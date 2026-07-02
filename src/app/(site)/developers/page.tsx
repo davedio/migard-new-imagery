@@ -7,9 +7,9 @@ export const metadata: Metadata = {
     "Developer paths for Midgard: source code, contracts, protocol review, and Protocol Role participation.",
   openGraph: {
     title: "Developers | Midgard",
-    images: [{ url: "/og/home.jpg", width: 1200, height: 630 }],
+    images: [{ url: "/og/get-started.jpg", width: 1200, height: 630 }],
   },
-  twitter: { card: "summary_large_image", images: ["/og/home.jpg"] },
+  twitter: { card: "summary_large_image", images: ["/og/get-started.jpg"] },
 };
 
 export default function DevelopersPage() {

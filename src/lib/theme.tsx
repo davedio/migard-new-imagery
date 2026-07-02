@@ -63,11 +63,25 @@ function withTransition(run: () => void) {
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   const startVT = (
     document as Document & {
-      startViewTransition?: (cb: () => void) => void;
+      startViewTransition?: (cb: () => void) => {
+        ready?: Promise<void>;
+        finished?: Promise<void>;
+        updateCallbackDone?: Promise<void>;
+      };
     }
   ).startViewTransition;
-  if (startVT && !reduce) {
-    startVT.call(document, run);
+  if (startVT && !reduce && document.visibilityState === "visible") {
+    try {
+      // The transition's promises reject (unhandled) if it gets skipped —
+      // hidden tab, rapid double-toggle — while the callback still runs.
+      // Swallow those; the theme change itself always lands.
+      const vt = startVT.call(document, run);
+      vt?.ready?.catch(() => {});
+      vt?.finished?.catch(() => {});
+      vt?.updateCallbackDone?.catch(() => {});
+    } catch {
+      run();
+    }
   } else {
     run();
   }

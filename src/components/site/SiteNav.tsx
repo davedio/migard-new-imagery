@@ -30,13 +30,12 @@ type NavChild = {
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
   {
-    label: "Learn",
-    href: "/learn",
+    label: "How it works",
+    href: "/how-it-works",
     children: [
-      { label: "Overview", description: "Start with the plain-language protocol map.", href: "/learn" },
-      { label: "How it works", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
-      { label: "FAQ", description: "Common questions about roles, settlement, and security.", href: "/faq" },
-      { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/glossary" },
+      { label: "The journey", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
+      { label: "Questions", description: "Common questions about roles, settlement, and security.", href: "/how-it-works#faq" },
+      { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/how-it-works#glossary" },
     ],
   },
   {
@@ -45,6 +44,7 @@ const NAV_LINKS: readonly NavLink[] = [
     children: [
       { label: "Developer overview", description: "Source, docs, contracts, and review paths.", href: "/developers" },
       { label: "Contracts", description: "Preprod validators, anchors, scripts, and topology.", href: "/developers#contracts" },
+      { label: "Security", description: "Trust path, fault proofs, disclosure, and audit status.", href: "/developers#security" },
       {
         label: "GitHub",
         description: "Repository, issues, and implementation history.",
@@ -60,7 +60,6 @@ const NAV_LINKS: readonly NavLink[] = [
     children: [
       { label: "Overview", description: "Operator, Watcher, and ecosystem participation paths.", href: "/participate" },
       { label: "Operators and Watchers", description: "Network roles that order activity and verify state.", href: "/participate#roles" },
-      { label: "Security", description: "Commitments, challenges, and settlement checks.", href: "/participate#security" },
       { label: "Economics", description: "Fees, rewards, bonds, and network incentives.", href: "/participate#economics" },
     ],
   },

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { ContractsReference } from "@/components/site/ContractsReference";
+import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { Card, CardGrid, CtaBand, Layers, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -15,11 +16,10 @@ const launchpad = [
     cta: "Inspect contracts",
   },
   {
-    label: "Docs",
-    detail: "Use the current source documentation and repository material.",
-    href: OFFICIAL_LINKS.docs,
-    cta: "Open docs",
-    github: true,
+    label: "Security",
+    detail: "Trust path, fault proofs, responsible disclosure, and audit status.",
+    href: "/developers#security",
+    cta: "Read security",
   },
   {
     label: "GitHub",
@@ -93,7 +93,7 @@ export default function DeveloperLanding() {
         sub={DEVELOPER_COPY.hero.lead}
         actions={[
           { label: "Contracts", href: "/developers#contracts", variant: "primary" },
-          { label: "Docs", href: OFFICIAL_LINKS.docs, variant: "ghost" },
+          { label: "Security", href: "/developers#security", variant: "ghost" },
           {
             label: "GitHub",
             href: OFFICIAL_LINKS.github,
@@ -103,7 +103,17 @@ export default function DeveloperLanding() {
         ]}
       />
 
+      <JumpChips
+        items={[
+          { id: "start", label: "Start" },
+          { id: "developer-paths", label: "Paths" },
+          { id: "contracts", label: "Contracts" },
+          { id: "security", label: "Security" },
+        ]}
+      />
+
       <section
+        id="start"
         className={styles.launchpad}
         aria-labelledby="developer-launchpad-title"
       >
@@ -115,7 +125,7 @@ export default function DeveloperLanding() {
             </p>
             <div className={styles.supportLinks} aria-label="Supporting documents">
               <span>Protocol design notes</span>
-              <strong>Whitepaper coming soon</strong>
+              <strong>Whitepaper ships with mainnet preparation (estimated)</strong>
             </div>
           </div>
           <div className={styles.launchStack}>
@@ -166,6 +176,24 @@ export default function DeveloperLanding() {
       </Section>
 
       <ContractsReference />
+
+      <Section
+        id="security"
+        title={DEVELOPER_COPY.security.title}
+        lead={DEVELOPER_COPY.security.lead}
+      >
+        <CardGrid cols={2}>
+          {DEVELOPER_COPY.security.cards.map((card) => (
+            <Card
+              key={card.title}
+              title={card.title}
+              body={card.body}
+              cta={"cta" in card ? card.cta : undefined}
+              href={"href" in card ? card.href : undefined}
+            />
+          ))}
+        </CardGrid>
+      </Section>
 
       <Section
         title="The builder checklist."
