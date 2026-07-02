@@ -119,6 +119,11 @@ function useDocTheme(): "light" | "dark" | null {
 }
 
 const STAGE_LABELS = ["Execute", "Verify", "Settle"] as const;
+const STAGE_CAPTIONS = [
+  "Confirmed in the canopy — usable in seconds (estimated).",
+  "Watchers verify the commitment on the way down the trunk\u2026",
+  "Settled on Cardano L1 at the roots.",
+] as const;
 const STAGE_CLASS_KEYS = ["sGreen", "sGold", "sCobalt"] as const;
 
 export default function DescentPreviewLoop({
@@ -165,7 +170,7 @@ export default function DescentPreviewLoop({
       const x = c.getContext("2d")!;
       const g = x.createRadialGradient(SPR / 2, SPR / 2, 0, SPR / 2, SPR / 2, SPR / 2);
       g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`);
-      g.addColorStop(0.38, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.42)`);
+      g.addColorStop(0.38, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.56)`);
       g.addColorStop(1, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`);
       x.fillStyle = g;
       x.fillRect(0, 0, SPR, SPR);
@@ -228,7 +233,7 @@ export default function DescentPreviewLoop({
       const spr = spriteAt(u);
       for (let i = 0; i < tail.length - 1; i++) {
         const k = (i + 1) / tail.length; // 0 old → 1 new
-        stamp(spr, tail[i].x, tail[i].y, 3 + k * 7, k * k * 0.3);
+        stamp(spr, tail[i].x, tail[i].y, 3 + k * 8, k * k * 0.42);
       }
 
       /* verification beat — gold pulse + one clean expanding ring */
@@ -259,7 +264,7 @@ export default function DescentPreviewLoop({
         t >= HOLD_A && t < HOLD_B
           ? 1 + 0.18 * Math.sin(((t - HOLD_A) / (HOLD_B - HOLD_A)) * Math.PI * 3)
           : 1;
-      stamp(spr, x, y, 15 * holdPulse, 0.9);
+      stamp(spr, x, y, 18 * holdPulse, 1);
       ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.95)`;
       ctx.beginPath();
       ctx.arc(x, y, 3.4 * holdPulse, 0, Math.PI * 2);
@@ -405,6 +410,11 @@ export default function DescentPreviewLoop({
           </span>
         ))}
       </div>
+
+      {/* live caption — one readable sentence narrating the current beat */}
+      <p className={styles.caption} data-stage={stage} aria-hidden="true">
+        {STAGE_CAPTIONS[stage]}
+      </p>
 
       {/* screen-reader account of the loop */}
       <p className={styles.srOnly}>

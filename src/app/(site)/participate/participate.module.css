@@ -1,0 +1,39 @@
+/* Bespoke styles for /participate — reading-rhythm redesign.
+   Everything shared (Statement, StepRail, cards, cta-band) lives in
+   v2.css / globals.css; only page-specific glue lives here. */
+
+/* One shared "Register interest" ask under the roles grid — the pair of
+   cards routes to a single CTA instead of one glowing button per card. */
+.rolesCta {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+/* One-line prose pointer that absorbs the old Security section.
+   Keeps id="security" as a landing pad for stale deep links, so it
+   needs its own scroll margin under the sticky nav. */
+.securityPointer {
+  margin: 30px auto 0;
+  max-width: 640px;
+  text-align: center;
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  scroll-margin-top: 110px;
+}
+
+.securityPointer a {
+  color: var(--green-bright);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.securityPointer a:hover,
+.securityPointer a:focus-visible {
+  text-decoration: underline;
+}
+
+:global([data-theme="light"]) .securityPointer a {
+  color: #0c7d36;
+}

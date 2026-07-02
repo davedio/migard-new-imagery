@@ -1,0 +1,80 @@
+/* ============================================================
+   How It Works — proof-metrics stat strip (rhythm pattern A).
+   A Statement-style row of big numbers with small captions and
+   fine lines. No boxes, no entrance — it is simply there.
+   Tokens match the rhythm primitives in v2.css (.statement /
+   .datarows hairlines).
+   ============================================================ */
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  gap: 0 36px;
+  max-width: 1080px;
+  margin: 10px auto 0;
+  border-top: 1px solid rgba(244, 241, 230, 0.14);
+}
+
+.cell {
+  display: grid;
+  gap: 7px;
+  align-content: start;
+  padding: 24px 0 20px;
+  border-bottom: 1px solid rgba(244, 241, 230, 0.12);
+}
+
+.cellKicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.cellValue {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.08;
+  font-weight: 500;
+  color: var(--text-hi);
+  text-wrap: balance;
+}
+
+.cellFine {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-dim);
+  max-width: 30ch;
+}
+
+.cellLink {
+  justify-self: start;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--green-bright);
+  text-decoration: none;
+  transition: opacity 0.18s var(--ease);
+}
+.cellLink:hover {
+  opacity: 0.75;
+}
+
+[data-theme="light"] .strip {
+  border-top-color: rgba(14, 27, 19, 0.16);
+}
+[data-theme="light"] .cell {
+  border-bottom-color: rgba(14, 27, 19, 0.12);
+}
+[data-theme="light"] .cellLink {
+  color: #0c7d36;
+}
+
+@media (max-width: 640px) {
+  .strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 24px;
+  }
+  .cell {
+    padding: 18px 0 16px;
+  }
+}

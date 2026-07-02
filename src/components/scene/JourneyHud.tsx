@@ -23,8 +23,10 @@ import { subscribeTelemetry, type Telemetry } from "@/lib/mockTelemetry";
 import styles from "./JourneyHud.module.css";
 
 const BEATS = 6;
-/** The WATCH beat spans [4/6, 5/6) of the journey (beat index 4). */
-const WATCH_FROM = 4 / BEATS;
+const BEAT_NAMES = ["Submit", "Sequence", "Commit", "Data availability", "Watch", "Settle"] as const;
+/** The readout runs through the DA + WATCH beats [3/6, 5/6) — the stretch
+    where independent verification is the story on screen. */
+const WATCH_FROM = 3 / BEATS;
 const WATCH_TO = 5 / BEATS;
 
 function formatWindow(ms: number): string {
@@ -54,7 +56,12 @@ export default function JourneyHud({ progress }: { progress: MotionValue<number>
 
   return (
     <div className={styles.hud} aria-hidden="true">
-      <TreeSpine count={BEATS} activeIndex={beat} className={styles.spine} />
+      <div className={styles.spineWrap}>
+        <TreeSpine count={BEATS} activeIndex={beat} className={styles.spine} />
+        <span className={styles.beatName} data-beat={beat}>
+          {BEAT_NAMES[beat]}
+        </span>
+      </div>
       <div className={styles.readout} data-on={watching && telemetry ? "true" : "false"}>
         {telemetry ? (
           <>

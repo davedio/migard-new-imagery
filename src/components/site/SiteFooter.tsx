@@ -5,7 +5,6 @@ import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { NetworkChip } from "@/components/site/NetworkChip";
 import { FooterStatement } from "@/components/v2/FooterStatement";
-import { SITE_COPY } from "@/lib/siteCopy";
 
 type FooterLink = {
   label: string;
@@ -63,7 +62,7 @@ export function SiteFooter() {
             <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} loading="eager" unoptimized />
             <span className="wm">Midgard</span>
           </div>
-          <p>{SITE_COPY.hero.lead}</p>
+          <p>Grown on Cardano. Every block checkable, every claim inspectable — from canopy to roots.</p>
 
           <OfficialSocialLinks className="site-footer__social" linkClassName="site-footer__social-link" iconSize={20} />
         </div>

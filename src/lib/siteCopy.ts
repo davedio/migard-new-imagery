@@ -8,10 +8,10 @@ export const SITE_COPY = {
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
     titleLines: ["The execution layer", "for UTXO finance"],
     lead:
-      "Midgard is an optimistic rollup for Cardano: transactions confirm in seconds, fees stay in plain ADA, and every block settles back to Cardano L1.",
+      "Midgard is an optimistic rollup for Cardano — the speed of a Layer 2, with every block settling back to the base layer.",
     primaryCta: { label: "See how it works", href: "/how-it-works" },
     secondaryCta: { label: "Start building", href: "/developers" },
-    tertiaryCta: { label: "Choose your path", href: "#paths" },
+    tertiaryCta: { label: "Participate", href: "/participate" },
   },
   /** The proof strip under the hero lead — visitor-facing numbers, not KPIs.
       Forward-looking figures say "estimated" once and state the claim plainly. */
@@ -144,73 +144,79 @@ export const SITE_COPY = {
 export const DEVELOPER_COPY = {
   hero: {
     title: "Build fast apps that settle on Cardano.",
+    /** The page's ONE telling of the wallet-action / app-interaction /
+        data-availability / fallback sentence (reading-rhythm redesign). */
     lead:
       "Start with the source, inspect the contract path, then map one UTXO flow to Midgard: wallet action, app interaction, data availability, fallback.",
   },
-  entryPoints: [
+  /** The page's SINGLE telling of the source → contracts → app flow →
+      trust path sequence, rendered as the StepRail beside the track grid. */
+  integrationPath: [
     {
-      label: "Contracts",
-      detail: "Addresses, topology, state anchors",
-      href: "/developers#contracts",
+      title: "Source",
+      body: "Clone the node and the contract implementation — the code you integrate against is the code you can read.",
+      tone: "green",
     },
     {
-      label: "Security",
-      detail: "Trust path, disclosure, audit status",
-      href: "/developers#security",
+      title: "Contracts",
+      body: "Confirm the preprod topology, validator addresses, and state anchors below against a public explorer.",
+      tone: "green",
     },
     {
-      label: "GitHub",
-      detail: "Source, docs, contracts, node code",
-      href: OFFICIAL_LINKS.github,
+      title: "App flow",
+      body: "Prototype the flow end to end against the bridge and State Queue validators — deposit in, transact, withdraw out.",
+      tone: "gold",
+    },
+    {
+      title: "Trust path",
+      body: "Before you rely on the flow, check what protects it: fault proofs, independent Watchers, Cardano L1 settlement.",
+      tone: "cobalt",
     },
   ],
   tracks: [
     {
       title: "Application builders",
-      body: "Map a real UTXO flow to Midgard: wallet action, dApp interaction, indexer need, and fallback path.",
-      href: OFFICIAL_LINKS.github,
-      cta: "Open GitHub",
+      body: "Map one UTXO app flow to Midgard: wallet action, contract path, data availability, fallback.",
+      href: "/developers#query",
+      cta: "Run the first query",
     },
     {
       title: "Protocol reviewers",
-      body: "Review validator topology, state anchors, reference scripts, and preprod deployment history before relying on the contract path.",
+      body: "Audit the deployment itself: seven validator addresses, six reference-script hashes, and the genesis history are published below with explorer links.",
       href: "/developers#contracts",
       cta: "Inspect contracts",
     },
     {
       title: "Protocol Roles",
-      body: "Run Operator or Watcher nodes to verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement. Register interest when the current testnet phase matches your role.",
+      body: "Run the network instead of building on it: Operators post a bond and produce blocks, Watchers replay commitments and file fault proofs. Register interest for the current testnet phase.",
       href: "/participate",
       cta: "Open Participate",
     },
     {
       title: "Midgard Stack",
-      body: "Explore custom deployments, reusable L2 infrastructure, and deeper partner integrations after the base protocol path is clear.",
+      body: "Deploy the same machinery as your own L2 — custom deployments, reusable infrastructure, and deeper partner integrations once the base protocol path is clear.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Discuss stack path",
     },
   ],
-  /** The security section content — folded into /developers#security. */
+  /** The security section content — folded into /developers#security.
+      Trust path + fault proofs are one Prose telling; audit status and
+      responsible disclosure stand as two emphasized data rows. */
   security: {
     title: "Security.",
     lead: "The trust path is inspectable end to end: fast confirmations up front, fault proofs and independent Watchers behind them, Cardano L1 settlement underneath.",
-    cards: [
+    prose: [
+      "One honest Watcher, out of any number, is enough to catch and stop a bad block. Committed state stays open to challenge for the full challenge window before it settles — fast confirmations up front never shortcut that window.",
+      "When a Watcher finds an invalid commitment, it is contested with an on-chain fault proof before it can become settled state. Security is enforced by Cardano L1, not by trusting Operators.",
+    ],
+    rows: [
       {
-        title: "Trust path",
-        body: "One honest Watcher, out of any number, is enough to catch and stop a bad block. Committed state stays open to challenge for the full challenge window before it settles.",
-      },
-      {
-        title: "Fault proofs",
-        body: "Invalid state is contested with an on-chain fault proof before it becomes settled state — security is enforced by Cardano L1, not by trusting Operators.",
-      },
-      {
-        title: "Audit status",
+        label: "Audit status",
         body: "Formally verified contracts with public source, live on preprod. Independent audits are planned ahead of mainnet.",
       },
       {
-        title: "Responsible disclosure",
-        body: "Found a vulnerability? Report it privately with evidence preserved — never post exploits publicly. Midgard will never ask for your seed phrase or private keys.",
-        cta: "Contact via intake form",
+        label: "Responsible disclosure",
+        body: "Found a vulnerability? Report it privately via the intake form with evidence preserved — never post exploits publicly. Midgard will never ask for your seed phrase or private keys.",
         href: OFFICIAL_LINKS.intakeForm,
       },
     ],

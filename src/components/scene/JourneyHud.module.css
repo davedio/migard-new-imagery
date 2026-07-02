@@ -23,7 +23,7 @@
   flex-direction: column;
   gap: 3px;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 11px;
+  font-size: 12.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(255, 214, 130, 0.92);
@@ -77,4 +77,30 @@
   .hud {
     display: none;
   }
+}
+
+/* the active beat's name rides beside the spine — the rail is a labeled
+   progress map now, not anonymous dots */
+.spineWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.beatName {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(190, 240, 205, 0.92);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  transition: color 0.4s ease;
+}
+.beatName[data-beat="3"],
+.beatName[data-beat="4"] {
+  color: rgba(255, 214, 130, 0.95);
+}
+.beatName[data-beat="5"] {
+  color: rgba(170, 205, 255, 0.95);
 }
