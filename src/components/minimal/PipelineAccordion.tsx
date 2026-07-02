@@ -38,13 +38,16 @@ import {
   type FocusEvent,
   type KeyboardEvent,
   type PointerEvent,
+  type ReactNode,
 } from "react";
 import { useMotionPref } from "@/lib/motion";
 import styles from "./PipelineAccordion.module.css";
 
 export type AccordionStep = {
   title: string;
-  body: string;
+  body: ReactNode;
+  /** optional protocol-layer chip (e.g. "L2 entry"), shown when expanded */
+  layer?: string;
   tone: "green" | "gold" | "cobalt";
 };
 
@@ -215,6 +218,9 @@ export default function PipelineAccordion({
               {step.title}
             </span>
             <span className={styles.content}>
+              {step.layer ? (
+                <span className={styles.layer}>{step.layer}</span>
+              ) : null}
               <span className={styles.title}>{step.title}</span>
               <span className={styles.body}>{step.body}</span>
             </span>

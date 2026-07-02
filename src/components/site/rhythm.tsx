@@ -7,9 +7,9 @@
    DataRows   flat directory/table rows with hairline separators —
               reference and routing content.
 
-   (Sequential content now gets a bespoke horizontal motion structure
-   per page: PipelineAccordion, LifecycleTrack, IntegrationSteps,
-   EconomicsCycle — one animation language each.)
+   (Sequential content now gets a bespoke motion structure per page:
+   PipelineAccordion, IntegrationSteps, EconomicsCycle — one animation
+   language each, and the pipeline text is told ONCE, on /how-it-works.)
 
    Pacing law lives in the doc: never two identical patterns
    adjacent · one loud moment per page · facts get one display

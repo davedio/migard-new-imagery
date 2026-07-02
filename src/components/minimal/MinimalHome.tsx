@@ -5,7 +5,6 @@ import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
 import FireflyField from "@/components/minimal/FireflyField";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
-import PipelineAccordion, { type AccordionStep } from "@/components/minimal/PipelineAccordion";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
@@ -38,15 +37,6 @@ function SmartLink({
     </Link>
   );
 }
-
-/* The six lifecycle beats as one horizontal band of collapsing slats —
-   the page's single telling of the pipeline (rhythm rule: every fact gets
-   one display treatment). */
-const PIPELINE_STEPS: readonly AccordionStep[] = SITE_COPY.lifecycle.map(([title, body], i) => ({
-  title,
-  body,
-  tone: i < 3 ? "green" : i < 5 ? "gold" : "cobalt",
-}));
 
 /* Verify & connect — the page's quiet closer: every proof surface and
    official channel as one flat directory (inspect + channels, deduped). */
@@ -136,29 +126,9 @@ export default function MinimalHome() {
         <div className="minimal-hero__visual-space" aria-hidden />
       </section>
 
-      {/* The pipeline — the six lifecycle beats as one horizontal band of
-          collapsing slats, closed by the line the section exists to say. */}
-      <section
-        className="minimal-section minimal-section--pipeline"
-        aria-labelledby="minimal-pipeline-title"
-      >
-        <div className="minimal-section__head">
-          <h2 id="minimal-pipeline-title">Fast execution first. Verification before final settlement.</h2>
-          <p>
-            You only ever see three steps — deposit, transact, withdraw. This is the
-            pipeline working underneath.
-          </p>
-        </div>
-        <div className="motion-band">
-          <PipelineAccordion steps={PIPELINE_STEPS} ariaLabel="Transaction lifecycle" />
-        </div>
-        <Statement
-          kicker={SITE_COPY.trustFlow.resolved.kicker}
-          line={SITE_COPY.trustFlow.resolved.title}
-          sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
-        />
-      </section>
-
+      {/* The pipeline lives ONCE on the site — told in full on
+          /how-it-works. Home keeps only this canvas trailer for it,
+          closed by the trust line the page exists to say. */}
       <section
         className="minimal-section minimal-section--descent minimal-section--descent-cols"
         aria-labelledby="minimal-descent-title"
@@ -169,6 +139,12 @@ export default function MinimalHome() {
             Execution in the canopy, verification in the trunk, settlement at the roots —
             the same journey every Midgard transaction makes.
           </p>
+          <Statement
+            align="left"
+            kicker={SITE_COPY.trustFlow.resolved.kicker}
+            line={SITE_COPY.trustFlow.resolved.title}
+            sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
+          />
         </div>
         <div className="minimal-descent-stage">
           <DescentPreviewLoop>

@@ -4793,11 +4793,6 @@ h2 em,
   }
 }
 
-/* ---- home pipeline section (accordion band + closing Statement) ---- */
-.minimal-section--pipeline {
-  padding-top: 46px;
-}
-
 /* spacing shim for the bespoke motion structures (accordion / stepper /
    cycle) mounted directly after a section head */
 .motion-band {
@@ -4841,7 +4836,8 @@ h2 em,
 }
 
 /* the descent set-piece earns the split later (the stage needs width):
-   ≥1440px the head sits beside the stage, vertically centered on it */
+   ≥1440px the head (with its trust Statement) sits beside the stage,
+   vertically centered on it */
 @media (min-width: 1440px) {
   .minimal-section--descent-cols {
     display: grid;
@@ -4851,6 +4847,14 @@ h2 em,
   }
   .minimal-section--descent-cols .minimal-section__head {
     max-width: none;
+  }
+  .minimal-section--descent-cols .minimal-section__head .statement {
+    margin: 24px 0 0;
+    padding: 0;
+    text-align: left;
+  }
+  .minimal-section--descent-cols .minimal-section__head .statement__line {
+    font-size: clamp(20px, 1.4vw, 26px);
   }
   .minimal-section--descent-cols .minimal-descent-stage {
     margin: 0;

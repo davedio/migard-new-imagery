@@ -1027,6 +1027,26 @@ button.panel:hover {
 .reveal--stagger.in > *:nth-child(4) { transition-delay: 240ms; }
 .reveal--stagger.in > *:nth-child(5) { transition-delay: 320ms; }
 .reveal--stagger.in > *:nth-child(6) { transition-delay: 400ms; }
+
+/* ---- per-page card entrances: one identical rise everywhere read as
+   copy-paste, so each grid gets its own concept (2026-07-02).
+   · /participate roles: the Operator/Watcher PAIR slides in from
+     opposite sides — two roles meeting in one system. Gated on
+     html[data-motion="on"] so reduced-motion / no-JS never see offsets.
+   · /developers #start: the stepper above owns that section's entrance;
+     the track cards are simply present.
+   · the /how-it-works compare grid keeps the classic rise (sole user). */
+[data-motion="on"] #roles .card-grid > .reveal:nth-child(1):not(.in) {
+  transform: translateX(-30px);
+}
+[data-motion="on"] #roles .card-grid > .reveal:nth-child(2):not(.in) {
+  transform: translateX(30px);
+}
+#start .card-grid > .reveal {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .reveal,
   .reveal--stagger > * {

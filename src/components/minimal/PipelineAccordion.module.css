@@ -133,6 +133,23 @@
   max-width: 100%;
 }
 
+/* optional protocol-layer chip — rides the same fade as the title */
+.layer {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--tone));
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+.slat[data-active="true"] .layer {
+  opacity: 0.85;
+  transition-delay: 0.12s;
+}
+
 /* horizontal title — crossfades in against the vertical one (two
    elements, opacity-switched; nothing rotates or jumps) */
 .title {
@@ -167,6 +184,15 @@
   opacity: 1;
   transform: none;
   transition-delay: 0.22s;
+}
+
+/* the "why it matters" line inside a rich body (how-it-works usage) */
+.body em {
+  display: block;
+  margin-top: 6px;
+  font-style: normal;
+  font-size: 13.5px;
+  color: var(--text-faint);
 }
 
 /* ---- auto-advance progress: 2px fill along the active slat's bottom.
@@ -227,6 +253,10 @@
   opacity: 1;
   white-space: normal;
 }
+.band[data-static="true"] .layer {
+  opacity: 0.85;
+  transition: none;
+}
 .band[data-static="true"] .body {
   opacity: 1;
   transform: none;
@@ -250,6 +280,10 @@
 :global([data-motion="off"]) .title {
   opacity: 1;
   white-space: normal;
+}
+:global([data-motion="off"]) .layer {
+  opacity: 0.85;
+  transition: none;
 }
 :global([data-motion="off"]) .body {
   opacity: 1;
@@ -285,6 +319,10 @@
   :global(html:not([data-motion="on"])) .title {
     opacity: 1;
     white-space: normal;
+  }
+  :global(html:not([data-motion="on"])) .layer {
+    opacity: 0.85;
+    transition: none;
   }
   :global(html:not([data-motion="on"])) .body {
     opacity: 1;
@@ -323,6 +361,10 @@
   .title {
     opacity: 1;
     white-space: normal;
+    transition: none;
+  }
+  .layer {
+    opacity: 0.85;
     transition: none;
   }
   .body {
