@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import ShatterHeading from "@/components/v2/ShatterHeading";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { TrustFlowAnimation } from "@/components/minimal/TrustFlowAnimation";
@@ -87,9 +88,9 @@ export default function MinimalHome() {
   return (
     <main className="minimal-site">
       <HeroStage />
-      <section id="top" className="minimal-hero" aria-labelledby="minimal-hero-title">
+      <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
         <div className="minimal-hero__copy">
-          <h1 id="minimal-hero-title">{SITE_COPY.hero.title}</h1>
+          <ShatterHeading as="h1" lines={[SITE_COPY.hero.title]} />
           <p>{SITE_COPY.hero.lead}</p>
           <div className="minimal-hero__dock">
             <div className="minimal-actions">

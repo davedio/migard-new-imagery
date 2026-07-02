@@ -431,17 +431,11 @@ h2 em,
   padding: clamp(132px, 19vh, 200px) var(--gut) clamp(44px, 6vh, 76px);
 }
 .page-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-image: var(--hero-plate, url("/v2/canopy-macro.avif"));
-  background-size: cover;
-  background-position: var(--hero-plate-pos, 78% 30%);
-  opacity: 0.8;
-  -webkit-mask-image: linear-gradient(180deg, #000 42%, transparent 98%);
-  mask-image: linear-gradient(180deg, #000 42%, transparent 98%);
-  animation: v2-plate-in 1.4s var(--ease-expo) both;
+  /* Retired: this painted a SECOND per-tone image band over the top of the
+     page, on top of the full-page PageBackdrop art (the visible "top bar"
+     with a fade seam). Every PageHero page runs a PageBackdrop now, so the
+     backdrop art is the one and only plate. */
+  content: none;
 }
 .page-hero::after {
   /* thin copy-side wash only — the art stays visible */
@@ -5323,62 +5317,65 @@ h2 em,
 
 /* ------------------------------------------------------------
    DARK MODE — page-backdrop scrims.
-   The base .page-backdrop__scrim washes are cream (built for the
-   light theme); on dark pages they read as a flat light-grey haze.
-   Re-tint every scrim variant to a dark green-black wash so the
-   night art stays dark and text keeps its legibility gradient.
+   The night plates are now intrinsically dark (official-reference
+   restrained night art), so the scrims only add a whisper of a
+   legibility wash. The old heavy washes were tuned for the earlier
+   bright neon plates and buried the new art in black.
    ------------------------------------------------------------ */
 [data-theme="dark"] .page-backdrop--full .page-backdrop__img {
-  opacity: 0.94;
-  filter: saturate(1.02) contrast(1.03) brightness(0.74);
+  opacity: 1;
+  filter: saturate(1.02) contrast(1.02);
+}
+[data-theme="dark"] .page-backdrop--soft .page-backdrop__img,
+[data-theme="dark"] .page-backdrop--bold .page-backdrop__img,
+[data-theme="dark"] .page-backdrop--side .page-backdrop__img,
+[data-theme="dark"] .page-backdrop--banner .page-backdrop__img {
+  opacity: 0.96;
 }
 [data-theme="dark"] .page-backdrop--full .page-backdrop__scrim {
   background:
-    radial-gradient(78% 56% at 90% 24%, rgba(78, 243, 131, 0.08), transparent 70%),
-    radial-gradient(92% 68% at 18% 10%, rgba(4, 7, 5, 0.24), transparent 72%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.2) 0%, rgba(4, 7, 5, 0.28) 52%, rgba(4, 7, 5, 0.36) 100%);
+    linear-gradient(180deg, rgba(4, 7, 5, 0.08) 0%, transparent 40%, rgba(4, 7, 5, 0.22) 100%);
 }
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .page-hero::after {
   background:
-    linear-gradient(90deg, rgba(4, 7, 5, 0.48) 0%, rgba(4, 7, 5, 0.24) 46%, rgba(4, 7, 5, 0.04) 78%),
-    linear-gradient(180deg, rgba(4, 7, 5, 0.04), rgba(4, 7, 5, 0.2));
+    linear-gradient(90deg, rgba(4, 7, 5, 0.34) 0%, rgba(4, 7, 5, 0.14) 46%, transparent 78%);
 }
 [data-theme="dark"] .page-backdrop--soft .page-backdrop__scrim {
   background: linear-gradient(
     180deg,
-    rgba(6, 13, 9, 0.18),
-    rgba(6, 13, 9, 0.06) 28%,
-    rgba(6, 13, 9, 0.4) 76%,
-    #06100b 100%
+    transparent,
+    transparent 55%,
+    rgba(6, 13, 9, 0.3) 86%,
+    rgba(6, 13, 9, 0.6) 100%
   );
 }
 [data-theme="dark"] .page-backdrop--bold .page-backdrop__scrim {
   background:
-    linear-gradient(90deg, rgba(6, 13, 9, 0.22), rgba(6, 13, 9, 0.06) 46%, transparent 72%),
+    linear-gradient(90deg, rgba(6, 13, 9, 0.24), transparent 52%),
     linear-gradient(
       180deg,
-      rgba(6, 13, 9, 0.1),
-      transparent 28%,
-      rgba(6, 13, 9, 0.46) 86%,
-      #06100b 100%
+      transparent,
+      transparent 58%,
+      rgba(6, 13, 9, 0.28) 88%,
+      rgba(6, 13, 9, 0.56) 100%
     );
 }
 [data-theme="dark"] .page-backdrop--side .page-backdrop__scrim {
   background: linear-gradient(
     180deg,
-    rgba(6, 13, 9, 0.08),
-    transparent 40%,
-    rgba(6, 13, 9, 0.4) 84%,
-    #06100b 100%
+    transparent,
+    transparent 55%,
+    rgba(6, 13, 9, 0.28) 86%,
+    rgba(6, 13, 9, 0.54) 100%
   );
 }
 [data-theme="dark"] .page-backdrop--banner .page-backdrop__scrim {
   background: linear-gradient(
     180deg,
     transparent 0,
-    rgba(6, 13, 9, 0.14) 38%,
-    rgba(6, 13, 9, 0.5) 64%,
-    #06100b 72%
+    rgba(6, 13, 9, 0.1) 38%,
+    rgba(6, 13, 9, 0.4) 64%,
+    rgba(6, 13, 9, 0.78) 78%
   );
 }
 
