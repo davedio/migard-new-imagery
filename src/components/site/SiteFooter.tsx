@@ -36,7 +36,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
   {
     title: "How it works",
     links: [
-      { label: "The journey", href: "/how-it-works" },
+      { label: "Flow of a transaction", href: "/how-it-works" },
       { label: "Questions", href: "/how-it-works#faq" },
       { label: "Glossary", href: "/how-it-works#glossary" },
       { label: "Trust / Trust in Utility", href: "/developers#security" },
@@ -62,7 +62,7 @@ export function SiteFooter() {
             <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} loading="eager" unoptimized />
             <span className="wm">Midgard</span>
           </div>
-          <p>Grown on Cardano. Every block checkable, every claim inspectable — from canopy to roots.</p>
+          <p>Grown on Cardano. Every block checkable, every claim inspectable.</p>
 
           <OfficialSocialLinks className="site-footer__social" linkClassName="site-footer__social-link" iconSize={20} />
         </div>

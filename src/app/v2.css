@@ -2624,7 +2624,9 @@ h2 em,
   z-index: 1;
   --hero-copy-lift: clamp(-42px, -3.6svh, -24px);
   width: min(1540px, calc(100% - clamp(18px, 2.6vw, 52px)));
-  min-height: min(680px, 78svh);
+  /* fill tall viewports so the hero owns the fold on big monitors, while
+     never forcing scroll on short laptop screens */
+  min-height: clamp(680px, 86svh, 1180px);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(330px, 0.86fr);
   align-items: center;
@@ -4891,4 +4893,201 @@ h2 em,
 [data-theme="dark"] .page-main:not(.page-main--hiw-experience) > [class*="JumpChips"] {
   position: sticky;
   z-index: 40;
+}
+
+/* ============================================================
+   AMBIENT MOTION (2026-07-02) — quiet, self-running life.
+   Rules: loops are slow (7s+) or micro (sheen); nothing moves
+   text that is being read; everything dies under
+   [data-motion="off"] and prefers-reduced-motion.
+   ============================================================ */
+
+/* 1 · hero tree breath — the plate inhales over ~26s while idle.
+   Applied to the FRAME so it composes with the JS scroll-zoom on the img. */
+@keyframes ambient-breath {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.015);
+  }
+}
+[data-motion="on"] .hero-tree-stage__frame {
+  animation: ambient-breath 26s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 2 · child-page backdrops drift — a near-imperceptible pan/scale so the
+   paintings feel alive behind the content. */
+@keyframes ambient-drift {
+  0%,
+  100% {
+    transform: scale(1.02) translate3d(0, 0, 0);
+  }
+  50% {
+    transform: scale(1.045) translate3d(-0.6%, -0.8%, 0);
+  }
+}
+[data-motion="on"] .page-backdrop__img {
+  animation: ambient-drift 48s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 3 · sap pulse — a small light travels the StepRail's vein on a loop,
+   the pipeline visibly flowing even when nobody scrolls. */
+@keyframes steprail-sap {
+  0% {
+    top: 2%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    top: 97%;
+    opacity: 0;
+  }
+}
+.steprail::after {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 2%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 999px;
+  background: var(--green-bright);
+  box-shadow: 0 0 12px rgba(78, 243, 131, 0.7);
+  opacity: 0;
+  z-index: 1;
+}
+[data-motion="on"] .steprail[data-drawn="true"]::after {
+  animation: steprail-sap 8s cubic-bezier(0.4, 0.1, 0.5, 0.9) infinite;
+  animation-delay: 1.2s;
+}
+[data-theme="light"] .steprail::after {
+  background: #0c7d36;
+  box-shadow: 0 0 10px rgba(12, 125, 54, 0.55);
+}
+
+/* 4 · statement accent glow — the one highlighted phrase breathes. */
+@keyframes statement-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 14px rgba(78, 243, 131, 0.16);
+  }
+  50% {
+    text-shadow: 0 0 26px rgba(78, 243, 131, 0.42);
+  }
+}
+[data-motion="on"] .statement__line em {
+  animation: statement-glow 4.5s ease-in-out infinite;
+}
+[data-theme="light"][data-motion="on"] .statement__line em {
+  animation: none; /* glow-on-cream reads as blur — light theme stays crisp */
+}
+
+/* 5 · primary CTA sheen — one light sweep every ~7s. */
+@keyframes cta-sheen {
+  0%,
+  86% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(230%) skewX(-18deg);
+  }
+}
+.minimal-btn--primary {
+  position: relative;
+  overflow: hidden;
+}
+.minimal-btn--primary::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 34%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.32),
+    transparent
+  );
+  transform: translateX(-130%) skewX(-18deg);
+  pointer-events: none;
+}
+[data-motion="on"] .minimal-btn--primary::after {
+  animation: cta-sheen 7.5s ease-in-out infinite;
+  animation-delay: 2.5s;
+}
+
+/* 6 · nav link underline — slides in on hover (interactive micro-motion). */
+.site-nav__link {
+  position: relative;
+}
+.site-nav__link::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 100%;
+  bottom: -3px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0;
+  transition: right 0.28s var(--ease), opacity 0.28s var(--ease);
+}
+.site-nav__link:hover::after,
+.site-nav__link[data-active="true"]::after {
+  right: 10%;
+  opacity: 0.55;
+}
+
+/* master kill-switches */
+[data-motion="off"] .hero-tree-stage__frame,
+[data-motion="off"] .page-backdrop__img,
+[data-motion="off"] .steprail::after,
+[data-motion="off"] .statement__line em,
+[data-motion="off"] .minimal-btn--primary::after {
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-tree-stage__frame,
+  .page-backdrop__img,
+  .steprail::after,
+  .statement__line em,
+  .minimal-btn--primary::after {
+    animation: none !important;
+  }
+}
+
+/* light-theme completions from the 2026-07-02 theme audit */
+[data-theme="light"] .steprail::before {
+  background: linear-gradient(
+    180deg,
+    rgba(12, 125, 54, 0.55),
+    rgba(138, 97, 21, 0.5) 62%,
+    rgba(43, 108, 176, 0.55)
+  );
+}
+[data-theme="light"] .v2-footer-statement__cta {
+  border-color: rgba(12, 125, 54, 0.35);
+}
+[data-theme="light"] .v2-footer-statement__cta:hover {
+  border-color: rgba(12, 125, 54, 0.55);
+  background: rgba(12, 125, 54, 0.08);
+}
+[data-theme="light"] .v2-footer-statement {
+  border-bottom-color: rgba(14, 27, 19, 0.12);
+}
+[data-theme="light"] .minimal-descent-stage {
+  box-shadow:
+    0 26px 60px rgba(54, 45, 30, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }

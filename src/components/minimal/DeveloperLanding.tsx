@@ -93,7 +93,7 @@ export default function DeveloperLanding() {
 
       <CtaBand
         title="Bring a concrete flow."
-        lead="Abstract interest stalls; a real flow gets a real answer. Bring the one your app depends on and it can be mapped, tested on preprod, and challenged in the open."
+        lead="Bring the flow your app depends on — it can be mapped and tested on preprod today. Bring the one your app depends on and it can be mapped, tested on preprod, and challenged in the open."
         actions={[
           {
             label: "Open GitHub",

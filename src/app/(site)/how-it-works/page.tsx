@@ -12,7 +12,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
-    "How Midgard runs as an optimistic rollup for UTXO applications — deposit, transact, withdraw, with sequencing, commitment, data availability checks, fault-proof verification, and Cardano L1 settlement — plus the FAQ and protocol glossary.",
+    "Follow a transaction through Midgard: fast execution, independent verification, and Cardano L1 settlement — plus the FAQ and protocol glossary.",
   openGraph: {
     title: "How Midgard Works",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -59,7 +59,7 @@ export default function HowItWorksPage() {
       <Section
         id="proof-metrics"
         title="Proof metrics."
-        lead="Five indicators, stated plainly — estimated where forward-looking, checkable where live."
+        lead="Five indicators — estimated where forward-looking, checkable where live."
       >
         <div className={styles.strip} role="list" aria-label="Proof metrics">
           {stripCells.map((item) => (
@@ -118,7 +118,7 @@ export default function HowItWorksPage() {
       {/* D — glossary as a quiet flat reference block, ends the page */}
       <Section
         id="glossary"
-        title="The words we use."
+        title="Glossary."
         lead="Short definitions for the protocol terms used across Midgard."
         tight
       >

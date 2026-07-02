@@ -4106,15 +4106,17 @@ a.chip:hover {
 
 [data-theme="light"] .plate-stage__img,
 [data-theme="light"] .plate-stage__dof-img {
-  opacity: 0.64;
-  filter: contrast(1) saturate(0.94) brightness(1.06);
+  /* the painting IS the page here — near-full strength; legibility comes
+     from the localized scrim behind the copy, not a global wash */
+  opacity: 0.92;
+  filter: contrast(1.01) saturate(1) brightness(1.02);
 }
 
 [data-theme="light"] .plate-stage__grade {
   background:
     radial-gradient(120% 60% at 50% 8%, rgba(255, 238, 190, 0.12), transparent 60%),
     radial-gradient(120% 56% at 50% 100%, rgba(47, 156, 255, calc(0.06 * var(--plate-settle))), transparent 62%),
-    linear-gradient(180deg, rgba(255, 250, 240, 0.22) 0%, rgba(255, 250, 240, 0.06) 36%, rgba(244, 239, 227, 0.32) 100%);
+    linear-gradient(180deg, rgba(255, 250, 240, 0.1) 0%, rgba(255, 250, 240, 0.03) 36%, rgba(244, 239, 227, 0.14) 100%);
   mix-blend-mode: normal;
 }
 

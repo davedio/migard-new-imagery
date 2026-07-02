@@ -175,10 +175,10 @@ export default function MinimalHome() {
           channels as one flat directory. */}
       <section id="channels" className="minimal-section minimal-section--verify" aria-labelledby="minimal-verify-title">
         <div className="minimal-section__head">
-          <h2 id="minimal-verify-title">Inspect before you trust speed.</h2>
+          <h2 id="minimal-verify-title">Inspect the claims.</h2>
           <p>
             Every claim on this page has a place you can check it — and every question
-            has an official door.
+            has an official channel.
           </p>
           <OfficialSocialLinks
             className="minimal-channel-socials"

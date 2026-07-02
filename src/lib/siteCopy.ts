@@ -57,8 +57,8 @@ export const SITE_COPY = {
     lead: "Deposit. Transact. Withdraw. Everything else is the pipeline working underneath.",
     resolved: {
       kicker: "Why that's safe",
-      title: "You don't have to watch the pipeline. It watches itself.",
-      body: "Operators sequence and commit your activity in seconds — that's the speed you feel. Every commitment stays open to challenge during data availability, and it only takes one honest Watcher, out of any number, to catch and stop a bad block before it settles. If no valid fault proof succeeds, state settles through Cardano's own L1 consensus.",
+      title: "You don't have to watch the pipeline — Watchers do it for you.",
+      body: "Operators sequence and commit your activity in seconds — that's the speed you feel. Every commitment stays open to challenge while its data is public. One honest Watcher, out of any number, is enough to stop a bad block before it settles; after that, state settles through Cardano's own L1 consensus.",
     },
     badges: [
       {
@@ -94,7 +94,7 @@ export const SITE_COPY = {
     {
       k: "Verified smart contracts",
       v: "Formal methods",
-      s: "Contracts ship with formal verification and public source, so security claims are checkable mathematics, not marketing.",
+      s: "Contracts ship with formal verification and public source, so security claims can be checked, not just asserted.",
       cta: "Read about Blaster",
       href: OFFICIAL_LINKS.blaster,
     },
@@ -206,7 +206,7 @@ export const DEVELOPER_COPY = {
     title: "Security.",
     lead: "The trust path is inspectable end to end: fast confirmations up front, fault proofs and independent Watchers behind them, Cardano L1 settlement underneath.",
     prose: [
-      "One honest Watcher, out of any number, is enough to catch and stop a bad block. Committed state stays open to challenge for the full challenge window before it settles — fast confirmations up front never shortcut that window.",
+      "One honest Watcher, out of any number, is enough to catch and stop a bad block. Committed state stays open to challenge for the full window before it settles — fast confirmations up front never shortcut it.",
       "When a Watcher finds an invalid commitment, it is contested with an on-chain fault proof before it can become settled state. Security is enforced by Cardano L1, not by trusting Operators.",
     ],
     rows: [

@@ -83,7 +83,7 @@ export default function ParticipatePage() {
           <Card
             title="Watcher"
             delay={60}
-            body="The permissionless role. No bond, no selection — anyone can run a Watcher. Watchers replay committed blocks against the posted data and submit a fault proof when a commitment doesn't hold; a single honest one suffices. Watchers earn verification rewards for the checks they run."
+            body="The permissionless role. No bond, no selection — anyone can run a Watcher. Watchers replay committed blocks against the posted data and submit a fault proof when a commitment doesn't hold; one honest Watcher is enough. Watchers earn verification rewards for the checks they run."
           />
         </CardGrid>
         <div className={styles.rolesCta}>
@@ -104,7 +104,7 @@ export default function ParticipatePage() {
 
       <Section id="economics" title="Economics.">
         <StepRail steps={economicsSteps} ariaLabel="How network economics fit together" />
-        <Statement line="Misbehavior costs more than honesty pays." />
+        <Statement line="A slashed bond costs more than honest sequencing ever earns." />
       </Section>
 
       <div id="register">

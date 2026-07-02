@@ -104,3 +104,27 @@
 .beatName[data-beat="5"] {
   color: rgba(170, 205, 255, 0.95);
 }
+
+/* light theme — deep tones over the bright cream plate (mirrors the
+   StageGraphic + DescentPreviewLoop light treatments) */
+:global([data-theme="light"]) .readout {
+  color: rgba(122, 86, 18, 0.95);
+}
+:global([data-theme="light"]) .rowDim {
+  color: rgba(122, 86, 18, 0.6);
+}
+:global([data-theme="light"]) .dot {
+  background: #8a6115;
+  box-shadow: 0 0 8px rgba(138, 97, 21, 0.5);
+}
+:global([data-theme="light"]) .beatName {
+  color: rgba(12, 92, 44, 0.95);
+  text-shadow: 0 1px 6px rgba(255, 252, 244, 0.65);
+}
+:global([data-theme="light"]) .beatName[data-beat="3"],
+:global([data-theme="light"]) .beatName[data-beat="4"] {
+  color: rgba(122, 86, 18, 0.95);
+}
+:global([data-theme="light"]) .beatName[data-beat="5"] {
+  color: rgba(43, 108, 176, 0.95);
+}

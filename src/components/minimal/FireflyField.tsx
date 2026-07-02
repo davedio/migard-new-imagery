@@ -12,9 +12,9 @@
    · Subscribes to the mock telemetry contract (src/lib/mockTelemetry)
      and maps txPerSec to data-activity="low|med|high"; the CSS scales
      animation durations from it — busier network, livelier fireflies.
-   · Dark theme only: watches documentElement's data-theme via a
-     MutationObserver and renders nothing in light theme (fireflies
-     over a daylight plate read as dust on the lens).
+   · Theme-aware: green fireflies at night, faint sunlit pollen by
+     day (same motes, warmer + quieter) — watches documentElement's
+     data-theme via a MutationObserver.
    · Motion off (useMotionPref): animations are disabled in CSS and
      the motes rest as faint static points — no loops of any kind.
 
@@ -48,17 +48,17 @@ type FireflySpec = {
 };
 
 /** Watch <html data-theme> (set by the theme boot script / ThemeProvider). */
-function useIsDarkTheme(): boolean {
-  const [dark, setDark] = useState(false); // SSR renders nothing; corrected on mount
+function useDocTheme(): "light" | "dark" | null {
+  const [theme, setTheme] = useState<"light" | "dark" | null>(null); // SSR renders nothing; corrected on mount
   useEffect(() => {
     const el = document.documentElement;
-    const read = () => setDark(el.dataset.theme === "dark");
+    const read = () => setTheme(el.dataset.theme === "dark" ? "dark" : "light");
     read();
     const mo = new MutationObserver(read);
     mo.observe(el, { attributes: true, attributeFilter: ["data-theme"] });
     return () => mo.disconnect();
   }, []);
-  return dark;
+  return theme;
 }
 
 export default function FireflyField({
@@ -69,7 +69,7 @@ export default function FireflyField({
   className?: string;
 }) {
   const { motionOn } = useMotionPref();
-  const isDark = useIsDarkTheme();
+  const theme = useDocTheme();
   const fieldRef = useRef<HTMLDivElement>(null);
 
   /* mote specs — computed ONCE per count, deterministic per index */
@@ -100,16 +100,16 @@ export default function FireflyField({
   /* telemetry → data-activity (written straight to the DOM so a 2s tick
      never re-renders the mote spans) */
   useEffect(() => {
-    if (!isDark || !motionOn) return;
+    if (!theme || !motionOn) return;
     const el = fieldRef.current;
     if (!el) return;
     return subscribeTelemetry((t) => {
       el.dataset.activity =
         t.txPerSec < 16 ? "low" : t.txPerSec <= 28 ? "med" : "high";
     });
-  }, [isDark, motionOn]);
+  }, [theme, motionOn]);
 
-  if (!isDark) return null;
+  if (!theme) return null;
 
   return (
     <div
@@ -117,6 +117,7 @@ export default function FireflyField({
       className={[styles.field, className].filter(Boolean).join(" ")}
       data-activity="med"
       data-motion={motionOn ? "on" : "off"}
+      data-variant={theme === "dark" ? "firefly" : "pollen"}
       aria-hidden="true"
     >
       {fireflies.map((f) => (

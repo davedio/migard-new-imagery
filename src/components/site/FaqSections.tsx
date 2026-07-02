@@ -54,7 +54,7 @@ const faqGroups = [
       },
       {
         q: "What do Watchers do?",
-        a: "Watchers inspect committed blocks, replay the relevant state transition, and submit a fault proof if an operator submits invalid state. Midgard safety requires at least one honest Watcher with the data needed to check the block.",
+        a: "Watchers inspect committed blocks, replay the relevant state transition, and raise a fault proof if an Operator commits invalid state. Midgard safety requires at least one honest Watcher with the data needed to check the block.",
       },
       {
         q: "Why does UTXO matter?",
@@ -154,7 +154,7 @@ export default function FaqSections() {
     <>
       <Section
         id="faq"
-        title="Questions, answered plainly."
+        title="Questions."
         lead="Short answers on what Midgard is, how its security works, and what to check before relying on it."
       >
         <div className="faq-basics-shell">
