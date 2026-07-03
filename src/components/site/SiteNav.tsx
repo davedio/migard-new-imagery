@@ -111,6 +111,24 @@ export function SiteNav() {
   };
   useEffect(() => clearCloseTimer, []);
 
+  /* Close any open dropdown the instant the page scrolls. Without this, a
+     trackpad scroll gesture (which can produce a few px of incidental
+     cursor drift, especially on a non-perfectly-vertical swipe) can leave
+     the cursor resting over a DIFFERENT nav item while the previous
+     dropdown is still technically open — that item's real onMouseEnter
+     then fires and swaps in its own list, reading as "scrolling brought up
+     a different menu." Every polished mega-menu closes on scroll for
+     exactly this reason; only attached while something is actually open. */
+  useEffect(() => {
+    if (!desktopDropdown) return;
+    const onScroll = () => {
+      clearCloseTimer();
+      setDesktopDropdown(null);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [desktopDropdown]);
+
   const open = menu.open && menu.pathname === pathname;
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */

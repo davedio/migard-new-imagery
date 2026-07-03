@@ -4504,6 +4504,51 @@ h2 em,
   border-top-color: rgba(244, 241, 230, 0.14);
 }
 
+/* LIGHT MODE — the same problem, missing its own fix: [data-theme="light"]
+   .card (etc) sit at a flat 0.9 opacity everywhere on the site, which is
+   fine over a plain page but not enough over a busy full-bleed backdrop
+   (/participate, /developers) — bright details like the roots-glow sap
+   veins show through card copy. Scoped to :has(.page-backdrop--full) only,
+   so every other page's cards are untouched; a light blur keeps it reading
+   as glass over the art rather than a flat block, and the image stays
+   fully visible everywhere OUTSIDE the cards. */
+[data-theme="light"] .page-main:has(.page-backdrop--full) .card,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .layer-row,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .callout,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .links-table,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-topic-rail,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-decision-card,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-model-card,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-trust-path__step,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .glossary__row {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent 58%),
+    rgba(255, 250, 240, 0.97);
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+  border-color: rgba(27, 23, 16, 0.18);
+  box-shadow:
+    0 22px 54px rgba(54, 45, 30, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-item {
+  border-top-color: rgba(27, 23, 16, 0.14);
+}
+
+/* section headings need the same legibility floor the dark theme already
+   gives them — copy that sits directly over the art, no card behind it */
+[data-theme="light"] .page-main:has(.page-backdrop--full) .section__head h2,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .section__head .lead,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .statement__line,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .statement__sub,
+[data-theme="light"] .page-main:has(.page-backdrop--full) .statement__kicker,
+[data-theme="light"] .page-main:has(.page-backdrop--full) [class*="securityPointer"] {
+  text-shadow:
+    0 1px 3px rgba(255, 250, 240, 0.6),
+    0 6px 18px rgba(255, 250, 240, 0.4);
+}
+
 /* Now that the washes are lighter, intro copy that floats directly over the
    night art (no solid panel behind it) gets a soft shadow instead of a wash —
    keeps it legible without graying the page. Invisible on solid sections. */
