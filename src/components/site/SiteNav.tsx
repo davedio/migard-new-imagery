@@ -111,6 +111,24 @@ export function SiteNav() {
   };
   useEffect(() => clearCloseTimer, []);
 
+  /* Close any open dropdown the instant the page scrolls. Without this, a
+     trackpad scroll gesture (which can produce a few px of incidental
+     cursor drift, especially on a non-perfectly-vertical swipe) can leave
+     the cursor resting over a DIFFERENT nav item while the previous
+     dropdown is still technically open — that item's real onMouseEnter
+     then fires and swaps in its own list, reading as "scrolling brought up
+     a different menu." Every polished mega-menu closes on scroll for
+     exactly this reason; only attached while something is actually open. */
+  useEffect(() => {
+    if (!desktopDropdown) return;
+    const onScroll = () => {
+      clearCloseTimer();
+      setDesktopDropdown(null);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [desktopDropdown]);
+
   const open = menu.open && menu.pathname === pathname;
 
   /* Scrim once scrolled — content scrolls beneath the transparent nav. */
@@ -192,7 +210,21 @@ export function SiteNav() {
                 onFocus={() => openDropdown(item.label)}
                 onBlur={closeDesktopDropdown}
               >
-                <Link href={item.href} className="site-nav__link site-nav__heading" data-active={isNavItemActive(item)}>
+                <Link
+                  href={item.href}
+                  className="site-nav__link site-nav__heading"
+                  data-active={isNavItemActive(item)}
+                  onClick={() => {
+                    /* A click navigates immediately, but the cursor stays put —
+                       if the destination page renders the same nav (it always
+                       does), that item's dropdown would otherwise reopen on
+                       landing and cover the new page's own heading until the
+                       mouse moves. Closing on click makes navigation a clean
+                       break from the menu. */
+                    clearCloseTimer();
+                    setDesktopDropdown(null);
+                  }}
+                >
                   {item.label}
                 </Link>
                 <div className="site-nav__dropdown" role="menu" aria-label={`${item.label} links`}>
@@ -220,6 +252,10 @@ export function SiteNav() {
                         {...linkClass(child.href, "site-nav__dropdown-link")}
                         role="menuitem"
                         style={{ "--i": i } as CSSProperties}
+                        onClick={() => {
+                          clearCloseTimer();
+                          setDesktopDropdown(null);
+                        }}
                       >
                         <span className="site-nav__dropdown-label">
                           {child.icon}
