@@ -210,7 +210,21 @@ export function SiteNav() {
                 onFocus={() => openDropdown(item.label)}
                 onBlur={closeDesktopDropdown}
               >
-                <Link href={item.href} className="site-nav__link site-nav__heading" data-active={isNavItemActive(item)}>
+                <Link
+                  href={item.href}
+                  className="site-nav__link site-nav__heading"
+                  data-active={isNavItemActive(item)}
+                  onClick={() => {
+                    /* A click navigates immediately, but the cursor stays put —
+                       if the destination page renders the same nav (it always
+                       does), that item's dropdown would otherwise reopen on
+                       landing and cover the new page's own heading until the
+                       mouse moves. Closing on click makes navigation a clean
+                       break from the menu. */
+                    clearCloseTimer();
+                    setDesktopDropdown(null);
+                  }}
+                >
                   {item.label}
                 </Link>
                 <div className="site-nav__dropdown" role="menu" aria-label={`${item.label} links`}>
@@ -238,6 +252,10 @@ export function SiteNav() {
                         {...linkClass(child.href, "site-nav__dropdown-link")}
                         role="menuitem"
                         style={{ "--i": i } as CSSProperties}
+                        onClick={() => {
+                          clearCloseTimer();
+                          setDesktopDropdown(null);
+                        }}
                       >
                         <span className="site-nav__dropdown-label">
                           {child.icon}
