@@ -19,7 +19,8 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Home", href: "/" },
       { label: "Learn", href: "/learn" },
-      { label: "How it works", href: "/how-it-works" },
+      { label: "Users", href: "/users" },
+      { label: "Economics", href: "/economics" },
       { label: "Developers", href: "/developers" },
       { label: "Participate", href: "/participate" },
     ],
@@ -29,18 +30,18 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Developer Overview", href: "/developers" },
       { label: "Contracts", href: "/developers#contracts" },
-      { label: "Security", href: "/developers#security" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
   {
-    title: "How it works",
+    title: "Learn",
     links: [
-      { label: "Flow of a transaction", href: "/how-it-works" },
+      { label: "How Midgard works", href: "/learn" },
+      { label: "Users", href: "/users" },
+      { label: "Security", href: "/learn#security" },
       { label: "Questions", href: "/faq" },
       { label: "Glossary", href: "/glossary" },
-      { label: "Trust / Trust in Utility", href: "/developers#security" },
       { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy },
     ],
   },

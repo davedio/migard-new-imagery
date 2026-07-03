@@ -8,9 +8,9 @@
               reference and routing content.
 
    (Sequential content gets a bespoke structure per page: a static
-   explainer grid on /how-it-works, IntegrationSteps on /developers,
+   explainer grid on /learn, IntegrationSteps on /developers,
    EconomicsCycle on /participate — and the pipeline text is told
-   ONCE, on /how-it-works.)
+   ONCE, on /learn.)
 
    Pacing law lives in the doc: never two identical patterns
    adjacent · one loud moment per page · facts get one display

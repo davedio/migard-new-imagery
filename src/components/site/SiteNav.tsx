@@ -40,19 +40,20 @@ const NAV_LINKS: readonly NavLink[] = [
     label: "Learn",
     href: "/learn",
     children: [
-      { label: "Learn overview", description: "Plain-language paths for users, builders, and Protocol Roles.", href: "/learn" },
-      { label: "How it works", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
+      { label: "How Midgard works", description: "Execution, verification, and Cardano settlement.", href: "/learn" },
+      { label: "Users", description: "A simpler page about what users get from Midgard.", href: "/users" },
+      { label: "Security", description: "Trust path, Watchers, fault proofs, and Cardano settlement.", href: "/learn#security" },
       { label: "FAQ", description: "Common questions about roles, settlement, and security.", href: "/faq" },
       { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/glossary" },
     ],
   },
+  { label: "Economics", href: "/economics" },
   {
     label: "Developers",
     href: "/developers",
     children: [
       { label: "Developer overview", description: "Source, docs, contracts, and review paths.", href: "/developers" },
       { label: "Contracts", description: "Preprod validators, anchors, scripts, and topology.", href: "/developers#contracts" },
-      { label: "Security", description: "Trust path, fault proofs, disclosure, and audit status.", href: "/developers#security" },
       {
         label: "GitHub",
         description: "Repository, issues, and implementation history.",

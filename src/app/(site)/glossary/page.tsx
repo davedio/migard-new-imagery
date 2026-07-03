@@ -25,7 +25,7 @@ export default function GlossaryPage() {
         sub="Short definitions for the protocol terms used across Midgard."
         actions={[
           { label: "Read FAQ", href: "/faq", variant: "primary" },
-          { label: "How it works", href: "/how-it-works", variant: "ghost" },
+          { label: "Learn how it works", href: "/learn", variant: "ghost" },
         ]}
       />
       <Section id="glossary" title="Protocol terms." lead="Flat definitions, no hidden glossary cards." tight cols>

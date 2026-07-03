@@ -3,7 +3,7 @@ import Link from "next/link";
 /**
  * Eyebrow breadcrumb for child pages of a section, e.g.
  *
- *   <PartOf parentHref="/how-it-works" parentLabel="How it works" />
+ *   <PartOf parentHref="/learn" parentLabel="Learn" />
  *
  * renders "PART OF · HOW IT WORKS" as a mono micro-label link, styled like
  * the existing kickers (see "PART OF EYEBROW" in globals.css). Server

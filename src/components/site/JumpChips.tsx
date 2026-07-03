@@ -114,7 +114,7 @@ export default function JumpChips({
     (id: string) => {
       const el = document.getElementById(id);
       if (!el) return;
-      /* window.scrollTo, not el.scrollIntoView — /how-it-works runs a
+      /* window.scrollTo, not el.scrollIntoView — the journey page runs a
          custom smooth-scroll hook that position:fixed + transforms the
          [data-scroll-content] wrapper, which breaks scrollIntoView's
          scrollable-ancestor walk (it would silently no-op there). A

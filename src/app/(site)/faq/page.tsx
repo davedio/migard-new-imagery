@@ -27,7 +27,7 @@ export default function FaqPage() {
         sub="Short answers on what Midgard is, how its security works, and what to check before relying on it."
         actions={[
           { label: "See glossary", href: "/glossary", variant: "primary" },
-          { label: "How it works", href: "/how-it-works", variant: "ghost" },
+          { label: "Learn how it works", href: "/learn", variant: "ghost" },
         ]}
       />
 

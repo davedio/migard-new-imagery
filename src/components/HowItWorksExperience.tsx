@@ -18,7 +18,7 @@ import { useTheme, themedAsset } from "@/lib/theme";
 /* ============================================================
    HowItWorksExperience — the FLAGSHIP "ride a transaction" act,
    relocated from the old home page and re-homed as the immersive
-   centerpiece of /how-it-works.
+   centerpiece of /learn.
 
    The page opens with a full-viewport JOURNEY ACT where a PHOTOREAL
    tree PLATE plays the scroll-driven canopy -> L1-settlement descent (the
@@ -41,7 +41,7 @@ import { useTheme, themedAsset } from "@/lib/theme";
         (buttery beats) and the HUD chapter labels.
 
    Because the experience mounts only on this route and unmounts on
-   navigation, these systems activate ONLY on /how-it-works —
+   navigation, these systems activate ONLY where this component is mounted —
    useSmoothScroll clears its fixed-layout hijack on unmount, so every
    other route is untouched.
    ============================================================ */

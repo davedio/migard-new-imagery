@@ -3,8 +3,7 @@ import { ContractsReference } from "@/components/site/ContractsReference";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import IntegrationSteps from "@/components/site/IntegrationSteps";
-import { DataRows } from "@/components/site/rhythm";
-import { Card, CardGrid, CtaBand, PageHero, Prose, Section } from "@/components/site/ui";
+import { Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
 
@@ -13,7 +12,7 @@ import { DEVELOPER_COPY } from "@/lib/siteCopy";
    JumpChips bar tracking the whole page → ONE Grid (developer paths, with the
    integration-path stepper as the page's single path telling) → contracts
    reference (header band, topology set-piece, table of record, genesis, query)
-   → security (Prose + two data rows) → one closing CTA band.
+   → one closing CTA band. Security now lives in the Learn section.
    Motion: the Grid keeps its group entrance; everything else is static. */
 
 export default function DeveloperLanding() {
@@ -27,7 +26,7 @@ export default function DeveloperLanding() {
         sub={DEVELOPER_COPY.hero.lead}
         actions={[
           { label: "Contracts", href: "/developers#contracts", variant: "primary" },
-          { label: "Security", href: "/developers#security", variant: "ghost" },
+          { label: "Security", href: "/learn#security", variant: "ghost" },
           {
             label: "GitHub",
             href: OFFICIAL_LINKS.github,
@@ -44,7 +43,6 @@ export default function DeveloperLanding() {
           { id: "start", label: "Paths" },
           { id: "contracts", label: "Contracts" },
           { id: "query", label: "Query" },
-          { id: "security", label: "Security" },
         ]}
       />
 
@@ -76,24 +74,6 @@ export default function DeveloperLanding() {
       </Section>
 
       <ContractsReference />
-
-      <Section
-        id="security"
-        title={DEVELOPER_COPY.security.title}
-        lead={DEVELOPER_COPY.security.lead}
-        cols
-        aside={<Prose items={DEVELOPER_COPY.security.prose.map((text) => ({ text }))} />}
-      >
-        <DataRows
-          ariaLabel="Audit status and responsible disclosure"
-          rows={DEVELOPER_COPY.security.rows.map((row) => ({
-            label: row.label,
-            body: row.body,
-            href: "href" in row ? row.href : undefined,
-            external: "href" in row ? /^https?:\/\//.test(row.href) : undefined,
-          }))}
-        />
-      </Section>
 
       <CtaBand
         title="Bring a concrete flow."

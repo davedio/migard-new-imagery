@@ -1035,7 +1035,7 @@ button.panel:hover {
      html[data-motion="on"] so reduced-motion / no-JS never see offsets.
    · /developers #start: the stepper above owns that section's entrance;
      the track cards are simply present.
-   · the /how-it-works compare grid keeps the classic rise (sole user). */
+   · the Learn journey grid keeps the classic rise (sole user). */
 [data-motion="on"] #roles .card-grid > .reveal:nth-child(1):not(.in) {
   transform: translateX(-30px);
 }

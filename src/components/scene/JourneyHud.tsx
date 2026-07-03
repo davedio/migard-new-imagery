@@ -2,7 +2,7 @@
 
 /* ============================================================
    JourneyHud — the tree-spine progress rail + live Watcher
-   readout that ride the /how-it-works descent.
+   readout that ride the Learn page descent.
 
    · TreeSpine mirrors the six lifecycle beats as sap-nodes lighting
      green → gold → cobalt while the packet descends (the same spring

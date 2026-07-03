@@ -4,7 +4,7 @@
    useSmoothScroll — a self-contained, library-free inertial scroll
    for the weighty "RESN" feel.
 
-   How it works:
+   Mechanics:
      - The page keeps its NATIVE scrollbar and native scroll height
        (we set body height = the scroll root's content height, position
        that root `fixed`, then translateY it). So keyboard, anchors,

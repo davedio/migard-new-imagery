@@ -13,14 +13,20 @@ const TOUR = [
   {
     href: "/learn",
     title: "Learn",
-    detail: "Start with the plain-language path through Midgard.",
+    detail: "Follow a transaction through Midgard and review the security path.",
     cta: "Open Learn",
   },
   {
-    href: "/how-it-works",
-    title: "How it works",
-    detail: "Ride a transaction from submit to Cardano settlement.",
-    cta: "Open How it works",
+    href: "/users",
+    title: "Users",
+    detail: "See what Midgard changes for normal app users.",
+    cta: "Open Users",
+  },
+  {
+    href: "/economics",
+    title: "Economics",
+    detail: "Review what each audience gets from the network.",
+    cta: "Open Economics",
   },
   {
     href: "/developers",

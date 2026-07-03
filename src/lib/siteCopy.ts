@@ -9,7 +9,7 @@ export const SITE_COPY = {
     titleLines: ["The execution layer", "for UTXO finance"],
     lead:
       "Midgard is an optimistic rollup for Cardano: transactions confirm in seconds, fees stay in plain ADA, and every block settles back to Cardano L1.",
-    primaryCta: { label: "See how it works", href: "/how-it-works" },
+    primaryCta: { label: "See how it works", href: "/learn" },
     secondaryCta: { label: "Start building", href: "/developers" },
     tertiaryCta: { label: "Participate", href: "/participate" },
   },
@@ -26,7 +26,7 @@ export const SITE_COPY = {
       title: "Users",
       body: "Deposit, transact, withdraw. Use the app while final settlement completes after verification.",
       cta: "Learn the user path",
-      href: "/how-it-works",
+      href: "/users",
     },
     {
       title: "Builders",
@@ -200,7 +200,7 @@ export const DEVELOPER_COPY = {
       cta: "Discuss stack path",
     },
   ],
-  /** The security section content — folded into /developers#security.
+  /** The security section content — folded into /learn#security.
       Trust path + fault proofs are one Prose telling; audit status and
       responsible disclosure stand as two emphasized data rows. */
   security: {
@@ -222,4 +222,80 @@ export const DEVELOPER_COPY = {
       },
     ],
   },
+} as const;
+
+/** /economics — the one page that tells every audience what they get,
+    fast. Reuses established claims only (fees in ADA, L1 settlement,
+    formal verification, bonded roles); adds no numbers and no new
+    claims. Deeper mechanics stay told once elsewhere — this page
+    routes to them rather than repeating them. */
+export const ECONOMICS_COPY = {
+  hero: {
+    label: "Economics & Security",
+    title: "What you get from Midgard.",
+    sub: "Fees stay in plain ADA. Security is enforced by Cardano, not by trust. See what using it, building on it, or running it actually gets you.",
+    actions: [
+      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" as const },
+      { label: "See how it works", href: "/learn", variant: "ghost" as const },
+    ],
+  },
+  /** The page's one Grid — three parallel audiences, each picking their
+      own path. Every card links onward to that audience's deeper page. */
+  paths: [
+    {
+      title: "Users",
+      body: "Fees stay in plain ADA — no separate token required to transact. Transactions confirm in seconds, and every commitment settles back to Cardano L1 underneath.",
+      cta: "See the user page",
+      href: "/users",
+    },
+    {
+      title: "Builders",
+      body: "A fee model denominated in ADA, contracts that ship with formal verification and public source, and a security model your users can check for themselves — not take on faith.",
+      cta: "Start building",
+      href: "/developers",
+    },
+    {
+      title: "Operators & Watchers",
+      body: "Bonded roles built for real work: Operators sequence and commit, Watchers verify. Bond and reward design is built so faults are never worth it — parameters are being finalized before those numbers are public.",
+      cta: "See roles & register",
+      href: "/participate",
+    },
+  ],
+  /** The page's one Statement — the differentiator, stated once. */
+  thesis: {
+    kicker: "The difference",
+    line: "Most rollups take value from their base layer. Midgard is built to pay Cardano back.",
+    sub: "No separate token required to use it. Fees settle in ADA, and every block anchors back to the same base layer securing all of Cardano.",
+  },
+  /** Prose — the honest, hedged status note. No numbers, no dates. */
+  status: {
+    kicker: "Where this stands",
+    paragraphs: [
+      "Midgard is a pre-alpha testnet on Cardano preprod. No real funds — every claim above is checkable against public source and preprod contracts, not just asserted.",
+      "Bond, fee, and role-incentive parameters are being finalized as testnet data comes in. A full breakdown of the network's economic design follows once benchmarks and parameters are approved.",
+    ],
+  },
+  /** Rows — the page ends quiet, routing to where each fact is told in full. */
+  explore: [
+    {
+      label: "Operator & Watcher economics",
+      body: "Bonds, rewards, and the full roles breakdown.",
+      href: "/participate#economics",
+    },
+    {
+      label: "Security model",
+      body: "Fault proofs, the trust path, and audit status.",
+      href: "/learn#security",
+    },
+    {
+      label: "Protocol terms",
+      body: "Short definitions for the words used across these pages.",
+      href: "/glossary",
+    },
+    {
+      label: "Questions",
+      body: "Common questions about status, security, and roles.",
+      href: "/faq",
+    },
+  ],
 } as const;

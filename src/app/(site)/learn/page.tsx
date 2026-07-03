@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
+import HowItWorksExperience from "@/components/HowItWorksExperience";
 import JumpChips from "@/components/site/JumpChips";
-import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
-import { PageHero, Section } from "@/components/site/ui";
-import { SITE_COPY } from "@/lib/siteCopy";
+import { Section } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { DEVELOPER_COPY, SITE_COPY } from "@/lib/siteCopy";
+import styles from "../how-it-works/page.module.css";
 
 export const metadata: Metadata = {
   title: "Learn Midgard",
   description:
-    "A plain-language map of Midgard: users, builders, protocol roles, transaction flow, and security assumptions.",
+    "Follow a transaction through Midgard, then review the user path, security assumptions, and Cardano L1 settlement model.",
   openGraph: {
     title: "Learn Midgard",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -19,8 +21,8 @@ export const metadata: Metadata = {
 const audienceRows = [
   {
     label: "Users",
-    body: SITE_COPY.paths[0].body,
-    href: "/learn#transaction-flow",
+    body: "Use apps with faster confirmations, fees in plain ADA, and final settlement rooted back to Cardano.",
+    href: "/users",
   },
   {
     label: "Builders",
@@ -34,60 +36,80 @@ const audienceRows = [
   },
 ] as const;
 
-const flowRows = SITE_COPY.lifecycle.map(([label, body]) => ({
-  label,
-  body,
-}));
-
 const securityRows = [
   {
-    label: "Fast first",
-    body: "Operators sequence activity quickly so apps feel responsive.",
+    label: "Cardano-rooted settlement",
+    body: "Fast confirmations happen up front, but verified state settles through Cardano L1.",
   },
   {
-    label: "Verification before settlement",
-    body: "Committed state remains checkable before final Cardano L1 settlement.",
+    label: "Verification before finality",
+    body: "Committed state stays public and challengeable before it becomes settled state.",
   },
   {
     label: "One honest Watcher",
     body: "One honest Watcher, out of any number, is enough to stop a bad block before it settles.",
   },
   {
-    label: "Contracts and source",
-    body: "Validators, reference scripts, and implementation history are published for review.",
+    label: "Formally verified contracts",
+    body: "Contracts ship with formal verification and public source, so claims can be checked rather than accepted on trust.",
     href: "/developers#contracts",
   },
+  ...DEVELOPER_COPY.security.rows,
 ] as const;
+
+const CUT_PROOF_POINTS = new Set(["Settlement security", "Independent verification"]);
+
+const stripCells = [
+  ...SITE_COPY.proofPoints.filter((p) => !CUT_PROOF_POINTS.has(p.k)),
+  {
+    k: "Fees",
+    v: "Plain ADA",
+    s: "A fraction of L1 cost, estimated — no separate gas token.",
+  },
+];
 
 export default function LearnPage() {
   return (
-    <main className="page-main">
-      <PageBackdrop name="tree-vista-wide" focus="58% 42%" />
-      <PageHero
-        compact
-        tone="tree"
-        label="Learn"
-        title="Learn Midgard."
-        sub="A plain-language map of faster UTXO execution, independent verification, and Cardano L1 settlement."
-        actions={[
-          { label: "See transaction flow", href: "/how-it-works", variant: "primary" },
-          { label: "Read FAQ", href: "/faq", variant: "ghost" },
-        ]}
-      />
-
+    <HowItWorksExperience>
       <JumpChips
         items={[
+          { id: "proof-metrics", label: "Proof metrics" },
           { id: "paths", label: "Paths" },
-          { id: "transaction-flow", label: "Flow" },
-          { id: "security-overview", label: "Security" },
+          { id: "security", label: "Security" },
           { id: "reference", label: "Reference" },
         ]}
       />
 
       <Section
+        id="proof-metrics"
+        title="Proof metrics."
+        lead="Five indicators — estimated where forward-looking, checkable where live."
+      >
+        <div className={styles.strip} role="list" aria-label="Proof metrics">
+          {stripCells.map((item) => (
+            <div key={item.k} role="listitem" className={styles.cell}>
+              <span className={styles.cellKicker}>{item.k}</span>
+              <span className={styles.cellValue}>{item.v}</span>
+              <span className={styles.cellFine}>{item.s}</span>
+              {"href" in item && item.href ? (
+                <a
+                  className={styles.cellLink}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {item.cta} →
+                </a>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section
         id="paths"
         title="Start with the path that matches you."
-        lead="Midgard has one protocol path, but different readers need different entry points."
+        lead="The transaction path is one protocol. The entry point depends on what you came here to do."
         cols
         aside={
           <Statement
@@ -101,18 +123,18 @@ export default function LearnPage() {
       </Section>
 
       <Section
-        id="transaction-flow"
-        title="Fast execution first. Verification before final settlement."
-        lead="The cinematic page shows the journey down the tree. This is the same path in plain language."
-      >
-        <DataRows rows={flowRows} ariaLabel="Plain-language transaction flow" />
-      </Section>
-
-      <Section
-        id="security-overview"
-        title="Security assumptions you can inspect."
-        lead="Midgard should be read as an optimistic rollup: fast confirmations up front, public checks before final settlement."
+        id="security"
+        title="Security, in plain language."
+        lead="Midgard should be read as an optimistic rollup: responsive execution up front, public checks before final Cardano settlement."
         cols
+        aside={
+          <Statement
+            align="left"
+            kicker="Trust path"
+            line="Speed comes first, but correctness still has to pass through verification."
+            sub="Operators can make the app feel fast. They do not get the final word on valid state."
+          />
+        }
       >
         <DataRows rows={securityRows} ariaLabel="Security assumptions" />
       </Section>
@@ -122,9 +144,9 @@ export default function LearnPage() {
           ariaLabel="Learn reference pages"
           rows={[
             {
-              label: "How it works",
-              body: "Follow the transaction journey visually, from submit to Cardano settlement.",
-              href: "/how-it-works",
+              label: "Users",
+              body: "A simpler page about what normal users get from Midgard.",
+              href: "/users",
             },
             {
               label: "FAQ",
@@ -136,9 +158,15 @@ export default function LearnPage() {
               body: "Definitions for the protocol terms used across the site.",
               href: "/glossary",
             },
+            {
+              label: "GitHub",
+              body: "The protocol is open — inspect source, contracts, and implementation history.",
+              href: OFFICIAL_LINKS.github,
+              external: true,
+            },
           ]}
         />
       </Section>
-    </main>
+    </HowItWorksExperience>
   );
 }

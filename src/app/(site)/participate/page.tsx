@@ -101,11 +101,11 @@ export default function ParticipatePage() {
             ]}
           />
         </div>
-        {/* Absorbs the old Security section; id kept for stale #security links. */}
+        {/* Keeps stale #security links useful while the full security model lives on Learn. */}
         <p id="security" className={styles.securityPointer}>
           The full security model — trust path, fault proofs, audit status, and the
-          disclosure route — lives with the developer documentation.{" "}
-          <Link href="/developers#security">Read the security model →</Link>
+          disclosure route — lives with Learn.{" "}
+          <Link href="/learn#security">Read the security model →</Link>
         </p>
       </Section>
 

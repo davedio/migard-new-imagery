@@ -1,8 +1,7 @@
 import { faqGroupId, Section } from "@/components/site/ui";
 
 /* =========================================================================
-   FaqSections — the grouped Q&A (formerly the /faq page) mounted as the
-   #faq anchor section on /how-it-works, plus a single compact
+   FaqSections — the grouped Q&A for the standalone /faq page, plus a single compact
    "How Midgard compares" block (the page's ONE card grid).
 
    Reading-rhythm redesign (2026-07-02): pruned from 17 questions to 12 —

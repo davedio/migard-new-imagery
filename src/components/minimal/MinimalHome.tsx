@@ -44,7 +44,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   {
     label: "Security model",
     body: "Trust path, fault proofs, audit status, and responsible disclosure.",
-    href: "/developers#security",
+    href: "/learn#security",
   },
   {
     label: "Contract surface",
@@ -127,7 +127,7 @@ export default function MinimalHome() {
       </section>
 
       {/* The pipeline lives ONCE on the site — told in full on
-          /how-it-works. Home keeps only this canvas trailer for it,
+          /learn. Home keeps only this canvas trailer for it,
           closed by the trust line the page exists to say. */}
       <section
         className="minimal-section minimal-section--descent minimal-section--descent-cols"
@@ -148,7 +148,7 @@ export default function MinimalHome() {
         </div>
         <div className="minimal-descent-stage">
           <DescentPreviewLoop>
-            <SmartLink className="minimal-btn minimal-btn--ghost" href="/how-it-works">
+            <SmartLink className="minimal-btn minimal-btn--ghost" href="/learn">
               Watch it happen -&gt;
             </SmartLink>
           </DescentPreviewLoop>

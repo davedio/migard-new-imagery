@@ -34,6 +34,8 @@ test("primary routes render with imagery and without horizontal overflow", async
   for (const route of [
     "/",
     "/learn",
+    "/users",
+    "/economics",
     "/developers",
     "/participate",
     "/how-it-works",
@@ -67,7 +69,7 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
   await expect(page.locator(".hero-tree-stage")).toBeVisible();
   await expect(page.getByRole("link", { name: /See how it works/i })).toHaveAttribute(
     "href",
-    "/how-it-works",
+    "/learn",
   );
   await expect(page.getByRole("link", { name: /Start building/i })).toHaveAttribute(
     "href",
@@ -114,15 +116,19 @@ test("desktop nav exposes Learn child pages", async ({ page }, testInfo) => {
 
   const dropdown = page.locator('.site-nav__group[data-open="true"] .site-nav__dropdown');
   await expect(dropdown.locator('.site-nav__dropdown-link[href="/learn"]')).toContainText(
-    "Learn overview",
+    "How Midgard works",
   );
   await expect(dropdown.locator('.site-nav__dropdown-link[href="/learn"]')).toHaveAttribute(
     "href",
     "/learn",
   );
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/how-it-works"]')).toHaveAttribute(
+  await expect(dropdown.locator('.site-nav__dropdown-link[href="/users"]')).toHaveAttribute(
     "href",
-    "/how-it-works",
+    "/users",
+  );
+  await expect(dropdown.locator('.site-nav__dropdown-link[href="/learn#security"]')).toHaveAttribute(
+    "href",
+    "/learn#security",
   );
   await expect(dropdown.locator('.site-nav__dropdown-link[href="/faq"]')).toHaveAttribute(
     "href",
@@ -154,9 +160,17 @@ test("mobile menu exposes grouped child pages", async ({ page }, testInfo) => {
     "href",
     "/learn",
   );
-  await expect(mobileMenu.getByRole("link", { name: /Learn overview/i })).toHaveAttribute(
+  await expect(mobileMenu.getByRole("link", { name: /How Midgard works/i })).toHaveAttribute(
     "href",
     "/learn",
+  );
+  await expect(mobileMenu.locator('.site-nav__mobile-child[href="/users"]')).toHaveAttribute(
+    "href",
+    "/users",
+  );
+  await expect(mobileMenu.locator('.site-nav__mobile-child[href="/learn#security"]')).toHaveAttribute(
+    "href",
+    "/learn#security",
   );
   await expect(mobileMenu.getByRole("link", { name: /^FAQ/i })).toHaveAttribute(
     "href",
@@ -178,15 +192,23 @@ test("mobile menu exposes grouped child pages", async ({ page }, testInfo) => {
   await page.screenshot({ path: testInfo.outputPath("mobile-menu.png"), fullPage: true });
 });
 
-test("restored Learn, FAQ, and Glossary pages start on their own content", async ({ page }, testInfo) => {
+test("Learn, Users, FAQ, and Glossary pages start on their own content", async ({ page }, testInfo) => {
   await page.goto("/learn");
   await expect(page).toHaveURL(/\/learn$/);
-  await expect(page.getByRole("heading", { name: "Learn Midgard." })).toBeVisible();
-  await expect(page.locator(".hiw-act")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
+  await expect(page.locator(".hiw-act")).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: /Proof metrics/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Start with the path/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Fast execution first/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Security assumptions/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Security, in plain language/i })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("learn.png"), fullPage: true });
+
+  await page.goto("/users");
+  await expect(page).toHaveURL(/\/users$/);
+  await expect(page.getByRole("heading", { name: "What users get from Midgard." })).toBeVisible();
+  await expect(page.locator(".hiw-act")).toHaveCount(0);
+  await expect(page.getByText("Fees in ADA")).toBeVisible();
+  await expect(page.getByText("Deposit. Transact. Withdraw.")).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("users.png"), fullPage: true });
 
   await page.goto("/faq");
   await expect(page).toHaveURL(/\/faq$/);
@@ -209,21 +231,25 @@ test("legacy and child routes land on current pages", async ({ page }) => {
   await expect(page).toHaveURL(/\/faq$/);
   await expect(page.getByRole("heading", { name: "Questions." }).first()).toBeVisible();
 
+  await page.goto("/how-it-works");
+  await expect(page).toHaveURL(/\/learn$/);
+  await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
+
   await page.goto("/contracts");
   await expect(page).toHaveURL(/\/developers#contracts$/);
   await expect(page.getByRole("heading", { name: /Build fast apps that settle on Cardano/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Core validators/i })).toBeVisible();
 });
 
-test("How it works and Participate no longer end in blank hidden content", async ({ page }, testInfo) => {
-  await page.goto("/how-it-works");
+test("Learn and Participate no longer end in blank hidden content", async ({ page }, testInfo) => {
+  await page.goto("/learn");
   await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Proof metrics/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Security and economics/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Security, in plain language/i })).toBeVisible();
   await expect(page.locator(".hiw-act")).toHaveCount(1);
   await expect(page.locator('.datarows__row[href="/faq"]')).toContainText("FAQ");
   await expect(page.locator('.datarows__row[href="/glossary"]')).toContainText("Glossary");
-  await page.screenshot({ path: testInfo.outputPath("how-it-works.png"), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("learn-hub.png"), fullPage: true });
 
   await page.goto("/participate");
   await expect(page.getByRole("heading", { name: /Participate in Midgard/i })).toBeVisible();
