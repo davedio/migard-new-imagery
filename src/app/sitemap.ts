@@ -2,9 +2,8 @@ import type { MetadataRoute } from "next";
 
 const SITE_URL = "https://migard-new-imagery.vercel.app";
 
-/* Canonical, indexable routes only — the 4-page IA. /contracts redirects into
-   /developers; /learn, /faq, and /glossary redirect into /how-it-works. */
-const ROUTES = ["", "/how-it-works", "/developers", "/participate"];
+/* Canonical, indexable routes only. /contracts redirects into /developers. */
+const ROUTES = ["", "/learn", "/how-it-works", "/developers", "/participate", "/faq", "/glossary"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return ROUTES.map((route) => ({

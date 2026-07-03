@@ -1,4 +1,3 @@
-import { Reveal } from "@/components/site/Reveal";
 import { faqGroupId, Section } from "@/components/site/ui";
 
 /* =========================================================================
@@ -197,14 +196,11 @@ export default function FaqSections() {
         lead="Three common paths side by side: what each is best for, its main caution, and what to inspect before you commit."
         tight
       >
-        {/* the page's one card grid — and its one scroll entrance */}
-        <Reveal>
-          <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
-            {decisionGrid.map((card) => (
-              <DecisionCard key={card.label} card={card} />
-            ))}
-          </div>
-        </Reveal>
+        <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
+          {decisionGrid.map((card) => (
+            <DecisionCard key={card.label} card={card} />
+          ))}
+        </div>
       </Section>
     </>
   );

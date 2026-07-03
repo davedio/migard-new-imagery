@@ -18,6 +18,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Explore",
     links: [
       { label: "Home", href: "/" },
+      { label: "Learn", href: "/learn" },
       { label: "How it works", href: "/how-it-works" },
       { label: "Developers", href: "/developers" },
       { label: "Participate", href: "/participate" },
@@ -37,8 +38,8 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "How it works",
     links: [
       { label: "Flow of a transaction", href: "/how-it-works" },
-      { label: "Questions", href: "/how-it-works#faq" },
-      { label: "Glossary", href: "/how-it-works#glossary" },
+      { label: "Questions", href: "/faq" },
+      { label: "Glossary", href: "/glossary" },
       { label: "Trust / Trust in Utility", href: "/developers#security" },
       { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy },
     ],

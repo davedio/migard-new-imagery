@@ -37,12 +37,13 @@ type NavChild = {
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
   {
-    label: "How it works",
-    href: "/how-it-works",
+    label: "Learn",
+    href: "/learn",
     children: [
-      { label: "Flow of a transaction", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
-      { label: "Questions", description: "Common questions about roles, settlement, and security.", href: "/how-it-works#faq" },
-      { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/how-it-works#glossary" },
+      { label: "Learn overview", description: "Plain-language paths for users, builders, and Protocol Roles.", href: "/learn" },
+      { label: "How it works", description: "Execution, verification, and Cardano settlement.", href: "/how-it-works" },
+      { label: "FAQ", description: "Common questions about roles, settlement, and security.", href: "/faq" },
+      { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/glossary" },
     ],
   },
   {

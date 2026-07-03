@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
-import FaqSections from "@/components/site/FaqSections";
-import GlossaryList from "@/components/site/GlossaryList";
 import JumpChips from "@/components/site/JumpChips";
 import { DataRows } from "@/components/site/rhythm";
 import { Section } from "@/components/site/ui";
@@ -12,7 +10,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "How Midgard Works",
   description:
-    "Follow a transaction through Midgard: fast execution, independent verification, and Cardano L1 settlement — plus the FAQ and protocol glossary.",
+    "Follow a transaction through Midgard: fast execution, independent verification, and Cardano L1 settlement.",
   openGraph: {
     title: "How Midgard Works",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -50,8 +48,6 @@ export default function HowItWorksPage() {
         items={[
           { id: "proof-metrics", label: "Proof metrics" },
           { id: "next", label: "Next steps" },
-          { id: "faq", label: "Questions" },
-          { id: "glossary", label: "Glossary" },
         ]}
       />
 
@@ -104,26 +100,22 @@ export default function HowItWorksPage() {
               external: true,
             },
             {
+              label: "FAQ",
+              body: "Product status, security claims, roles, and what to check before relying on Midgard.",
+              href: "/faq",
+            },
+            {
+              label: "Glossary",
+              body: "Short definitions for the protocol terms used across Midgard.",
+              href: "/glossary",
+            },
+            {
               label: "Whitepaper",
               body: "The full technical writeup ships alongside mainnet preparation, later this year.",
               meta: "estimated",
             },
           ]}
         />
-      </Section>
-
-      {/* D + E — FAQ rows, then the page's one card grid (comparison) */}
-      <FaqSections />
-
-      {/* D — glossary as a quiet flat reference block, ends the page */}
-      <Section
-        id="glossary"
-        title="Glossary."
-        lead="Short definitions for the protocol terms used across Midgard."
-        tight
-        cols
-      >
-        <GlossaryList />
       </Section>
     </HowItWorksExperience>
   );

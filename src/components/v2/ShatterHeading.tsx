@@ -45,6 +45,26 @@ type Letter = {
 
 const RESTORE_FADE_S = 0.3; // dust dissolve / glyph fade-in duration — quick, so words reassemble before you miss them
 
+function paletteForTheme(theme: "light" | "dark") {
+  return theme === "light"
+    ? {
+        colors: [
+          "rgba(14, 27, 19, 0.92)",
+          "rgba(12, 125, 54, 0.95)",
+          "rgba(125, 92, 16, 0.95)",
+        ],
+        link: "rgba(14, 27, 19, 0.16)",
+      }
+    : {
+        colors: [
+          "rgba(232, 238, 229, 0.96)",
+          "rgba(74, 222, 128, 0.95)",
+          "rgba(255, 200, 64, 0.95)",
+        ],
+        link: "rgba(220, 240, 228, 0.14)",
+      };
+}
+
 export default function ShatterHeading({
   as: Tag = "h2",
   lines,
@@ -116,13 +136,20 @@ export default function ShatterHeading({
     let ch = 0;
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    /* dust matches the theme's ink — bone dust on the tree plate is
-       invisible white-on-white over the dawn plate (read once per mount;
-       a theme flip re-keys the page surfaces anyway) */
-    const lightTheme = document.documentElement.dataset.theme === "light";
-    const COLORS = lightTheme
-      ? ["rgba(14, 27, 19, 0.92)", "rgba(12, 125, 54, 0.95)", "rgba(125, 92, 16, 0.95)"]
-      : ["rgba(232, 238, 229, 0.96)", "rgba(74, 222, 128, 0.95)", "rgba(255, 200, 64, 0.95)"];
+    /* Dust matches the active theme. This must follow live theme toggles:
+       if the page mounts in light mode, then toggles to dark, stale dark-ink
+       particles make the hovered letters look like they disappear. */
+    const readTheme = (): "light" | "dark" =>
+      document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    let activeTheme = readTheme();
+    let palette = paletteForTheme(activeTheme);
+    const syncTheme = () => {
+      const next = readTheme();
+      if (next === activeTheme) return;
+      activeTheme = next;
+      palette = paletteForTheme(next);
+      if (count > 0) start();
+    };
 
     /* ---- sample glyph pixels into particles ---- */
     const sample = () => {
@@ -290,7 +317,7 @@ export default function ShatterHeading({
             anyActive = true;
             ctx.globalAlpha = L.fade;
             for (let g = 0; g < 3; g++) {
-              ctx.fillStyle = COLORS[g];
+              ctx.fillStyle = palette.colors[g];
               for (let i = L.p0; i < L.p1; i++) {
                 if (CG[i] !== g) continue;
                 const s = SZ[i];
@@ -358,7 +385,7 @@ export default function ShatterHeading({
 
         /* ---- draw: batched by color group ---- */
         for (let g = 0; g < 3; g++) {
-          ctx.fillStyle = COLORS[g];
+          ctx.fillStyle = palette.colors[g];
           for (let i = L.p0; i < L.p1; i++) {
             if (CG[i] !== g) continue;
             const s = SZ[i];
@@ -366,9 +393,7 @@ export default function ShatterHeading({
           }
         }
         /* faint constellation links between displaced row-neighbours */
-        ctx.strokeStyle = lightTheme
-          ? "rgba(14, 27, 19, 0.16)"
-          : "rgba(220, 240, 228, 0.14)";
+        ctx.strokeStyle = palette.link;
         ctx.lineWidth = 1;
         ctx.beginPath();
         let seg = 0;
@@ -415,12 +440,18 @@ export default function ShatterHeading({
 
     window.addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
+    const themeObserver = new MutationObserver(syncTheme);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
 
     return () => {
       disposed = true;
       stop();
       window.clearTimeout(sampleTimer);
       ro.disconnect();
+      themeObserver.disconnect();
       window.removeEventListener("scroll", markDirty);
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);

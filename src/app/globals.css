@@ -2773,7 +2773,12 @@ a.card:hover {
 
 /* ---- cta band ---- */
 .cta-band {
-  padding: clamp(52px, 8vh, 100px) var(--gut);
+  padding: clamp(42px, 6vh, 72px) var(--gut);
+  border-top: 1px solid rgba(244, 241, 230, 0.08);
+  background:
+    radial-gradient(900px 420px at 50% 0%, rgba(78, 243, 131, 0.08), transparent 70%),
+    radial-gradient(720px 360px at 82% 100%, rgba(207, 154, 46, 0.06), transparent 72%),
+    linear-gradient(180deg, rgba(5, 12, 8, 0.32), rgba(5, 12, 8, 0.58));
 }
 .cta-band__inner {
   max-width: 720px;

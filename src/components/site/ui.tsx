@@ -398,12 +398,10 @@ export function CtaBand({
   return (
     <section className="cta-band">
       <div className="cta-band__inner">
-        <Reveal>
-          {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
-          <h2>{title}</h2>
-          {lead ? <p className="lead">{lead}</p> : null}
-          <Actions items={actions} center />
-        </Reveal>
+        {eyebrow ? <div className="eyebrow">{eyebrow}</div> : null}
+        <h2>{title}</h2>
+        {lead ? <p className="lead">{lead}</p> : null}
+        <Actions items={actions} center />
       </div>
     </section>
   );
