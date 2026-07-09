@@ -41,6 +41,38 @@ export const GLOSSARY = {
     term: "Layer 2",
     def: "A protocol that executes transactions off the base chain for speed and cost, while anchoring its security back to Layer 1.",
   },
+  "cardano-l1": {
+    term: "Cardano L1",
+    def: "The base Cardano blockchain, where Midgard anchors its security and final settlement.",
+  },
+  bond: {
+    term: "bond",
+    def: "ADA an Operator locks as collateral on Cardano; a valid fault proof slashes it, which is what makes honest operation the profitable strategy.",
+  },
+  "soft-confirmation": {
+    term: "soft confirmation",
+    def: "The near-instant confirmation you can act on — reached in seconds (estimated), backed by the Operator's bond, ahead of final settlement.",
+  },
+  "state-queue": {
+    term: "state queue",
+    def: "The on-chain queue of committed block headers on Cardano, each awaiting its challenge window before folding into confirmed state.",
+  },
+  "data-availability": {
+    term: "data availability",
+    def: "The property that a block's full data is published and retrievable so anyone can replay and check it; Midgard's dedicated DA layer is in active development.",
+  },
+  "da-committee": {
+    term: "data availability committee",
+    def: "The planned set of nodes that attest a block's data is retrievable, separate from the Operators who sequence blocks.",
+  },
+  "archive-node": {
+    term: "archive node",
+    def: "A planned node type that stores full chain history so it can be served independently of the data-availability layer.",
+  },
+  "rpc-poisoning": {
+    term: "RPC poisoning",
+    def: "Feeding an app false chain data through a compromised RPC provider; Midgard's canonical state lives on Cardano, so you can verify it from your own node instead of trusting a single feed.",
+  },
 } as const;
 
 export type GlossaryKey = keyof typeof GLOSSARY;

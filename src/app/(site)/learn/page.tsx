@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const audienceRows = [
   {
     label: "Users",
-    body: "Use apps with faster confirmations, fees in plain ADA, and final settlement rooted back to Cardano.",
+    body: "Use apps with faster confirmations, fees in ADA, and final settlement rooted back to Cardano.",
     href: "/users",
   },
   {
@@ -50,8 +50,8 @@ const securityRows = [
     body: "One honest Watcher, out of any number, is enough to stop a bad block before it settles.",
   },
   {
-    label: "Formally verified contracts",
-    body: "Contracts ship with formal verification and public source, so claims can be checked rather than accepted on trust.",
+    label: "Contracts in the open",
+    body: "Public source with formal-methods work in progress, so claims can be checked rather than accepted on trust.",
     href: "/developers#contracts",
   },
   ...DEVELOPER_COPY.security.rows,
@@ -63,8 +63,13 @@ const stripCells = [
   ...SITE_COPY.proofPoints.filter((p) => !CUT_PROOF_POINTS.has(p.k)),
   {
     k: "Fees",
-    v: "Plain ADA",
+    v: "In ADA",
     s: "A fraction of L1 cost, estimated — no separate gas token.",
+  },
+  {
+    k: "Throughput",
+    v: "Up to 300x",
+    s: "Estimated design target — unbenchmarked until measured.",
   },
 ];
 
@@ -83,7 +88,7 @@ export default function LearnPage() {
       <Section
         id="proof-metrics"
         title="Proof metrics."
-        lead="Five indicators — estimated where forward-looking, checkable where live."
+        lead="Six indicators — estimated where forward-looking, checkable where live."
       >
         <div className={styles.strip} role="list" aria-label="Proof metrics">
           {stripCells.map((item) => (

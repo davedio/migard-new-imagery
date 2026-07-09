@@ -7,7 +7,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "Users | Midgard",
   description:
-    "What users get from Midgard: faster app interactions, fees in plain ADA, and settlement rooted back to Cardano.",
+    "What users get from Midgard: faster app interactions, fees in ADA, and settlement rooted back to Cardano.",
   openGraph: {
     title: "Users | Midgard",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],

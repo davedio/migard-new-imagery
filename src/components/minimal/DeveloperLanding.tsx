@@ -43,6 +43,8 @@ export default function DeveloperLanding() {
           { id: "start", label: "Paths" },
           { id: "contracts", label: "Contracts" },
           { id: "query", label: "Query" },
+          { id: "defense", label: "Fault proofs" },
+          { id: "reference", label: "Reference" },
         ]}
       />
 
@@ -75,9 +77,96 @@ export default function DeveloperLanding() {
 
       <ContractsReference />
 
+      {/* Technical security depth lives HERE per the 2026-07-08 persona
+          split: Learn keeps the plain-language summary, Participate keeps
+          the incentive framing, developers get the mechanism. DA/DAC detail
+          is allowed in this technical context (and FAQs) only. */}
+      <Section
+        id="defense"
+        title="How the protocol defends itself."
+        lead="An invalid transaction, a bad commitment, withheld data, an operator gone dark: each is a fault, and each can be checked on Cardano. Fault is broader than fraud on purpose — not every failure is intentional."
+      >
+        <CardGrid cols={2}>
+          <Card
+            num="01"
+            title="Operators commit and bond"
+            body="An Operator sequences a block, commits its header to the L1 state queue, and locks a bond as collateral against that commitment."
+          />
+          <Card
+            num="02"
+            title="Watchers verify"
+            body="Watchers run independently. They replay every committed block against the posted data, the UTXO rules, and the L1 header."
+            delay={50}
+          />
+          <Card
+            num="03"
+            title="A fault proof slashes"
+            body="If a block is faulty, a Watcher submits a compact fault proof to Cardano. It slashes the Operator's bond, reverts the block, and rewards the prover."
+            delay={100}
+          />
+          <Card
+            num="04"
+            title="The window is the guarantee"
+            body="A block folds into confirmed state only after its challenge window passes with no valid fault proof — fast confirmations up front never shortcut it."
+            delay={150}
+          />
+        </CardGrid>
+        <div className="prose">
+          <p className="dim">
+            Scope, honestly stated: the protocol enforces custody (scripts, not keys),
+            validity (fault proofs), and settlement on Cardano. What an app, RPC, or
+            explorer <em>shows</em> you still depends on the data source it reads — a
+            compromised RPC feed can lie about what you see (RPC poisoning) but cannot
+            rewrite Midgard&apos;s canonical state, which lives on Cardano. For the strongest
+            assurance, verify against your own node. Block-data retrievability is designed
+            to be handled by a dedicated data-availability layer with committee
+            attestation; that layer is in active development, with long-term history
+            planned for separate archive nodes.
+          </p>
+        </div>
+      </Section>
+
+      <Section
+        id="reference"
+        title="Keep these handy."
+        lead="Midgard is pre-alpha. The node, contracts, and SDK are open source and you can build against them today; a hosted public RPC endpoint arrives with a later phase. For now, run against the local node and Cardano preprod."
+        tight
+      >
+        <CardGrid cols={2}>
+          <Card
+            title="GitHub"
+            body="The node, the contracts, and the TypeScript SDK — one repo."
+            cta="Open the repo"
+            href={OFFICIAL_LINKS.github}
+            ctaIcon={<GitHubIcon size={14} />}
+          />
+          <Card
+            title="Whitepaper"
+            body="The full protocol design, end to end."
+            cta="Read the spec"
+            href="https://anastasia-labs.github.io/midgard/midgard.pdf"
+            delay={50}
+          />
+          <Card
+            title="Contract addresses"
+            body="Verify every validator and state anchor on Cardano preprod."
+            cta="Inspect contracts"
+            href="/developers#contracts"
+            delay={100}
+          />
+          <Card
+            title="Discord"
+            body="Pre-alpha testnet access and developer support."
+            cta="Join Discord"
+            href={OFFICIAL_LINKS.discord}
+            delay={150}
+          />
+        </CardGrid>
+      </Section>
+
       <CtaBand
         title="Bring a concrete flow."
-        lead="Bring the flow your app depends on — it can be mapped and tested on preprod today. Bring the one your app depends on and it can be mapped, tested on preprod, and challenged in the open."
+        lead="Bring the flow your app depends on — it can be mapped, tested on preprod, and challenged in the open."
         actions={[
           {
             label: "Open GitHub",

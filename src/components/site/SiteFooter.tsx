@@ -45,6 +45,16 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy },
     ],
   },
+  {
+    title: "Official",
+    links: [
+      { label: "Official links", href: "/official-links" },
+      { label: "Network status", href: "/status" },
+      { label: "Whitepaper", href: "https://anastasia-labs.github.io/midgard/midgard.pdf", external: true },
+      { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
+      { label: "X · @midgardprotocol", href: OFFICIAL_LINKS.x, external: true },
+    ],
+  },
 ];
 
 const LEGAL = ["Terms publishing soon", "Privacy publishing soon"] as const;

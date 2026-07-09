@@ -2,13 +2,15 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const SITE_COPY = {
   hero: {
-    /** Honest state-of-the-network chip shown above the H1. */
-    status: "Pre-alpha public testnet",
+    /** Honest state-of-the-network chip shown above the H1 — links to /status.
+        "public" deliberately absent: the public-testnet phase is still ahead. */
+    status: "Pre-alpha testnet",
     title: "The execution layer for UTXO finance",
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
     titleLines: ["The execution layer", "for UTXO finance"],
+    /* The call-agreed subhead (Dave + Harun, 2026-07-03). */
     lead:
-      "Midgard is an optimistic rollup for Cardano: transactions confirm in seconds, fees stay in plain ADA, and every block settles back to Cardano L1.",
+      "Midgard is an optimistic rollup that makes applications faster with verified smart contracts and Cardano settlement.",
     primaryCta: { label: "See how it works", href: "/learn" },
     secondaryCta: { label: "Start building", href: "/developers" },
     tertiaryCta: { label: "Participate", href: "/participate" },
@@ -17,27 +19,29 @@ export const SITE_COPY = {
       Forward-looking figures say "estimated" once and state the claim plainly. */
   stats: [
     { k: "Confirmations", v: "Seconds", s: "estimated, not minutes" },
-    { k: "Fees", v: "Plain ADA", s: "a fraction of L1, estimated" },
-    { k: "Security", v: "Cardano L1", s: "every block settles on the base layer" },
-    { k: "Contracts", v: "Formally verified", s: "public source, on preprod today" },
+    { k: "Fees", v: "In ADA", s: "a fraction of L1, estimated" },
+    { k: "Security", v: "Cardano", s: "every block settles on the base layer" },
+    { k: "Contracts", v: "Open source", s: "formal methods in progress, on preprod today" },
   ],
+  /** The home "Choose your path" cards — verb-led per the 2026-07-03 call
+      (use / build / participate), with the earn hook stated as an estimate. */
   paths: [
     {
-      title: "Users",
-      body: "Deposit, transact, withdraw. Use the app while final settlement completes after verification.",
-      cta: "Learn the user path",
+      title: "Use",
+      body: "Deposit, transact, withdraw. Use apps with confirmation in seconds while final settlement completes on Cardano after verification.",
+      cta: "See the user path",
       href: "/users",
     },
     {
-      title: "Builders",
-      body: "Map one UTXO app flow to Midgard: wallet action, contract path, data availability, fallback.",
+      title: "Build",
+      body: "Same transaction logic, new speed. Your validators, tests, and tooling carry over — switching is close to one endpoint change.",
       cta: "Start building",
       href: "/developers",
     },
     {
-      title: "Protocol Roles",
-      body: "Run Operator or Watcher nodes to verify commitments, challenge invalid state, and help secure the path to Cardano L1 settlement.",
-      cta: "Explore Protocol Roles",
+      title: "Participate",
+      body: "Run the network and earn for it. Operators sequence blocks for fees; Watchers who catch a bad block earn an estimated 30–50% of the slashed bond.",
+      cta: "Explore protocol roles",
       href: "/participate",
     },
   ],
@@ -92,9 +96,9 @@ export const SITE_COPY = {
       s: "Applications keep their UTXO design and gain faster execution — no EVM translation layer.",
     },
     {
-      k: "Verified smart contracts",
-      v: "Formal methods",
-      s: "Contracts ship with formal verification and public source, so security claims can be checked, not just asserted.",
+      k: "Smart contracts",
+      v: "Open source",
+      s: "Public source with formal-methods work in progress, so security claims can be checked, not just asserted.",
       cta: "Read about Blaster",
       href: OFFICIAL_LINKS.blaster,
     },
@@ -106,7 +110,7 @@ export const SITE_COPY = {
     {
       k: "Status",
       v: "Pre-alpha testnet",
-      s: "Live on a public pre-alpha testnet today. Mainnet follows audits and parameter finalization.",
+      s: "Live on a pre-alpha testnet on Cardano preprod today. Mainnet follows audits and parameter finalization.",
     },
   ],
   channels: [
@@ -213,7 +217,7 @@ export const DEVELOPER_COPY = {
     rows: [
       {
         label: "Audit status",
-        body: "Formally verified contracts with public source, live on preprod. Independent audits are planned ahead of mainnet.",
+        body: "Open-source contracts with formal-methods work in progress, live on preprod. Independent audits are planned ahead of mainnet.",
       },
       {
         label: "Responsible disclosure",
@@ -226,14 +230,15 @@ export const DEVELOPER_COPY = {
 
 /** /economics — the one page that tells every audience what they get,
     fast. Reuses established claims only (fees in ADA, L1 settlement,
-    formal verification, bonded roles); adds no numbers and no new
-    claims. Deeper mechanics stay told once elsewhere — this page
-    routes to them rather than repeating them. */
+    formal methods in progress, bonded roles); role rewards quoted as
+    estimates per the 2026-07-08 claims ruling. Deeper mechanics stay
+    told once elsewhere — this page routes to them rather than
+    repeating them. */
 export const ECONOMICS_COPY = {
   hero: {
     label: "Economics & Security",
     title: "What you get from Midgard.",
-    sub: "Fees stay in plain ADA. Security is enforced by Cardano, not by trust. See what using it, building on it, or running it actually gets you.",
+    sub: "Fees are paid in ADA. Security is enforced by Cardano, not by trust. See what using it, building on it, or running it actually gets you.",
     actions: [
       { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" as const },
       { label: "See how it works", href: "/learn", variant: "ghost" as const },
@@ -244,19 +249,19 @@ export const ECONOMICS_COPY = {
   paths: [
     {
       title: "Users",
-      body: "Fees stay in plain ADA — no separate token required to transact. Transactions confirm in seconds, and every commitment settles back to Cardano L1 underneath.",
+      body: "Fees are paid in ADA — no separate token required to transact. Transactions confirm in seconds, and every commitment settles back to Cardano underneath.",
       cta: "See the user page",
       href: "/users",
     },
     {
       title: "Builders",
-      body: "A fee model denominated in ADA, contracts that ship with formal verification and public source, and a security model your users can check for themselves — not take on faith.",
+      body: "A fee model denominated in ADA, contracts with public source and formal-methods work in progress, and a security model your users can check for themselves — not take on faith.",
       cta: "Start building",
       href: "/developers",
     },
     {
       title: "Operators & Watchers",
-      body: "Bonded roles built for real work: Operators sequence and commit, Watchers verify. Bond and reward design is built so faults are never worth it — parameters are being finalized before those numbers are public.",
+      body: "Bonded roles built for real work: Operators sequence and commit blocks for fees; Watchers earn an estimated 30–50% of a slashed bond for a valid fault proof. Full parameters are finalized during testnet.",
       cta: "See roles & register",
       href: "/participate",
     },

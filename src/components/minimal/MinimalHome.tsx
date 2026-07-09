@@ -7,6 +7,7 @@ import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
+import { Card, CardGrid } from "@/components/site/ui";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { SITE_COPY } from "@/lib/siteCopy";
@@ -41,6 +42,16 @@ function SmartLink({
 /* Verify & connect — the page's quiet closer: every proof surface and
    official channel as one flat directory (inspect + channels, deduped). */
 const VERIFY_ROWS: readonly DataRow[] = [
+  {
+    label: "Official links",
+    body: "The canonical list — if a link is not on it, it is not us.",
+    href: "/official-links",
+  },
+  {
+    label: "Network status",
+    body: "Every metric labeled with its real state: live, preprod, preview, target, or planned.",
+    href: "/status",
+  },
   {
     label: "Security model",
     body: "Trust path, fault proofs, audit status, and responsible disclosure.",
@@ -92,10 +103,11 @@ export default function MinimalHome() {
         {/* live-activity fireflies over the night plate (dark theme only) */}
         <FireflyField count={16} className="minimal-hero__fireflies" />
         <div className="minimal-hero__copy">
-          <span className="minimal-status-chip">
+          {/* The chip now routes to the honest status board. */}
+          <Link href="/status" className="minimal-status-chip">
             <i aria-hidden />
             {SITE_COPY.hero.status}
-          </span>
+          </Link>
           <ShatterHeading as="h1" lines={[...SITE_COPY.hero.titleLines]} />
           <p>{SITE_COPY.hero.lead}</p>
           <dl className="minimal-hero-stats" aria-label="Midgard at a glance">
@@ -124,6 +136,34 @@ export default function MinimalHome() {
           </div>
         </div>
         <div className="minimal-hero__visual-space" aria-hidden />
+      </section>
+
+      {/* Choose your path — the role router, called up early per the
+          2026-07-03 call ("why do I need to be here?" answered first).
+          Verb-led cards from SITE_COPY.paths; earn hook stated as an
+          estimate per the 2026-07-08 claims ruling. */}
+      <section
+        id="paths"
+        className="minimal-section minimal-section--paths"
+        aria-labelledby="minimal-paths-title"
+      >
+        <div className="minimal-section__head">
+          <h2 id="minimal-paths-title">Three roles. One protocol.</h2>
+          <p>Use it, build on it, or run it — each path has its own page.</p>
+        </div>
+        <CardGrid cols={3}>
+          {SITE_COPY.paths.map((path, i) => (
+            <Card
+              key={path.title}
+              num={String(i + 1).padStart(2, "0")}
+              title={path.title}
+              body={path.body}
+              cta={path.cta}
+              href={path.href}
+              delay={i * 50}
+            />
+          ))}
+        </CardGrid>
       </section>
 
       {/* The pipeline lives ONCE on the site — told in full on
@@ -155,6 +195,56 @@ export default function MinimalHome() {
         </div>
       </section>
 
+      {/* Problem → solution — adopted from the aligned copy doc on the
+          2026-07-03 call, trimmed to two sentences per Dave's ask, with
+          the throughput figure qualified as an estimate per the
+          2026-07-08 claims ruling. */}
+      <section
+        id="problem"
+        className="minimal-section minimal-section--problem"
+        aria-labelledby="minimal-problem-title"
+      >
+        <div className="minimal-section__head">
+          <h2 id="minimal-problem-title">Security shouldn&apos;t be the price you pay for scale.</h2>
+          <p>
+            Cardano is secure and decentralized by design — but as adoption grows, fees
+            rise and throughput hits a ceiling. The usual workarounds trade away security
+            for speed or lock your funds behind bridges.
+          </p>
+          <Statement
+            align="left"
+            kicker="Scale without the trade-off"
+            line="Midgard anchors its security to Cardano through fault proofs."
+            sub="While targeting up to 300x the throughput (estimated) at lower cost."
+          />
+        </div>
+        <CardGrid cols={2}>
+          <Card
+            num="🌊"
+            title="DeFi without congestion"
+            body="Swaps, lending, and orderbooks that keep moving when the base chain is busy, then settle back to Cardano."
+          />
+          <Card
+            num="⚡"
+            title="High-frequency apps"
+            body="Games and real-time state that update constantly, confirmed in seconds."
+            delay={50}
+          />
+          <Card
+            num="🪙"
+            title="Everyday payments"
+            body="Low-fee transfers in ADA, with nothing new to hold."
+            delay={100}
+          />
+          <Card
+            num="🛠️"
+            title="Cheaper infrastructure"
+            body="Run apps and services at lower cost, with the same scripts and tooling."
+            delay={150}
+          />
+        </CardGrid>
+      </section>
+
       <EcosystemPartners />
 
       {/* Verify & connect — the quiet closer: proof surfaces and official
@@ -165,7 +255,9 @@ export default function MinimalHome() {
         aria-labelledby="minimal-verify-title"
       >
         <div className="minimal-section__head">
-          <h2 id="minimal-verify-title">Inspect the claims.</h2>
+          {/* Renamed from "Inspect the claims." — Dave on the 7/3 call:
+              "I don't know what inspect the claims means." */}
+          <h2 id="minimal-verify-title">Check it yourself.</h2>
           <p>
             Every claim on this page has a place you can check it — and every question
             has an official channel.

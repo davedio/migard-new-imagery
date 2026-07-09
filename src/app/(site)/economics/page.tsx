@@ -9,7 +9,7 @@ import { ECONOMICS_COPY } from "@/lib/siteCopy";
 export const metadata: Metadata = {
   title: "Economics & Security | Midgard",
   description:
-    "What users, builders, Operators, and Watchers each get from Midgard — fees in plain ADA, a verifiable security model, and bonded roles that earn for the work.",
+    "What users, builders, Operators, and Watchers each get from Midgard — fees in ADA, a verifiable security model, and bonded roles that earn for the work.",
   openGraph: {
     title: "Economics & Security | Midgard",
     images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],

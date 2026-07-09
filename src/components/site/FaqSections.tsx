@@ -4,13 +4,16 @@ import { faqGroupId, Section } from "@/components/site/ui";
    FaqSections — the grouped Q&A for the standalone /faq page, plus a single compact
    "How Midgard compares" block (the page's ONE card grid).
 
-   Reading-rhythm redesign (2026-07-02): pruned from 17 questions to 12 —
-   the duplicated / self-referential ones are gone (fees now live in the
-   proof-metrics strip; "who is it for" / "where do builders start" /
-   "what do Protocol Roles do" restated the page or other answers). Rows
-   render statically — no reveal slabs; the decision grid gets the page's
-   single group entrance. Styles come from the existing .faq-*,
-   .faq-basics-shell, and .faq-decision-* classes.
+   Copy-alignment expansion (2026-07-08): grew back from 12 to ~21 questions,
+   adopting the high-value visitor-anxiety answers from the aligned copy doc
+   (token, Hydra, custody, liveness, cost, wallet, speed, earnings, mainnet)
+   with the claims rulings applied — token answers are present-tense scoped
+   only (Base-style: state today's facts, promise nothing about the future),
+   percentages carry "estimated", no hard-finality durations, no wallet
+   names, no "mathematically verified". Rows render statically — no reveal
+   slabs; the decision grid gets the page's single group entrance. Styles
+   come from the existing .faq-*, .faq-basics-shell, and .faq-decision-*
+   classes.
    ========================================================================= */
 
 const faqGroups = [
@@ -23,11 +26,23 @@ const faqGroups = [
       },
       {
         q: "Is Midgard live?",
-        a: "Midgard is live on a public pre-alpha testnet — not mainnet yet. Check GitHub for current parameters and status before integrating.",
+        a: "Midgard is live on a pre-alpha testnet on Cardano preprod — not mainnet yet, and the broader public-testnet phase is still ahead. Check the network status page and GitHub before integrating.",
       },
       {
-        q: "Is Midgard a sidechain?",
-        a: "No. Midgard is a rollup: L2 execution, committed state, fault-proof verification, and settlement through Cardano L1.",
+        q: "Does Midgard have a token?",
+        a: "There is no Midgard token today — no sale, and no airdrop. Fees are paid in ADA. Anything about the protocol's future would come through official channels first; anyone selling a Midgard token now is a scam, so check the official links page.",
+      },
+      {
+        q: "How is Midgard different from Hydra?",
+        a: "They are complementary. Hydra is a state channel: a small group locks funds and transacts among themselves, which is ideal when the participants are known and online. Midgard is an optimistic rollup: an open Layer 2 anyone can use, with shared state secured by fault proofs on Cardano.",
+      },
+      {
+        q: "Is Midgard a bridge or a sidechain?",
+        a: "Neither. A bridge moves your assets into another system's custody, and a sidechain runs its own consensus with its own security assumptions. Midgard is a rollup: L2 execution, committed state, fault-proof verification, and settlement through Cardano L1.",
+      },
+      {
+        q: "When is mainnet?",
+        a: "There is no date. Midgard is paced by the work, not a calendar — mainnet follows independent audits and parameter finalization.",
       },
       {
         q: "Can existing UTXO apps use Midgard?",
@@ -40,11 +55,36 @@ const faqGroups = [
     ],
   },
   {
+    title: "Costs, wallets & funds",
+    items: [
+      {
+        q: "What does it cost to use Midgard?",
+        a: "Fees are paid in ADA — there is no separate gas token. Midgard is designed to lower costs by executing off-chain and committing compact data to Cardano; measured fee comparisons will be published once benchmarked.",
+      },
+      {
+        q: "Do I need a new wallet or asset?",
+        a: "No. You use ADA and a Cardano wallet you already have. Supported wallets are announced through official channels as each testnet phase confirms them.",
+      },
+      {
+        q: "How fast are transactions?",
+        a: "You get a soft confirmation in seconds (estimated) — your transaction is usable right away. Final settlement follows on Cardano after the block's challenge window closes with no valid fault proof.",
+      },
+      {
+        q: "Who holds my funds?",
+        a: "No one holds them but the protocol. Funds are locked by Cardano smart contracts — not by a company or a multisig bridge — so there is no operator key that can move your money.",
+      },
+      {
+        q: "What if every operator goes offline?",
+        a: "Your funds can never be permanently stranded. If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. That escape path is enforced by the protocol, not by trust.",
+      },
+    ],
+  },
+  {
     title: "Security",
     items: [
       {
         q: "What is the main security claim?",
-        a: "Finalized state settles through Cardano L1 after verification. The security model depends on mathematically verified contracts, UTXO-local fault proofs, data availability, and at least one honest Watcher.",
+        a: "Finalized state settles through Cardano L1 after verification. The security model depends on openly published contracts, UTXO-local fault proofs, data availability, and at least one honest Watcher.",
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
@@ -68,6 +108,14 @@ const faqGroups = [
         a: "Midgard is pre-alpha. Participation is staged: initial operation is internal-team-led, with broader Operator and Watcher registration opened as parameters mature.",
       },
       {
+        q: "How do Operators and Watchers earn?",
+        a: "Operators sequence and commit blocks in rotating shifts and earn fees from L2 transactions, deposits, and withdrawals. Watchers who submit a valid fault proof earn an estimated 30–50% of the slashed operator bond. Exact parameters are finalized during testnet.",
+      },
+      {
+        q: "How do I avoid scams?",
+        a: "Only trust links listed on the official links page. Midgard will never DM you first or ask for your seed phrase — and there is no token to buy today.",
+      },
+      {
         q: "What should I check before relying on Midgard?",
         a: "Check current testnet status, contract surfaces, source code, challenge-window assumptions, Operator behavior, and published benchmark data.",
       },
@@ -83,7 +131,12 @@ const basicsRail = [
   {
     label: "Product status",
     href: `#${faqGroupId("Product status")}`,
-    detail: "What Midgard is, current status, and whether existing apps fit.",
+    detail: "What Midgard is, current status, tokens, and how it compares.",
+  },
+  {
+    label: "Costs, wallets & funds",
+    href: `#${faqGroupId("Costs, wallets & funds")}`,
+    detail: "Fees, wallets, custody, speed, and the operator-offline escape path.",
   },
   {
     label: "Security",
@@ -93,7 +146,7 @@ const basicsRail = [
   {
     label: "Protocol Roles",
     href: `#${faqGroupId("Protocol Roles and status")}`,
-    detail: "Who runs the network today, what to check, and where to report.",
+    detail: "Who runs the network, how roles earn, and where to report.",
   },
 ] as const;
 

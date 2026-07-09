@@ -52,8 +52,11 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        // The learn page's section id is "security" — the old
+        // "#security-overview" anchor never existed and silently dropped
+        // visitors at the top of the page.
         source: "/security",
-        destination: "/learn#security-overview",
+        destination: "/learn#security",
         permanent: false,
       },
     ];
