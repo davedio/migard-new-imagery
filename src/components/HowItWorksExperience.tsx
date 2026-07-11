@@ -165,7 +165,14 @@ const EXPLAINER_STEPS = [
   },
 ] as const;
 
-const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-flow-tall.avif";
+/* Redesigned 2026-07-11: the previous plate (journey-flow-tall) was a
+   symmetric, near-uniform trunk, so the five FOCALS_TALL dwell/zoom stops
+   below all looked nearly identical as the camera panned — the descent
+   didn't read as travel. This plate is purpose-built with a distinct scene
+   at each stop: sunlit canopy -> a gnarled branch fork -> a weathered
+   trunk hollow -> mossy roots over boulders -> the sap-light pooling into
+   a glowing basin at the base (the "Settle" payoff). */
+const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-descent.avif";
 
 function JourneyAct({
   actRef,
