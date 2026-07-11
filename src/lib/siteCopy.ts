@@ -235,73 +235,55 @@ export const DEVELOPER_COPY = {
     estimates per the 2026-07-08 claims ruling. Deeper mechanics stay
     told once elsewhere — this page routes to them rather than
     repeating them. */
-export const ECONOMICS_COPY = {
-  hero: {
-    label: "Economics & Security",
-    title: "What you get from Midgard.",
-    sub: "Fees are paid in ADA. Security is enforced by Cardano, not by trust. See what using it, building on it, or running it actually gets you.",
-    actions: [
-      { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" as const },
-      { label: "See how it works", href: "/learn", variant: "ghost" as const },
-    ],
-  },
-  /** The page's one Grid — three parallel audiences, each picking their
-      own path. Every card links onward to that audience's deeper page. */
-  paths: [
+/* The /economics page was folded into the audience pages (2026-07-11):
+   each of /users, /developers, /participate carries its own economics
+   section, and this matrix is the single cross-entity comparison view
+   rendered on /learn#economics. Claims rules: estimates stated as
+   estimates, no hard parameters, token-silent. */
+export const ECONOMICS_MATRIX = {
+  title: "Economics, across the network.",
+  lead: "One view of what every participant pays and earns. Each audience page tells its own side in full.",
+  rows: [
     {
-      title: "Users",
-      body: "Fees are paid in ADA — nothing new to hold. Transactions confirm in seconds, and every commitment settles back to Cardano underneath.",
-      cta: "See the user page",
-      href: "/users",
+      who: "Users",
+      pay: "Fees in ADA — a fraction of L1 cost, estimated. Nothing new to hold.",
+      get: "Confirmation in seconds (estimated), with settlement back on Cardano.",
+      href: "/users#economics",
+      cta: "User economics",
     },
     {
-      title: "Builders",
-      body: "A fee model denominated in ADA, contracts with public source and formal-methods work in progress, and a security model your users can check for themselves — not take on faith.",
-      cta: "Start building",
-      href: "/developers",
+      who: "Builders",
+      pay: "The same ADA fee model your users already pay — no separate asset to integrate.",
+      get: "Faster execution for unchanged UTXO contracts, with public source to verify.",
+      href: "/developers#economics",
+      cta: "Builder economics",
     },
     {
-      title: "Operators & Watchers",
-      body: "Bonded roles built for real work: Operators sequence and commit blocks for fees; Watchers earn an estimated 30–50% of a slashed bond for a valid fault proof. Full parameters are finalized during testnet.",
-      cta: "See roles & register",
-      href: "/participate",
+      who: "Operators",
+      pay: "A bond locked on Cardano while sequencing in rotating shifts.",
+      get: "Fees from every transaction, deposit, and withdrawal they commit.",
+      href: "/participate#economics",
+      cta: "Role economics",
+    },
+    {
+      who: "Watchers",
+      pay: "Node runtime — anyone can run one.",
+      get: "An estimated 30–50% of a slashed bond for a valid fault proof.",
+      href: "/participate#economics",
+      cta: "Role economics",
+    },
+    {
+      who: "Cardano",
+      pay: "—",
+      get: "Every Midgard fee settles in ADA on the base layer that secures it.",
+      href: "/learn#security",
+      cta: "Security model",
     },
   ],
-  /** The page's one Statement — the differentiator, stated once. */
   thesis: {
     kicker: "The difference",
     line: "Most rollups take value from their base layer. Midgard is built to pay Cardano back.",
-    sub: "You pay fees in ADA, with nothing new to hold. Every block anchors back to the same base layer securing all of Cardano.",
   },
-  /** Prose — the honest, hedged status note. No numbers, no dates. */
-  status: {
-    kicker: "Where this stands",
-    paragraphs: [
-      "Midgard is a pre-alpha testnet on Cardano preprod. No real funds — every claim above is checkable against public source and preprod contracts, not just asserted.",
-      "Bond, fee, and role-incentive parameters are being finalized as testnet data comes in. A full breakdown of the network's economic design follows once benchmarks and parameters are approved.",
-    ],
-  },
-  /** Rows — the page ends quiet, routing to where each fact is told in full. */
-  explore: [
-    {
-      label: "Operator & Watcher economics",
-      body: "Bonds, rewards, and the full roles breakdown.",
-      href: "/participate#economics",
-    },
-    {
-      label: "Security model",
-      body: "Fault proofs, the trust path, and audit status.",
-      href: "/learn#security",
-    },
-    {
-      label: "Protocol terms",
-      body: "Short definitions for the words used across these pages.",
-      href: "/glossary",
-    },
-    {
-      label: "Questions",
-      body: "Common questions about status, security, and roles.",
-      href: "/faq",
-    },
-  ],
+  finePrint:
+    "Bond, fee, and role-incentive parameters are finalized as testnet data comes in; a full economic breakdown follows once benchmarks are approved.",
 } as const;

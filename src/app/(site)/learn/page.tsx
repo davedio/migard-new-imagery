@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
+import EconomicsMatrix from "@/components/site/EconomicsMatrix";
 import JumpChips from "@/components/site/JumpChips";
 import SoftConfirmFeed from "@/components/site/SoftConfirmFeed";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { DEVELOPER_COPY, SITE_COPY } from "@/lib/siteCopy";
+import { DEVELOPER_COPY, ECONOMICS_MATRIX, SITE_COPY } from "@/lib/siteCopy";
 import styles from "../how-it-works/page.module.css";
 
 export const metadata: Metadata = {
@@ -83,6 +84,7 @@ export default function LearnPage() {
           { id: "flow", label: "Flow" },
           { id: "paths", label: "Paths" },
           { id: "security", label: "Security" },
+          { id: "economics", label: "Economics" },
           { id: "reference", label: "Reference" },
         ]}
       />
@@ -155,6 +157,23 @@ export default function LearnPage() {
         }
       >
         <DataRows rows={securityRows} ariaLabel="Security assumptions" />
+      </Section>
+
+      {/* The cross-entity economics view — the /economics page folded into
+          this table on 2026-07-11; each audience page tells its own side. */}
+      <Section
+        id="economics"
+        title={ECONOMICS_MATRIX.title}
+        lead={ECONOMICS_MATRIX.lead}
+        aside={
+          <Statement
+            align="left"
+            kicker={ECONOMICS_MATRIX.thesis.kicker}
+            line={ECONOMICS_MATRIX.thesis.line}
+          />
+        }
+      >
+        <EconomicsMatrix />
       </Section>
 
       <Section id="reference" title="Reference pages." tight cols>

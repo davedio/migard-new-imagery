@@ -23,10 +23,10 @@ const TOUR = [
     cta: "Open Users",
   },
   {
-    href: "/economics",
+    href: "/learn#economics",
     title: "Economics",
-    detail: "Review what each audience gets from the network.",
-    cta: "Open Economics",
+    detail: "Compare what every participant pays and earns, in one table.",
+    cta: "See the economics",
   },
   {
     href: "/developers",

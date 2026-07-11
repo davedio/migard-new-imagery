@@ -20,7 +20,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "Home", href: "/" },
       { label: "Learn", href: "/learn" },
       { label: "Users", href: "/users" },
-      { label: "Economics", href: "/economics" },
+      { label: "Economics", href: "/learn#economics" },
       { label: "Developers", href: "/developers" },
       { label: "Participate", href: "/participate" },
     ],

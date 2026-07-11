@@ -115,11 +115,11 @@ its sentence):
 | `journey-flow-tall` (9:16) | /learn journey plate | One immense tree top-to-bottom: sunlit canopy at top, mossy bark descending, roots dissolving into cloud at bottom; a thin mint sap-light ribbon winds down the full trunk like a waterfall of light | forest-path |
 | `sentinel-watch` | /participate | Two weathered sentinel standing stones on a mossy terraced hillside, right third, overlooking a valley of ridgelines fading into fog; faint mint beacon glow between them | rune-stones |
 | `trunk-mist` | /glossary | Broad mossy trunk of one ancient tree at respectful distance, right side, half dissolved in rolling fog; one thin mint sap-vein traces up the bark | rune-stones |
-| `stepping-stones` | /users | Broad flat stepping stones crossing a calm shallow forest stream, lower right, far bank glowing warm; faint mint shimmer on the water | forest-path |
+| `stepping-stones` | (retired as a page backdrop — file kept, available) | Broad flat stepping stones crossing a calm shallow forest stream, lower right, far bank glowing warm; faint mint shimmer on the water | forest-path |
 | `signal-cairn` | /status | Small stacked stone cairn on a mossy ridge at dawn, right third, a soft steady mint light at its top like a quiet signal lantern; hills fade into fog | rune-stones |
 | `winding-road` | /roadmap | Pale footpath climbing terraced switchbacks from lower left toward a bright warm horizon upper right; low waypoint stones at the bends | forest-path |
 | `forest-path` | /faq AND /developers | (original master — do not regenerate) | — |
-| `terraces` | /economics | (original master — the "steps") | — |
+| `terraces` | /users (vivid) | (original master — the "steps"; moved here when /economics folded into the audience pages, 2026-07-11) | — |
 | `rune-stones` | /official-links | (original master — the "tablets") | — |
 
 Retired: `stone-gateway` (arch on /developers — rejected 2026-07-11),

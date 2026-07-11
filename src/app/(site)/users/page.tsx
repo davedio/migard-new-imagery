@@ -22,16 +22,30 @@ const benefitRows = [
     body: "Transactions can become usable in seconds while final settlement continues underneath.",
   },
   {
-    label: "Fees in ADA",
-    body: "You pay fees in ADA — nothing new to hold.",
-  },
-  {
-    label: "Cardano underneath",
-    body: "Midgard is built so verified state settles back through Cardano L1.",
-  },
-  {
     label: "A clearer exit path",
     body: "Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
+  },
+] as const;
+
+/* The user side of network economics — /economics folded into the audience
+   pages 2026-07-11; the cross-entity table lives on /learn#economics. */
+const economicsRows = [
+  {
+    label: "What you pay",
+    body: "Fees in ADA — a fraction of L1 cost, estimated.",
+  },
+  {
+    label: "What you hold",
+    body: "ADA and the Cardano wallet you already have. Nothing new to buy, bridge, or manage.",
+  },
+  {
+    label: "Where value settles",
+    body: "Every commitment lands back on Cardano after verification — the same base layer securing your L1 funds.",
+  },
+  {
+    label: "The whole picture",
+    body: "Compare what every participant pays and earns across the network.",
+    href: "/learn#economics",
   },
 ] as const;
 
@@ -70,7 +84,9 @@ const statusRows = [
 export default function UsersPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="stepping-stones" variant="full" focus="60% 55%" />
+      {/* The terraced "steps" — Dave's pick for this page (2026-07-11),
+          inherited from the retired /economics page. */}
+      <PageBackdrop name="terraces" variant="full" focus="55% 70%" vivid />
       <PageHero
         compact
         tone="moss"
@@ -86,6 +102,7 @@ export default function UsersPage() {
       <JumpChips
         items={[
           { id: "benefits", label: "Benefits" },
+          { id: "economics", label: "Economics" },
           { id: "path", label: "Simple path" },
           { id: "status", label: "Status" },
         ]}
@@ -97,6 +114,14 @@ export default function UsersPage() {
         lead="Midgard is meant to make Cardano apps feel faster without changing the thing users already understand: value settles back to Cardano."
       >
         <DataRows rows={benefitRows} ariaLabel="User benefits" />
+      </Section>
+
+      <Section
+        id="economics"
+        title="What it costs you."
+        lead="The economics of using Midgard, in plain terms: pay in ADA, hold nothing new, settle back to Cardano."
+      >
+        <DataRows rows={economicsRows} ariaLabel="User economics" />
       </Section>
 
       <Section

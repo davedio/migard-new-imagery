@@ -3,6 +3,7 @@ import { ContractsReference } from "@/components/site/ContractsReference";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import IntegrationSteps from "@/components/site/IntegrationSteps";
+import { DataRows } from "@/components/site/rhythm";
 import { Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
@@ -43,6 +44,7 @@ export default function DeveloperLanding() {
       <JumpChips
         items={[
           { id: "start", label: "Paths" },
+          { id: "economics", label: "Economics" },
           { id: "contracts", label: "Contracts" },
           { id: "query", label: "Query" },
           { id: "defense", label: "Fault proofs" },
@@ -75,6 +77,37 @@ export default function DeveloperLanding() {
             />
           ))}
         </CardGrid>
+      </Section>
+
+      {/* The builder side of network economics — /economics folded into the
+          audience pages 2026-07-11; the cross-view lives on /learn#economics. */}
+      <Section
+        id="economics"
+        title="Economics for builders."
+        lead="No new asset in your integration, no separate fee market to explain to users — the economics are ADA end to end."
+      >
+        <DataRows
+          ariaLabel="Builder economics"
+          rows={[
+            {
+              label: "Fee model",
+              body: "Denominated in ADA end to end. Your users transact with the wallet and asset they already have.",
+            },
+            {
+              label: "Cost profile",
+              body: "Execution happens off-chain; only compact data commits to Cardano. Measured fee comparisons will be published once benchmarked.",
+            },
+            {
+              label: "What your users pay",
+              body: "A fraction of L1 cost (estimated), with confirmation in seconds — the same contracts underneath.",
+            },
+            {
+              label: "The whole picture",
+              body: "Compare what every participant pays and earns across the network.",
+              href: "/learn#economics",
+            },
+          ]}
+        />
       </Section>
 
       <ContractsReference />

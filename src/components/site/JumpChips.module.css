@@ -86,15 +86,22 @@
 
 /* active pill fills with the theme accent; ink flips for contrast.
    Dark theme: bright green (#4ef383) → near-black ink.
-   Light theme: --green-bright is a deep green (#0c7d36) → bone text. */
-.chipActive,
-.chipActive:hover {
+   Light theme: --green-bright is a deep green (#0c7d36) → bone text.
+   SPECIFICITY IS LOAD-BEARING: Next can emit this module's CSS into two
+   chunks, which breaks same-specificity source-order ties (the resting
+   .chip skin was beating .chipActive → white-on-white active chips in
+   light mode). The active rules are compounded (.chip.chipActive) so they
+   outrank the resting rules no matter which sheet loads last. */
+.chip.chipActive,
+.chip.chipActive:hover {
   background: var(--green-bright, #4ef383);
   border-color: transparent;
   color: #06110a;
 }
-:global([data-theme="light"]) .chipActive,
-:global([data-theme="light"]) .chipActive:hover {
+:global([data-theme="light"]) .chip.chipActive,
+:global([data-theme="light"]) .chip.chipActive:hover {
+  background: var(--green-bright, #0c7d36);
+  border-color: transparent;
   color: #f4f1ec;
 }
 

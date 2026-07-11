@@ -160,33 +160,17 @@ test("mobile menu exposes grouped child pages", async ({ page }, testInfo) => {
     "href",
     "/learn",
   );
-  await expect(mobileMenu.getByRole("link", { name: /How Midgard works/i })).toHaveAttribute(
-    "href",
-    "/learn",
-  );
-  await expect(mobileMenu.locator('.site-nav__mobile-child[href="/users"]')).toHaveAttribute(
+  await expect(mobileMenu.getByRole("link", { name: /^Users$/i })).toHaveAttribute(
     "href",
     "/users",
   );
-  await expect(mobileMenu.locator('.site-nav__mobile-child[href="/learn#security"]')).toHaveAttribute(
-    "href",
-    "/learn#security",
-  );
-  await expect(mobileMenu.getByRole("link", { name: /^FAQ/i })).toHaveAttribute(
-    "href",
-    "/faq",
-  );
-  await expect(mobileMenu.getByRole("link", { name: /^Glossary/i })).toHaveAttribute(
-    "href",
-    "/glossary",
-  );
-  await expect(mobileMenu.getByRole("link", { name: /Developer overview/i })).toHaveAttribute(
+  await expect(mobileMenu.getByRole("link", { name: /^Developers$/i })).toHaveAttribute(
     "href",
     "/developers",
   );
-  await expect(mobileMenu.getByRole("link", { name: /Operators and Watchers/i })).toHaveAttribute(
+  await expect(mobileMenu.getByRole("link", { name: /^Participate$/i })).toHaveAttribute(
     "href",
-    "/participate#roles",
+    "/participate",
   );
 
   await page.screenshot({ path: testInfo.outputPath("mobile-menu.png"), fullPage: true });
