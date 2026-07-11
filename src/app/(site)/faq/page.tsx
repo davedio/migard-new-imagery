@@ -31,9 +31,14 @@ export default function FaqPage() {
         ]}
       />
 
+      {/* One chip per FAQ group (ids from faqGroupId in ui.tsx), so the bar
+          actually navigates a ~21-question page instead of decorating it. */}
       <JumpChips
         items={[
-          { id: "faq", label: "FAQ" },
+          { id: "faq-product-status", label: "Status" },
+          { id: "faq-costs-wallets-funds", label: "Costs & wallets" },
+          { id: "faq-security", label: "Security" },
+          { id: "faq-protocol-roles-and-status", label: "Roles" },
           { id: "comparison", label: "Compare" },
         ]}
       />

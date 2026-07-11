@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
@@ -92,6 +93,14 @@ export default function OfficialLinksPage() {
         label="Trust & safety"
         title="Official links."
         sub="One page of canonical links, so you can tell the real Midgard from the fakes. If it is not listed here, it is not us."
+      />
+
+      <JumpChips
+        items={[
+          { id: "verify", label: "Verify" },
+          { id: "links", label: "The links" },
+          { id: "explore", label: "Explore" },
+        ]}
       />
 
       <Section

@@ -3,17 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-  type FocusEvent,
-  type ReactNode,
-} from "react";
-import { GitHubIcon } from "@/components/site/BrandIcons";
+import { useEffect, useState } from "react";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
-import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { useTheme } from "@/lib/theme";
 
 /* ------------------------------------------------------------------ */
@@ -23,56 +14,22 @@ import { useTheme } from "@/lib/theme";
 type NavLink = {
   label: string;
   href: string;
-  children?: readonly NavChild[];
+  /** Extra pathnames that should light this item up (e.g. /faq lives in the
+      Learn family even though it is not nested under /learn). */
+  family?: readonly string[];
 };
 
-type NavChild = {
-  label: string;
-  description: string;
-  href: string;
-  external?: boolean;
-  icon?: ReactNode;
-};
-
+/* Flat by design (Dave, 2026-07-11): the dropdowns mixed same-page anchors
+   with other pages and confused people. Every page now orients visitors
+   with its own sticky JumpChips bar instead; FAQ/Glossary stay reachable
+   from the footer, /learn, and each other. */
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
-  {
-    label: "Learn",
-    href: "/learn",
-    children: [
-      { label: "How Midgard works", description: "Execution, verification, and Cardano settlement.", href: "/learn" },
-      { label: "Security", description: "Trust path, Watchers, fault proofs, and Cardano settlement.", href: "/learn#security" },
-      { label: "FAQ", description: "Common questions about roles, settlement, and security.", href: "/faq" },
-      { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/glossary" },
-    ],
-  },
-  /* Users is its own destination, not a Learn child (Dave, 2026-07-11). */
+  { label: "Learn", href: "/learn", family: ["/faq", "/glossary"] },
   { label: "Users", href: "/users" },
   { label: "Economics", href: "/economics" },
-  {
-    label: "Developers",
-    href: "/developers",
-    children: [
-      { label: "Developer overview", description: "Source, docs, contracts, and review paths.", href: "/developers" },
-      { label: "Contracts", description: "Preprod validators, anchors, scripts, and topology.", href: "/developers#contracts" },
-      {
-        label: "GitHub",
-        description: "Repository, issues, and implementation history.",
-        href: OFFICIAL_LINKS.github,
-        external: true,
-        icon: <GitHubIcon size={14} aria-hidden />,
-      },
-    ],
-  },
-  {
-    label: "Participate",
-    href: "/participate",
-    children: [
-      { label: "Overview", description: "Operator, Watcher, and ecosystem participation paths.", href: "/participate" },
-      { label: "Operators and Watchers", description: "Network roles that order activity and verify state.", href: "/participate#roles" },
-      { label: "Economics", description: "Fees, rewards, bonds, and network incentives.", href: "/participate#economics" },
-    ],
-  },
+  { label: "Developers", href: "/developers" },
+  { label: "Participate", href: "/participate" },
 ] as const;
 
 /* ------------------------------------------------------------------ */
@@ -82,55 +39,16 @@ const NAV_LINKS: readonly NavLink[] = [
 /**
  * Fixed top navigation shared across every page in the (site) route group.
  *
- * Desktop: first-level pages stay visible, with dropdowns for their subpages.
- * A scrim fades in once the page is scrolled (data-scrolled).
+ * Desktop: a flat row of first-level pages — no dropdowns. A scrim fades in
+ * once the page is scrolled (data-scrolled).
  *
- * Mobile: burger menu with the same grouped page list.
+ * Mobile: burger menu with the same flat page list.
  */
 export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
-  const [desktopDropdown, setDesktopDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
-  /* the dropdown panel is much wider than its trigger, so a mouse moving
-     diagonally toward a side item can cross a sliver of dead space between
-     them — a closeTimer grace period (not an instant close) survives that
-     without requiring a pixel-perfect hover path */
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const clearCloseTimer = () => {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
-  };
-  const openDropdown = (label: string) => {
-    clearCloseTimer();
-    setDesktopDropdown(label);
-  };
-  const scheduleCloseDropdown = () => {
-    clearCloseTimer();
-    closeTimer.current = setTimeout(() => setDesktopDropdown(null), 260);
-  };
-  useEffect(() => clearCloseTimer, []);
-
-  /* Close any open dropdown the instant the page scrolls. Without this, a
-     trackpad scroll gesture (which can produce a few px of incidental
-     cursor drift, especially on a non-perfectly-vertical swipe) can leave
-     the cursor resting over a DIFFERENT nav item while the previous
-     dropdown is still technically open — that item's real onMouseEnter
-     then fires and swaps in its own list, reading as "scrolling brought up
-     a different menu." Every polished mega-menu closes on scroll for
-     exactly this reason; only attached while something is actually open. */
-  useEffect(() => {
-    if (!desktopDropdown) return;
-    const onScroll = () => {
-      clearCloseTimer();
-      setDesktopDropdown(null);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [desktopDropdown]);
 
   const open = menu.open && menu.pathname === pathname;
 
@@ -171,11 +89,6 @@ export function SiteNav() {
       pathname,
       open: state.pathname === pathname ? !state.open : true,
     }));
-  const closeDesktopDropdown = (event: FocusEvent<HTMLDivElement>) => {
-    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
-    clearCloseTimer();
-    setDesktopDropdown(null);
-  };
 
   /* Home is active only on exactly "/" — every route starts with "/". */
   const isActive = (href: string) => {
@@ -186,12 +99,7 @@ export function SiteNav() {
   };
 
   const isNavItemActive = (item: NavLink) =>
-    isActive(item.href) || item.children?.some((child) => isActive(child.href)) === true;
-
-  const linkClass = (href: string, className = "site-nav__link") => ({
-    className,
-    "data-active": isActive(href),
-  });
+    isActive(item.href) || item.family?.some((href) => isActive(href)) === true;
 
   return (
     <>
@@ -202,80 +110,16 @@ export function SiteNav() {
         </Link>
 
         <div className="site-nav__links">
-          {NAV_LINKS.map((item) =>
-            item.children ? (
-              <div
-                key={item.label}
-                className="site-nav__group"
-                data-open={desktopDropdown === item.label}
-                onMouseEnter={() => openDropdown(item.label)}
-                onMouseLeave={scheduleCloseDropdown}
-                onFocus={() => openDropdown(item.label)}
-                onBlur={closeDesktopDropdown}
-              >
-                <Link
-                  href={item.href}
-                  className="site-nav__link site-nav__heading"
-                  data-active={isNavItemActive(item)}
-                  onClick={() => {
-                    /* A click navigates immediately, but the cursor stays put —
-                       if the destination page renders the same nav (it always
-                       does), that item's dropdown would otherwise reopen on
-                       landing and cover the new page's own heading until the
-                       mouse moves. Closing on click makes navigation a clean
-                       break from the menu. */
-                    clearCloseTimer();
-                    setDesktopDropdown(null);
-                  }}
-                >
-                  {item.label}
-                </Link>
-                <div className="site-nav__dropdown" role="menu" aria-label={`${item.label} links`}>
-                  {item.children.map((child, i) =>
-                    child.external ? (
-                      <a
-                        key={child.label}
-                        href={child.href}
-                        className="site-nav__dropdown-link"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        role="menuitem"
-                        style={{ "--i": i } as CSSProperties}
-                      >
-                        <span className="site-nav__dropdown-label">
-                          {child.icon}
-                          {child.label}
-                        </span>
-                        <span className="site-nav__dropdown-desc">{child.description}</span>
-                      </a>
-                    ) : (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        {...linkClass(child.href, "site-nav__dropdown-link")}
-                        role="menuitem"
-                        style={{ "--i": i } as CSSProperties}
-                        onClick={() => {
-                          clearCloseTimer();
-                          setDesktopDropdown(null);
-                        }}
-                      >
-                        <span className="site-nav__dropdown-label">
-                          {child.icon}
-                          {child.label}
-                        </span>
-                        <span className="site-nav__dropdown-desc">{child.description}</span>
-                      </Link>
-                    ),
-                  )}
-                </div>
-              </div>
-            ) : (
-              <Link key={item.label} href={item.href} {...linkClass(item.href)}>
-                {item.label}
-              </Link>
-            ),
-          )}
+          {NAV_LINKS.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="site-nav__link"
+              data-active={isNavItemActive(item)}
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
 
         <div className="site-nav__right">
@@ -312,55 +156,13 @@ export function SiteNav() {
         </div>
       </nav>
 
-      {/* Mobile menu — same grouped page list as desktop. */}
+      {/* Mobile menu — the same flat page list. */}
       <div className="site-nav__mobile" data-open={open} aria-hidden={!open} inert={!open}>
-        {NAV_LINKS.map((item) =>
-          item.children ? (
-            <div key={item.label} className="site-nav__mobile-group">
-              <Link
-                href={item.href}
-                className="site-nav__mobile-title"
-                data-active={isNavItemActive(item)}
-                onClick={closeMenu}
-              >
-                {item.label}
-              </Link>
-              {item.children.map((child) =>
-                child.external ? (
-                  <a
-                    key={child.label}
-                    href={child.href}
-                    className="site-nav__mobile-child"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={closeMenu}
-                  >
-                    <span className="site-nav__mobile-label">
-                      {child.icon}
-                      {child.label}
-                    </span>
-                    <span className="site-nav__mobile-desc">{child.description}</span>
-                  </a>
-                ) : (
-                  <Link
-                    key={child.label}
-                    href={child.href}
-                    className="site-nav__mobile-child"
-                    data-active={isActive(child.href)}
-                    onClick={closeMenu}
-                  >
-                    <span className="site-nav__mobile-label">{child.label}</span>
-                    <span className="site-nav__mobile-desc">{child.description}</span>
-                  </Link>
-                ),
-              )}
-            </div>
-          ) : (
-            <Link key={item.label} href={item.href} data-active={isActive(item.href)} onClick={closeMenu}>
-              {item.label}
-            </Link>
-          ),
-        )}
+        {NAV_LINKS.map((item) => (
+          <Link key={item.label} href={item.href} data-active={isNavItemActive(item)} onClick={closeMenu}>
+            {item.label}
+          </Link>
+        ))}
         <OfficialSocialLinks
           className="site-nav__mobile-social"
           linkClassName="site-nav__mobile-social-link"

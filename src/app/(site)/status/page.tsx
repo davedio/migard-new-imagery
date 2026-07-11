@@ -134,6 +134,7 @@ export default function StatusPage() {
 
       <JumpChips
         items={[
+          { id: "legend", label: "How to read" },
           { id: "deployment", label: "Deployment" },
           { id: "access", label: "Access" },
           { id: "performance", label: "Performance" },

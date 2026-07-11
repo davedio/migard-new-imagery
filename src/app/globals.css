@@ -1813,38 +1813,6 @@ button.panel:hover {
     font-size: 11.5px;
     letter-spacing: 0;
   }
-  .site-nav__mobile-group {
-    display: grid;
-    gap: 7px;
-  }
-  .site-nav__mobile-title {
-    margin-top: 2px;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold-bright);
-  }
-  .site-nav__mobile-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    color: var(--text-hi);
-  }
-  .site-nav__mobile-desc {
-    display: block;
-    margin-top: 3px;
-    color: var(--text-faint);
-    font-family: var(--font-body);
-    font-size: 12px;
-    letter-spacing: 0;
-    text-transform: none;
-  }
-  .site-nav__mobile-link--external {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-  }
   .site-nav__mobile .btn {
     margin-top: 14px;
     justify-content: center;
@@ -3530,8 +3498,8 @@ a.card:hover {
   z-index: 2;
 }
 /* ============================================================
-   2026-06 REDESIGN — nav dropdown, scrim, mobile groups, footer
-   sitemap, shared page components.
+   2026-06 REDESIGN — flat nav + scrim, footer sitemap, shared
+   page components. (Dropdowns/mobile groups removed 2026-07-11.)
    ============================================================ */
 
 /* ---- nav: scrolled scrim ---- */
