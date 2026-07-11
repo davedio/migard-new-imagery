@@ -18,7 +18,9 @@ import { DEVELOPER_COPY } from "@/lib/siteCopy";
 export default function DeveloperLanding() {
   return (
     <main className="page-main developer-page">
-      <PageBackdrop name="stone-gateway" focus="62% 50%" />
+      {/* Dave's pick (2026-07-11): the original forest-path tree stays on
+          Developers — the stone-gateway experiment is retired. */}
+      <PageBackdrop name="forest-path" focus="54% 48%" />
       <PageHero
         compact
         tone="tree"

@@ -41,12 +41,13 @@ const NAV_LINKS: readonly NavLink[] = [
     href: "/learn",
     children: [
       { label: "How Midgard works", description: "Execution, verification, and Cardano settlement.", href: "/learn" },
-      { label: "Users", description: "A simpler page about what users get from Midgard.", href: "/users" },
       { label: "Security", description: "Trust path, Watchers, fault proofs, and Cardano settlement.", href: "/learn#security" },
       { label: "FAQ", description: "Common questions about roles, settlement, and security.", href: "/faq" },
       { label: "Glossary", description: "Short definitions for Midgard protocol terms.", href: "/glossary" },
     ],
   },
+  /* Users is its own destination, not a Learn child (Dave, 2026-07-11). */
+  { label: "Users", href: "/users" },
   { label: "Economics", href: "/economics" },
   {
     label: "Developers",
