@@ -22,12 +22,9 @@ const TOUR = [
     detail: "See what Midgard changes for normal app users.",
     cta: "Open Users",
   },
-  {
-    href: "/learn#economics",
-    title: "Economics",
-    detail: "Compare what every participant pays and earns, in one table.",
-    cta: "See the economics",
-  },
+  /* No Economics stop: it's a section (/learn#economics), not a page, and a
+     hash href can never match pathname — it made the tour loop Learn <-> Users
+     forever instead of ever reaching Developers/Participate. */
   {
     href: "/developers",
     title: "Developers",

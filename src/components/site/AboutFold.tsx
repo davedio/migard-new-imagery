@@ -48,7 +48,8 @@ export function AboutFold({ showThesis = true }: { showThesis?: boolean } = {}) 
           items={[
             {
               label: "Read the full story",
-              href: "/about",
+              /* /about never shipped — Learn is the story page. */
+              href: "/learn",
               variant: "ghost",
             },
             {

@@ -106,43 +106,30 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
   await page.screenshot({ path: testInfo.outputPath("home-h1-dark-hover.png") });
 });
 
-test("desktop nav exposes Learn child pages", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop dropdown behavior only");
+test("desktop nav is a flat page row with correct active state", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop-chromium", "Desktop nav behavior only");
 
   await page.goto("/");
 
-  const learn = page.locator(".site-nav__heading", { hasText: "Learn" });
-  await learn.hover();
+  const links = page.locator(".site-nav__links a");
+  await expect(links).toHaveText(["Home", "Learn", "Users", "Developers", "Participate"]);
+  await expect(page.locator('.site-nav__links a[href="/learn"]')).toHaveAttribute("data-active", "false");
+  // no dropdown machinery remains
+  await expect(page.locator(".site-nav__group, .site-nav__dropdown")).toHaveCount(0);
 
-  const dropdown = page.locator('.site-nav__group[data-open="true"] .site-nav__dropdown');
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/learn"]')).toContainText(
-    "How Midgard works",
-  );
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/learn"]')).toHaveAttribute(
-    "href",
-    "/learn",
-  );
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/users"]')).toHaveAttribute(
-    "href",
-    "/users",
-  );
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/learn#security"]')).toHaveAttribute(
-    "href",
-    "/learn#security",
-  );
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/faq"]')).toHaveAttribute(
-    "href",
-    "/faq",
-  );
-  await expect(dropdown.locator('.site-nav__dropdown-link[href="/glossary"]')).toHaveAttribute(
-    "href",
-    "/glossary",
-  );
+  // Learn stays lit on its family pages (/faq, /glossary)
+  await page.goto("/faq");
+  await expect(page.locator('.site-nav__links a[href="/learn"]')).toHaveAttribute("data-active", "true");
 
-  await page.screenshot({ path: testInfo.outputPath("nav-learn-open.png") });
+  await page.screenshot({ path: testInfo.outputPath("nav-flat.png") });
 });
 
-test("mobile menu exposes grouped child pages", async ({ page }, testInfo) => {
+test("/economics permanently redirects into the Learn economics table", async ({ page }) => {
+  await page.goto("/economics");
+  await expect(page).toHaveURL(/\/learn#economics$/);
+});
+
+test("mobile menu lists the flat page links", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "mobile-chromium", "Mobile menu behavior only");
 
   await page.goto("/");

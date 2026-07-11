@@ -81,10 +81,13 @@ h2 em,
   background: rgba(78, 243, 131, 0.25);
   color: var(--bone);
 }
+/* Keep the ring visible and on-brand in both themes — this file loads after
+   globals.css, so a quiet 1px bone ring here was silently downgrading the
+   intended prominent ring sitewide. */
 :focus-visible {
-  outline: 1px solid var(--bone);
+  outline: 2px solid var(--green-bright);
   outline-offset: 3px;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 
 /* ---------------------------------------------------------------------------
@@ -4984,4 +4987,93 @@ h2 em,
   box-shadow:
     0 26px 60px rgba(54, 45, 30, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================================
+   2026-07-11 LIGHT-MODE STATE PARITY (site audit) — dark-designed
+   components and literal neon-mint state colors that had no light
+   completion. Lives at the END of the file so it wins every
+   same-specificity order tie against earlier light overrides.
+   ============================================================ */
+[data-theme="light"] .partner-magnet-card:hover,
+[data-theme="light"] .partner-magnet-card:focus-within {
+  border-color: rgba(12, 125, 54, 0.45);
+  box-shadow:
+    0 22px 38px rgba(54, 45, 30, 0.16),
+    0 0 22px rgba(12, 125, 54, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+[data-theme="light"] .minimal-channel-social {
+  border-color: rgba(73, 55, 23, 0.22);
+  background: rgba(255, 252, 244, 0.6);
+  color: #29281c;
+}
+[data-theme="light"] .minimal-channel-social:hover,
+[data-theme="light"] .minimal-channel-social:focus-visible {
+  border-color: rgba(12, 125, 54, 0.45);
+  background: rgba(12, 125, 54, 0.08);
+  color: #15170f;
+}
+[data-theme="light"] .motion-toggle {
+  border-color: rgba(12, 125, 54, 0.34);
+  background: rgba(250, 246, 238, 0.85);
+  color: #29281c;
+}
+[data-theme="light"] .motion-toggle:hover {
+  border-color: rgba(138, 101, 18, 0.5);
+  background: rgba(246, 241, 230, 0.95);
+}
+[data-theme="light"] .motion-toggle__glyph {
+  color: rgba(41, 40, 28, 0.62);
+  box-shadow: inset 0 0 0 2px rgba(250, 246, 238, 0.9);
+}
+[data-theme="light"] .motion-toggle__glyph[data-on="true"] {
+  color: #0c7d36;
+  box-shadow:
+    inset 0 0 0 2px rgba(250, 246, 238, 0.9),
+    0 0 12px rgba(12, 125, 54, 0.25);
+}
+/* .page-main prefix matches the specificity of the backdrop-page card
+   flattening (which uses :has()) so the tone accents survive on /faq */
+[data-theme="light"] .page-main .faq-decision-card[data-tone="midgard"] {
+  border-color: rgba(12, 125, 54, 0.45);
+}
+[data-theme="light"] .page-main .faq-decision-card[data-tone="watch"] {
+  border-color: rgba(138, 101, 18, 0.45);
+}
+[data-theme="light"] .site-nav__social-link,
+[data-theme="light"] .site-footer__social-link {
+  border-color: rgba(73, 55, 23, 0.22);
+  background: rgba(255, 252, 244, 0.5);
+  color: rgba(41, 40, 28, 0.75);
+}
+[data-theme="light"] .site-nav__social-link:hover,
+[data-theme="light"] .site-nav__social-link:focus-visible,
+[data-theme="light"] .site-footer__social-link:hover,
+[data-theme="light"] .site-footer__social-link:focus-visible {
+  border-color: rgba(12, 125, 54, 0.45);
+  background: rgba(12, 125, 54, 0.08);
+  color: #15170f;
+}
+[data-theme="light"] .v2-footer-statement:hover .v2-footer-statement__main em {
+  color: #15170f;
+}
+[data-theme="light"] .v2-footer-statement:hover .v2-footer-statement__cta {
+  border-color: rgba(12, 125, 54, 0.5);
+  background: rgba(12, 125, 54, 0.08);
+}
+
+/* nav mid-width clamp (1181–1320px, "links must never clip") — restated
+   here because the original in globals.css was silently losing to later
+   rules in this file's cascade. */
+@media (min-width: 1181px) and (max-width: 1320px) {
+  .site-nav {
+    gap: 14px;
+  }
+  .site-nav__links {
+    gap: clamp(8px, 1.1vw, 16px);
+  }
+  .site-nav__link {
+    font-size: 11.5px;
+  }
 }

@@ -123,7 +123,9 @@ export default function SoftConfirmFeed() {
         SIMULATED&nbsp;&middot;&nbsp;TRANSACTION&nbsp;FLOW
       </div>
 
-      <div className={css.stream} data-motion={motionOn ? "on" : "off"}>
+      {/* The stream churns rows every 1.4s — hidden from assistive tech;
+          the visible fine print below describes what it shows. */}
+      <div className={css.stream} data-motion={motionOn ? "on" : "off"} aria-hidden="true">
         {visibleEntries(head).map((e, i) => (
           <div
             key={e.id}

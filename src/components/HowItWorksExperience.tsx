@@ -357,6 +357,12 @@ export default function HowItWorksExperience({
           );
           if (beats.dataset.active !== String(active)) {
             beats.dataset.active = String(active);
+            /* mirror the visual active state for assistive tech — only runs
+               when the active beat CHANGES, not every frame */
+            beats.querySelectorAll("button").forEach((btn, i) => {
+              if (i === active) btn.setAttribute("aria-current", "step");
+              else btn.removeAttribute("aria-current");
+            });
           }
         }
       }

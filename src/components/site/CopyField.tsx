@@ -49,11 +49,16 @@ export function CopyField({
         type="button"
         className={styles.copyBtn}
         onClick={copy}
-        aria-label={copied ? "Copied" : `Copy ${label ?? "value"}`}
+        aria-label={`Copy ${label ?? "value"}`}
         data-copied={copied}
       >
         {copied ? "copied" : "copy"}
       </button>
+      {/* polite announcement so keyboard/SR users hear the confirmation the
+          button text shows visually */}
+      <span role="status" style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clipPath: "inset(50%)" }}>
+        {copied ? "Copied to clipboard" : ""}
+      </span>
     </span>
   );
 }

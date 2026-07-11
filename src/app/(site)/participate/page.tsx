@@ -33,7 +33,7 @@ const economicsSteps = [
   },
   {
     title: "Roles earn for the work",
-    body: "Operators earn fees from every L2 transaction, deposit, and withdrawal they commit; Watchers earn an estimated 30–50% of a slashed bond for a valid fault proof. Full parameters are finalized during testnet.",
+    body: "Operators earn fees from every L2 transaction, deposit, and withdrawal they commit; Watchers earn a share of a slashed bond for a valid fault proof. Full parameters are finalized during testnet.",
     tone: "gold",
   },
   {

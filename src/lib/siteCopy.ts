@@ -41,7 +41,7 @@ export const SITE_COPY = {
     },
     {
       title: "Participate",
-      body: "Run the network and earn for it. Operators sequence blocks for fees; Watchers who catch a bad block earn an estimated 30–50% of the slashed bond.",
+      body: "Run the network and earn for it. Operators sequence blocks for fees; Watchers who catch a bad block earn a share of the slashed bond.",
       cta: "Explore protocol roles",
       href: "/participate",
     },
@@ -229,12 +229,6 @@ export const DEVELOPER_COPY = {
   },
 } as const;
 
-/** /economics — the one page that tells every audience what they get,
-    fast. Reuses established claims only (fees in ADA, L1 settlement,
-    formal methods in progress, bonded roles); role rewards quoted as
-    estimates per the 2026-07-08 claims ruling. Deeper mechanics stay
-    told once elsewhere — this page routes to them rather than
-    repeating them. */
 /* The /economics page was folded into the audience pages (2026-07-11):
    each of /users, /developers, /participate carries its own economics
    section, and this matrix is the single cross-entity comparison view

@@ -138,6 +138,11 @@
     rgba(255, 255, 255, 0)
   );
 }
+/* a white sheen is invisible over the light-mode line — use a deep-green
+   glint instead */
+:global([data-theme="light"]) .sheen {
+  background: linear-gradient(90deg, rgba(12, 125, 54, 0), rgba(12, 125, 54, 0.35), rgba(12, 125, 54, 0));
+}
 
 /* ============================================================
    DESKTOP ≥820px — 4 columns, connector visible, motion lives here

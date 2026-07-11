@@ -115,6 +115,7 @@ export function SiteNav() {
               href={item.href}
               className="site-nav__link"
               data-active={isNavItemActive(item)}
+              aria-current={isActive(item.href) ? "page" : undefined}
             >
               {item.label}
             </Link>
@@ -158,7 +159,13 @@ export function SiteNav() {
       {/* Mobile menu — the same flat page list. */}
       <div className="site-nav__mobile" data-open={open} aria-hidden={!open} inert={!open}>
         {NAV_LINKS.map((item) => (
-          <Link key={item.label} href={item.href} data-active={isNavItemActive(item)} onClick={closeMenu}>
+          <Link
+            key={item.label}
+            href={item.href}
+            data-active={isNavItemActive(item)}
+            aria-current={isActive(item.href) ? "page" : undefined}
+            onClick={closeMenu}
+          >
             {item.label}
           </Link>
         ))}
