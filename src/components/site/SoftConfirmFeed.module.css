@@ -1,0 +1,150 @@
+/* =========================================================================
+   SoftConfirmFeed — a SIMULATED stream of the transaction flow: TXs
+   soft-confirm (green), blocks seal them (gold), commits carry headers
+   down to Cardano L1 (cobalt). Self-driven, clearly labelled simulated;
+   freezes to a static frame under reduced motion.
+   ========================================================================= */
+
+.feed {
+  position: relative;
+  margin-top: 28px;
+  padding: 18px 18px 16px;
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(215, 226, 216, 0.025), transparent 45%), var(--panel);
+}
+
+.overline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.overlineDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.stream {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+  overflow: hidden;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid var(--panel-edge);
+  border-radius: 10px;
+  background: rgba(127, 140, 128, 0.06);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+
+/* one-shot entrance on the newest row only; killed under reduced motion
+   and the site's motion-off toggle */
+.stream[data-motion="on"] .row[data-newest] {
+  animation: rowIn 0.35s ease-out;
+}
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stream .row[data-newest] {
+    animation: none;
+  }
+}
+
+.dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.row[data-kind="tx"] .dot {
+  background: var(--green-bright);
+}
+.row[data-kind="block"] .dot {
+  background: var(--gold-bright);
+}
+.row[data-kind="commit"] .dot {
+  background: #78b9ff;
+}
+
+.kind {
+  flex: none;
+  width: 58px;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+}
+.row[data-kind="tx"] .kind {
+  color: var(--green-bright);
+}
+.row[data-kind="block"] .kind {
+  color: var(--gold-bright);
+}
+.row[data-kind="commit"] .kind {
+  color: #9cc8ff;
+}
+
+.row[data-kind="block"] {
+  border-color: rgba(255, 200, 64, 0.35);
+}
+.row[data-kind="commit"] {
+  border-color: rgba(120, 185, 255, 0.35);
+}
+
+.label {
+  color: var(--text-hi);
+  white-space: nowrap;
+}
+
+.status {
+  margin-left: auto;
+  color: var(--text-dim);
+  font-size: 11.5px;
+  text-align: right;
+}
+
+.fine {
+  margin: 14px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+[data-theme="light"] .row {
+  background: rgba(38, 56, 42, 0.04);
+}
+[data-theme="light"] .row[data-kind="commit"] .dot {
+  background: #2b6cb0;
+}
+[data-theme="light"] .row[data-kind="commit"] .kind {
+  color: #2b6cb0;
+}
+
+@media (max-width: 560px) {
+  .status {
+    display: none;
+  }
+}

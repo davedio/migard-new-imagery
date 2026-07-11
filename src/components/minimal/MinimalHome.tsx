@@ -195,10 +195,10 @@ export default function MinimalHome() {
         </div>
       </section>
 
-      {/* Problem → solution — adopted from the aligned copy doc on the
-          2026-07-03 call, trimmed to two sentences per Dave's ask, with
-          the throughput figure qualified as an estimate per the
-          2026-07-08 claims ruling. */}
+      {/* Problem → solution — per the 2026-07-10 call, the problem prose is
+          gone entirely: the heading states the tension, the Statement carries
+          the solution (the "second sentence only" decision), throughput still
+          qualified as an estimate per the 2026-07-08 claims ruling. */}
       <section
         id="problem"
         className="minimal-section minimal-section--problem"
@@ -206,11 +206,6 @@ export default function MinimalHome() {
       >
         <div className="minimal-section__head">
           <h2 id="minimal-problem-title">Security shouldn&apos;t be the price you pay for scale.</h2>
-          <p>
-            Cardano is secure and decentralized by design — but as adoption grows, fees
-            rise and throughput hits a ceiling. The usual workarounds trade away security
-            for speed or lock your funds behind bridges.
-          </p>
           <Statement
             align="left"
             kicker="Scale without the trade-off"

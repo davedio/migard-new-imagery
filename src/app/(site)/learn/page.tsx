@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
 import JumpChips from "@/components/site/JumpChips";
+import SoftConfirmFeed from "@/components/site/SoftConfirmFeed";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -64,7 +65,7 @@ const stripCells = [
   {
     k: "Fees",
     v: "In ADA",
-    s: "A fraction of L1 cost, estimated — no separate gas token.",
+    s: "A fraction of L1 cost, estimated — you pay fees in ADA.",
   },
   {
     k: "Throughput",
@@ -79,6 +80,7 @@ export default function LearnPage() {
       <JumpChips
         items={[
           { id: "proof-metrics", label: "Proof metrics" },
+          { id: "flow", label: "Flow" },
           { id: "paths", label: "Paths" },
           { id: "security", label: "Security" },
           { id: "reference", label: "Reference" },
@@ -109,6 +111,17 @@ export default function LearnPage() {
             </div>
           ))}
         </div>
+      </Section>
+
+      {/* The soft-confirm feed — agreed on the 2026-07-10 call: the
+          per-transaction view (TXs soft-confirm, blocks seal them, commits
+          settle down to Cardano). Simulated and labelled as such. */}
+      <Section
+        id="flow"
+        title="Watch transactions soft-confirm."
+        lead="Transactions become usable in seconds while blocks seal behind them and commit down to Cardano — simulated here to show the shape of the flow."
+      >
+        <SoftConfirmFeed />
       </Section>
 
       <Section

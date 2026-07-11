@@ -59,7 +59,7 @@ const faqGroups = [
     items: [
       {
         q: "What does it cost to use Midgard?",
-        a: "Fees are paid in ADA — there is no separate gas token. Midgard is designed to lower costs by executing off-chain and committing compact data to Cardano; measured fee comparisons will be published once benchmarked.",
+        a: "Fees are paid in ADA. Midgard is designed to lower costs by executing off-chain and committing compact data to Cardano; measured fee comparisons will be published once benchmarked.",
       },
       {
         q: "Do I need a new wallet or asset?",

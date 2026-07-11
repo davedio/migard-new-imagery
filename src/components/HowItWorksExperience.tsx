@@ -188,9 +188,10 @@ function JourneyAct({
             <span style={{ color: "var(--green-bright)" }}>transaction</span>
           </h1>
           <p className="hiw-act__lead">
-            For users, the path is deposit, transact, withdraw. Under the hood,
-            one pipeline does the checking — follow a transaction all the way
-            down to Cardano.
+            You never touch the lifecycle directly: deposit once, transact as
+            much as you like, and withdraw when you&apos;re done. Midgard runs
+            everything else underneath — follow a transaction all the way down
+            to Cardano.
           </p>
           <ol className="hiw-act__beats" ref={beatsRef} aria-label="Jump to a stage in the journey">
             {ACT_BEATS.map((b, i) => (
@@ -227,6 +228,10 @@ function HowItWorksExplainer() {
       <div className="hiw-explainer__head">
         <p>Transaction path</p>
         <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
+        <p className="hiw-explainer__lead">
+          Six steps take every transaction from instant soft confirmation on
+          Midgard to irreversible settlement on Cardano.
+        </p>
       </div>
       <ol className="hiw-explainer__grid" aria-label="Transaction lifecycle, step by step">
         {EXPLAINER_STEPS.map((step) => {

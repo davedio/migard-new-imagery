@@ -22,7 +22,7 @@ const benefitRows = [
   },
   {
     label: "Fees in ADA",
-    body: "No separate Midgard gas token is required to transact.",
+    body: "You pay fees in ADA — nothing new to hold.",
   },
   {
     label: "Cardano underneath",
@@ -30,7 +30,7 @@ const benefitRows = [
   },
   {
     label: "A clearer exit path",
-    body: "Deposit, transact, withdraw. The protocol work stays underneath the user path.",
+    body: "Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
   },
 ] as const;
 

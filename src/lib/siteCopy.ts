@@ -5,12 +5,13 @@ export const SITE_COPY = {
     /** Honest state-of-the-network chip shown above the H1 — links to /status.
         "public" deliberately absent: the public-testnet phase is still ahead. */
     status: "Pre-alpha testnet",
-    title: "The execution layer for UTXO finance",
+    /* Headline + subhead agreed on the 2026-07-10 call (Dave + Harun) —
+       replaces "The execution layer for UTXO finance". */
+    title: "Scaling UTXO finance",
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
-    titleLines: ["The execution layer", "for UTXO finance"],
-    /* The call-agreed subhead (Dave + Harun, 2026-07-03). */
+    titleLines: ["Scaling", "UTXO finance"],
     lead:
-      "Midgard is an optimistic rollup that makes applications faster with verified smart contracts and Cardano settlement.",
+      "Midgard is an optimistic rollup that helps apps run faster and at a lower cost while keeping settlement and security anchored on Cardano.",
     primaryCta: { label: "See how it works", href: "/learn" },
     secondaryCta: { label: "Start building", href: "/developers" },
     tertiaryCta: { label: "Participate", href: "/participate" },
@@ -58,7 +59,7 @@ export const SITE_COPY = {
   trustFlow: {
     kicker: "Transaction path",
     title: "You only ever see three steps.",
-    lead: "Deposit. Transact. Withdraw. Everything else is the pipeline working underneath.",
+    lead: "You never touch the lifecycle directly. Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
     resolved: {
       kicker: "Why that's safe",
       title: "You don't have to watch the pipeline — Watchers do it for you.",

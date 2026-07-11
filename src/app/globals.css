@@ -3306,6 +3306,16 @@ a.card:hover {
   line-height: 1.02;
   font-weight: 500;
 }
+/* the six-steps lead sentence under the h2 — overrides the kicker styling
+   that .hiw-explainer__head p would otherwise apply */
+.hiw-explainer__head .hiw-explainer__lead {
+  margin: 16px auto 0;
+  max-width: 640px;
+  color: var(--text-dim);
+  font: 400 16px/1.6 var(--font-body);
+  letter-spacing: 0;
+  text-transform: none;
+}
 
 /* the lifecycle grid — plain, static, always fully readable. Every step's
    what + why is in normal document flow (no absolute positioning, no
