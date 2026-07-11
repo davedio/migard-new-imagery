@@ -14,16 +14,20 @@ export function PageBackdrop({
   name,
   variant = "full",
   focus = "58% 42%",
+  vivid = false,
 }: {
   name: string;
   variant?: BackdropVariant;
   focus?: string;
+  /** For intrinsically pale plates (terraces, canopy washes) that would
+      otherwise disappear under the legibility scrim. */
+  vivid?: boolean;
 }) {
   const { theme } = useTheme();
   const base = theme === "dark" ? "/dark/img/watercolor" : "/img/watercolor";
   return (
     <div
-      className={`page-backdrop page-backdrop--${variant}`}
+      className={`page-backdrop page-backdrop--${variant}${vivid ? " page-backdrop--vivid" : ""}`}
       style={{ "--backdrop-pos": focus } as CSSProperties}
       aria-hidden="true"
     >

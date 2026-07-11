@@ -250,7 +250,7 @@ export const ECONOMICS_COPY = {
   paths: [
     {
       title: "Users",
-      body: "Fees are paid in ADA — no separate token required to transact. Transactions confirm in seconds, and every commitment settles back to Cardano underneath.",
+      body: "Fees are paid in ADA — nothing new to hold. Transactions confirm in seconds, and every commitment settles back to Cardano underneath.",
       cta: "See the user page",
       href: "/users",
     },
@@ -271,7 +271,7 @@ export const ECONOMICS_COPY = {
   thesis: {
     kicker: "The difference",
     line: "Most rollups take value from their base layer. Midgard is built to pay Cardano back.",
-    sub: "No separate token required to use it. Fees settle in ADA, and every block anchors back to the same base layer securing all of Cardano.",
+    sub: "You pay fees in ADA, with nothing new to hold. Every block anchors back to the same base layer securing all of Cardano.",
   },
   /** Prose — the honest, hedged status note. No numbers, no dates. */
   status: {

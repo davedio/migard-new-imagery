@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -84,6 +85,7 @@ const exploreRows = [
 export default function OfficialLinksPage() {
   return (
     <main className="page-main">
+      <PageBackdrop name="rune-stones" variant="full" focus="52% 55%" />
       <PageHero
         compact
         tone="ink"

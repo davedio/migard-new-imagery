@@ -165,7 +165,7 @@ const EXPLAINER_STEPS = [
   },
 ] as const;
 
-const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/trunk-flow-tall.avif";
+const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-flow-tall.avif";
 
 function JourneyAct({
   actRef,

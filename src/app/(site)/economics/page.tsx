@@ -29,7 +29,7 @@ export default function EconomicsPage() {
 
   return (
     <main className="page-main">
-      <PageBackdrop name="canopy-light" focus="55% 40%" />
+      <PageBackdrop name="terraces" focus="55% 70%" vivid />
       <PageHero compact tone="cobalt" label={hero.label} title={hero.title} sub={hero.sub} actions={[...hero.actions]} />
 
       <JumpChips

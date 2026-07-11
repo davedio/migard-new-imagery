@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import JumpChips from "@/components/site/JumpChips";
+import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -69,6 +70,7 @@ const statusRows = [
 export default function UsersPage() {
   return (
     <main className="page-main">
+      <PageBackdrop name="stepping-stones" variant="full" focus="60% 55%" />
       <PageHero
         compact
         tone="moss"

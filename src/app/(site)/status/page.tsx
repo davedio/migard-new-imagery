@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import JumpChips from "@/components/site/JumpChips";
+import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 
@@ -122,6 +123,7 @@ const exploreRows = [
 export default function StatusPage() {
   return (
     <main className="page-main">
+      <PageBackdrop name="signal-cairn" variant="full" focus="74% 46%" />
       <PageHero
         compact
         tone="ink"

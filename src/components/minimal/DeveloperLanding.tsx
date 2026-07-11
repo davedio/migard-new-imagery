@@ -18,7 +18,7 @@ import { DEVELOPER_COPY } from "@/lib/siteCopy";
 export default function DeveloperLanding() {
   return (
     <main className="page-main developer-page">
-      <PageBackdrop name="forest-path" focus="54% 48%" />
+      <PageBackdrop name="stone-gateway" focus="62% 50%" />
       <PageHero
         compact
         tone="tree"

@@ -2,6 +2,7 @@
    No nav, footer, or sitemap entry points here yet. */
 
 import type { Metadata } from "next";
+import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { Card, CardGrid, PageHero, Section } from "@/components/site/ui";
 
@@ -55,6 +56,7 @@ const exploreRows = [
 export default function RoadmapPage() {
   return (
     <main className="page-main">
+      <PageBackdrop name="winding-road" variant="full" focus="45% 55%" />
       <PageHero
         compact
         tone="cobalt"
