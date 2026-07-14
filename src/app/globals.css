@@ -1884,12 +1884,6 @@ button.panel:hover {
   line-height: 1;
   color: var(--text-hi);
 }
-.site-footer__brand p {
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--text-dim);
-  max-width: 360px;
-}
 .site-footer__brand .chips {
   display: flex;
   gap: 8px;

@@ -65,6 +65,10 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
       name: /The scaling layer for UTXO finance/i,
     }),
   ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Start here: choose your path" })).toHaveAttribute(
+    "href",
+    "#paths",
+  );
   await expect(page.locator(".minimal-hero__copy")).toContainText("Cardano L1");
   await expect(page.locator(".hero-tree-stage")).toBeVisible();
   await expect(page.getByRole("link", { name: /See how it works/i })).toHaveAttribute(
@@ -79,6 +83,9 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
     "href",
     "/participate",
   );
+  await expect(page.locator("footer")).not.toContainText("Next page");
+  await expect(page.locator("footer")).not.toContainText("Grown on Cardano");
+  await expect(page.locator("footer")).toContainText("© 2026 Midgard Labs");
 
   await page.locator(".site-nav__theme").click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");

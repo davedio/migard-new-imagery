@@ -636,76 +636,13 @@ h2 em,
 }
 
 /* ---------------------------------------------------------------------------
-   Footer — compact next-step strip above the sitemap.
+   Footer — compact sitemap and legal links.
    ------------------------------------------------------------------------- */
 .site-footer {
   border-top: 1px solid var(--hairline);
   /* its own scrim: link contrast holds even with the lighter stage veil */
   background: linear-gradient(180deg, rgba(4, 8, 5, 0.25), rgba(4, 8, 5, 0.92) 55%);
   padding-top: 0;
-}
-.v2-footer-statement {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 18px;
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 20px 0 24px;
-  border-bottom: 1px solid rgba(215, 226, 216, 0.12);
-  font-family: var(--font-sans);
-  letter-spacing: 0;
-  color: var(--text-hi);
-  text-decoration: none;
-}
-.v2-footer-statement__kicker {
-  grid-column: 1 / -1;
-  width: fit-content;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text-faint);
-}
-.v2-footer-statement__main {
-  display: grid;
-  gap: 5px;
-}
-.v2-footer-statement__main strong {
-  font-size: clamp(20px, 2vw, 30px);
-  line-height: 1.1;
-  font-weight: 550;
-}
-.v2-footer-statement__main em {
-  font-style: normal;
-  max-width: 520px;
-  color: var(--text-dim);
-  font-size: 14px;
-  line-height: 1.45;
-  transition: color 0.24s var(--ease);
-}
-.v2-footer-statement__cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  justify-self: end;
-  padding: 10px 13px;
-  border: 1px solid rgba(78, 243, 131, 0.24);
-  border-radius: 999px;
-  color: var(--green-bright);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  transition: border-color 0.24s var(--ease), background 0.24s var(--ease), transform 0.24s var(--ease);
-}
-.v2-footer-statement:hover .v2-footer-statement__main em {
-  color: var(--bone);
-}
-.v2-footer-statement:hover .v2-footer-statement__cta {
-  transform: translateY(-1px);
-  border-color: rgba(78, 243, 131, 0.5);
-  background: rgba(78, 243, 131, 0.08);
 }
 .site-footer__col h4 {
   color: var(--text-faint);
@@ -1987,14 +1924,6 @@ h2 em,
   }
   .v2-duel {
     grid-template-columns: 1fr;
-  }
-  .v2-footer-statement {
-    grid-template-columns: 1fr;
-    gap: 14px;
-    padding: 18px 0 22px;
-  }
-  .v2-footer-statement__cta {
-    justify-self: start;
   }
   .page-hero::before {
     opacity: 0.66;
@@ -4684,6 +4613,20 @@ h2 em,
   letter-spacing: 0.14em;
   text-transform: uppercase;
   backdrop-filter: blur(6px);
+  text-decoration: none;
+  transition: border-color 0.24s var(--ease), background 0.24s var(--ease), box-shadow 0.24s var(--ease), transform 0.24s var(--ease);
+}
+
+.minimal-status-chip--callout {
+  animation: minimal-callout-pulse 4.8s var(--ease) infinite;
+}
+
+.minimal-status-chip--callout:hover,
+.minimal-status-chip--callout:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(78, 243, 131, 0.7);
+  background: rgba(4, 7, 5, 0.72);
+  box-shadow: 0 0 24px rgba(78, 243, 131, 0.16);
 }
 
 .minimal-status-chip i {
@@ -4705,6 +4648,17 @@ h2 em,
   }
 }
 
+@keyframes minimal-callout-pulse {
+  0%,
+  74%,
+  100% {
+    box-shadow: 0 0 0 rgba(78, 243, 131, 0);
+  }
+  82% {
+    box-shadow: 0 0 26px rgba(78, 243, 131, 0.24);
+  }
+}
+
 [data-theme="light"] .minimal-status-chip {
   border-color: rgba(12, 125, 54, 0.34);
   background: rgba(246, 241, 232, 0.6);
@@ -4714,6 +4668,13 @@ h2 em,
 [data-theme="light"] .minimal-status-chip i {
   background: #0c7d36;
   box-shadow: 0 0 10px rgba(12, 125, 54, 0.5);
+}
+
+[data-theme="light"] .minimal-status-chip--callout:hover,
+[data-theme="light"] .minimal-status-chip--callout:focus-visible {
+  border-color: rgba(12, 125, 54, 0.62);
+  background: rgba(255, 252, 244, 0.86);
+  box-shadow: 0 0 22px rgba(12, 125, 54, 0.16);
 }
 
 /* the proof strip — four checkable claims under the hero lead */
@@ -5207,30 +5168,21 @@ h2 em,
 [data-motion="off"] .hero-tree-stage__frame,
 [data-motion="off"] .page-backdrop__img,
 [data-motion="off"] .statement__line em,
-[data-motion="off"] .minimal-btn--primary::after {
+[data-motion="off"] .minimal-btn--primary::after,
+[data-motion="off"] .minimal-status-chip--callout {
   animation: none !important;
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-tree-stage__frame,
   .page-backdrop__img,
   .statement__line em,
-  .minimal-btn--primary::after {
+  .minimal-btn--primary::after,
+  .minimal-status-chip--callout {
     animation: none !important;
   }
 }
 
 /* light-theme completions from the 2026-07-02 theme audit */
-[data-theme="light"] .v2-footer-statement__cta {
-  border-color: rgba(12, 125, 54, 0.35);
-}
-[data-theme="light"] .v2-footer-statement__cta:hover,
-[data-theme="light"] .v2-footer-statement__cta:focus-visible {
-  border-color: rgba(12, 125, 54, 0.55);
-  background: rgba(12, 125, 54, 0.08);
-}
-[data-theme="light"] .v2-footer-statement {
-  border-bottom-color: rgba(14, 27, 19, 0.12);
-}
 [data-theme="light"] .minimal-descent-stage {
   box-shadow:
     0 26px 60px rgba(54, 45, 30, 0.12),
@@ -5303,14 +5255,6 @@ h2 em,
   background: rgba(12, 125, 54, 0.08);
   color: #15170f;
 }
-[data-theme="light"] .v2-footer-statement:hover .v2-footer-statement__main em {
-  color: #15170f;
-}
-[data-theme="light"] .v2-footer-statement:hover .v2-footer-statement__cta {
-  border-color: rgba(12, 125, 54, 0.5);
-  background: rgba(12, 125, 54, 0.08);
-}
-
 /* nav mid-width clamp (1181–1320px, "links must never clip") — restated
    here because the original in globals.css was silently losing to later
    rules in this file's cascade. */
