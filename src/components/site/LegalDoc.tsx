@@ -5,6 +5,8 @@ export type LegalSection = {
   id: string;
   heading: string;
   paragraphs: ReactNode[];
+  /** Optional non-paragraph block (e.g. a category table) rendered after the paragraphs. */
+  after?: ReactNode;
 };
 
 /**
@@ -34,6 +36,7 @@ export function LegalDoc({
           {s.paragraphs.map((p, j) => (
             <p key={j}>{p}</p>
           ))}
+          {s.after}
         </section>
       ))}
       {footnote ? <p className={styles.footnote}>{footnote}</p> : null}
