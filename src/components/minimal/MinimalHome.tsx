@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import ShatterHeading from "@/components/v2/ShatterHeading";
 import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
-import FireflyField from "@/components/minimal/FireflyField";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
@@ -100,8 +99,6 @@ export default function MinimalHome() {
     <main className="minimal-site">
       <HeroStage />
       <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
-        {/* live-activity fireflies over the night plate (dark theme only) */}
-        <FireflyField count={16} className="minimal-hero__fireflies" />
         <div className="minimal-hero__copy">
           <Link
             href={SITE_COPY.hero.startCta.href}
