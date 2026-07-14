@@ -61,6 +61,8 @@ const LEGAL = [
   { label: "Terms of Use", href: "/terms" },
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Cookie Notice", href: "/cookies" },
+  { label: "Official Channels", href: "/official-channels" },
+  { label: "Security Policy", href: "/security-policy" },
 ] as const;
 
 /**
