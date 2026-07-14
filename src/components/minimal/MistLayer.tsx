@@ -87,16 +87,19 @@ void main() {
   vec2 push = vec2(0.0);
   float thin = 0.0;
   for (int i = 0; i < ${TRAIL}; i++) {
-    vec2 tp = vec2(uTrail[i].x * aspect, uTrail[i].y);
+    /* the disturbance itself drifts downwind as it ages — smoke carries
+       its own history */
+    vec2 tp = vec2(uTrail[i].x * aspect, uTrail[i].y) + vec2(0.007, 0.002) * uAge[i];
     vec2 tv = uTrail[i].zw;
     float d = distance(suv, tp);
-    float infl = exp(-d * d * 55.0) * exp(-uAge[i] * 1.35);
-    push += tv * infl * 0.6;
-    thin += infl * min(1.0, length(tv) * 1.6);
+    float base = exp(-d * d * 55.0);
+    /* the BEND lingers (~6s), the cleared HOLE refills sooner (~3s) */
+    push += tv * base * exp(-uAge[i] * 0.35) * 0.5;
+    thin += base * exp(-uAge[i] * 0.8) * min(1.0, length(tv) * 1.6);
   }
 
   /* fog field: wind-advected, domain-warped fbm */
-  vec2 wind = vec2(uT * 0.020, uT * 0.006);
+  vec2 wind = vec2(uT * 0.0085, uT * 0.0024); /* fog creeps, never scrolls */
   vec2 p = suv * 2.6 + push * 2.4;
   float warp = fbm(p * 0.85 + wind * 1.7 + 11.3);
   float f = fbm(p + vec2(warp * 1.7, warp * 1.1) + wind);
@@ -192,6 +195,7 @@ export function MistLayer() {
     const ages = new Float32Array(TRAIL).fill(99);
     let head = 0;
     const ptr = { x: -1, y: -1, t: 0 };
+    let lastWrite = 0;
     const onMove = (e: PointerEvent) => {
       const now = performance.now();
       const nx = e.clientX / Math.max(1, W);
@@ -201,8 +205,11 @@ export function MistLayer() {
         const vx = (nx - ptr.x) / dts;
         const vy = (ny - ptr.y) / dts;
         const speed = Math.hypot(vx, vy);
-        /* only real strokes disturb the fog — hover jitter is ignored */
-        if (speed > 0.12) {
+        /* only real strokes disturb the fog — hover jitter is ignored;
+           writes are throttled so one sweep leaves a ~10-point wake whose
+           older disturbances live long enough to keep deforming the field */
+        if (speed > 0.12 && now - lastWrite > 55) {
+          lastWrite = now;
           const i = head % TRAIL;
           trail[i * 4] = nx;
           trail[i * 4 + 1] = ny;
