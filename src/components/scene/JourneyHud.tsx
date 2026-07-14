@@ -20,14 +20,18 @@ import { useMotionValueEvent, type MotionValue } from "motion/react";
 import TreeSpine from "@/components/minimal/TreeSpine";
 import { useEffect } from "react";
 import { subscribeTelemetry, type Telemetry } from "@/lib/mockTelemetry";
+import {
+  JOURNEY_STAGE_BOUNDS,
+  journeyStageIndex,
+} from "@/lib/journeyStages";
 import styles from "./JourneyHud.module.css";
 
 const BEATS = 6;
 const BEAT_NAMES = ["Submit", "Sequence", "Commit", "Data availability", "Watch", "Settle"] as const;
-/** The readout runs through the DA + WATCH beats [3/6, 5/6) — the stretch
-    where independent verification is the story on screen. */
-const WATCH_FROM = 3 / BEATS;
-const WATCH_TO = 5 / BEATS;
+/** The readout runs through the DA + WATCH beats — the stretch where
+    independent verification is the story on screen. */
+const WATCH_FROM = JOURNEY_STAGE_BOUNDS[3];
+const WATCH_TO = JOURNEY_STAGE_BOUNDS[5];
 
 function formatWindow(ms: number): string {
   const totalMin = Math.max(0, Math.floor(ms / 60000));
@@ -42,7 +46,7 @@ export default function JourneyHud({ progress }: { progress: MotionValue<number>
   const [telemetry, setTelemetry] = useState<Telemetry | null>(null);
 
   useMotionValueEvent(progress, "change", (v) => {
-    const next = Math.min(BEATS - 1, Math.max(0, Math.floor(v * BEATS)));
+    const next = journeyStageIndex(v);
     setBeat((prev) => (prev === next ? prev : next));
     const inWatch = v >= WATCH_FROM && v < WATCH_TO;
     setWatching((prev) => (prev === inWatch ? prev : inWatch));

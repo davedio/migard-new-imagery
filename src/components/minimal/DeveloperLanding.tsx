@@ -84,7 +84,7 @@ export default function DeveloperLanding() {
       <Section
         id="economics"
         title="Economics for builders."
-        lead="No new asset in your integration, no separate fee market to explain to users — the economics are ADA end to end."
+        lead="No new asset in your integration, no separate fee market to explain to users."
       >
         <DataRows
           ariaLabel="Builder economics"
@@ -148,7 +148,7 @@ export default function DeveloperLanding() {
         </CardGrid>
         <div className="prose">
           <p className="dim">
-            Scope, honestly stated: the protocol enforces custody (scripts, not keys),
+            The protocol enforces custody (scripts, not keys),
             validity (fault proofs), and settlement on Cardano. What an app, RPC, or
             explorer <em>shows</em> you still depends on the data source it reads — a
             compromised RPC feed can lie about what you see (RPC poisoning) but cannot

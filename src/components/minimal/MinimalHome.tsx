@@ -100,10 +100,13 @@ export default function MinimalHome() {
       <HeroStage />
       <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
         <div className="minimal-hero__copy">
-          {/* The chip now routes to the honest status board. */}
-          <Link href="/status" className="minimal-status-chip">
+          <Link
+            href={SITE_COPY.hero.startCta.href}
+            className="minimal-status-chip minimal-status-chip--callout"
+            aria-label={SITE_COPY.hero.startCta.label}
+          >
             <i aria-hidden />
-            {SITE_COPY.hero.status}
+            {SITE_COPY.hero.startCta.label}
           </Link>
           <ShatterHeading as="h1" lines={[...SITE_COPY.hero.titleLines]} />
           <p>{SITE_COPY.hero.lead}</p>

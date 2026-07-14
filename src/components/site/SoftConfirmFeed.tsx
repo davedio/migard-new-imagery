@@ -18,7 +18,7 @@ import css from "./SoftConfirmFeed.module.css";
  * the smooth-scroll experience).
  * ------------------------------------------------------------------ */
 
-const CADENCE_MS = 1400;
+const CADENCE_MS = 1600;
 const MAX_VISIBLE = 7;
 /* enough history at first paint that the reduced-motion static frame
    already shows all three row kinds */
@@ -117,15 +117,24 @@ export default function SoftConfirmFeed() {
   }, [motionOn]);
 
   return (
-    <div className={css.feed} aria-label="Simulated transaction flow">
+    <div
+      className={css.feed}
+      data-motion={motionOn ? "on" : "off"}
+      aria-label="Simulated transaction flow"
+    >
       <div className={css.overline}>
         <span className={css.overlineDot} aria-hidden />
         SIMULATED&nbsp;&middot;&nbsp;TRANSACTION&nbsp;FLOW
       </div>
 
-      {/* The stream churns rows every 1.4s — hidden from assistive tech;
+      <p className={css.srOnly}>
+        Transactions use a circle and solid edge, sealed blocks use a diamond
+        and dashed edge, and commits to Cardano use a ring and a second edge.
+      </p>
+
+      {/* The stream churns rows every 1.6s — hidden from assistive tech;
           the visible fine print below describes what it shows. */}
-      <div className={css.stream} data-motion={motionOn ? "on" : "off"} aria-hidden="true">
+      <div className={css.stream} aria-hidden="true">
         {visibleEntries(head).map((e, i) => (
           <div
             key={e.id}

@@ -1,16 +1,19 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { EcosystemPartner } from "@/lib/ecosystemPartners";
 import { useTheme } from "@/lib/theme";
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type {
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+} from "react";
 
 const isSvgLogo = (logo: string) => logo.endsWith(".svg");
 const logoImageStyle = { objectFit: "contain" } as const;
 
 type CardSnapshot = {
-  element: HTMLDivElement;
+  element: HTMLButtonElement;
   centerX: number;
   centerY: number;
   width: number;
@@ -44,12 +47,16 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
   const { theme } = useTheme();
   const rows = chunkPartners(partners);
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const dialogRef = useRef<HTMLDialogElement | null>(null);
+  const stayButtonRef = useRef<HTMLButtonElement | null>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const cardsRef = useRef<CardSnapshot[]>([]);
   const frameRef = useRef<number | null>(null);
   const pointRef = useRef<{ x: number; y: number } | null>(null);
+  const [pendingPartner, setPendingPartner] = useState<EcosystemPartner | null>(null);
 
   const setCardMotion = useCallback(
-    (card: HTMLDivElement, x = 0, y = 0, z = 0, rotation = 0, scale = 1, opacity = 1) => {
+    (card: HTMLButtonElement, x = 0, y = 0, z = 0, rotation = 0, scale = 1, opacity = 1) => {
       card.style.setProperty("--magnet-x", `${x.toFixed(2)}px`);
       card.style.setProperty("--magnet-y", `${y.toFixed(2)}px`);
       card.style.setProperty("--magnet-z", `${z.toFixed(2)}px`);
@@ -63,7 +70,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
   const measureCards = useCallback(() => {
     const board = boardRef.current;
     if (!board) return;
-    const cards = Array.from(board.querySelectorAll<HTMLDivElement>(".partner-magnet-card"));
+    const cards = Array.from(board.querySelectorAll<HTMLButtonElement>(".partner-magnet-card"));
     cardsRef.current = cards.map((element) => {
       setCardMotion(element);
       const box = element.getBoundingClientRect();
@@ -160,6 +167,44 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
     return () => resetCards();
   }, [resetCards]);
 
+  useEffect(() => {
+    if (!pendingPartner || !dialogRef.current) return;
+
+    if (!dialogRef.current.open) {
+      dialogRef.current.showModal();
+    }
+
+    const frame = requestAnimationFrame(() => stayButtonRef.current?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [pendingPartner]);
+
+  const openExitWarning = useCallback(
+    (event: ReactMouseEvent<HTMLButtonElement>, partner: EcosystemPartner) => {
+      lastTriggerRef.current = event.currentTarget;
+      resetCards();
+      setPendingPartner(partner);
+    },
+    [resetCards],
+  );
+
+  const closeExitWarning = useCallback(() => {
+    if (dialogRef.current?.open) {
+      dialogRef.current.close();
+    }
+  }, []);
+
+  const handleDialogClose = useCallback(() => {
+    setPendingPartner(null);
+    requestAnimationFrame(() => lastTriggerRef.current?.focus());
+  }, []);
+
+  const handleDialogBackdropClick = useCallback(
+    (event: ReactMouseEvent<HTMLDialogElement>) => {
+      if (event.target === event.currentTarget) closeExitWarning();
+    },
+    [closeExitWarning],
+  );
+
   return (
     <div
       className="partner-magnet-board"
@@ -169,7 +214,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
       onPointerMove={handlePointerMove}
       ref={boardRef}
     >
-      <div className="partner-magnet-board__grid" aria-label="Ecosystem partner logos" role="list">
+      <nav className="partner-magnet-board__grid" aria-label="Ecosystem partner websites">
         {rows.map((row, rowIndex) => (
           <div
             className="partner-magnet-row"
@@ -191,15 +236,17 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                 .join(" ");
 
               return (
-                <div
+                <button
                   className="partner-magnet-card"
+                  type="button"
                   data-logo-shape={partner.logoShape ?? "wide"}
                   data-show-name={partner.showName ? "true" : undefined}
                   data-slot={index + 1}
                   data-tone={partner.tone}
-                  aria-label={partner.name}
+                  aria-haspopup="dialog"
+                  aria-label={`Visit ${partner.name} website`}
                   key={partner.name}
-                  role="listitem"
+                  onClick={(event) => openExitWarning(event, partner)}
                 >
                   <span className={logoClassName} aria-hidden="true">
                     <Image
@@ -217,12 +264,64 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                       {partner.name}
                     </span>
                   ) : null}
-                </div>
+                </button>
               );
             })}
           </div>
         ))}
-      </div>
+      </nav>
+
+      <dialog
+        aria-describedby="partner-exit-description"
+        aria-labelledby="partner-exit-title"
+        className="partner-exit-dialog"
+        onCancel={(event) => {
+          event.preventDefault();
+          closeExitWarning();
+        }}
+        onClick={handleDialogBackdropClick}
+        onClose={handleDialogClose}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            closeExitWarning();
+          }
+        }}
+        ref={dialogRef}
+      >
+        {pendingPartner ? (
+          <div className="partner-exit-dialog__panel">
+            <p className="partner-exit-dialog__eyebrow">External website</p>
+            <h3 id="partner-exit-title">You&apos;re leaving Midgard</h3>
+            <p id="partner-exit-description">
+              You&apos;re about to visit {pendingPartner.name}. This third-party website has its own
+              terms and privacy practices.
+            </p>
+            <p className="partner-exit-dialog__destination" aria-label="Destination website">
+              {new URL(pendingPartner.website).hostname.replace(/^www\./, "")}
+            </p>
+            <div className="partner-exit-dialog__actions">
+              <button
+                className="minimal-btn minimal-btn--quiet"
+                onClick={closeExitWarning}
+                ref={stayButtonRef}
+                type="button"
+              >
+                Stay on Midgard
+              </button>
+              <a
+                className="minimal-btn minimal-btn--primary"
+                href={pendingPartner.website}
+                onClick={closeExitWarning}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                Continue to {pendingPartner.name}
+              </a>
+            </div>
+          </div>
+        ) : null}
+      </dialog>
     </div>
   );
 }

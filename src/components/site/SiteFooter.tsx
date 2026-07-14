@@ -4,7 +4,6 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { NetworkChip } from "@/components/site/NetworkChip";
-import { FooterStatement } from "@/components/v2/FooterStatement";
 
 type FooterLink = {
   label: string;
@@ -72,15 +71,12 @@ const LEGAL = [
 export function SiteFooter() {
   return (
     <footer className="site-footer">
-      {/* Compact next-step link above the sitemap. */}
-      <FooterStatement />
       <div className="site-footer__top site-footer__top--sitemap">
         <div className="site-footer__brand">
           <div className="lock">
             <Image src="/midgard-icon.png" alt="" aria-hidden width={24} height={24} loading="eager" unoptimized />
             <span className="wm">Midgard</span>
           </div>
-          <p>Grown on Cardano. Every block checkable, every claim inspectable.</p>
 
           <OfficialSocialLinks className="site-footer__social" linkClassName="site-footer__social-link" iconSize={20} />
         </div>
@@ -122,7 +118,7 @@ export function SiteFooter() {
           ))}
         </div>
         <NetworkChip />
-        <span className="meta">© 2026 Midgard Labs · Always start from official links</span>
+        <span className="meta">© 2026 Midgard Labs</span>
       </div>
     </footer>
   );

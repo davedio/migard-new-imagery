@@ -1,5 +1,6 @@
 export type EcosystemPartner = {
   name: string;
+  website: string;
   /** Light-colored mark for the dark site theme. */
   logo: string;
   /** Dark-ink mark for the light site theme. */
@@ -15,6 +16,7 @@ export type EcosystemPartner = {
 export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   {
     name: "Anastasia Labs",
+    website: "https://www.anastasialabs.com/",
     logo: "/ecosystem/anastasia-labs.svg",
     logoLight: "/ecosystem/anastasia-labs.svg",
     width: 2000,
@@ -24,6 +26,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Sundae Labs",
+    website: "https://sundae.fi/",
     logo: "/ecosystem/sundae-labs-dark.png",
     logoLight: "/ecosystem/sundae-labs.png",
     width: 1143,
@@ -33,6 +36,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Input Output Global",
+    website: "https://www.iog.io/",
     logo: "/ecosystem/input-output.svg",
     logoLight: "/ecosystem/input-output-light.svg",
     width: 240,
@@ -42,6 +46,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "VIA Labs",
+    website: "https://vialabs.io/",
     logo: "/ecosystem/via-labs.svg",
     logoLight: "/ecosystem/via-labs.svg",
     width: 140,
@@ -52,6 +57,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Flux Point Studios",
+    website: "https://fluxpointstudios.com/",
     logo: "/ecosystem/flux-point-studios.png",
     logoLight: "/ecosystem/flux-point-studios.png",
     width: 250,
@@ -62,6 +68,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "FluidTokens",
+    website: "https://fluidtokens.com/",
     logo: "/ecosystem/fluidtokens.svg",
     logoLight: "/ecosystem/fluidtokens-dark.svg",
     width: 187,
@@ -72,6 +79,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Indigo Labs",
+    website: "https://indigoprotocol.io/",
     logo: "/ecosystem/indigo-labs.png",
     logoLight: "/ecosystem/indigo-labs.png",
     width: 1500,
@@ -82,6 +90,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Strike Finance",
+    website: "https://www.strikefinance.org/",
     logo: "/ecosystem/strike-finance.svg",
     logoLight: "/ecosystem/strike-finance.svg",
     width: 356,
@@ -92,6 +101,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Artifi Labs",
+    website: "https://artifi.finance/",
     logo: "/ecosystem/artifi-labs.svg",
     logoLight: "/ecosystem/artifi-labs-light.svg",
     width: 122,
@@ -101,6 +111,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Lace Wallet",
+    website: "https://www.lace.io/",
     logo: "/ecosystem/lace-wordmark.svg",
     logoLight: "/ecosystem/lace-wordmark-light.svg",
     width: 105,
@@ -110,6 +121,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Liqwid",
+    website: "https://www.liqwid.finance/",
     logo: "/ecosystem/liqwid.svg",
     logoLight: "/ecosystem/liqwid-light.svg",
     width: 2652,
@@ -119,6 +131,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Midnight",
+    website: "https://midnight.network/",
     logo: "/ecosystem/midnight-logo-light.svg",
     logoLight: "/ecosystem/midnight-logo-dark.svg",
     width: 251,
@@ -128,6 +141,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Minswap",
+    website: "https://minswap.org/",
     logo: "/ecosystem/minswap.png",
     logoLight: "/ecosystem/minswap-dark.png",
     width: 96,
@@ -138,6 +152,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Modus Create",
+    website: "https://moduscreate.com/",
     logo: "/ecosystem/modus-create.svg",
     logoLight: "/ecosystem/modus-create.svg",
     width: 186,
@@ -147,6 +162,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Pogun",
+    website: "https://pogun.io/",
     logo: "/ecosystem/pogun-wordmark.svg",
     logoLight: "/ecosystem/pogun-wordmark-light.svg",
     width: 800,
@@ -156,6 +172,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "RealFi",
+    website: "https://realfi.co/",
     logo: "/ecosystem/realfi-logo.svg",
     logoLight: "/ecosystem/realfi-logo-dark-text.svg",
     width: 346,
@@ -165,6 +182,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "Tweag",
+    website: "https://www.tweag.io/",
     logo: "/ecosystem/tweag.png",
     logoLight: "/ecosystem/tweag-light.png",
     width: 2110,
@@ -174,6 +192,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "USDCx",
+    website: "https://usdcx.iog.io/",
     logo: "/ecosystem/usdcx.png",
     logoLight: "/ecosystem/usdcx.png",
     width: 330,
@@ -184,6 +203,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   },
   {
     name: "WingRiders",
+    website: "https://www.wingriders.com/",
     logo: "/ecosystem/wingriders.svg",
     logoLight: "/ecosystem/wingriders-dark.svg",
     width: 1600,

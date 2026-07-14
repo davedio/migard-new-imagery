@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { createPortal } from "react-dom";
-import { useSpring } from "motion/react";
+import { useMotionValue } from "motion/react";
 import {
   useCallback,
   useEffect,
@@ -11,6 +11,10 @@ import {
   type ReactNode,
 } from "react";
 import JourneyHud from "@/components/scene/JourneyHud";
+import {
+  journeyStageCenter,
+  journeyStageIndex,
+} from "@/lib/journeyStages";
 import { useMotionPref } from "@/lib/motion";
 import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
@@ -20,9 +24,9 @@ import { useTheme, themedAsset } from "@/lib/theme";
    relocated from the old home page and re-homed as the immersive
    centerpiece of /learn.
 
-   The page opens with a full-viewport JOURNEY ACT where a PHOTOREAL
-   tree PLATE plays the scroll-driven canopy -> L1-settlement descent (the
-   visual lifecycle) via a parallax pan, with LIVE green overlays
+   The page introduces the protocol in plain language before a full-viewport
+   JOURNEY ACT where a PHOTOREAL tree PLATE plays the scroll-driven canopy ->
+   L1-settlement descent (the visual lifecycle) via a parallax pan, with LIVE green overlays
    (beams, network pulses, leaves, ADA diamonds) layered over it, and a
    HUD chapter rail whose labels are aligned to the
    page's protocol-lifecycle language (Submit · L2 -> Sequence ->
@@ -37,8 +41,7 @@ import { useTheme, themedAsset } from "@/lib/theme";
      1. inertial smooth scroll (useSmoothScroll) — native scrollbar
         kept, the (site) layout's [data-scroll-content] wrapper is
         rAF-lerped for weight.
-     2. a spring-smoothed scroll progress feeding BOTH the 3D scene
-        (buttery beats) and the HUD chapter labels.
+     2. live visual progress shared by every stage label and indicator.
 
    Because the experience mounts only on this route and unmounts on
    navigation, these systems activate ONLY where this component is mounted —
@@ -112,7 +115,6 @@ const ACT_BEATS: { stage: string; name: string; layer: string }[] = [
   { stage: "05", name: "Watch", layer: "bridge" },
   { stage: "06", name: "Settle", layer: "l1" },
 ];
-const ACT_BEAT_COUNT = ACT_BEATS.length;
 
 const EXPLAINER_STEPS = [
   {
@@ -161,7 +163,7 @@ const EXPLAINER_STEPS = [
     layer: "Cardano L1 finality",
     what: "If no valid fault proof succeeds, verified state settles through Cardano L1.",
     check: "After the verification path clears, finalized state inherits Cardano L1 security.",
-    why: "Fast execution and final settlement stay separate, clear, and reviewable.",
+    why: "Fast execution and final settlement stay separate and reviewable.",
   },
 ] as const;
 
@@ -186,19 +188,23 @@ function JourneyAct({
   onJumpToBeat: (index: number) => void;
 }) {
   return (
-    <section className="hiw-act" aria-label="Transaction journey" ref={actRef}>
+    <section
+      id="full-journey"
+      className="hiw-act"
+      aria-labelledby="full-journey-title"
+      ref={actRef}
+    >
       <div className="hiw-act__viewport">
         <div className="hiw-act__scrim" aria-hidden />
         <div className="hiw-act__intro">
-          <h1 className="hiw-act__title">
-            Flow of a{" "}
+          <p className="hiw-act__kicker">Put the 101 together</p>
+          <h2 id="full-journey-title" className="hiw-act__title">
+            Now follow one{" "}
             <span style={{ color: "var(--green-bright)" }}>transaction</span>
-          </h1>
+          </h2>
           <p className="hiw-act__lead">
-            You never touch the lifecycle directly: deposit once, transact as
-            much as you like, and withdraw when you&apos;re done. Midgard runs
-            everything else underneath — follow a transaction all the way down
-            to Cardano.
+            You have the model. Now watch Midgard order, publish, verify, and
+            settle one transaction down to Cardano.
           </p>
           <ol className="hiw-act__beats" ref={beatsRef} aria-label="Jump to a stage in the journey">
             {ACT_BEATS.map((b, i) => (
@@ -218,7 +224,7 @@ function JourneyAct({
           </ol>
           <div className="hiw-act__cue" aria-hidden>
             <span className="hiw-act__rail" />
-            Scroll to follow it down
+            Scroll through the six stages
           </div>
         </div>
       </div>
@@ -263,8 +269,11 @@ function HowItWorksExplainer() {
 }
 
 export default function HowItWorksExperience({
+  beforeJourney,
   children,
 }: {
+  /** Plain-language lessons and proof shown before the immersive journey. */
+  beforeJourney?: ReactNode;
   /** the detailed lifecycle sections, rendered beneath the journey act */
   children: ReactNode;
 }) {
@@ -323,6 +332,7 @@ export default function HowItWorksExperience({
   // 1 once its bottom has scrolled up to the viewport bottom.
   const actRef = useRef<HTMLElement | null>(null);
   const journeyProgressRef = useRef(0);
+  const sceneProgressRef = useRef(0);
   /* the beat-chip row — its active/current beat is written directly each
      frame below (matches the --journey-p pattern), not React state, so
      the 6 buttons don't re-render on every scroll tick */
@@ -333,11 +343,9 @@ export default function HowItWorksExperience({
   // transaction on the tree — one source of truth, no drift from the comet.
   const packetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // A spring MotionValue the HUD subscribes to; fed each frame from the
-  // act-progress (buttery, no jumps). Softer + heavier (client note: slower /
-  // calmer descent) so the HUD's stage changes ease in sympathy with the
-  // gentler plate pan rather than snapping at thresholds.
-  const springProgress = useSpring(0, { stiffness: 52, damping: 24, mass: 0.9 });
+  // Every label follows the scene's already-eased progress so the transaction,
+  // stage card, beat chips, and HUD all change together.
+  const stageProgress = useMotionValue(0);
   useEffect(() => {
     let raf = 0;
     const tick = () => {
@@ -351,10 +359,7 @@ export default function HowItWorksExperience({
         act.style.setProperty("--journey-p", journeyProgressRef.current.toFixed(4));
         const beats = beatsRef.current;
         if (beats) {
-          const active = Math.min(
-            ACT_BEAT_COUNT - 1,
-            Math.max(0, Math.floor(journeyProgressRef.current * ACT_BEAT_COUNT)),
-          );
+          const active = journeyStageIndex(sceneProgressRef.current);
           if (beats.dataset.active !== String(active)) {
             beats.dataset.active = String(active);
             /* mirror the visual active state for assistive tech — only runs
@@ -366,12 +371,12 @@ export default function HowItWorksExperience({
           }
         }
       }
-      springProgress.set(journeyProgressRef.current);
+      stageProgress.set(sceneProgressRef.current);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [springProgress]);
+  }, [stageProgress]);
 
   // Jump the (real, native) scroll position so the act lands on beat i's
   // midpoint. The smooth-scroll hook above already lerps window.scrollY into
@@ -383,7 +388,7 @@ export default function HowItWorksExperience({
     const rect = act.getBoundingClientRect();
     const span = Math.max(1, rect.height - window.innerHeight);
     const currentProgress = clamp(-rect.top / span);
-    const targetProgress = clamp((index + 0.5) / ACT_BEAT_COUNT);
+    const targetProgress = journeyStageCenter(index);
     const deltaY = (targetProgress - currentProgress) * span;
     window.scrollTo({ top: window.scrollY + deltaY, behavior: "smooth" });
   }, []);
@@ -398,6 +403,7 @@ export default function HowItWorksExperience({
             key={plateSrc}
             plateSrc={plateSrc}
             progressRef={journeyProgressRef}
+            visualProgressRef={sceneProgressRef}
             packetRef={packetRef}
             motionOn={journeyOn}
             wide={wide}
@@ -407,12 +413,12 @@ export default function HowItWorksExperience({
               (packetRef) and rides the journey. Tracking is gated to advanced
               (desktop + fine pointer + motion-on); otherwise a static label. */}
           <StageGraphic
-            progress={springProgress}
+            progress={stageProgress}
             packetRef={packetRef}
             enabled={advanced}
           />
           {/* spine rail + live Watcher readout — desktop, motion-on only */}
-          {advanced ? <JourneyHud progress={springProgress} /> : null}
+          {advanced ? <JourneyHud progress={stageProgress} /> : null}
         </div>
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>
@@ -422,6 +428,7 @@ export default function HowItWorksExperience({
           The journey act is transparent over the fixed plate; the detailed
           sections below stay opaque. */}
       <main className="page-main page-main--how-it-works page-main--hiw-experience">
+        {beforeJourney}
         <JourneyAct actRef={actRef} beatsRef={beatsRef} onJumpToBeat={jumpToBeat} />
         <HowItWorksExplainer />
         {children}

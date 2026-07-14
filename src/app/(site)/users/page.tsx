@@ -23,7 +23,7 @@ const benefitRows = [
   },
   {
     label: "A clearer exit path",
-    body: "Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
+    body: "Deposit once, transact as much as you like, and withdraw when you're done.",
   },
 ] as const;
 
@@ -119,7 +119,7 @@ export default function UsersPage() {
       <Section
         id="economics"
         title="What it costs you."
-        lead="The economics of using Midgard, in plain terms: pay in ADA, hold nothing new, settle back to Cardano."
+        lead="Pay in ADA, hold nothing new, settle back to Cardano."
       >
         <DataRows rows={economicsRows} ariaLabel="User economics" />
       </Section>
@@ -133,7 +133,7 @@ export default function UsersPage() {
             align="left"
             kicker="User path"
             line="Deposit. Transact. Withdraw."
-            sub="The verification machinery stays visible for reviewers, but normal users should not have to think about it every time they use an app."
+            sub="The verification machinery stays visible for reviewers, but normal users should not have to think about it."
           />
         }
       >

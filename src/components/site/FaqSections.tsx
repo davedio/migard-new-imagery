@@ -42,7 +42,7 @@ const faqGroups = [
       },
       {
         q: "When is mainnet?",
-        a: "There is no date. Midgard is paced by the work, not a calendar — mainnet follows independent audits and parameter finalization.",
+        a: "There is no date. Mainnet follows independent audits and parameter finalization.",
       },
       {
         q: "Can existing UTXO apps use Midgard?",
@@ -88,7 +88,7 @@ const faqGroups = [
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
-        a: "No responsible protocol should promise that. The point is that the attack surface is narrower than many on-chain finance systems, and the most important logic can be inspected, challenged, and formally checked.",
+        a: "No responsible protocol should promise that. The attack surface is narrower than many on-chain finance systems, and the most important logic can be inspected, challenged, and formally checked.",
       },
       {
         q: "What do Watchers do?",
@@ -245,7 +245,7 @@ export default function FaqSections() {
       <Section
         id="comparison"
         title="How Midgard compares."
-        lead="Three common paths side by side: what each is best for, its main caution, and what to inspect before you commit."
+        lead="Three common paths side by side."
         tight
       >
         <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">

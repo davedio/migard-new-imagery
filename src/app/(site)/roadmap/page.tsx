@@ -81,7 +81,7 @@ export default function RoadmapPage() {
             />
           ))}
         </CardGrid>
-        <Statement line="Everything grows from Cardano, and every path can be checked." />
+        <Statement line="Everything grows from Cardano." />
       </Section>
 
       <Section id="explore" title="Keep exploring." tight>

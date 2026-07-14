@@ -10,7 +10,7 @@
 
    ── SIGNATURE: RIDE THE TRANSACTION · CINEMATIC + STAGED STORY ──
    The scroll FOLLOWS one luminous transaction packet down the tree AND
-   tells its life story. The descent is tied 1:1 to the five lifecycle
+   tells its life story. The descent is tied 1:1 to the six lifecycle
    chapters (the SAME thresholds the floating StageGraphic badge uses) and
    the camera DWELLS + ZOOMS on each stage's focal region as it becomes
    active, so each beat lands as its own distinct, up-close MOMENT:
@@ -22,6 +22,8 @@
                             vertical QUEUE of ticks along the trunk.
      COMMIT   (mid trunk)   the queue COMPRESSES / bundles down and the
                             packet morphs round -> square BLOCK (batch).
+     DATA AVAILABILITY      the committed data remains visible while the
+                            packet crosses the verification bridge.
      WATCH    (lower trunk) a gold challenge-window SCAN-LINE sweeps the
                             frame and watcher "eyes" blink on the branches.
      SETTLE   (roots / L1)  the block LANDS in the cobalt L1 bedrock with
@@ -39,7 +41,7 @@
      1. THE PLATE — current light world-tree image (canopy -> trunk
         -> roots over mossy rock with a COBALT L1 glow at the base). As
         the page scrolls DOWN, the plate PANS + ZOOMS canopy -> roots in
-        FIVE eased dwells (one per stage), coupled to the packet so you
+        SIX eased dwells (one per stage), coupled to the packet so you
         ride it down to the cobalt L1 bedrock = settlement. A cinematic
         POST stack (ACES-ish grade, DOF, soft bloom, vignette, chromatic
         aberration, film grain) sits over the single plate.
@@ -64,6 +66,10 @@
    ============================================================ */
 
 import { useEffect, useMemo, useRef, type RefObject } from "react";
+import {
+  JOURNEY_STAGE_BOUNDS,
+  JOURNEY_STAGE_COUNT,
+} from "@/lib/journeyStages";
 
 /* ---- deterministic RNG (so the network/motes are stable across mounts) */
 function mulberry32(seed: number) {
@@ -107,16 +113,17 @@ function mixRGB(c0: string, c1: string, t: number): string {
    progress within that stage, used to drive each beat's birth / peak /
    handoff AND the camera dwell+zoom on that stage's focal region.
    ================================================================ */
-const STAGE_BOUNDS = [0, 0.14, 0.4, 0.58, 0.84, 1.0001];
-const STAGE_COUNT = STAGE_BOUNDS.length - 1;
 function stageOf(p: number): { idx: number; local: number } {
-  for (let i = STAGE_COUNT - 1; i >= 0; i--) {
-    if (p >= STAGE_BOUNDS[i]) {
-      const span = Math.max(1e-4, STAGE_BOUNDS[i + 1] - STAGE_BOUNDS[i]);
-      return { idx: i, local: clamp((p - STAGE_BOUNDS[i]) / span) };
+  for (let i = JOURNEY_STAGE_COUNT - 1; i >= 0; i--) {
+    if (p >= JOURNEY_STAGE_BOUNDS[i]) {
+      const span = Math.max(
+        1e-4,
+        JOURNEY_STAGE_BOUNDS[i + 1] - JOURNEY_STAGE_BOUNDS[i],
+      );
+      return { idx: i, local: clamp((p - JOURNEY_STAGE_BOUNDS[i]) / span) };
     }
   }
-  return { idx: 0, local: clamp(p / STAGE_BOUNDS[1]) };
+  return { idx: 0, local: clamp(p / JOURNEY_STAGE_BOUNDS[1]) };
 }
 
 /* ================================================================
@@ -139,13 +146,15 @@ const FOCALS_TALL: Focal[] = [
   { focY: -2, scale: 1.18 }, // SUBMIT   · visible packet in the upper canopy
   { focY: 12, scale: 1.15 }, // SEQUENCE · upper trunk, still tracking the head
   { focY: 38, scale: 1.18 }, // COMMIT   · mid trunk
-  { focY: 66, scale: 1.17 }, // WATCH    · lower trunk / bridge
+  { focY: 54, scale: 1.15 }, // DATA     · availability bridge
+  { focY: 70, scale: 1.17 }, // WATCH    · lower trunk / bridge
   { focY: 98, scale: 1.3 }, // SETTLE   · into the cobalt L1 vault
 ];
 const FOCALS_WIDE: Focal[] = [
   { focY: 18, scale: 1.34 },
   { focY: 40, scale: 1.14 },
   { focY: 56, scale: 1.16 },
+  { focY: 64, scale: 1.14 },
   { focY: 70, scale: 1.12 },
   { focY: 86, scale: 1.26 },
 ];
@@ -315,6 +324,7 @@ function buildModel(wide: boolean): Model {
 
 export default function PhotorealBackdrop({
   progressRef,
+  visualProgressRef,
   packetRef,
   motionOn,
   wide,
@@ -322,6 +332,8 @@ export default function PhotorealBackdrop({
 }: {
   /** smoothed 0..1 journey progress (same ref the scene used) */
   progressRef: RefObject<number>;
+  /** OUT: the scene's eased progress, used to keep every stage label aligned */
+  visualProgressRef?: RefObject<number>;
   /** OUT: live packet screen position in px, written each frame so the
       floating StageGraphic badge can anchor to the packet on the tree */
   packetRef?: RefObject<{ x: number; y: number }>;
@@ -369,6 +381,7 @@ export default function PhotorealBackdrop({
     if (!motionOn) {
       const e = 0.42;
       panProgRef.current = e;
+      if (visualProgressRef) visualProgressRef.current = e;
       const cam = cameraAt(2, 0, focals); // park on the COMMIT mid-trunk focal
       el.style.setProperty("--plate-y", `${cam.focY}%`);
       el.style.setProperty("--plate-scale", "1.04");
@@ -402,15 +415,16 @@ export default function PhotorealBackdrop({
       // plate descent and the packet are perfectly coupled. Softer stiffness
       // (client note: slower / calmer) so the pan trails the scroll with more
       // weight and settles unhurriedly instead of tracking it tightly.
-      const stiffness = 64;
+      const stiffness = 110;
       const damping = 2 * Math.sqrt(stiffness); // critical
       const a = stiffness * (target - cur) - damping * vel;
       vel += a * dt;
-      const maxVel = 1.15;
+      const maxVel = 1.7;
       vel = clamp(vel, -maxVel, maxVel);
       cur += vel * dt;
       cur = clamp(cur);
       panProgRef.current = cur;
+      if (visualProgressRef) visualProgressRef.current = cur;
 
       // PER-STAGE camera: dwell on the active stage's focal band + zoom,
       // then ease to the next. Eased target, then a soft follow so it never
@@ -505,7 +519,7 @@ export default function PhotorealBackdrop({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [progressRef, motionOn, wide]);
+  }, [progressRef, visualProgressRef, motionOn, wide]);
 
   // ---- live overlays canvas ----
   useEffect(() => {
@@ -1001,16 +1015,19 @@ export default function PhotorealBackdrop({
       const sLocal = stage.local;
       // per-stage "intensity" envelopes (0..1), each peaking mid-stage so
       // the beat reads as its own moment then hands off to the next.
-      const submitT = sIdx === 0 ? 1 : clamp(1 - (p - STAGE_BOUNDS[1]) / 0.06);
+      const submitT =
+        sIdx === 0
+          ? 1
+          : clamp(1 - (p - JOURNEY_STAGE_BOUNDS[1]) / 0.06);
       const sequenceT =
         sIdx === 1
           ? smooth(clamp(sLocal / 0.6))
           : sIdx < 1
             ? 0
-            : clamp(1 - (p - STAGE_BOUNDS[2]) / 0.06);
+            : clamp(1 - (p - JOURNEY_STAGE_BOUNDS[2]) / 0.06);
       const commitT = sIdx === 2 ? Math.sin(smooth(sLocal) * Math.PI) : 0; // bell: bundle in, release down
       const watchT =
-        sIdx === 3 ? Math.sin(smooth(clamp((sLocal - 0.05) / 0.9)) * Math.PI) : 0;
+        sIdx === 4 ? Math.sin(smooth(clamp((sLocal - 0.05) / 0.9)) * Math.PI) : 0;
 
       // packet position: image-space along the measured centerline,
       // projected to screen through the live camera
@@ -1054,7 +1071,9 @@ export default function PhotorealBackdrop({
          ============================================================ */
       if (submitT > 0.001) {
         // converge: 0 = at home scatter, 1 = collapsed into packet
-        const converge = smooth(clamp((p / STAGE_BOUNDS[1]) * 1.05));
+        const converge = smooth(
+          clamp((p / JOURNEY_STAGE_BOUNDS[1]) * 1.05),
+        );
         for (const gl of glints) {
           const hx = lerp(gl.x, pk.x, converge);
           const hy = lerp(gl.y, pk.y, converge);

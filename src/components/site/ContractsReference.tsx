@@ -28,12 +28,12 @@ export function ContractsReference() {
         id="contracts"
         eyebrow="Contracts"
         title="Inspect the contract path."
-        lead="Verify Midgard preprod contract addresses, inspect state anchors, and trace bootstrap history from one place."
+        lead="Verify Midgard preprod contract addresses, inspect state anchors, and trace bootstrap history."
       >
         <Prose
           items={[
             {
-              text: "User activity enters through the Deposit, Tx Order, and Withdrawal validators; Hub Oracle, Scheduler, State Queue, and Settlement coordinate the state that can mature; and the fault-proof contracts give Watchers a public route to contest invalid committed state before it settles. Every address, script hash, and transaction below is evidence you can check on the explorer.",
+              text: "User activity enters through the Deposit, Tx Order, and Withdrawal validators; Hub Oracle, Scheduler, State Queue, and Settlement coordinate the state that can mature; and the fault-proof contracts give Watchers a public route to contest invalid committed state before it settles.",
             },
           ]}
         />

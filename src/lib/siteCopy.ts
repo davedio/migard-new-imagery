@@ -2,9 +2,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const SITE_COPY = {
   hero: {
-    /** Honest state-of-the-network chip shown above the H1 — links to /status.
-        "public" deliberately absent: the public-testnet phase is still ahead. */
-    status: "Pre-alpha testnet",
+    startCta: { label: "Start here: choose your path", href: "#paths" },
     /* Homepage positioning line. Keep titleLines in sync so the interactive
        heading preserves the intended line break. */
     title: "The scaling layer for UTXO finance.",
@@ -59,7 +57,7 @@ export const SITE_COPY = {
   trustFlow: {
     kicker: "Transaction path",
     title: "You only ever see three steps.",
-    lead: "You never touch the lifecycle directly. Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
+    lead: "Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
     resolved: {
       kicker: "Why that's safe",
       title: "You don't have to watch the pipeline — Watchers do it for you.",
@@ -99,7 +97,7 @@ export const SITE_COPY = {
     {
       k: "Smart contracts",
       v: "Open source",
-      s: "Public source with formal-methods work in progress, so security claims can be checked, not just asserted.",
+      s: "Public source with formal-methods work in progress, so security claims can be checked.",
       cta: "Read about Blaster",
       href: OFFICIAL_LINKS.blaster,
     },
@@ -182,7 +180,7 @@ export const DEVELOPER_COPY = {
   tracks: [
     {
       title: "Application builders",
-      body: "Map one UTXO app flow to Midgard: wallet action, contract path, data availability, fallback.",
+      body: "Map one UTXO app flow to Midgard.",
       href: "/developers#query",
       cta: "Run the first query",
     },
@@ -200,7 +198,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Midgard Stack",
-      body: "Deploy the same machinery as your own L2 — custom deployments, reusable infrastructure, and deeper partner integrations once the base protocol path is clear.",
+      body: "Deploy the same machinery as your own L2 — reusable infrastructure and deeper partner integrations once the base protocol path is clear.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Discuss stack path",
     },
