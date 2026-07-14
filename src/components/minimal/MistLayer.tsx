@@ -64,12 +64,15 @@ function makeSprite(tint: [number, number, number]): HTMLCanvasElement {
   s.width = s.height = 256;
   const c = s.getContext("2d")!;
   const g = c.createRadialGradient(128, 128, 0, 128, 128, 128);
-  /* two-tone: luminous core + a faint dusty rim, so a bank reads as a
-     SHAPE against the pale painted sky instead of a milky brightening */
-  g.addColorStop(0, `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, 0.9)`);
-  g.addColorStop(0.38, `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, 0.42)`);
-  g.addColorStop(0.66, "rgba(209, 200, 186, 0.2)");
-  g.addColorStop(1, "rgba(209, 200, 186, 0)");
+  /* real fog against a BRIGHT sky reads slightly DARKER than the sky —
+     cream-on-cream is invisible at any opacity (review 2026-07-13 #2).
+     So: bright cream heart (visible over the dark tree/canyon) inside a
+     dusty grey-sage body (visible over the pale sky). */
+  g.addColorStop(0, `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, 0.85)`);
+  g.addColorStop(0.22, `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, 0.5)`);
+  g.addColorStop(0.45, "rgba(196, 194, 183, 0.5)");
+  g.addColorStop(0.75, "rgba(189, 188, 178, 0.24)");
+  g.addColorStop(1, "rgba(189, 188, 178, 0)");
   c.fillStyle = g;
   c.fillRect(0, 0, 256, 256);
   return s;
@@ -122,10 +125,10 @@ export function MistLayer() {
         dy: 0,
         vx: 0,
         vy: 0,
-        r: 60 + Math.random() * 70,
+        r: 70 + Math.random() * 80,
         angle: (Math.random() - 0.5) * 0.9, // mostly horizontal banks
         stretch: 1.6 + Math.random() * 1.2,
-        baseA: 0.085 + Math.random() * 0.075,
+        baseA: 0.17 + Math.random() * 0.13,
         veil: 1,
         ph: Math.random() * Math.PI * 2,
         curl: Math.random() < 0.5 ? 1 : -1,
