@@ -91,7 +91,8 @@
   text-decoration: none;
   transition: color 0.2s var(--ease);
 }
-.metaLink:hover {
+.metaLink:hover,
+.metaLink:focus-visible {
   color: var(--green-bright);
 }
 
@@ -108,7 +109,8 @@
   opacity: 0.85;
   transition: opacity 0.2s var(--ease);
 }
-.queryTeaser a:hover {
+.queryTeaser a:hover,
+.queryTeaser a:focus-visible {
   opacity: 1;
 }
 :global([data-theme="light"]) .queryTeaser a {
@@ -348,7 +350,8 @@
   text-decoration: none;
   transition: color 0.2s var(--ease);
 }
-a.copyValue:hover {
+a.copyValue:hover,
+a.copyValue:focus-visible {
   color: var(--green-bright);
 }
 .copyBtn {
@@ -365,7 +368,8 @@ a.copyValue:hover {
   cursor: pointer;
   transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
 }
-.copyBtn:hover {
+.copyBtn:hover,
+.copyBtn:focus-visible {
   color: var(--green-bright);
   border-color: var(--green-dim);
 }

@@ -129,7 +129,7 @@ export function SiteNav() {
             className="site-nav__theme"
             onClick={toggleTheme}
             aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            title="Toggle dark mode"
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
           >
             {theme === "dark" ? (
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">

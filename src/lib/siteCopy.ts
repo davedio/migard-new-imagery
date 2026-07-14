@@ -5,11 +5,11 @@ export const SITE_COPY = {
     /** Honest state-of-the-network chip shown above the H1 — links to /status.
         "public" deliberately absent: the public-testnet phase is still ahead. */
     status: "Pre-alpha testnet",
-    /* Headline + subhead agreed on the 2026-07-10 call (Dave + Harun) —
-       replaces "The execution layer for UTXO finance". */
-    title: "Scaling UTXO finance",
+    /* Homepage positioning line. Keep titleLines in sync so the interactive
+       heading preserves the intended line break. */
+    title: "The scaling layer for UTXO finance.",
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
-    titleLines: ["Scaling", "UTXO finance"],
+    titleLines: ["The scaling layer", "for UTXO finance."],
     lead:
       "Midgard is an optimistic rollup that helps apps run faster and at a lower cost while keeping settlement and security anchored on Cardano.",
     primaryCta: { label: "See how it works", href: "/learn" },

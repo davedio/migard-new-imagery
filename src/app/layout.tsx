@@ -37,14 +37,14 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Midgard | Scaling UTXO finance",
+  title: "Midgard | The scaling layer for UTXO finance",
   description:
     "Midgard is an optimistic rollup that helps apps run faster and at a lower cost while keeping settlement and security anchored on Cardano.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Midgard | Scaling UTXO finance",
+    title: "Midgard | The scaling layer for UTXO finance",
     description:
       "An optimistic rollup that helps apps run faster and at a lower cost while keeping settlement and security anchored on Cardano.",
     url: "/",
@@ -54,14 +54,14 @@ export const metadata: Metadata = {
         url: "/og/home.jpg",
         width: 1200,
         height: 630,
-        alt: "Midgard - scaling UTXO finance",
+        alt: "Midgard - the scaling layer for UTXO finance",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Midgard | Scaling UTXO finance",
+    title: "Midgard | The scaling layer for UTXO finance",
     description:
       "An optimistic rollup that helps apps run faster and at a lower cost while keeping settlement and security anchored on Cardano.",
     images: ["/og/home.jpg"],

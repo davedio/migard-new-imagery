@@ -9,6 +9,16 @@ import { useTheme } from "@/lib/theme";
 
 export type BackdropVariant = "full" | "soft" | "bold" | "side" | "banner";
 
+const PALE_DARK_BACKDROPS = new Set([
+  "journey-descent",
+  "journey-flow-tall",
+  "signal-cairn",
+  "sentinel-watch",
+  "stepping-stones",
+  "stone-gateway",
+  "trunk-mist",
+  "winding-road",
+]);
 
 export function PageBackdrop({
   name,
@@ -25,9 +35,10 @@ export function PageBackdrop({
 }) {
   const { theme } = useTheme();
   const base = theme === "dark" ? "/dark/img/watercolor" : "/img/watercolor";
+  const needsDarkWash = theme === "dark" && PALE_DARK_BACKDROPS.has(name);
   return (
     <div
-      className={`page-backdrop page-backdrop--${variant}${vivid ? " page-backdrop--vivid" : ""}`}
+      className={`page-backdrop page-backdrop--${variant}${vivid ? " page-backdrop--vivid" : ""}${needsDarkWash ? " page-backdrop--dark-pale" : ""}`}
       style={{ "--backdrop-pos": focus } as CSSProperties}
       aria-hidden="true"
     >

@@ -183,7 +183,8 @@
   background: transparent;
   transition: color 0.2s var(--ease), background 0.2s var(--ease);
 }
-.switchBtn:hover {
+.switchBtn:hover,
+.switchBtn:focus-visible {
   color: var(--text-hi);
 }
 .switchBtn[data-active="true"][data-net="l1"] {
@@ -272,7 +273,8 @@
   text-decoration: none;
   transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.stackChip:hover {
+.stackChip:hover,
+.stackChip:focus-visible {
   border-color: var(--gold-line);
   transform: translateY(-2px);
 }
@@ -289,7 +291,8 @@
   color: var(--text-faint);
   transition: color 0.2s var(--ease);
 }
-.stackChip:hover .stackExt {
+.stackChip:hover .stackExt,
+.stackChip:focus-visible .stackExt {
   color: var(--gold-bright);
 }
 .stackRole {

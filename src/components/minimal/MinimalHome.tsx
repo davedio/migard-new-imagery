@@ -87,7 +87,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
 
 function EcosystemPartners() {
   return (
-    <section className="minimal-partners" aria-labelledby="minimal-partners-title">
+    <section id="ecosystem" className="minimal-partners" aria-labelledby="minimal-partners-title">
       <h2 id="minimal-partners-title">Ecosystem Partners</h2>
       <p className="minimal-partners__intro">{SITE_COPY.partnersIntro}</p>
       <MagneticPartnerBoard partners={ECOSYSTEM_PARTNERS} />
@@ -215,24 +215,24 @@ export default function MinimalHome() {
         </div>
         <CardGrid cols={2}>
           <Card
-            num="🌊"
+            num="01"
             title="DeFi without congestion"
             body="Swaps, lending, and orderbooks that keep moving when the base chain is busy, then settle back to Cardano."
           />
           <Card
-            num="⚡"
+            num="02"
             title="High-frequency apps"
             body="Games and real-time state that update constantly, confirmed in seconds."
             delay={50}
           />
           <Card
-            num="🪙"
+            num="03"
             title="Everyday payments"
             body="Low-fee transfers in ADA, with nothing new to hold."
             delay={100}
           />
           <Card
-            num="🛠️"
+            num="04"
             title="Cheaper infrastructure"
             body="Run apps and services at lower cost, with the same scripts and tooling."
             delay={150}

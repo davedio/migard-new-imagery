@@ -3,6 +3,22 @@
 import { useState } from "react";
 import styles from "./contracts.module.css";
 
+function copyWithSelection(value: string) {
+  const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  const textarea = document.createElement("textarea");
+  textarea.value = value;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-9999px";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  const didCopy = document.execCommand("copy");
+  textarea.remove();
+  activeElement?.focus();
+  return didCopy;
+}
+
 /**
  * A monospace value (address / hash / UTxO ref) with a copy-to-clipboard
  * button and an optional explorer link. The full value is always present in
@@ -21,13 +37,17 @@ export function CopyField({
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
+    let didCopy = false;
     try {
       await navigator.clipboard.writeText(value);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1400);
+      didCopy = true;
     } catch {
-      // Clipboard blocked (e.g. insecure context) — selection still works.
+      didCopy = copyWithSelection(value);
     }
+
+    if (!didCopy) return;
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1400);
   };
 
   return (

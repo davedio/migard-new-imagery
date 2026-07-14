@@ -1,11 +1,15 @@
 export type EcosystemPartner = {
   name: string;
+  /** Light-colored mark for the dark site theme. */
   logo: string;
-  logoLight?: string;
+  /** Dark-ink mark for the light site theme. */
+  logoLight: string;
   width: number;
   height: number;
   tone: "dark" | "light";
   logoShape?: "wide" | "icon" | "tall";
+  showName?: boolean;
+  monochromeOnLight?: boolean;
 };
 
 export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
@@ -19,11 +23,11 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoShape: "wide",
   },
   {
-    name: "Artifi Labs",
-    logo: "/ecosystem/artifi-labs.svg",
-    logoLight: "/ecosystem/artifi-labs-light.svg",
-    width: 122,
-    height: 31,
+    name: "Sundae Labs",
+    logo: "/ecosystem/sundae-labs-dark.png",
+    logoLight: "/ecosystem/sundae-labs.png",
+    width: 1143,
+    height: 195,
     tone: "dark",
     logoShape: "wide",
   },
@@ -32,6 +36,65 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logo: "/ecosystem/input-output.svg",
     logoLight: "/ecosystem/input-output-light.svg",
     width: 240,
+    height: 31,
+    tone: "dark",
+    logoShape: "wide",
+  },
+  {
+    name: "VIA Labs",
+    logo: "/ecosystem/via-labs.svg",
+    logoLight: "/ecosystem/via-labs.svg",
+    width: 140,
+    height: 26,
+    tone: "dark",
+    logoShape: "wide",
+    monochromeOnLight: true,
+  },
+  {
+    name: "Flux Point Studios",
+    logo: "/ecosystem/flux-point-studios.png",
+    logoLight: "/ecosystem/flux-point-studios.png",
+    width: 250,
+    height: 274,
+    tone: "dark",
+    logoShape: "icon",
+    showName: true,
+  },
+  {
+    name: "FluidTokens",
+    logo: "/ecosystem/fluidtokens.svg",
+    logoLight: "/ecosystem/fluidtokens-dark.svg",
+    width: 187,
+    height: 230,
+    tone: "dark",
+    logoShape: "icon",
+    showName: true,
+  },
+  {
+    name: "Indigo Labs",
+    logo: "/ecosystem/indigo-labs.png",
+    logoLight: "/ecosystem/indigo-labs.png",
+    width: 1500,
+    height: 500,
+    tone: "dark",
+    logoShape: "wide",
+    monochromeOnLight: true,
+  },
+  {
+    name: "Strike Finance",
+    logo: "/ecosystem/strike-finance.svg",
+    logoLight: "/ecosystem/strike-finance.svg",
+    width: 356,
+    height: 51,
+    tone: "dark",
+    logoShape: "wide",
+    monochromeOnLight: true,
+  },
+  {
+    name: "Artifi Labs",
+    logo: "/ecosystem/artifi-labs.svg",
+    logoLight: "/ecosystem/artifi-labs-light.svg",
+    width: 122,
     height: 31,
     tone: "dark",
     logoShape: "wide",
@@ -71,6 +134,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     height: 96,
     tone: "dark",
     logoShape: "icon",
+    showName: true,
   },
   {
     name: "Modus Create",
@@ -100,15 +164,6 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoShape: "wide",
   },
   {
-    name: "Sundae Labs",
-    logo: "/ecosystem/sundae-labs-dark.png",
-    logoLight: "/ecosystem/sundae-labs.png",
-    width: 1143,
-    height: 195,
-    tone: "dark",
-    logoShape: "wide",
-  },
-  {
     name: "Tweag",
     logo: "/ecosystem/tweag.png",
     logoLight: "/ecosystem/tweag-light.png",
@@ -125,6 +180,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     height: 331,
     tone: "dark",
     logoShape: "icon",
+    showName: true,
   },
   {
     name: "WingRiders",

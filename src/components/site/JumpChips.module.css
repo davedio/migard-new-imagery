@@ -73,12 +73,14 @@
   color: #3a4136;
 }
 
-.chip:hover {
+.chip:hover,
+.chip:focus-visible {
   color: var(--text-hi, #f4f1e6);
   border-color: var(--panel-edge-strong, rgba(244, 241, 230, 0.28));
   background: rgba(244, 241, 230, 0.08);
 }
-:global([data-theme="light"]) .chip:hover {
+:global([data-theme="light"]) .chip:hover,
+:global([data-theme="light"]) .chip:focus-visible {
   color: #15170f;
   border-color: rgba(73, 55, 23, 0.32);
   background: rgba(255, 252, 244, 0.9);
@@ -93,13 +95,15 @@
    light mode). The active rules are compounded (.chip.chipActive) so they
    outrank the resting rules no matter which sheet loads last. */
 .chip.chipActive,
-.chip.chipActive:hover {
+.chip.chipActive:hover,
+.chip.chipActive:focus-visible {
   background: var(--green-bright, #4ef383);
   border-color: transparent;
   color: #06110a;
 }
 :global([data-theme="light"]) .chip.chipActive,
-:global([data-theme="light"]) .chip.chipActive:hover {
+:global([data-theme="light"]) .chip.chipActive:hover,
+:global([data-theme="light"]) .chip.chipActive:focus-visible {
   background: var(--green-bright, #0c7d36);
   border-color: transparent;
   color: #f4f1ec;

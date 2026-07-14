@@ -62,7 +62,7 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
 
   await expect(
     page.getByRole("heading", {
-      name: /Scaling UTXO finance/i,
+      name: /The scaling layer for UTXO finance/i,
     }),
   ).toBeVisible();
   await expect(page.locator(".minimal-hero__copy")).toContainText("Cardano L1");

@@ -180,20 +180,28 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
             {row.map((partner, index) => {
               // Dark site: use the light-colored logo (partner.logo) so it reads
               // on a dark chip. Light site: use the dark-ink logoLight variant.
-              const logo =
-                theme === "dark" ? partner.logo : partner.logoLight ?? partner.logo;
+              const logo = theme === "dark" ? partner.logo : partner.logoLight;
+              const logoClassName = [
+                "partner-magnet-card__logo",
+                theme === "light" && partner.monochromeOnLight
+                  ? "partner-magnet-card__logo--monochrome"
+                  : "",
+              ]
+                .filter(Boolean)
+                .join(" ");
 
               return (
                 <div
                   className="partner-magnet-card"
                   data-logo-shape={partner.logoShape ?? "wide"}
+                  data-show-name={partner.showName ? "true" : undefined}
                   data-slot={index + 1}
                   data-tone={partner.tone}
                   aria-label={partner.name}
                   key={partner.name}
                   role="listitem"
                 >
-                  <span className="partner-magnet-card__logo" aria-hidden="true">
+                  <span className={logoClassName} aria-hidden="true">
                     <Image
                       src={logo}
                       alt=""
@@ -204,6 +212,11 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                       unoptimized={isSvgLogo(logo)}
                     />
                   </span>
+                  {partner.showName ? (
+                    <span className="partner-magnet-card__name" aria-hidden="true">
+                      {partner.name}
+                    </span>
+                  ) : null}
                 </div>
               );
             })}
