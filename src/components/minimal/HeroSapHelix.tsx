@@ -71,7 +71,7 @@ export function HeroSapHelix({
   const { motionOn } = useMotionPref();
   const { theme } = useTheme();
   /* DARK MODE ONLY (direction 2026-07-13): the luminous sap belongs to the
-     night plate; light mode carries the MistLayer instead. */
+     night plate. */
   const active = motionOn && theme === "dark";
 
   useEffect(() => {

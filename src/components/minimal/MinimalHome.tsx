@@ -4,7 +4,6 @@ import ShatterHeading from "@/components/v2/ShatterHeading";
 import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
 import FireflyField from "@/components/minimal/FireflyField";
 import { HeroStage } from "@/components/minimal/HeroStage";
-import MistLayer from "@/components/minimal/MistLayer";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
@@ -100,8 +99,6 @@ export default function MinimalHome() {
   return (
     <main className="minimal-site">
       <HeroStage />
-      {/* light-theme wafting fog — home page only (Dave 2026-07-13) */}
-      <MistLayer />
       <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
         {/* live-activity fireflies over the night plate (dark theme only) */}
         <FireflyField count={16} className="minimal-hero__fireflies" />
