@@ -57,7 +57,10 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
   },
 ];
 
-const LEGAL = ["Terms publishing soon", "Privacy publishing soon"] as const;
+const LEGAL = [
+  { label: "Terms of Use", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
+] as const;
 
 /**
  * Shared footer for the (site) route group — the full sitemap. Static server
@@ -109,8 +112,10 @@ export function SiteFooter() {
 
       <div className="site-footer__bottom">
         <div className="site-footer__legal">
-          {LEGAL.map((label) => (
-            <span key={label}>{label}</span>
+          {LEGAL.map((l) => (
+            <Link href={l.href} key={l.label}>
+              {l.label}
+            </Link>
           ))}
         </div>
         <NetworkChip />
