@@ -3822,6 +3822,14 @@ h2 em,
    light surfaces. Scoped to [data-theme="light"] for the current site.
    ============================================================ */
 
+/* -- light-theme mist: drifting fog banks you can waft away (MistLayer) -- */
+.mist-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 44;
+  pointer-events: none;
+}
+
 /* -- home hero: fixed painterly tree plate that zooms + dissolves -- */
 .hero-tree-stage {
   position: fixed;

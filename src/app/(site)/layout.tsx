@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { SiteNav } from "@/components/site/SiteNav";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import InteriorFluidBackground from "@/components/InteriorFluidBackground";
+import MistLayer from "@/components/minimal/MistLayer";
 import { ScrollProgress } from "@/components/v2/ChromeV2";
 
 /**
@@ -33,6 +34,8 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
         {children}
         <SiteFooter />
       </div>
+      {/* light-theme wafting fog — fixed over the page, under the nav */}
+      <MistLayer />
     </>
   );
 }
