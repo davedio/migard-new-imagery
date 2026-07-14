@@ -1,82 +1,121 @@
 "use client";
 
 /* ============================================================
-   MistLayer — light-theme atmosphere for the whole site, take two.
+   MistLayer — real volumetric-looking mist, home hero only.
 
-   Review (2026-07-13): v1 spread ~100 near-invisible wisps evenly
-   across the frame — no fog you could SEE, yet the accumulated film
-   washed the painting out. This version is the opposite shape:
+   Take three (review 2026-07-13: sprite blobs "don't look real").
+   This is a WebGL fragment-shader fog — the technique real sites
+   use for living smoke:
 
-     · the fog lives in a handful of drifting BANKS (clusters of
-       elongated wisps), dense enough to read as real fog with soft
-       bright cores and ragged edges
-     · between banks there is CLEAR AIR — most of the painting shows
-       through completely untouched
-     · total coverage is lower than v1, but every wisp is ~3x denser,
-       so the mist is unmistakably there
+     · 5-octave fractal noise, DOMAIN-WARPED (fbm sampled through
+       fbm), advected by a slow wind — the fog curls and breathes
+       like actual vapor, no repeating shapes, no blobs
+     · a low-frequency bank mask carves it into drifting fog banks
+       with genuinely clear air between them
+     · two-tone shading: dusty grey-sage body against the pale sky,
+       cream highlights inside the dense cores over the dark tree
 
-   The waft is unchanged in spirit and stronger in feel: pointer
-   VELOCITY pushes nearby wisps along the hand's stroke (with curl),
-   and thins them fast; they tumble, settle, and refill over ~3s.
-   A slow hover barely stirs the fog; a sweep parts a bank.
+   The WAFT is written into the noise field itself: the pointer
+   leaves a short trail of disturbances (position + velocity + age);
+   each one pushes the fog's sampling domain along the hand's stroke
+   AND thins the density locally, decaying over ~2s — so a sweep
+   visibly bends, tears, and clears the vapor, which then re-knits.
+   Slow hovers barely register (velocity-driven, like the rest of
+   the site's motion grammar).
 
-   Light theme + motion-on only; parked when hidden; self-heals
-   zero-size mounts. Decorative (pointer-events: none, under nav).
+   Raw WebGL (one quad, one shader) — no scene graph needed. Light
+   theme + home + motion-on only; parks when hidden; self-heals
+   zero-size mounts; falls back to nothing without WebGL.
    ============================================================ */
 
 import { useEffect, useRef } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme } from "@/lib/theme";
 
-const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const TRAIL = 20; // pointer disturbance ring buffer
 
-type Wisp = {
-  /** local offset from the cluster centre */
-  ox: number;
-  oy: number;
-  /** waft displacement (velocity-integrated, decays home) */
-  dx: number;
-  dy: number;
-  vx: number;
-  vy: number;
-  r: number;
-  angle: number; // bank elongation axis
-  stretch: number; // 1.6..2.8 — how elongated the bank reads
-  baseA: number;
-  veil: number;
-  ph: number;
-  curl: 1 | -1;
-  sprite: number;
-};
-
-type Cluster = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  ph: number;
-  wisps: Wisp[];
-};
-
-function makeSprite(tint: [number, number, number]): HTMLCanvasElement {
-  const s = document.createElement("canvas");
-  s.width = s.height = 256;
-  const c = s.getContext("2d")!;
-  const g = c.createRadialGradient(128, 128, 0, 128, 128, 128);
-  /* real fog against a BRIGHT sky reads slightly DARKER than the sky —
-     cream-on-cream is invisible at any opacity (review 2026-07-13 #2).
-     So: bright cream heart (visible over the dark tree/canyon) inside a
-     dusty grey-sage body (visible over the pale sky). */
-  g.addColorStop(0, `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, 0.85)`);
-  g.addColorStop(0.22, `rgba(${tint[0]}, ${tint[1]}, ${tint[2]}, 0.5)`);
-  g.addColorStop(0.45, "rgba(196, 194, 183, 0.5)");
-  g.addColorStop(0.75, "rgba(189, 188, 178, 0.24)");
-  g.addColorStop(1, "rgba(189, 188, 178, 0)");
-  c.fillStyle = g;
-  c.fillRect(0, 0, 256, 256);
-  return s;
+const VERT = `
+attribute vec2 aPos;
+void main() {
+  gl_Position = vec4(aPos, 0.0, 1.0);
 }
+`;
+
+const FRAG = `
+precision highp float;
+
+uniform vec2 uRes;
+uniform float uT;
+uniform vec4 uTrail[${TRAIL}]; /* xy = pos (uv), zw = velocity (uv/s) */
+uniform float uAge[${TRAIL}];
+
+/* ---- hash / value noise / fbm ---- */
+float hash(vec2 p) {
+  p = fract(p * vec2(234.34, 435.345));
+  p += dot(p, p + 34.23);
+  return fract(p.x * p.y);
+}
+float noise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  float a = hash(i);
+  float b = hash(i + vec2(1.0, 0.0));
+  float c = hash(i + vec2(0.0, 1.0));
+  float d = hash(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+float fbm(vec2 p) {
+  float v = 0.0;
+  float amp = 0.5;
+  mat2 rot = mat2(0.8, 0.6, -0.6, 0.8); /* rotate octaves — kills grid feel */
+  for (int i = 0; i < 5; i++) {
+    v += amp * noise(p);
+    p = rot * p * 2.03;
+    amp *= 0.5;
+  }
+  return v;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes;
+  float aspect = uRes.x / uRes.y;
+  vec2 suv = vec2(uv.x * aspect, uv.y); /* aspect-true space */
+
+  /* pointer disturbances: push the sampling domain along the stroke,
+     and thin the fog locally — both decay with age */
+  vec2 push = vec2(0.0);
+  float thin = 0.0;
+  for (int i = 0; i < ${TRAIL}; i++) {
+    vec2 tp = vec2(uTrail[i].x * aspect, uTrail[i].y);
+    vec2 tv = uTrail[i].zw;
+    float d = distance(suv, tp);
+    float infl = exp(-d * d * 55.0) * exp(-uAge[i] * 1.35);
+    push += tv * infl * 0.6;
+    thin += infl * min(1.0, length(tv) * 1.6);
+  }
+
+  /* fog field: wind-advected, domain-warped fbm */
+  vec2 wind = vec2(uT * 0.020, uT * 0.006);
+  vec2 p = suv * 2.6 + push * 2.4;
+  float warp = fbm(p * 0.85 + wind * 1.7 + 11.3);
+  float f = fbm(p + vec2(warp * 1.7, warp * 1.1) + wind);
+
+  /* banks: low-frequency coverage so there is real clear air */
+  float banks = smoothstep(0.42, 0.72, fbm(suv * 0.7 + wind * 0.5 + push * 0.8 + 3.7));
+
+  float density = smoothstep(0.38, 0.82, f) * banks;
+  density *= 1.0 - clamp(thin, 0.0, 0.92);
+
+  /* two-tone: dusty grey-sage body, cream hearts in the dense cores */
+  vec3 body = vec3(0.742, 0.735, 0.700);
+  vec3 core = vec3(0.992, 0.980, 0.953);
+  vec3 col = mix(body, core, smoothstep(0.30, 0.85, density));
+
+  float alpha = density * 0.62;
+  gl_FragColor = vec4(col * alpha, alpha); /* premultiplied */
+}
+`;
 
 export function MistLayer() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,187 +126,119 @@ export function MistLayer() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !active) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const gl = canvas.getContext("webgl", {
+      alpha: true,
+      premultipliedAlpha: true,
+      antialias: false,
+      depth: false,
+      stencil: false,
+    });
+    if (!gl) return; // no WebGL — the page simply has no mist
 
-    let raf = 0;
-    let running = false;
+    /* ---- compile ---- */
+    const mk = (type: number, src: string) => {
+      const sh = gl.createShader(type)!;
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+        return null;
+      }
+      return sh;
+    };
+    const vs = mk(gl.VERTEX_SHADER, VERT);
+    const fs = mk(gl.FRAGMENT_SHADER, FRAG);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    const quad = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 3, -1, -1, 3]), /* fullscreen tri */
+      gl.STATIC_DRAW,
+    );
+    const aPos = gl.getAttribLocation(prog, "aPos");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); /* premultiplied */
+
+    const uRes = gl.getUniformLocation(prog, "uRes");
+    const uT = gl.getUniformLocation(prog, "uT");
+    const uTrail = gl.getUniformLocation(prog, "uTrail");
+    const uAge = gl.getUniformLocation(prog, "uAge");
+
+    /* fog is soft — render at reduced resolution and let CSS stretch it */
+    const SCALE = Math.min(window.devicePixelRatio || 1, 1.5) * 0.6;
     let W = 0;
     let H = 0;
-    const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
-
-    /* warm parchment cream + a faint sage, matching the painted palette */
-    const sprites = [
-      makeSprite([253, 250, 243]),
-      makeSprite([238, 244, 235]),
-    ];
-
     const fit = () => {
       W = window.innerWidth;
       H = window.innerHeight;
-      canvas.width = Math.round(W * DPR);
-      canvas.height = Math.round(H * DPR);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      canvas.width = Math.max(2, Math.round(W * SCALE));
+      canvas.height = Math.max(2, Math.round(H * SCALE));
+      gl.viewport(0, 0, canvas.width, canvas.height);
     };
     fit();
 
-    /* ---- the banks ---- */
-    const clusterCount = () => (window.innerWidth <= 760 ? 3 : 5);
-    const clusters: Cluster[] = [];
-
-    const makeWisp = (): Wisp => {
-      const spreadX = 130 + Math.random() * 130;
-      const spreadY = 60 + Math.random() * 70;
-      return {
-        ox: (Math.random() - 0.5) * 2 * spreadX,
-        oy: (Math.random() - 0.5) * 2 * spreadY,
-        dx: 0,
-        dy: 0,
-        vx: 0,
-        vy: 0,
-        r: 70 + Math.random() * 80,
-        angle: (Math.random() - 0.5) * 0.9, // mostly horizontal banks
-        stretch: 1.6 + Math.random() * 1.2,
-        baseA: 0.17 + Math.random() * 0.13,
-        veil: 1,
-        ph: Math.random() * Math.PI * 2,
-        curl: Math.random() < 0.5 ? 1 : -1,
-        sprite: Math.random() < 0.7 ? 0 : 1,
-      };
-    };
-
-    const seed = () => {
-      clusters.length = 0;
-      const n = clusterCount();
-      for (let i = 0; i < n; i++) {
-        /* spread the banks around the frame with jitter — never a grid */
-        const gx = (i + 0.5) / n + (Math.random() - 0.5) * 0.14;
-        const wisps: Wisp[] = [];
-        const per = 4 + Math.floor(Math.random() * 3);
-        for (let k = 0; k < per; k++) wisps.push(makeWisp());
-        clusters.push({
-          x: gx * W,
-          y: (0.12 + Math.random() * 0.76) * H,
-          vx: (Math.random() - 0.5) * 7,
-          vy: (Math.random() - 0.5) * 3.5,
-          ph: Math.random() * Math.PI * 2,
-          wisps,
-        });
-      }
-    };
-    seed();
-
-    /* pointer — POSITION for locality, VELOCITY for force */
-    const ptr = { x: -9999, y: -9999, vx: 0, vy: 0 };
-    let lastMove = 0;
+    /* ---- pointer disturbance ring buffer ---- */
+    const trail = new Float32Array(TRAIL * 4);
+    const ages = new Float32Array(TRAIL).fill(99);
+    let head = 0;
+    const ptr = { x: -1, y: -1, t: 0 };
     const onMove = (e: PointerEvent) => {
       const now = performance.now();
-      const dtm = Math.min(64, now - (lastMove || now - 16)) / 1000;
-      lastMove = now;
-      if (ptr.x > -999) {
-        ptr.vx = lerp(ptr.vx, (e.clientX - ptr.x) / Math.max(dtm, 0.008), 0.3);
-        ptr.vy = lerp(ptr.vy, (e.clientY - ptr.y) / Math.max(dtm, 0.008), 0.3);
+      const nx = e.clientX / Math.max(1, W);
+      const ny = 1 - e.clientY / Math.max(1, H); /* GL y-up */
+      if (ptr.x >= 0) {
+        const dts = Math.max(0.008, (now - ptr.t) / 1000);
+        const vx = (nx - ptr.x) / dts;
+        const vy = (ny - ptr.y) / dts;
+        const speed = Math.hypot(vx, vy);
+        /* only real strokes disturb the fog — hover jitter is ignored */
+        if (speed > 0.12) {
+          const i = head % TRAIL;
+          trail[i * 4] = nx;
+          trail[i * 4 + 1] = ny;
+          const cap = Math.min(1, speed) / Math.max(speed, 1e-4);
+          trail[i * 4 + 2] = vx * cap;
+          trail[i * 4 + 3] = vy * cap;
+          ages[i] = 0;
+          head++;
+        }
       }
-      ptr.x = e.clientX;
-      ptr.y = e.clientY;
+      ptr.x = nx;
+      ptr.y = ny;
+      ptr.t = now;
     };
 
-    const WAFT_R = 250;
+    let raf = 0;
+    let running = false;
     let last = performance.now();
+    let t = Math.random() * 100; /* start mid-field, never identical */
 
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
-      /* self-heal zero-size mounts (prerender/background tab) */
-      if (W !== window.innerWidth || H !== window.innerHeight) {
-        const hadNone = W === 0;
-        fit();
-        if (hadNone && W > 0) seed();
-      }
+      if (W !== window.innerWidth || H !== window.innerHeight) fit();
       if (W === 0) return;
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      const t = now / 1000;
+      t += dt;
+      for (let i = 0; i < TRAIL; i++) ages[i] += dt;
 
-      ptr.vx *= Math.exp(-6 * dt);
-      ptr.vy *= Math.exp(-6 * dt);
-      const sweep = clamp01(Math.hypot(ptr.vx, ptr.vy) / 750);
-
-      ctx.clearRect(0, 0, W, H);
-
-      for (const cl of clusters) {
-        /* banks drift as one — a slow travelling weather system */
-        cl.vx += Math.sin(t * 0.09 + cl.ph) * 1.6 * dt;
-        cl.vy += Math.cos(t * 0.07 + cl.ph * 1.7) * 0.9 * dt;
-        cl.vx *= Math.exp(-0.5 * dt);
-        cl.vy *= Math.exp(-0.5 * dt);
-        cl.x += cl.vx * dt * 10;
-        cl.y += cl.vy * dt * 10;
-        /* toroidal wrap with a generous margin so a bank re-enters whole */
-        const M = 420;
-        if (cl.x < -M) cl.x = W + M;
-        else if (cl.x > W + M) cl.x = -M;
-        if (cl.y < -M) cl.y = H + M;
-        else if (cl.y > H + M) cl.y = -M;
-
-        for (const b of cl.wisps) {
-          /* slow internal churn keeps a bank alive */
-          const churnX = Math.sin(t * 0.16 + b.ph) * 9;
-          const churnY = Math.cos(t * 0.13 + b.ph * 2.1) * 5;
-          const hx = cl.x + b.ox + churnX;
-          const hy = cl.y + b.oy + churnY;
-
-          /* the waft: velocity-scaled push along the hand's stroke */
-          const px2 = hx + b.dx;
-          const py2 = hy + b.dy;
-          const ddx = px2 - ptr.x;
-          const ddy = py2 - ptr.y;
-          const dist = Math.hypot(ddx, ddy);
-          let thin = 0;
-          if (dist < WAFT_R + b.r && sweep > 0.015) {
-            const fall = Math.pow(1 - clamp01(dist / (WAFT_R + b.r)), 1.5);
-            const inv = 1 / Math.max(26, dist);
-            const ax = ddx * inv;
-            const ay = ddy * inv;
-            const push = (150 + 620 * sweep) * fall;
-            b.vx += (ax * push + ptr.vx * 0.5 * fall - ay * b.curl * push * 0.3) * dt;
-            b.vy += (ay * push + ptr.vy * 0.5 * fall + ax * b.curl * push * 0.3) * dt;
-            thin = fall * sweep;
-          }
-
-          /* displacement integrates, decays home (the bank re-forms) */
-          b.vx *= Math.exp(-1.9 * dt);
-          b.vy *= Math.exp(-1.9 * dt);
-          b.dx += b.vx * dt * 16;
-          b.dy += b.vy * dt * 16;
-          b.dx *= Math.exp(-0.55 * dt);
-          b.dy *= Math.exp(-0.55 * dt);
-
-          /* thinning: fast to clear, slow (~3s) to refill */
-          const veilTarget = 1 - 0.9 * thin;
-          b.veil +=
-            (veilTarget - b.veil) *
-            Math.min(1, dt * (veilTarget < b.veil ? 8 : 0.33));
-
-          const a = b.baseA * b.veil;
-          if (a < 0.008) continue;
-
-          /* an elongated bank: three stamps along the wisp's axis */
-          const breathe = 1 + 0.05 * Math.sin(t * 0.3 + b.ph);
-          const r = b.r * breathe;
-          const wob = b.angle + Math.sin(t * 0.11 + b.ph) * 0.1;
-          const cosA = Math.cos(wob);
-          const sinA = Math.sin(wob);
-          const step = r * b.stretch * 0.42;
-          ctx.globalAlpha = a;
-          for (let k = -1; k <= 1; k++) {
-            const sx = px2 + cosA * step * k;
-            const sy = py2 + sinA * step * k;
-            const sr = r * (k === 0 ? 1 : 0.78);
-            ctx.drawImage(sprites[b.sprite], sx - sr, sy - sr, sr * 2, sr * 2);
-          }
-        }
-      }
-      ctx.globalAlpha = 1;
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform1f(uT, t);
+      gl.uniform4fv(uTrail, trail);
+      gl.uniform1fv(uAge, ages);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
 
     const start = () => {
@@ -292,6 +263,10 @@ export function MistLayer() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("resize", fit);
       document.removeEventListener("visibilitychange", onVis);
+      gl.deleteProgram(prog);
+      gl.deleteShader(vs);
+      gl.deleteShader(fs);
+      gl.deleteBuffer(quad);
     };
   }, [active]);
 
