@@ -54,7 +54,7 @@ const securityRows = [
   },
   {
     label: "Contracts in the open",
-    body: "Public source with formal-methods work in progress, so claims can be checked rather than accepted on trust.",
+    body: "Public source with formal-methods work in progress, so claims can be checked.",
     href: "/developers#contracts",
   },
   ...DEVELOPER_COPY.security.rows,
@@ -185,7 +185,7 @@ export default function LearnPage() {
             id="flow"
             eyebrow="What users feel first"
             title="Watch transactions soft-confirm."
-            lead="Transactions become usable in seconds while blocks seal behind them and commit down to Cardano — simulated here to show the shape of the flow."
+            lead="Transactions become usable in seconds while blocks seal behind them and commit down to Cardano — simulated here."
           >
             <SoftConfirmFeed />
           </Section>

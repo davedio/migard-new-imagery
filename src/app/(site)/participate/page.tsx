@@ -12,7 +12,7 @@ import styles from "./participate.module.css";
 export const metadata: Metadata = {
   title: "Participate | Midgard",
   description:
-    "Operator and Watcher roles, network economics, and how to register interest in participating in Midgard.",
+    "Operator and Watcher roles, network economics, and how to register interest.",
   openGraph: {
     title: "Participate | Midgard",
     images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],
@@ -50,7 +50,7 @@ const economicsSteps = [
 const differentCards = [
   {
     title: "Verifiable security",
-    body: "A bad state transition can be checked precisely — against the exact inputs and scripts it touched — instead of relying on broad trust. UTXO execution is deterministic and local, so validity can be checked on Cardano itself.",
+    body: "A bad state transition can be checked against the exact inputs and scripts it touched — instead of relying on broad trust. UTXO execution is deterministic and local, so validity can be checked on Cardano itself.",
   },
   {
     title: "Non-custodial",
@@ -105,7 +105,7 @@ export default function ParticipatePage() {
         <CardGrid cols={2}>
           <Card
             title="Operator"
-            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts — and they stake a bond to do it. If a fault proof succeeds against a block they committed, that bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
+            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts. If a fault proof succeeds against a block they committed, their bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
           />
           <Card
             title="Watcher"
@@ -139,7 +139,7 @@ export default function ParticipatePage() {
       <Section
         id="different"
         title="Security you can verify."
-        lead="Most Layer 2s force a new trust model onto you: an operator set or a multisig bridge. Midgard asks you to trust Cardano and verifiable computation. Here is the difference."
+        lead="Most Layer 2s force a new trust model onto you: an operator set or a multisig bridge. Midgard asks you to trust Cardano and verifiable computation."
         cols
         aside={
           <Statement

@@ -47,11 +47,11 @@ export const GLOSSARY = {
   },
   bond: {
     term: "bond",
-    def: "ADA an Operator locks as collateral on Cardano; a valid fault proof slashes it, which is what makes honest operation the profitable strategy.",
+    def: "ADA an Operator locks as collateral on Cardano; a valid fault proof slashes it, making honest operation the profitable strategy.",
   },
   "soft-confirmation": {
     term: "soft confirmation",
-    def: "The near-instant confirmation you can act on — reached in seconds (estimated), backed by the Operator's bond, ahead of final settlement.",
+    def: "The confirmation you can act on — reached in seconds (estimated), backed by the Operator's bond, ahead of final settlement.",
   },
   "state-queue": {
     term: "state queue",
@@ -71,7 +71,7 @@ export const GLOSSARY = {
   },
   "rpc-poisoning": {
     term: "RPC poisoning",
-    def: "Feeding an app false chain data through a compromised RPC provider; Midgard's canonical state lives on Cardano, so you can verify it from your own node instead of trusting a single feed.",
+    def: "Feeding an app false chain data through a compromised RPC provider; Midgard's canonical state lives on Cardano, so you can verify it from your own node.",
   },
 } as const;
 

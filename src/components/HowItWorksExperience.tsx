@@ -163,7 +163,7 @@ const EXPLAINER_STEPS = [
     layer: "Cardano L1 finality",
     what: "If no valid fault proof succeeds, verified state settles through Cardano L1.",
     check: "After the verification path clears, finalized state inherits Cardano L1 security.",
-    why: "Fast execution and final settlement stay separate, clear, and reviewable.",
+    why: "Fast execution and final settlement stay separate and reviewable.",
   },
 ] as const;
 
@@ -204,7 +204,7 @@ function JourneyAct({
           </h2>
           <p className="hiw-act__lead">
             You have the model. Now watch Midgard order, publish, verify, and
-            settle one transaction all the way down to Cardano.
+            settle one transaction down to Cardano.
           </p>
           <ol className="hiw-act__beats" ref={beatsRef} aria-label="Jump to a stage in the journey">
             {ACT_BEATS.map((b, i) => (
