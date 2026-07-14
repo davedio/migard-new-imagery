@@ -3,25 +3,31 @@
 /* ============================================================
    MistLayer — real volumetric-looking mist, home hero only.
 
-   Take three (review 2026-07-13: sprite blobs "don't look real").
-   This is a WebGL fragment-shader fog — the technique real sites
-   use for living smoke:
+   Take four (review 2026-07-13: "static and kinetic pops, not
+   smooth"). Two real bugs, now fixed:
 
-     · 5-octave fractal noise, DOMAIN-WARPED (fbm sampled through
-       fbm), advected by a slow wind — the fog curls and breathes
-       like actual vapor, no repeating shapes, no blobs
-     · a low-frequency bank mask carves it into drifting fog banks
-       with genuinely clear air between them
-     · two-tone shading: dusty grey-sage body against the pale sky,
-       cream highlights inside the dense cores over the dark tree
+     1. STATIC — the noise field only ever TRANSLATED through wind
+        (fbm(p + wind*t) is a fixed pattern being panned). At a slow
+        wind speed that reads as a frozen photo sliding, not living
+        vapor. Fixed with genuine time-domain turbulence: the domain
+        warp itself is re-sampled through a second, independently-
+        phased time offset, so the fog's SHAPE churns frame to frame,
+        not just its position.
 
-   The WAFT is written into the noise field itself: the pointer
-   leaves a short trail of disturbances (position + velocity + age);
-   each one pushes the fog's sampling domain along the hand's stroke
-   AND thins the density locally, decaying over ~2s — so a sweep
-   visibly bends, tears, and clears the vapor, which then re-knits.
-   Slow hovers barely register (velocity-driven, like the rest of
-   the site's motion grammar).
+     2. POPS — the cursor trail recorded raw, widely-spaced pointer
+        samples at full strength the instant they landed (age=0 was
+        already 100% intensity), so a fast sweep looked like isolated
+        hotspots snapping in and out rather than one continuous
+        disturbance. Fixed two ways: (a) fast pointer moves are now
+        linearly interpolated into several sub-points along the
+        stroke, so the trail is a continuous rope, not scattered
+        dots; (b) every disturbance fades IN over ~150ms (attack
+        ramp) before it decays, so nothing snaps to full strength in
+        a single frame.
+
+   Otherwise unchanged: a low-frequency bank mask carves the field
+   into drifting banks with real clear air; two-tone shading (dusty
+   grey-sage body against the pale sky, cream hearts in dense cores).
 
    Raw WebGL (one quad, one shader) — no scene graph needed. Light
    theme + home + motion-on only; parks when hidden; self-heals
@@ -32,7 +38,7 @@ import { useEffect, useRef } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme } from "@/lib/theme";
 
-const TRAIL = 20; // pointer disturbance ring buffer
+const TRAIL = 32; // pointer disturbance ring buffer (headroom for interpolated strokes)
 
 const VERT = `
 attribute vec2 aPos;
@@ -83,7 +89,9 @@ void main() {
   vec2 suv = vec2(uv.x * aspect, uv.y); /* aspect-true space */
 
   /* pointer disturbances: push the sampling domain along the stroke,
-     and thin the fog locally — both decay with age */
+     and thin the fog locally. Each one FADES IN over ~150ms (attack)
+     before its ~6s/~3s decay — nothing snaps to full strength in one
+     frame, which is what read as a "pop". */
   vec2 push = vec2(0.0);
   float thin = 0.0;
   for (int i = 0; i < ${TRAIL}; i++) {
@@ -92,20 +100,25 @@ void main() {
     vec2 tp = vec2(uTrail[i].x * aspect, uTrail[i].y) + vec2(0.007, 0.002) * uAge[i];
     vec2 tv = uTrail[i].zw;
     float d = distance(suv, tp);
-    float base = exp(-d * d * 55.0);
-    /* the BEND lingers (~6s), the cleared HOLE refills sooner (~3s) */
-    push += tv * base * exp(-uAge[i] * 0.35) * 0.5;
-    thin += base * exp(-uAge[i] * 0.8) * min(1.0, length(tv) * 1.6);
+    float base = exp(-d * d * 34.0); /* softer than before — points blend into a rope */
+    float attack = smoothstep(0.0, 0.16, uAge[i]);
+    push += tv * base * attack * exp(-uAge[i] * 0.35) * 0.5;
+    thin += base * attack * exp(-uAge[i] * 0.8) * min(1.0, length(tv) * 1.6);
   }
 
-  /* fog field: wind-advected, domain-warped fbm */
-  vec2 wind = vec2(uT * 0.0085, uT * 0.0024); /* fog creeps, never scrolls */
+  /* fog field: wind-advected AND genuinely turbulent. Sampling a fixed
+     noise pattern through wind*t alone is just a pan — it looks frozen
+     at a slow speed. Feeding a second, independently-phased time offset
+     back into the warp makes the SHAPE itself churn frame to frame. */
+  vec2 wind = vec2(uT * 0.011, uT * 0.003); /* fog creeps, never scrolls */
   vec2 p = suv * 2.6 + push * 2.4;
-  float warp = fbm(p * 0.85 + wind * 1.7 + 11.3);
+  vec2 warpCoord = p * 0.85 + wind * 1.7 + 11.3;
+  float warp = fbm(warpCoord + fbm(warpCoord * 0.55 + uT * 0.05) * 1.5);
   float f = fbm(p + vec2(warp * 1.7, warp * 1.1) + wind);
 
-  /* banks: low-frequency coverage so there is real clear air */
-  float banks = smoothstep(0.38, 0.64, fbm(suv * 0.7 + wind * 0.5 + push * 0.8 + 3.7));
+  /* banks: low-frequency coverage so there is real clear air; also
+     given a whisper of the same time-turbulence so they don't just pan */
+  float banks = smoothstep(0.38, 0.64, fbm(suv * 0.7 + wind * 0.5 + push * 0.8 + uT * 0.012 + 3.7));
 
   float density = smoothstep(0.33, 0.74, f) * banks;
   density *= 1.0 - clamp(thin, 0.0, 0.92);
@@ -195,8 +208,19 @@ export function MistLayer() {
     const trail = new Float32Array(TRAIL * 4);
     const ages = new Float32Array(TRAIL).fill(99);
     let head = 0;
+    const write = (nx: number, ny: number, vx: number, vy: number, speed: number) => {
+      const i = head % TRAIL;
+      trail[i * 4] = nx;
+      trail[i * 4 + 1] = ny;
+      const cap = Math.min(1, speed) / Math.max(speed, 1e-4);
+      trail[i * 4 + 2] = vx * cap;
+      trail[i * 4 + 3] = vy * cap;
+      ages[i] = 0;
+      head++;
+    };
+
+    const STEP = 0.02; // normalized-space spacing between stroke samples
     const ptr = { x: -1, y: -1, t: 0 };
-    let lastWrite = 0;
     const onMove = (e: PointerEvent) => {
       const now = performance.now();
       const nx = e.clientX / Math.max(1, W);
@@ -206,19 +230,24 @@ export function MistLayer() {
         const vx = (nx - ptr.x) / dts;
         const vy = (ny - ptr.y) / dts;
         const speed = Math.hypot(vx, vy);
-        /* only real strokes disturb the fog — hover jitter is ignored;
-           writes are throttled so one sweep leaves a ~10-point wake whose
-           older disturbances live long enough to keep deforming the field */
-        if (speed > 0.12 && now - lastWrite > 55) {
-          lastWrite = now;
-          const i = head % TRAIL;
-          trail[i * 4] = nx;
-          trail[i * 4 + 1] = ny;
-          const cap = Math.min(1, speed) / Math.max(speed, 1e-4);
-          trail[i * 4 + 2] = vx * cap;
-          trail[i * 4 + 3] = vy * cap;
-          ages[i] = 0;
-          head++;
+        /* only real strokes disturb the fog — hover jitter is ignored.
+           A fast sweep can jump a large screen distance between two
+           pointermove events; LERPING sub-points along that segment
+           turns the stroke into one continuous rope of disturbance
+           instead of discrete dots "popping" in far apart. */
+        if (speed > 0.12) {
+          const dist = Math.hypot(nx - ptr.x, ny - ptr.y);
+          const steps = Math.max(1, Math.min(8, Math.round(dist / STEP)));
+          for (let s = 1; s <= steps; s++) {
+            const f = s / steps;
+            write(
+              ptr.x + (nx - ptr.x) * f,
+              ptr.y + (ny - ptr.y) * f,
+              vx,
+              vy,
+              speed,
+            );
+          }
         }
       }
       ptr.x = nx;
