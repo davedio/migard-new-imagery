@@ -115,6 +115,9 @@ export function HeroTreeImage() {
             fetchPriority="high"
           />
         </picture>
+        {/* dark-mode only: soft sap-light bloom breathing through the canopy
+            (sits under the scrim so copy-side legibility is untouched) */}
+        <div className="hero-canopy-glow" />
       </div>
       <div className="hero-tree-stage__scrim" />
     </div>
