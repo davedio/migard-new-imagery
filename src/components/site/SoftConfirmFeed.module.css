@@ -1,128 +1,210 @@
 /* =========================================================================
    SoftConfirmFeed — a SIMULATED stream of the transaction flow: TXs
-   soft-confirm (green), blocks seal them (gold), commits carry headers
-   down to Cardano L1 (cobalt). Self-driven, clearly labelled simulated;
-   freezes to a static frame under reduced motion.
+   soft-confirm, blocks seal them, commits carry headers down to Cardano L1.
+   Color is reinforced by marker shape, edge treatment, labels, and motion.
+   The stream freezes to a static frame under reduced motion.
    ========================================================================= */
 
 .feed {
+  --tx-signal: #62f59a;
+  --tx-edge: rgba(98, 245, 154, 0.6);
+  --tx-surface: rgba(62, 213, 116, 0.1);
+  --tx-surface-active: rgba(62, 213, 116, 0.2);
+  --tx-sweep: rgba(136, 255, 178, 0.32);
+  --block-signal: #ffc857;
+  --block-edge: rgba(255, 200, 87, 0.68);
+  --block-surface: rgba(255, 181, 50, 0.1);
+  --block-surface-active: rgba(255, 181, 50, 0.2);
+  --block-sweep: rgba(255, 222, 139, 0.35);
+  --commit-signal: #74b9ff;
+  --commit-edge: rgba(116, 185, 255, 0.7);
+  --commit-surface: rgba(73, 145, 255, 0.11);
+  --commit-surface-active: rgba(73, 145, 255, 0.22);
+  --commit-sweep: rgba(150, 208, 255, 0.36);
+
   position: relative;
   margin-top: 28px;
   padding: 18px 18px 16px;
-  border: 1px solid var(--panel-edge);
+  border: 1px solid var(--panel-edge-strong);
   border-radius: var(--r-lg);
-  background: linear-gradient(180deg, rgba(215, 226, 216, 0.025), transparent 45%), var(--panel);
+  background:
+    linear-gradient(180deg, rgba(215, 226, 216, 0.045), transparent 45%),
+    var(--panel);
 }
 
 .overline {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   font-family: var(--font-mono);
   font-size: 10.5px;
+  font-weight: 650;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-dim);
+  color: var(--text);
 }
+
 .overlineDot {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--panel);
   border-radius: 50%;
-  background: var(--green-bright);
-  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+  background: var(--tx-signal);
+  box-shadow:
+    0 0 0 2px rgba(98, 245, 154, 0.34),
+    0 0 14px rgba(98, 245, 154, 0.72);
+}
+
+.feed[data-motion="on"] .overlineDot {
+  animation: overlinePulse 2.4s ease-in-out infinite;
 }
 
 .stream {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
   margin-top: 16px;
   overflow: hidden;
 }
 
 .row {
-  display: flex;
+  --signal: var(--tx-signal);
+  --edge: var(--tx-edge);
+  --surface: var(--tx-surface);
+  --surface-active: var(--tx-surface-active);
+  --sweep: var(--tx-sweep);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: 12px 72px minmax(0, 1fr) minmax(178px, auto);
   align-items: center;
   gap: 12px;
-  min-height: 38px;
-  padding: 8px 12px;
-  border: 1px solid var(--panel-edge);
-  border-radius: 10px;
-  background: rgba(127, 140, 128, 0.06);
+  min-height: 44px;
+  padding: 8px 12px 8px 10px;
+  overflow: hidden;
+  border: 1px solid var(--edge);
+  border-left: 4px solid var(--signal);
+  border-radius: 4px;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px rgba(244, 241, 230, 0.025);
   font-family: var(--font-mono);
   font-size: 12.5px;
-}
-
-/* one-shot entrance on the newest row only; killed under reduced motion
-   and the site's motion-off toggle */
-.stream[data-motion="on"] .row[data-newest] {
-  animation: rowIn 0.35s ease-out;
-}
-@keyframes rowIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .stream .row[data-newest] {
-    animation: none;
-  }
-}
-
-.dot {
-  flex: none;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-.row[data-kind="tx"] .dot {
-  background: var(--green-bright);
-}
-.row[data-kind="block"] .dot {
-  background: var(--gold-bright);
-}
-.row[data-kind="commit"] .dot {
-  background: #78b9ff;
-}
-
-.kind {
-  flex: none;
-  width: 58px;
-  font-size: 10.5px;
-  letter-spacing: 0.1em;
-}
-.row[data-kind="tx"] .kind {
-  color: var(--green-bright);
-}
-.row[data-kind="block"] .kind {
-  color: var(--gold-bright);
-}
-.row[data-kind="commit"] .kind {
-  color: #9cc8ff;
+  isolation: isolate;
 }
 
 .row[data-kind="block"] {
-  border-color: rgba(255, 200, 64, 0.35);
+  --signal: var(--block-signal);
+  --edge: var(--block-edge);
+  --surface: var(--block-surface);
+  --surface-active: var(--block-surface-active);
+  --sweep: var(--block-sweep);
+  border-top-style: dashed;
+  border-bottom-style: dashed;
 }
+
 .row[data-kind="commit"] {
-  border-color: rgba(120, 185, 255, 0.35);
+  --signal: var(--commit-signal);
+  --edge: var(--commit-edge);
+  --surface: var(--commit-surface);
+  --surface-active: var(--commit-surface-active);
+  --sweep: var(--commit-sweep);
+  box-shadow:
+    inset -4px 0 0 var(--signal),
+    inset 0 0 0 1px rgba(244, 241, 230, 0.025);
+}
+
+.row::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto 0 0;
+  width: 32%;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-125%);
+  background: linear-gradient(90deg, transparent, var(--sweep), transparent);
+}
+
+/* The newest event gets a full-row signal, not only a tiny moving dot. */
+.feed[data-motion="on"] .row[data-newest] {
+  animation:
+    rowIn 0.62s var(--ease),
+    rowFocus 1.25s ease-out;
+}
+
+.feed[data-motion="on"] .row[data-newest]::after {
+  animation: signalSweep 1.15s ease-out;
+}
+
+.feed[data-motion="on"] .row[data-newest] .dot {
+  animation: markerPulse 1.15s ease-out;
+}
+
+.dot {
+  grid-column: 1;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--signal);
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 2px rgba(5, 12, 8, 0.72);
+}
+
+.row[data-kind="block"] .dot {
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+
+.row[data-kind="commit"] .dot {
+  border-width: 3px;
+  background: transparent;
+  box-shadow:
+    0 0 0 2px rgba(5, 12, 8, 0.72),
+    0 0 0 4px var(--commit-edge);
+}
+
+.kind {
+  grid-column: 2;
+  width: 72px;
+  padding: 4px 6px;
+  border: 1px solid var(--edge);
+  border-radius: 2px;
+  background: rgba(5, 12, 8, 0.56);
+  color: var(--signal);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-align: center;
 }
 
 .label {
+  position: relative;
+  z-index: 1;
+  grid-column: 3;
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-hi);
+  font-weight: 650;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .status {
+  position: relative;
+  z-index: 1;
+  grid-column: 4;
   margin-left: auto;
-  color: var(--text-dim);
+  color: var(--text);
   font-size: 11.5px;
+  font-weight: 550;
   text-align: right;
+}
+
+.row[data-newest] .status {
+  color: var(--signal);
+  font-weight: 750;
 }
 
 .fine {
@@ -133,18 +215,195 @@
   color: var(--text-dim);
 }
 
-[data-theme="light"] .row {
-  background: rgba(38, 56, 42, 0.04);
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
-[data-theme="light"] .row[data-kind="commit"] .dot {
-  background: #2b6cb0;
+
+@keyframes rowIn {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scaleY(0.92);
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
-[data-theme="light"] .row[data-kind="commit"] .kind {
-  color: #2b6cb0;
+
+@keyframes rowFocus {
+  0%,
+  18% {
+    background: var(--surface-active);
+    box-shadow:
+      inset 0 0 0 2px var(--signal),
+      0 0 24px -6px var(--signal);
+  }
+  100% {
+    background: var(--surface);
+  }
+}
+
+@keyframes signalSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-125%);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(410%);
+  }
+}
+
+@keyframes markerPulse {
+  0%,
+  22% {
+    filter: brightness(1.3);
+    box-shadow:
+      0 0 0 3px rgba(5, 12, 8, 0.74),
+      0 0 0 7px var(--edge),
+      0 0 22px var(--signal);
+  }
+  100% {
+    filter: none;
+  }
+}
+
+@keyframes overlinePulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px rgba(98, 245, 154, 0.28),
+      0 0 10px rgba(98, 245, 154, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px rgba(98, 245, 154, 0.18),
+      0 0 18px rgba(98, 245, 154, 0.85);
+  }
+}
+
+:global([data-theme="light"]) .feed {
+  --tx-signal: #006b53;
+  --tx-edge: rgba(0, 107, 83, 0.62);
+  --tx-surface: rgba(0, 128, 96, 0.09);
+  --tx-surface-active: rgba(0, 128, 96, 0.2);
+  --tx-sweep: rgba(0, 128, 96, 0.28);
+  --block-signal: #7a5200;
+  --block-edge: rgba(122, 82, 0, 0.64);
+  --block-surface: rgba(217, 145, 0, 0.1);
+  --block-surface-active: rgba(217, 145, 0, 0.21);
+  --block-sweep: rgba(217, 145, 0, 0.3);
+  --commit-signal: #005ea8;
+  --commit-edge: rgba(0, 94, 168, 0.64);
+  --commit-surface: rgba(0, 112, 192, 0.09);
+  --commit-surface-active: rgba(0, 112, 192, 0.2);
+  --commit-sweep: rgba(0, 112, 192, 0.29);
+  background:
+    linear-gradient(180deg, rgba(12, 125, 54, 0.045), transparent 45%),
+    var(--panel);
+}
+
+:global([data-theme="light"]) .overlineDot {
+  border-color: var(--panel);
+  box-shadow:
+    0 0 0 2px rgba(0, 107, 83, 0.24),
+    0 0 12px rgba(0, 107, 83, 0.32);
+}
+
+:global([data-theme="light"]) .row {
+  box-shadow: inset 0 0 0 1px rgba(14, 27, 19, 0.035);
+}
+
+:global([data-theme="light"]) .row[data-kind="commit"] {
+  box-shadow:
+    inset -4px 0 0 var(--signal),
+    inset 0 0 0 1px rgba(14, 27, 19, 0.035);
+}
+
+:global([data-theme="light"]) .dot {
+  box-shadow: 0 0 0 2px var(--panel);
+}
+
+:global([data-theme="light"]) .row[data-kind="commit"] .dot {
+  box-shadow:
+    0 0 0 2px var(--panel),
+    0 0 0 4px var(--commit-edge);
+}
+
+:global([data-theme="light"]) .kind {
+  background: rgba(255, 255, 252, 0.72);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed .overlineDot,
+  .feed .row[data-newest],
+  .feed .row[data-newest]::after,
+  .feed .row[data-newest] .dot {
+    animation: none;
+  }
 }
 
 @media (max-width: 560px) {
+  .feed {
+    padding: 16px 12px 14px;
+  }
+
+  .row {
+    grid-template-columns: 12px 66px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 5px 10px;
+    min-height: 58px;
+    padding: 8px 10px 8px 8px;
+  }
+
+  .dot,
+  .kind {
+    grid-row: 1 / span 2;
+  }
+
+  .kind {
+    width: 66px;
+  }
+
+  .label,
   .status {
-    display: none;
+    grid-column: 3;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .status {
+    font-size: 10.5px;
+  }
+}
+
+@media (forced-colors: active) {
+  .row,
+  .kind,
+  .dot {
+    border-color: CanvasText;
+  }
+
+  .row[data-kind="block"] {
+    border-top-style: dashed;
+    border-bottom-style: dashed;
+  }
+
+  .row[data-kind="commit"] {
+    border-right: 4px double CanvasText;
   }
 }
