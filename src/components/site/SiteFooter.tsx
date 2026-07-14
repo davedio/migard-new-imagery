@@ -60,6 +60,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
 const LEGAL = [
   { label: "Terms of Use", href: "/terms" },
   { label: "Privacy Policy", href: "/privacy" },
+  { label: "Cookie Notice", href: "/cookies" },
 ] as const;
 
 /**

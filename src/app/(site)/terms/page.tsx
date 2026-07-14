@@ -187,7 +187,8 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         Our collection and use of information in connection with the Site are described in the
-        Midgard <Link href="/privacy">Privacy Policy</Link> and Cookie Notice. Do not submit seed
+        Midgard <Link href="/privacy">Privacy Policy</Link> and{" "}
+        <Link href="/cookies">Cookie Notice</Link>. Do not submit seed
         phrases, private keys, passwords, or unnecessary personal or sensitive information through
         any Site form or contact route.
       </>,
@@ -289,8 +290,9 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "General",
     paragraphs: [
       <>
-        These Terms, together with the <Link href="/privacy">Privacy Policy</Link>, Cookie Notice,
-        and any program-specific terms we publish, are the entire agreement between you and
+        These Terms, together with the <Link href="/privacy">Privacy Policy</Link>,{" "}
+        <Link href="/cookies">Cookie Notice</Link>, and any program-specific terms we publish, are
+        the entire agreement between you and
         Midgard Labs regarding the Site, and they supersede prior agreements on that subject. If
         any provision is held invalid, the remaining provisions remain in effect. Our failure to
         enforce a provision is not a waiver. You may not assign these Terms; we may assign them in

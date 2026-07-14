@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { Callout, PageHero, Section } from "@/components/site/ui";
@@ -51,7 +52,8 @@ const SECTIONS: readonly LegalSection[] = [
         messages, form submissions, and security reports, including any attachments you include;
         technical information collected automatically when you visit the Site, such as IP address,
         browser and device type, pages viewed, referring page, approximate region, and similar log
-        data; cookie and similar identifiers as described in our Cookie Notice; and wallet
+        data; cookie and similar identifiers as described in our{" "}
+        <Link href="/cookies">Cookie Notice</Link>; and wallet
         addresses or transaction identifiers only if you choose to submit them through a form or
         message (for example, in a support or testnet-feedback context).
       </>,
@@ -129,11 +131,12 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Cookies and Analytics",
     paragraphs: [
       <>
-        The Site currently uses only the cookies and similar technologies described in our Cookie
-        Notice. Our default posture is minimal: essential operation first, analytics only if and
-        when a specific tool is adopted, and no advertising cookies. If a tool requiring consent
-        is activated for your jurisdiction, the Site will present a consent mechanism before that
-        tool runs. See the Cookie Notice for the current list and your choices.
+        The Site currently uses only the cookies and similar technologies described in our{" "}
+        <Link href="/cookies">Cookie Notice</Link>. Our default posture is minimal: essential
+        operation first, analytics only if and when a specific tool is adopted, and no advertising
+        cookies. If a tool requiring consent is activated for your jurisdiction, the Site will
+        present a consent mechanism before that tool runs. See the{" "}
+        <Link href="/cookies">Cookie Notice</Link> for the current list and your choices.
       </>,
     ],
   },
