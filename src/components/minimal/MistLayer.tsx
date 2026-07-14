@@ -105,17 +105,18 @@ void main() {
   float f = fbm(p + vec2(warp * 1.7, warp * 1.1) + wind);
 
   /* banks: low-frequency coverage so there is real clear air */
-  float banks = smoothstep(0.42, 0.72, fbm(suv * 0.7 + wind * 0.5 + push * 0.8 + 3.7));
+  float banks = smoothstep(0.38, 0.64, fbm(suv * 0.7 + wind * 0.5 + push * 0.8 + 3.7));
 
-  float density = smoothstep(0.38, 0.82, f) * banks;
+  float density = smoothstep(0.33, 0.74, f) * banks;
   density *= 1.0 - clamp(thin, 0.0, 0.92);
 
-  /* two-tone: dusty grey-sage body, cream hearts in the dense cores */
-  vec3 body = vec3(0.742, 0.735, 0.700);
+  /* two-tone: dusty grey-sage body (clearly darker than the pale sky),
+     cream hearts in the dense cores */
+  vec3 body = vec3(0.706, 0.700, 0.664);
   vec3 core = vec3(0.992, 0.980, 0.953);
   vec3 col = mix(body, core, smoothstep(0.30, 0.85, density));
 
-  float alpha = density * 0.62;
+  float alpha = density * 0.78;
   gl_FragColor = vec4(col * alpha, alpha); /* premultiplied */
 }
 `;
