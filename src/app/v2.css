@@ -3842,6 +3842,22 @@ h2 em,
   inset: 0;
   overflow: hidden;
 }
+/* the mover carries the JS zoom/lift transform so the sap-orb canvas
+   inside it rides the exact same motion as the plate */
+.hero-tree-stage__mover {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.02);
+  transform-origin: 60% 34%; /* zoom toward the canopy */
+  will-change: transform;
+}
+.hero-tree-stage__sap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 .hero-tree-stage__img {
   position: absolute;
   --hero-tree-base-lift: -3.8;
@@ -3850,9 +3866,6 @@ h2 em,
   height: 100%;
   object-fit: cover;
   object-position: 53% 46%; /* pulled-back vista: centre the tree, full canopy in frame, open sky-left for copy */
-  transform: scale(1.02);
-  transform-origin: 60% 34%; /* zoom toward the canopy */
-  will-change: transform, opacity;
   filter: saturate(1.12) contrast(1.05);
 }
 .hero-tree-stage__scrim {
@@ -3880,6 +3893,8 @@ h2 em,
   .hero-tree-stage__img {
     --hero-tree-base-lift: -1.2;
     object-position: 50% 30%;
+  }
+  .hero-tree-stage__mover {
     transform-origin: 50% 26%;
   }
   .hero-tree-stage__scrim {
