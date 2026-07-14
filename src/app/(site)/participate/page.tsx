@@ -105,7 +105,7 @@ export default function ParticipatePage() {
         <CardGrid cols={2}>
           <Card
             title="Operator"
-            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts. If a fault proof succeeds against a block they committed, their bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
+            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts — and they stake a bond to do it. If a fault proof succeeds against a block they committed, that bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
           />
           <Card
             title="Watcher"

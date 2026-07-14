@@ -47,7 +47,7 @@ export const GLOSSARY = {
   },
   bond: {
     term: "bond",
-    def: "ADA an Operator locks as collateral on Cardano; a valid fault proof slashes it, making honest operation the profitable strategy.",
+    def: "ADA an Operator locks as collateral on Cardano; a valid fault proof slashes it, which is what makes honest operation the profitable strategy.",
   },
   "soft-confirmation": {
     term: "soft confirmation",

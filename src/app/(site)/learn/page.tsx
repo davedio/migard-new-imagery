@@ -119,12 +119,12 @@ export default function LearnPage() {
           <PageHero
             compact
             label="Learn Midgard"
-            title="Midgard 101."
+            title="Midgard Overview."
             sub="Start with the four ideas that make the protocol click."
             body="Learn what users experience, what happens underneath, and where trust comes from. The full transaction journey comes after the essentials."
             chips={
               <>
-                <SectionJumpButton id="basics" label="Start the 101" variant="primary" />
+                <SectionJumpButton id="basics" label="Start the overview" variant="primary" />
                 <SectionJumpButton id="full-journey" label="Skip to the full journey" />
               </>
             }
@@ -132,7 +132,7 @@ export default function LearnPage() {
 
           <JumpChips
             items={[
-              { id: "basics", label: "Midgard 101" },
+              { id: "basics", label: "Overview" },
               { id: "flow", label: "Soft confirms" },
               { id: "proof-metrics", label: "Proof metrics" },
               { id: "security", label: "Security" },
@@ -148,7 +148,7 @@ export default function LearnPage() {
             title="The short version."
             lead="Work through these ideas first. They are the vocabulary for everything the tree shows later."
           >
-            <ol className={learnStyles.primerList} aria-label="Midgard 101 lessons">
+            <ol className={learnStyles.primerList} aria-label="Midgard overview lessons">
               {primerSteps.map((step) => (
                 <li key={step.n} className={learnStyles.primerStep} data-tone={step.tone}>
                   <span className={learnStyles.primerNumber}>{step.n} / 04</span>
@@ -167,7 +167,7 @@ export default function LearnPage() {
             </ol>
             <div className={learnStyles.primerHandoff}>
               <div>
-                <span>101 complete</span>
+                <span>Overview complete</span>
                 <p>Next, see the fast signal a user actually experiences.</p>
               </div>
               <SectionJumpButton
