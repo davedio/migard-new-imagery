@@ -3053,7 +3053,7 @@ a.card:focus-visible {
 /* ============================================================
    HOW IT WORKS — transaction-journey experience.
 
-   The page (HowItWorksExperience) opens with a TALL journey ACT rendered
+   The page (HowItWorksExperience) teaches the protocol first, then reveals a TALL journey ACT rendered
    transparent OVER the fixed .scene-stage (photoreal backdrop, portaled to
    <body>). Scrolling the act's span drives the full canopy -> Cardano-L1
    descent, so the transaction is actually WATCHED settling within the
@@ -3097,9 +3097,10 @@ a.card:focus-visible {
 .hiw-act {
   position: relative;
   z-index: 1;
-  /* Enough runway for the six-stage descent, but short enough that the normal
-     explainer arrives before the page starts to feel like a hidden scroller. */
-  min-height: 480vh;
+  /* Six clear scroll beats without letting the visual chapter dominate the
+     complete Learn page after the 101 material has done the teaching. */
+  min-height: 360vh;
+  scroll-margin-top: 72px;
 }
 
 /* the pinned panel that holds the intro/legend while the descent plays */
@@ -3136,6 +3137,13 @@ a.card:focus-visible {
 .hiw-act__intro {
   max-width: min(660px, 100%);
   margin-left: max(0px, calc((100vw - var(--maxw)) / 2));
+}
+.hiw-act__kicker {
+  margin: 0;
+  color: var(--gold-bright);
+  font: 11px/1 var(--font-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 .hiw-act__title {
   margin-top: 16px;
@@ -3468,7 +3476,7 @@ a.card:focus-visible {
 
 @media (max-width: 640px) {
   .hiw-act {
-    min-height: 220vh;
+    min-height: 260vh;
   }
   .hiw-act__viewport {
     padding-top: 96px;
@@ -3524,8 +3532,8 @@ a.card:focus-visible {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 60vh;
-  background: linear-gradient(to bottom, rgba(3, 7, 4, 0) 0%, #030704 86%);
+  height: 34vh;
+  background: linear-gradient(to bottom, rgba(3, 7, 4, 0) 0%, #030704 94%);
   pointer-events: none;
   z-index: 2;
 }

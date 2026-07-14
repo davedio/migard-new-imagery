@@ -33,6 +33,43 @@ const NAV_OFFSET = 96;
    chose doesn't flicker through intermediate sections mid-scroll */
 const CLICK_LOCK_MS = 900;
 
+function scrollToSection(id: string, motionOn: boolean) {
+  const el = document.getElementById(id);
+  if (!el) return false;
+  const targetY = Math.max(
+    0,
+    el.getBoundingClientRect().top + window.scrollY - NAV_OFFSET,
+  );
+  window.scrollTo({
+    top: targetY,
+    behavior: motionOn ? "smooth" : "instant",
+  });
+  window.history.replaceState(null, "", `#${id}`);
+  return true;
+}
+
+export function SectionJumpButton({
+  id,
+  label,
+  variant = "ghost",
+}: {
+  id: string;
+  label: string;
+  variant?: "primary" | "ghost";
+}) {
+  const { motionOn } = useMotionPref();
+  return (
+    <button
+      type="button"
+      className={`btn btn--${variant}`}
+      aria-controls={id}
+      onClick={() => scrollToSection(id, motionOn)}
+    >
+      {label}
+    </button>
+  );
+}
+
 export default function JumpChips({
   items,
   ariaLabel = "On this page",
@@ -123,15 +160,7 @@ export default function JumpChips({
          the same technique the journey act's own beat-jump uses. */
       setActiveId(id);
       lockUntilRef.current = performance.now() + CLICK_LOCK_MS;
-      const targetY = Math.max(
-        0,
-        el.getBoundingClientRect().top + window.scrollY - NAV_OFFSET,
-      );
-      window.scrollTo({
-        top: targetY,
-        behavior: motionOn ? "smooth" : "instant",
-      });
-      window.history.replaceState(null, "", `#${id}`);
+      scrollToSection(id, motionOn);
     },
     [motionOn],
   );

@@ -1,3 +1,133 @@
+.primerList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--panel-edge-strong);
+}
+
+.primerStep {
+  --primer-accent: var(--green-bright);
+  display: grid;
+  grid-template-columns: 82px minmax(230px, 0.72fr) minmax(320px, 1fr);
+  gap: clamp(20px, 3vw, 52px);
+  align-items: start;
+  padding: clamp(24px, 3.4vw, 42px) 0;
+  border-bottom: 1px solid var(--panel-edge);
+}
+
+.primerStep[data-tone="gold"] {
+  --primer-accent: var(--gold-bright);
+}
+
+.primerStep[data-tone="cobalt"] {
+  --primer-accent: #78b9ff;
+}
+
+.primerNumber,
+.primerTitle > span,
+.primerHandoff span {
+  font-family: var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.primerNumber {
+  padding-top: 4px;
+  color: var(--primer-accent);
+  font-size: 11px;
+}
+
+.primerTitle > span {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--primer-accent);
+  font-size: 10px;
+}
+
+.primerTitle h3 {
+  margin: 0;
+  color: var(--text-hi);
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.5vw, 38px);
+  font-weight: 500;
+  line-height: 1.08;
+}
+
+.primerBody > p:first-child {
+  margin: 0;
+  max-width: 62ch;
+  color: var(--text);
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.62;
+}
+
+.primerTakeaway {
+  margin: 18px 0 0;
+  padding-left: 14px;
+  border-left: 2px solid var(--primer-accent);
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1.52;
+}
+
+.primerTakeaway strong {
+  color: var(--text-hi);
+  font-weight: 600;
+}
+
+.primerHandoff {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: clamp(24px, 3.5vw, 42px);
+}
+
+.primerHandoff span {
+  color: var(--green-bright);
+  font-size: 10px;
+}
+
+.primerHandoff p {
+  margin: 7px 0 0;
+  color: var(--text);
+  font-size: 16px;
+}
+
+:global([data-theme="light"]) .primerStep[data-tone="cobalt"] {
+  --primer-accent: #2b6cb0;
+}
+
+@media (max-width: 900px) {
+  .primerStep {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+
+  .primerBody {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 620px) {
+  .primerStep {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .primerBody {
+    grid-column: 1;
+  }
+
+  .primerHandoff {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primerHandoff :global(.btn) {
+    width: 100%;
+  }
+}
+
 .coreModel {
   display: grid;
   grid-template-columns: minmax(260px, 0.38fr) minmax(0, 1fr);

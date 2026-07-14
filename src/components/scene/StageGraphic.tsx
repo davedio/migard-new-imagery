@@ -33,8 +33,8 @@
    Perf: pure DOM. Position + opacity are written imperatively from a
    single rAF loop reading refs (the packet ref + the live stage index);
    React re-renders ONLY when the active stage index changes (5x across
-   the whole act), driven off the spring MotionValue. No per-scroll React
-   state, no per-frame React work.
+   the whole act), driven off the shared scene MotionValue. No per-scroll
+   React state, no other per-frame React work.
 
    Fallback: motion-off / reduced-motion / small / touch — the rAF
    tracking is bypassed and a simpler STATIC label is shown, pinned to a
@@ -43,6 +43,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { useMotionValueEvent, type MotionValue } from "motion/react";
+import { journeyStageIndex } from "@/lib/journeyStages";
 
 const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
 
@@ -140,17 +141,6 @@ const STAGES: Stage[] = [
   },
 ];
 
-/* SAME thresholds as the scene's stageOf / the old HUD, so the badge swaps
-   on the exact scroll positions the camera dwells + the canvas beats fire. */
-function stageIndex(p: number): number {
-  if (p >= 0.86) return 5;
-  if (p >= 0.68) return 4;
-  if (p >= 0.52) return 3;
-  if (p >= 0.36) return 2;
-  if (p >= 0.18) return 1;
-  return 0;
-}
-
 /* Per-stage custom glyph — a refined inline SVG (currentColor so it tints
    per layer), one motif per stage. Submit = a tx spark, Sequence = ordered
    rows, Commit = a settling block, Watch = a watching eye, Settle = an
@@ -220,21 +210,21 @@ export default function StageGraphic({
   packetRef,
   enabled,
 }: {
-  /** smoothed 0..1 scroll progress (the spring MotionValue) */
+  /** live 0..1 scroll progress, kept in lockstep with the scene */
   progress: MotionValue<number>;
   /** live packet screen position in px, published by PhotorealBackdrop */
   packetRef: RefObject<{ x: number; y: number }>;
   /** advanced (desktop + fine pointer + motion-on): drives the tracking */
   enabled: boolean;
 }) {
-  const [active, setActive] = useState(() => stageIndex(progress.get()));
+  const [active, setActive] = useState(() => journeyStageIndex(progress.get()));
   const rootRef = useRef<HTMLDivElement>(null);
 
   // swap the active stage when the index crosses a threshold (5x total).
   // (The top-of-page fade --sg-fade is driven by the rAF loop while tracking;
   // in the static fallback the badge stays at full opacity.)
   useMotionValueEvent(progress, "change", (v) => {
-    const idx = stageIndex(v);
+    const idx = journeyStageIndex(v);
     setActive((prev) => (prev === idx ? prev : idx));
   });
 
