@@ -17,7 +17,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   {
     name: "Anastasia Labs",
     website: "https://www.anastasialabs.com/",
-    logo: "/ecosystem/anastasia-labs.svg",
+    logo: "/ecosystem/anastasia-labs-dark.png",
     logoLight: "/ecosystem/anastasia-labs.svg",
     width: 2000,
     height: 464,
@@ -183,7 +183,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
   {
     name: "Tweag",
     website: "https://www.tweag.io/",
-    logo: "/ecosystem/tweag.png",
+    logo: "/ecosystem/tweag-dark.png",
     logoLight: "/ecosystem/tweag-light.png",
     width: 2110,
     height: 570,
