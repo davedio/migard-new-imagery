@@ -21,7 +21,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/anastasia-labs.svg",
     width: 2000,
     height: 464,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {
@@ -157,7 +157,7 @@ export const ECOSYSTEM_PARTNERS: readonly EcosystemPartner[] = [
     logoLight: "/ecosystem/modus-create.svg",
     width: 186,
     height: 24,
-    tone: "light",
+    tone: "dark",
     logoShape: "wide",
   },
   {

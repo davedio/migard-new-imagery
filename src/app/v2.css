@@ -2883,20 +2883,6 @@ h2 em,
   --hover-y: -1px;
 }
 
-.partner-magnet-card[data-tone="light"] {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(246, 240, 226, 0.58)),
-    rgba(250, 247, 238, 0.92);
-  border-color: rgba(14, 27, 19, 0.12);
-  box-shadow:
-    0 22px 38px rgba(26, 18, 8, 0.18),
-    0 8px 18px rgba(60, 42, 14, 0.12),
-    0 2px 0 rgba(60, 42, 14, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -10px 20px rgba(105, 80, 35, 0.08);
-  color: rgba(17, 27, 20, 0.74);
-}
-
 .partner-magnet-card__logo {
   position: relative;
   z-index: 1;
@@ -2958,9 +2944,14 @@ h2 em,
   text-align: left;
 }
 
-[data-theme="light"] .partner-magnet-card__name,
-.partner-magnet-card[data-tone="light"] .partner-magnet-card__name {
+[data-theme="light"] .partner-magnet-card__name {
   color: rgba(17, 27, 20, 0.78);
+}
+
+/* Modus Create only ships a dark-ink SVG. Keep its mark legible on the
+   dark card without changing the source asset used by the light theme. */
+[data-theme="dark"] .partner-magnet-card[data-partner="Modus Create"] .partner-magnet-card__logo img {
+  filter: brightness(0) invert(1);
 }
 
 .partner-exit-dialog {

@@ -239,6 +239,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                 <button
                   className="partner-magnet-card"
                   type="button"
+                  data-partner={partner.name}
                   data-logo-shape={partner.logoShape ?? "wide"}
                   data-show-name={partner.showName ? "true" : undefined}
                   data-slot={index + 1}
