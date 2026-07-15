@@ -8,7 +8,7 @@ export const SITE_COPY = {
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
     titleLines: ["The execution layer", "for UTXO finance."],
     lead:
-      "Midgard is an optimistic rollup designed for faster, lower-cost execution, with verification and settlement anchored to Cardano L1.",
+      "Midgard gives Cardano applications faster, lower-cost execution, with settlement and security anchored to Cardano L1.",
     primaryCta: { label: "See how it works", href: "/learn" },
     secondaryCta: { label: "Start building", href: "/developers" },
     tertiaryCta: { label: "Participate", href: "/participate" },
