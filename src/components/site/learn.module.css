@@ -34,14 +34,14 @@
 .primerNumber {
   padding-top: 4px;
   color: var(--primer-accent);
-  font-size: 11px;
+  font-size: 14.5px;
 }
 
 .primerTitle > span {
   display: block;
   margin-bottom: 10px;
   color: var(--primer-accent);
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .primerTitle h3 {
@@ -57,7 +57,7 @@
   margin: 0;
   max-width: 62ch;
   color: var(--text);
-  font-size: clamp(15px, 1.25vw, 18px);
+  font-size: clamp(16.5px, 1.25vw, 18px);
   line-height: 1.62;
 }
 
@@ -66,7 +66,7 @@
   padding-left: 14px;
   border-left: 2px solid var(--primer-accent);
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.52;
 }
 
@@ -85,13 +85,13 @@
 
 .primerHandoff span {
   color: var(--green-bright);
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .primerHandoff p {
   margin: 7px 0 0;
   color: var(--text);
-  font-size: 16px;
+  font-size: 17px;
 }
 
 :global([data-theme="light"]) .primerStep[data-tone="cobalt"] {
@@ -160,7 +160,7 @@
 .coreCopy p {
   margin: 14px 0 0;
   color: var(--text);
-  font-size: clamp(15px, 1.35vw, 18px);
+  font-size: clamp(16.5px, 1.35vw, 18px);
   line-height: 1.55;
 }
 
@@ -244,7 +244,7 @@
 .coreLane span {
   font-family: var(--font-mono);
   color: var(--gold-bright);
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.08em;
 }
 
@@ -259,7 +259,7 @@
 .coreLane p {
   margin: 10px 0 0;
   color: var(--text-dim);
-  font-size: 15px;
+  font-size: 16.5px;
   line-height: 1.45;
 }
 
@@ -378,7 +378,7 @@
   color: var(--green-bright);
   background: rgba(4, 7, 5, 0.96);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .trustStep h3 {
@@ -391,7 +391,7 @@
 .trustStep p {
   margin: 12px 0 0;
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.48;
 }
 

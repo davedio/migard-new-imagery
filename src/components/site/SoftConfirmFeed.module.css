@@ -37,7 +37,7 @@
   align-items: center;
   gap: 9px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 14.5px;
   font-weight: 650;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -88,7 +88,7 @@
   background: var(--surface);
   box-shadow: inset 0 0 0 1px rgba(244, 241, 230, 0.025);
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 14.5px;
   isolation: isolate;
 }
 
@@ -172,7 +172,7 @@
   border-radius: 2px;
   background: rgba(5, 12, 8, 0.56);
   color: var(--signal);
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 750;
   letter-spacing: 0.1em;
   line-height: 1;
@@ -197,7 +197,7 @@
   grid-column: 4;
   margin-left: auto;
   color: var(--text);
-  font-size: 11.5px;
+  font-size: 14px;
   font-weight: 550;
   text-align: right;
 }
@@ -210,7 +210,7 @@
 .fine {
   margin: 14px 0 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   line-height: 1.5;
   color: var(--text-dim);
 }
@@ -387,7 +387,7 @@
   }
 
   .status {
-    font-size: 10.5px;
+    font-size: 14.5px;
   }
 }
 

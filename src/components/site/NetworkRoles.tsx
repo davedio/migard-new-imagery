@@ -18,7 +18,7 @@ const cardStyle: CSSProperties = {
 
 const eyebrowStyle: CSSProperties = {
   fontFamily: "var(--font-mono)",
-  fontSize: 11,
+  fontSize: 14.5,
   letterSpacing: "0.18em",
   textTransform: "uppercase",
   color: "var(--gold-bright)",
@@ -32,7 +32,7 @@ const titleStyle: CSSProperties = {
 
 const bodyStyle: CSSProperties = {
   marginTop: 10,
-  fontSize: 14,
+  fontSize: 16,
   lineHeight: 1.6,
   color: "var(--text-dim)",
   flex: 1,
@@ -41,7 +41,7 @@ const bodyStyle: CSSProperties = {
 const metricStyle: CSSProperties = {
   marginTop: 16,
   fontFamily: "var(--font-mono)",
-  fontSize: 12,
+  fontSize: 14,
   letterSpacing: "0.04em",
   color: "var(--green-bright)",
 };

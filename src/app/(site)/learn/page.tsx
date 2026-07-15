@@ -159,7 +159,7 @@ export default function LearnPage() {
                   <div className={learnStyles.primerBody}>
                     <p>{step.body}</p>
                     <p className={learnStyles.primerTakeaway}>
-                      <strong>Keep this:</strong> {step.takeaway}
+                      {step.takeaway}
                     </p>
                   </div>
                 </li>

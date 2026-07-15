@@ -10,15 +10,12 @@
    motion preference (the same hook the particle hero uses), and the
    whole layer is decorative (aria-hidden).
 
-   The zoom transform now lives on a MOVER wrapper (not the <img>)
-   so the HeroSapHelix orb canvas inside the same wrapper is carried
-   by the exact same motion. The scroll sequence is keyed to the
-   transaction section, rather than disappearing after a fixed short
-   distance, and the shared progress value carries the sap field.
+   The zoom transform lives on a MOVER wrapper rather than the image.
+   The scroll sequence is keyed to the transaction section instead of
+   disappearing after a fixed short distance.
    ============================================================ */
 
 import { useEffect, useRef } from "react";
-import { HeroSapHelix } from "@/components/minimal/HeroSapHelix";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme } from "@/lib/theme";
 
@@ -34,8 +31,6 @@ export function HeroTreeImage() {
   const stageRef = useRef<HTMLDivElement>(null);
   const moverRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
-  /** eased descent progress 0..1 — read by HeroSapHelix each frame */
-  const progressRef = useRef(0);
 
   useEffect(() => {
     const img = imgRef.current;
@@ -78,7 +73,6 @@ export function HeroTreeImage() {
     };
 
     const applyFrame = () => {
-      progressRef.current = current;
       const camera = smooth01((current - 0.02) / 0.84);
       const scale = 1 + camera * (portrait ? 0.075 : 0.1);
       const lift = baseLift - camera * (portrait ? 1.1 : 1.6);
@@ -179,8 +173,6 @@ export function HeroTreeImage() {
               fetchPriority="high"
             />
           </picture>
-          {/* sap orbs + the scroll helix — carried by the same transform */}
-          <HeroSapHelix imgRef={imgRef} progressRef={progressRef} />
         </div>
       </div>
       <div className="hero-tree-stage__scrim" />

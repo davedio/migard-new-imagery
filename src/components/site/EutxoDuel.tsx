@@ -48,7 +48,7 @@ export function EutxoDuel() {
               <p
                 style={{
                   marginTop: 16,
-                  fontSize: 14.5,
+                  fontSize: 16,
                   lineHeight: 1.6,
                   color: "var(--text-dim)",
                 }}

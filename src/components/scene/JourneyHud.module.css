@@ -23,7 +23,7 @@
   flex-direction: column;
   gap: 3px;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 12.5px;
+  font-size: 14.5px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(255, 214, 130, 0.92);
@@ -89,7 +89,7 @@
 }
 .beatName {
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 12.5px;
+  font-size: 14.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: rgba(190, 240, 205, 0.92);

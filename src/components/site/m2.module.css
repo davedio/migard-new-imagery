@@ -28,7 +28,7 @@
 }
 .statLabel {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 14.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -50,7 +50,7 @@
 .statSub {
   margin-top: 7px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.03em;
   color: var(--text-faint);
 }
@@ -81,7 +81,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -120,7 +120,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.45;
   color: var(--text);
 }
@@ -159,7 +159,7 @@
 }
 .switchFile {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   letter-spacing: 0.04em;
   color: var(--text-dim);
 }
@@ -177,7 +177,7 @@
   padding: 6px 14px;
   border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   letter-spacing: 0.04em;
   color: var(--text-dim);
   background: transparent;
@@ -200,7 +200,7 @@
   padding: 18px 20px;
   overflow-x: auto;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 14.5px;
   line-height: 1.75;
   color: var(--text);
 }
@@ -238,7 +238,7 @@
 .switchCaption {
   padding: 10px 16px 14px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 14.5px;
   letter-spacing: 0.04em;
   color: var(--text-faint);
   border-top: 1px solid var(--panel-edge);
@@ -282,12 +282,12 @@
   display: inline-flex;
   align-items: center;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-hi);
 }
 .stackExt {
   margin-left: 6px;
-  font-size: 11px;
+  font-size: 14.5px;
   color: var(--text-faint);
   transition: color 0.2s var(--ease);
 }
@@ -297,7 +297,7 @@
 }
 .stackRole {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-faint);

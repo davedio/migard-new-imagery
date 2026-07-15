@@ -72,12 +72,12 @@
   --h2-weight: 500;
   --h3-size: 20px;
   --h3-weight: 500;
-  --lead-size: clamp(17px, 1.55vw, 21px);
-  --body-size: 17px;
+  --lead-size: clamp(18px, 1.55vw, 22px);
+  --body-size: 18px;
   --body-line: 1.55;
-  --eyebrow-size: 13px;
-  --eyebrow-spacing: 0.28em;
-  --mono-size: 12.5px;
+  --eyebrow-size: 14.5px;
+  --eyebrow-spacing: 0.22em;
+  --mono-size: 14.5px;
   --mono-spacing: 0.04em;
 }
 
@@ -546,13 +546,13 @@ a {
   border: 1px solid rgba(var(--sg), 0.42);
   border-radius: 999px;
   background: rgba(var(--sg), 0.1);
-  font: 9px/1 var(--font-mono);
+  font: 14px/1 var(--font-mono);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: rgb(var(--sg));
 }
 .stage-graphic__count {
-  font: 10px/1 var(--font-mono);
+  font: 14px/1 var(--font-mono);
   letter-spacing: 0.2em;
   color: var(--text-faint);
 }
@@ -573,7 +573,7 @@ a {
 .stage-graphic__line {
   margin: 6px 0 0;
   max-width: 210px;
-  font-size: 11.5px;
+  font-size: 14px;
   line-height: 1.46;
   color: var(--text);
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
@@ -613,7 +613,7 @@ a {
 }
 .stage-graphic__readout dt {
   margin: 0;
-  font: 9px/1 var(--font-mono);
+  font: 14px/1 var(--font-mono);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -621,7 +621,7 @@ a {
 .stage-graphic__readout dd {
   margin: 0;
   color: var(--text-hi);
-  font-size: 11.5px;
+  font-size: 14px;
   line-height: 1.35;
 }
 .stage-graphic__readout[data-tone="bridge"] dd {
@@ -715,7 +715,7 @@ a {
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.04em;
   padding: 6px 12px;
   border-radius: var(--r-sm);
@@ -804,7 +804,7 @@ a {
   gap: 9px;
   white-space: nowrap;
   font-family: var(--font-mono);
-  font-size: 13.5px;
+  font-size: 15.5px;
   letter-spacing: 0.04em;
   padding: 12px 20px;
   border-radius: var(--r);
@@ -847,7 +847,7 @@ a {
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14.5px;
   letter-spacing: 0.05em;
   color: var(--gold-bright);
   padding: 13px 6px;
@@ -983,7 +983,7 @@ button.panel:hover {
 
 .metric-row .k {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   color: var(--text-dim);
   letter-spacing: 0.04em;
   white-space: nowrap;
@@ -991,7 +991,7 @@ button.panel:hover {
 
 .metric-row .v {
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--green-bright);
   text-align: right;
   white-space: nowrap;
@@ -1073,7 +1073,7 @@ button.panel:hover {
   background: var(--deep-ink);
   color: var(--text-hi);
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 14.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
@@ -1186,7 +1186,7 @@ button.panel:hover {
   position: absolute;
   inset: 0;
   color: var(--green-bright);
-  font: 11px/1.35 var(--font-mono);
+  font: 14.5px/1.35 var(--font-mono);
   text-transform: uppercase;
   transition: opacity 0.25s var(--ease);
 }
@@ -1198,7 +1198,7 @@ button.panel:hover {
 .lifecycle-rail text {
   fill: rgba(59, 232, 99, 0.82);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .lifecycle-rail text.is-muted {
@@ -1276,7 +1276,7 @@ button.panel:hover {
 .lifecycle-rail__arrow {
   fill: var(--green-bright);
   font-family: system-ui, sans-serif;
-  font-size: 9px;
+  font-size: 14px;
 }
 
 .lifecycle__main {
@@ -1300,7 +1300,7 @@ button.panel:hover {
   max-width: min(760px, 100%);
   margin-top: 18px;
   color: var(--text);
-  font-size: clamp(17px, 1.5vw, 23px);
+  font-size: clamp(18px, 1.5vw, 23px);
   line-height: 1.55;
 }
 
@@ -1382,7 +1382,7 @@ button.panel:hover {
   border-radius: 999px;
   color: #020602;
   background: var(--midgard-green);
-  font: 700 10px/1 var(--font-mono);
+  font: 700 14px/1 var(--font-mono);
 }
 
 /* Cardano-involving steps (commit / watch / settle) carry a blue identity
@@ -1409,7 +1409,7 @@ button.panel:hover {
 
 .lifecycle-card__title h3 {
   color: var(--text-hi);
-  font-size: 15px;
+  font-size: 16.5px;
   line-height: 1;
   font-family: var(--font-display);
   text-transform: uppercase;
@@ -1418,7 +1418,7 @@ button.panel:hover {
 
 .lifecycle-card__annotation {
   color: var(--text-dim);
-  font: 12px/1.2 var(--font-mono);
+  font: 14px/1.2 var(--font-mono);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -1444,7 +1444,7 @@ button.panel:hover {
   gap: 8px;
   margin-bottom: 12px;
   color: rgba(59, 232, 99, 0.72);
-  font: 12px/1.3 var(--font-mono);
+  font: 14px/1.3 var(--font-mono);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -1472,7 +1472,7 @@ button.panel:hover {
 
 .lifecycle-card__side p {
   color: var(--text);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.58;
 }
 
@@ -1517,7 +1517,7 @@ button.panel:hover {
   }
 
   .lifecycle__hero p {
-    font-size: clamp(16px, 3.2vw, 18px);
+    font-size: clamp(17px, 3.2vw, 18px);
   }
 }
 
@@ -1537,7 +1537,7 @@ button.panel:hover {
   }
 
   .lifecycle__hero p {
-    font-size: 16px;
+    font-size: 17px;
   }
 
   .lifecycle-card__annotation {
@@ -1620,7 +1620,7 @@ button.panel:hover {
 }
 .site-nav__logo .wm {
   font-family: var(--font-wordmark);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
@@ -1633,7 +1633,7 @@ button.panel:hover {
 }
 .site-nav__link {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
   color: var(--text);
@@ -1702,7 +1702,7 @@ button.panel:hover {
   border-radius: var(--r);
   background: rgba(11, 21, 16, 0.6);
   color: var(--text-hi);
-  font-size: 15px;
+  font-size: 16.5px;
   cursor: pointer;
 }
 .site-nav__mobile {
@@ -1732,7 +1732,7 @@ button.panel:hover {
   }
 
   .site-nav__link {
-    font-size: 13px;
+    font-size: 14.5px;
   }
 
   .site-nav__social-link {
@@ -1759,7 +1759,7 @@ button.panel:hover {
   }
 
   .site-nav__link {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .site-nav__social-link {
@@ -1806,7 +1806,7 @@ button.panel:hover {
   }
   .site-nav__mobile a {
     font-family: var(--font-mono);
-    font-size: 13px;
+    font-size: 14.5px;
     line-height: 1.35;
     color: var(--text);
     padding: 11px 10px;
@@ -1836,7 +1836,7 @@ button.panel:hover {
   }
   .site-nav__mobile .site-nav__mobile-social-link span {
     font-family: var(--font-mono);
-    font-size: 11.5px;
+    font-size: 14px;
     letter-spacing: 0;
   }
   .site-nav__mobile .btn {
@@ -1880,7 +1880,7 @@ button.panel:hover {
 .site-footer__brand .lock .wm {
   font-family: var(--font-wordmark);
   font-weight: 700;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1;
   color: var(--text-hi);
 }
@@ -1924,7 +1924,7 @@ button.panel:hover {
 }
 .site-footer__col h4 {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -1939,7 +1939,7 @@ button.panel:hover {
 }
 .site-footer__col a,
 .site-footer__col li > span {
-  font-size: 13.5px;
+  font-size: 15.5px;
   color: var(--text-dim);
   transition: color 0.2s var(--ease);
 }
@@ -1974,7 +1974,7 @@ button.panel:hover {
 .site-footer__legal a,
 .site-footer__legal span {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   color: var(--text-faint);
 }
 .site-footer__legal a:hover {
@@ -1982,7 +1982,7 @@ button.panel:hover {
 }
 .site-footer__bottom .meta {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   color: var(--text-faint);
 }
 
@@ -2036,13 +2036,13 @@ button.panel:hover {
 .page-hero .sub {
   margin-top: 20px;
   max-width: 680px;
-  font-size: clamp(17px, 1.62vw, 23px);
+  font-size: clamp(18px, 1.62vw, 23px);
   color: var(--text);
 }
 .page-hero .body {
   margin-top: 16px;
   max-width: 680px;
-  font-size: clamp(15px, 1.48vw, 19px);
+  font-size: clamp(16.5px, 1.48vw, 19px);
   color: var(--text-dim);
 }
 
@@ -2127,7 +2127,7 @@ button.panel:hover {
   gap: 14px;
 }
 .prose p {
-  font-size: clamp(16px, 1.52vw, 19px);
+  font-size: clamp(17px, 1.52vw, 19px);
   color: var(--text);
 }
 .prose p.dim {
@@ -2196,7 +2196,7 @@ a.card:focus-visible {
 }
 .card__num {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.2em;
   color: var(--gold-bright);
 }
@@ -2208,14 +2208,14 @@ a.card:focus-visible {
 }
 .card p {
   margin-top: 7px;
-  font-size: 15px;
+  font-size: 16.5px;
   color: var(--text-dim);
   flex: 1;
 }
 .card__cta {
   margin-top: 12px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--green-bright);
 }
 .card--cta-glow {
@@ -2332,7 +2332,7 @@ a.card:focus-visible {
     0 0 18px -8px rgba(32, 190, 67, 0.42);
   color: var(--text-hi);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.35;
   text-decoration: none;
   overflow-wrap: anywhere;
@@ -2375,7 +2375,7 @@ a.card:focus-visible {
   flex: 0 0 auto;
 }
 .bullets li span {
-  font-size: 15px;
+  font-size: 16.5px;
   color: var(--text-hi);
 }
 
@@ -2395,17 +2395,17 @@ a.card:focus-visible {
 }
 .layer-row .n {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.18em;
   color: var(--gold-bright);
 }
 .layer-row .name {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 18px;
   color: var(--text-hi);
 }
 .layer-row .desc {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-dim);
 }
 @media (max-width: 640px) {
@@ -2426,7 +2426,7 @@ a.card:focus-visible {
 }
 .faq-group h3 {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--gold-bright);
@@ -2439,13 +2439,13 @@ a.card:focus-visible {
   border-top: 1px solid var(--panel-edge);
 }
 .faq-item .q {
-  font-size: 16px;
+  font-size: 17px;
   color: var(--text-hi);
   font-family: var(--font-display);
 }
 .faq-item .a {
   margin-top: 8px;
-  font-size: 14.5px;
+  font-size: 16px;
   color: var(--text-dim);
   max-width: 680px;
 }
@@ -2477,7 +2477,7 @@ a.card:focus-visible {
 }
 .faq-decision-card__label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--gold-bright);
@@ -2503,14 +2503,14 @@ a.card:focus-visible {
 .faq-decision-card dt {
   color: var(--green-bright);
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 .faq-decision-card dd {
   margin: 0;
   color: var(--text-dim);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.48;
 }
 
@@ -2535,7 +2535,7 @@ a.card:focus-visible {
 .comparison-chart__legend strong,
 .comparison-chart__legend span {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   line-height: 1;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -2585,7 +2585,7 @@ a.card:focus-visible {
 .comparison-chart__head {
   padding: 0 14px 4px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold-bright);
@@ -2598,7 +2598,7 @@ a.card:focus-visible {
 }
 .comparison-chart__k {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 18px;
   color: var(--text-hi);
 }
 .comparison-chart__cell {
@@ -2613,7 +2613,7 @@ a.card:focus-visible {
 .comparison-chart__score em {
   color: var(--text-faint);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   font-style: normal;
   line-height: 1;
   text-transform: uppercase;
@@ -2623,14 +2623,14 @@ a.card:focus-visible {
   display: none;
   margin-bottom: 8px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--gold-bright);
 }
 .comparison-chart__cell p {
   margin: 8px 0 0;
-  font-size: 13.5px;
+  font-size: 15.5px;
   line-height: 1.45;
   color: var(--text-dim);
 }
@@ -2674,7 +2674,7 @@ a.card:focus-visible {
 }
 .comparison-matrix__head {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--gold-bright);
@@ -2688,12 +2688,12 @@ a.card:focus-visible {
 }
 .comparison-matrix__k {
   font-family: var(--font-display);
-  font-size: 17px;
+  font-size: 18px;
   color: var(--text-hi);
 }
 .comparison-matrix__row p {
   margin: 8px 0 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--text-dim);
 }
@@ -2750,7 +2750,7 @@ a.card:focus-visible {
 }
 .callout p {
   margin-top: 10px;
-  font-size: 14.5px;
+  font-size: 16px;
   color: var(--text);
 }
 .callout ul {
@@ -2760,7 +2760,7 @@ a.card:focus-visible {
   gap: 7px;
 }
 .callout li {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-dim);
 }
 
@@ -2831,13 +2831,13 @@ a.card:focus-visible {
 }
 .links-row .k {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   letter-spacing: 0.06em;
   color: var(--text-dim);
 }
 .links-row .v {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--green-bright);
 }
 .links-row .v.pending {
@@ -3157,7 +3157,7 @@ a.card:focus-visible {
 .hiw-act__kicker {
   margin: 0;
   color: var(--gold-bright);
-  font: 11px/1 var(--font-mono);
+  font: 14.5px/1 var(--font-mono);
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }
@@ -3174,7 +3174,7 @@ a.card:focus-visible {
   margin-top: 22px;
   max-width: 50ch;
   color: var(--text);
-  font-size: clamp(17px, 1.45vw, 21px);
+  font-size: clamp(18px, 1.45vw, 21px);
   line-height: 1.55;
 }
 
@@ -3212,7 +3212,7 @@ a.card:focus-visible {
   background: rgba(5, 11, 8, 0.42);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  font: 10px/1 var(--font-mono);
+  font: 14px/1 var(--font-mono);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -3266,7 +3266,7 @@ a.card:focus-visible {
   gap: 12px;
   margin-top: clamp(34px, 6vh, 64px);
   color: var(--text-dim);
-  font: 11px/1 var(--font-mono);
+  font: 14.5px/1 var(--font-mono);
   letter-spacing: 0.24em;
   text-transform: uppercase;
 }
@@ -3318,7 +3318,7 @@ a.card:focus-visible {
 .hiw-explainer__head p {
   margin: 0 0 14px;
   color: var(--green-bright);
-  font: 11px/1 var(--font-mono);
+  font: 14.5px/1 var(--font-mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
@@ -3336,7 +3336,7 @@ a.card:focus-visible {
   margin: 16px auto 0;
   max-width: 640px;
   color: var(--text-dim);
-  font: 400 16px/1.6 var(--font-body);
+  font: 400 17px/1.6 var(--font-body);
   letter-spacing: 0;
   text-transform: none;
 }
@@ -3375,7 +3375,7 @@ a.card:focus-visible {
 }
 .hiw-explainer__card-n {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-faint);
 }
 .hiw-explainer__card[data-tone="green"] .hiw-explainer__card-n {
@@ -3390,7 +3390,7 @@ a.card:focus-visible {
 .hiw-explainer__card-layer {
   margin-top: -4px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 14.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--text-faint);
@@ -3403,13 +3403,13 @@ a.card:focus-visible {
 }
 .hiw-explainer__card-what {
   margin: 2px 0 0;
-  font-size: 14.5px;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--text-dim);
 }
 .hiw-explainer__card-why {
   margin: 0;
-  font-size: 13px;
+  font-size: 14.5px;
   line-height: 1.5;
   color: var(--text-faint);
 }
@@ -3483,7 +3483,7 @@ a.card:focus-visible {
       radial-gradient(172% 122% at 50% 48%, rgba(3, 7, 4, 0.72), rgba(3, 7, 4, 0.42) 52%, transparent 86%);
   }
   .hiw-act__lead {
-    font-size: 16px;
+    font-size: 17px;
   }
   .hiw-explainer__head {
     text-align: left;
@@ -3512,7 +3512,7 @@ a.card:focus-visible {
     min-width: 0;
     padding: 7px 9px;
     align-items: flex-start;
-    font-size: 10.5px;
+    font-size: 14.5px;
     letter-spacing: 0.06em;
   }
   .hiw-act__beat-name {
@@ -3577,7 +3577,7 @@ a.card:focus-visible {
     gap: clamp(8px, 1.1vw, 16px);
   }
   .site-nav__link {
-    font-size: 11.5px;
+    font-size: 14px;
   }
 }
 
@@ -3609,7 +3609,7 @@ a.card:focus-visible {
   border-radius: 999px;
   background: rgba(9, 18, 12, 0.76);
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   color: var(--text);
   transition: border-color 0.2s var(--ease);
 }
@@ -3633,7 +3633,7 @@ a.card:focus-visible {
   color: var(--text-dim);
 }
 .network-chip__sim {
-  font-size: 11.5px;
+  font-size: 14px;
   letter-spacing: 0.12em;
   padding: 2px 5px;
   border: 1px solid var(--panel-edge);
@@ -3648,7 +3648,7 @@ a.card:focus-visible {
   gap: 8px;
   margin-bottom: 14px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -3703,7 +3703,7 @@ a.card:focus-visible {
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--text-hi);
 }
@@ -3715,7 +3715,7 @@ a.card:focus-visible {
   transform: translateX(3px);
 }
 .next-steps__sub {
-  font-size: 13px;
+  font-size: 14.5px;
   line-height: 1.4;
   color: var(--text-dim);
 }
@@ -3748,7 +3748,7 @@ a.card:focus-visible {
   border: 1px solid var(--panel-edge-strong);
   border-radius: 9px;
   box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.8);
-  font-size: 12.5px;
+  font-size: 14.5px;
   font-weight: 400;
   line-height: 1.5;
   color: var(--text);
@@ -3768,7 +3768,7 @@ a.card:focus-visible {
 }
 .term__tip-term {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -3860,7 +3860,7 @@ a.card:focus-visible {
 }
 .page-toc__title {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -3869,7 +3869,7 @@ a.card:focus-visible {
 }
 .page-toc a {
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 14.5px;
   color: var(--text);
   padding: 7px 8px;
   border-radius: 7px;
@@ -3918,7 +3918,7 @@ a.card:focus-visible {
 }
 .hiw-step-card__num {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   font-weight: 600;
   letter-spacing: 0.14em;
   color: var(--green-bright);
@@ -3929,14 +3929,14 @@ a.card:focus-visible {
   color: var(--text-hi);
 }
 .hiw-step-card__body {
-  font-size: 13.5px;
+  font-size: 15.5px;
   line-height: 1.6;
   color: var(--text-dim);
 }
 .hiw-step-card__tag {
   align-self: flex-start;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 3px 7px;
@@ -3995,7 +3995,7 @@ a.card:focus-visible {
 }
 .page-sticky-toc a {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14.5px;
   letter-spacing: 0.04em;
   color: var(--text-dim);
   padding: 6px 12px;
@@ -4033,7 +4033,7 @@ a.card:focus-visible {
 }
 .glossary__row dt {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -4041,7 +4041,7 @@ a.card:focus-visible {
 }
 .glossary__row dd {
   margin: 6px 0 0;
-  font-size: 13.5px;
+  font-size: 15.5px;
   line-height: 1.55;
   color: var(--text-dim);
 }
@@ -4061,7 +4061,7 @@ a.chip:hover {
   flex: 1 0 100%;
   display: block;
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 /* ---- changelog ---- */
@@ -4087,13 +4087,13 @@ a.chip:hover {
 }
 .changelog__date {
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 14.5px;
   letter-spacing: 0.08em;
   color: var(--text-dim);
 }
 .changelog__tag {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 3px 8px;
@@ -4117,7 +4117,7 @@ a.chip:hover {
 }
 .changelog__body p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   color: var(--text-dim);
   max-width: 64ch;
@@ -4163,12 +4163,12 @@ a.chip:hover {
   justify-content: space-between;
   padding: 12px 16px;
   border-top: 1px solid var(--panel-edge);
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--text);
 }
 .brand-mark figcaption a {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   color: var(--green-bright);
 }
 .brand-colors {
@@ -4190,16 +4190,16 @@ a.chip:hover {
   margin-bottom: 6px;
 }
 .brand-color__name {
-  font-size: 13px;
+  font-size: 14.5px;
   color: var(--text-hi);
 }
 .brand-color__hex {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 14px;
   color: var(--green-bright);
 }
 .brand-color__note {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-dim);
 }
 

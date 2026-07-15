@@ -25,7 +25,7 @@
 
 .cellKicker {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 14.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -41,7 +41,7 @@
 }
 
 .cellFine {
-  font-size: 13px;
+  font-size: 14.5px;
   line-height: 1.45;
   color: var(--text-dim);
   max-width: 30ch;
@@ -50,7 +50,7 @@
 .cellLink {
   justify-self: start;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 14px;
   color: var(--green-bright);
   text-decoration: none;
   transition: opacity 0.18s var(--ease);

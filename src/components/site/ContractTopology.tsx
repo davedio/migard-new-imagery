@@ -145,7 +145,7 @@ export function ContractTopology() {
         {/* Fault-proof system zone */}
         <g data-node="fpzone">
           <rect x="50" y="174" width="340" height="158" rx="8" fill="rgba(207,154,46,0.04)" stroke="rgba(207,154,46,0.2)" strokeWidth="1" strokeDasharray="4 3" className={styles.diagramNode} style={{ animationDelay: "200ms" }} />
-          <text x="62" y="189" fill="var(--gold)" opacity="0.5" fontSize="7" fontFamily={mono} fontWeight="600" letterSpacing="0.08em" className={styles.diagramNode} style={{ animationDelay: "200ms" }}>FAULT PROOF SYSTEM</text>
+          <text x="62" y="189" fill="var(--gold)" opacity="0.5" fontSize="14" fontFamily={mono} fontWeight="600" letterSpacing="0.08em" className={styles.diagramNode} style={{ animationDelay: "200ms" }}>FAULT PROOF SYSTEM</text>
         </g>
 
         {/* Pipeline edges */}
@@ -175,70 +175,70 @@ export function ContractTopology() {
         <line data-edge="withdrawal settlement" x1="867" y1="196" x2="800" y2="105" pathLength={1} stroke="currentColor" strokeWidth="1" opacity="0.2" markerEnd="url(#topo-ah)" className={styles.diagramLine} style={{ animationDelay: "730ms" }} />
 
         {/* Edge labels */}
-        <text data-edge="statequeue settlement" x="635" y="67" textAnchor="middle" fill="currentColor" opacity="0.28" fontSize="8" fontFamily={mono}>on maturation</text>
-        <text data-edge="compthread statequeue" x="481" y="205" textAnchor="middle" fill="var(--gold)" opacity="0.5" fontSize="8" fontFamily={mono}>challenges</text>
-        <text data-edge="fraudproof statequeue" x="465" y="325" textAnchor="middle" fill="var(--gold)" opacity="0.4" fontSize="8" fontFamily={mono}>fault removal</text>
+        <text data-edge="statequeue settlement" x="635" y="67" textAnchor="middle" fill="currentColor" opacity="0.28" fontSize="14" fontFamily={mono}>on maturation</text>
+        <text data-edge="compthread statequeue" x="481" y="205" textAnchor="middle" fill="var(--gold)" opacity="0.5" fontSize="14" fontFamily={mono}>challenges</text>
+        <text data-edge="fraudproof statequeue" x="465" y="325" textAnchor="middle" fill="var(--gold)" opacity="0.4" fontSize="14" fontFamily={mono}>fault removal</text>
 
         {/* Operator Directory */}
-        <text data-node="opdir" x="413" y="126" textAnchor="middle" fill="currentColor" opacity="0.22" fontSize="7" fontFamily={mono} fontWeight="600" letterSpacing="0.07em" className={styles.diagramNode} style={{ animationDelay: "260ms" }}>OPERATOR DIRECTORY</text>
+        <text data-node="opdir" x="413" y="126" textAnchor="middle" fill="currentColor" opacity="0.22" fontSize="14" fontFamily={mono} fontWeight="600" letterSpacing="0.07em" className={styles.diagramNode} style={{ animationDelay: "260ms" }}>OPERATOR DIRECTORY</text>
         <g data-node="opdir" className={styles.diagramNode} style={{ animationDelay: "280ms" }}>
           <rect x="270" y="130" width="92" height="32" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="316" y="150" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Active</text>
+          <text x="316" y="150" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14" fontFamily={mono}>Active</text>
         </g>
         <g data-node="opdir" className={styles.diagramNode} style={{ animationDelay: "320ms" }}>
           <rect x="367" y="130" width="92" height="32" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="413" y="150" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Registered</text>
+          <text x="413" y="150" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14" fontFamily={mono}>Registered</text>
         </g>
         <g data-node="opdir" className={styles.diagramNode} style={{ animationDelay: "360ms" }}>
           <rect x="464" y="130" width="92" height="32" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="510" y="150" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Retired</text>
+          <text x="510" y="150" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14" fontFamily={mono}>Retired</text>
         </g>
 
         {/* User bridge validators */}
-        <text data-node="bridge" x="756" y="189" textAnchor="middle" fill="currentColor" opacity="0.24" fontSize="7" fontFamily={mono} fontWeight="600" letterSpacing="0.08em" className={styles.diagramNode} style={{ animationDelay: "650ms" }}>USER BRIDGE</text>
+        <text data-node="bridge" x="756" y="189" textAnchor="middle" fill="currentColor" opacity="0.24" fontSize="14" fontFamily={mono} fontWeight="600" letterSpacing="0.08em" className={styles.diagramNode} style={{ animationDelay: "650ms" }}>USER BRIDGE</text>
         <g data-node="deposit" className={styles.diagramNode} style={{ animationDelay: "650ms" }}>
           <rect x="593" y="196" width="100" height="28" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="643" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Deposit</text>
+          <text x="643" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14" fontFamily={mono}>Deposit</text>
         </g>
         <g data-node="txorder" className={styles.diagramNode} style={{ animationDelay: "665ms" }}>
           <rect x="705" y="196" width="100" height="28" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="755" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Tx Order</text>
+          <text x="755" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14" fontFamily={mono}>Tx Order</text>
         </g>
         <g data-node="withdrawal" className={styles.diagramNode} style={{ animationDelay: "680ms" }}>
           <rect x="817" y="196" width="100" height="28" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="867" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10" fontFamily={mono}>Withdrawal</text>
+          <text x="867" y="214" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14" fontFamily={mono}>Withdrawal</text>
         </g>
 
         {/* Fault system nodes (gold) */}
         <g data-node="fpcat" className={styles.diagramNode} style={{ animationDelay: "400ms" }}>
           <rect x="62" y="196" width="138" height="28" rx="4" fill="rgba(207,154,46,0.08)" stroke="var(--gold-dim)" strokeWidth="1" />
-          <text x="131" y="214" textAnchor="middle" fill="var(--gold-bright)" opacity="0.85" fontSize="10" fontFamily={mono}>FP Catalogue</text>
+          <text x="131" y="214" textAnchor="middle" fill="var(--gold-bright)" opacity="0.85" fontSize="14" fontFamily={mono}>FP Catalogue</text>
         </g>
         <g data-node="compthread" className={styles.diagramNode} style={{ animationDelay: "430ms" }}>
           <rect x="224" y="196" width="152" height="28" rx="4" fill="rgba(207,154,46,0.08)" stroke="var(--gold-dim)" strokeWidth="1" />
-          <text x="300" y="214" textAnchor="middle" fill="var(--gold-bright)" opacity="0.85" fontSize="10" fontFamily={mono}>Computation Thread</text>
+          <text x="300" y="214" textAnchor="middle" fill="var(--gold-bright)" opacity="0.85" fontSize="14" fontFamily={mono}>Computation Thread</text>
         </g>
         <g data-node="fraudproof" className={styles.diagramNode} style={{ animationDelay: "600ms" }}>
           <rect x="240" y="300" width="120" height="28" rx="4" fill="rgba(207,154,46,0.12)" stroke="var(--gold)" strokeWidth="1.5" />
-          <text x="300" y="318" textAnchor="middle" fill="var(--gold-bright)" opacity="0.95" fontSize="10" fontFamily={mono}>Fault Proof</text>
+          <text x="300" y="318" textAnchor="middle" fill="var(--gold-bright)" opacity="0.95" fontSize="14" fontFamily={mono}>Fault Proof</text>
         </g>
 
         {/* Pipeline nodes */}
         <g data-node="hub" className={styles.diagramNode} style={{ animationDelay: "50ms" }}>
           <rect x="55" y="72" width="130" height="36" rx="6" fillOpacity="0.14" strokeWidth="2" filter="url(#topo-glow)" style={{ fill: "var(--midgard-green)", stroke: "var(--midgard-green)" }} />
-          <text x="120" y="94" textAnchor="middle" fontSize="11" fontWeight="700" fontFamily={mono} style={{ fill: "var(--green-bright)" }}>Hub Oracle</text>
+          <text x="120" y="94" textAnchor="middle" fontSize="14.5" fontWeight="700" fontFamily={mono} style={{ fill: "var(--green-bright)" }}>Hub Oracle</text>
         </g>
         <g data-node="scheduler" className={styles.diagramNode} style={{ animationDelay: "200ms" }}>
           <rect x="255" y="75" width="120" height="30" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="315" y="94" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10.5" fontFamily={mono}>Scheduler</text>
+          <text x="315" y="94" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14.5" fontFamily={mono}>Scheduler</text>
         </g>
         <g data-node="statequeue" className={styles.diagramNode} style={{ animationDelay: "350ms" }}>
           <rect x="455" y="72" width="130" height="36" rx="5" fillOpacity="0.1" strokeWidth="1.5" filter="url(#topo-glow)" style={{ fill: "var(--midgard-green)", stroke: "var(--midgard-green)" }} />
-          <text x="520" y="94" textAnchor="middle" fontSize="10.5" fontWeight="600" fontFamily={mono} style={{ fill: "var(--green-bright)" }}>State Queue</text>
+          <text x="520" y="94" textAnchor="middle" fontSize="14.5" fontWeight="600" fontFamily={mono} style={{ fill: "var(--green-bright)" }}>State Queue</text>
         </g>
         <g data-node="settlement" className={styles.diagramNode} style={{ animationDelay: "500ms" }}>
           <rect x="685" y="75" width="120" height="30" rx="4" fill="var(--panel)" stroke="var(--panel-edge-strong)" strokeWidth="1" />
-          <text x="745" y="94" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="10.5" fontFamily={mono}>Settlement</text>
+          <text x="745" y="94" textAnchor="middle" fill="currentColor" opacity="0.5" fontSize="14.5" fontFamily={mono}>Settlement</text>
         </g>
       </svg>
 

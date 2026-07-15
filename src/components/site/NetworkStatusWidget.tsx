@@ -77,7 +77,7 @@ function RollingNumber({
       <span
         style={{
           fontFamily: "var(--font-mono)",
-          fontSize: 14,
+          fontSize: 16,
           color: "var(--text-hi)",
         }}
       >
@@ -101,7 +101,7 @@ function RollingNumber({
           transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
           style={{
             fontFamily: "var(--font-mono)",
-            fontSize: 14,
+            fontSize: 16,
             color: "var(--text-hi)",
             display: "inline-block",
           }}
@@ -180,7 +180,7 @@ export function NetworkStatusWidget() {
               k: "Block",
               v: (
                 <span style={{ display: "inline-flex", alignItems: "baseline", gap: 2 }}>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--text-hi)" }}>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 16, color: "var(--text-hi)" }}>
                     #
                   </span>
                   <RollingNumber value={snap.l1.blockHeight} motionOn={motionOn} />
