@@ -65,10 +65,7 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
       name: /The scaling layer for UTXO finance/i,
     }),
   ).toBeVisible();
-  await expect(page.getByRole("link", { name: "Start here: choose your path" })).toHaveAttribute(
-    "href",
-    "#paths",
-  );
+  await expect(page.getByRole("link", { name: "Start here: choose your path" })).toHaveCount(0);
   await expect(page.locator(".minimal-hero__copy")).toContainText("Cardano L1");
   await expect(page.locator(".hero-tree-stage")).toBeVisible();
   await expect(page.getByRole("link", { name: /See how it works/i })).toHaveAttribute(

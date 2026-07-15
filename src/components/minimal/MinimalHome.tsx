@@ -100,14 +100,6 @@ export default function MinimalHome() {
       <HeroStage />
       <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
         <div className="minimal-hero__copy">
-          <Link
-            href={SITE_COPY.hero.startCta.href}
-            className="minimal-status-chip minimal-status-chip--callout"
-            aria-label={SITE_COPY.hero.startCta.label}
-          >
-            <i aria-hidden />
-            {SITE_COPY.hero.startCta.label}
-          </Link>
           <ShatterHeading as="h1" lines={[...SITE_COPY.hero.titleLines]} />
           <p>{SITE_COPY.hero.lead}</p>
           <dl className="minimal-hero-stats" aria-label="Midgard at a glance">

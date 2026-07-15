@@ -2,7 +2,6 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const SITE_COPY = {
   hero: {
-    startCta: { label: "Start here: choose your path", href: "#paths" },
     /* Homepage positioning line. Keep titleLines in sync so the interactive
        heading preserves the intended line break. */
     title: "The scaling layer for UTXO finance.",
