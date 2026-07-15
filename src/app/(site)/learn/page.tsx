@@ -258,6 +258,7 @@ export default function LearnPage() {
         id="economics"
         title={ECONOMICS_MATRIX.title}
         lead={ECONOMICS_MATRIX.lead}
+        cols
         aside={
           <Statement
             align="left"

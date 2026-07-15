@@ -27,19 +27,34 @@ export function LegalDoc({
 }) {
   return (
     <article className={styles.doc}>
-      <p className={styles.meta}>{meta}</p>
-      {sections.map((s, i) => (
-        <section className={styles.section} id={s.id} key={s.id}>
-          <h2>
-            {i + 1}. {s.heading}
-          </h2>
-          {s.paragraphs.map((p, j) => (
-            <p key={j}>{p}</p>
+      <nav className={styles.toc} aria-label="On this page">
+        <span className={styles.tocLabel}>On this page</span>
+        <ol className={styles.tocList}>
+          {sections.map((section, index) => (
+            <li key={section.id}>
+              <a href={`#${section.id}`}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                {section.heading}
+              </a>
+            </li>
           ))}
-          {s.after}
-        </section>
-      ))}
-      {footnote ? <p className={styles.footnote}>{footnote}</p> : null}
+        </ol>
+      </nav>
+      <div className={styles.content}>
+        <p className={styles.meta}>{meta}</p>
+        {sections.map((s, i) => (
+          <section className={styles.section} id={s.id} key={s.id}>
+            <h2>
+              {i + 1}. {s.heading}
+            </h2>
+            {s.paragraphs.map((p, j) => (
+              <p key={j}>{p}</p>
+            ))}
+            {s.after ? <div className={styles.after}>{s.after}</div> : null}
+          </section>
+        ))}
+        {footnote ? <p className={styles.footnote}>{footnote}</p> : null}
+      </div>
     </article>
   );
 }

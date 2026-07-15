@@ -86,7 +86,7 @@ const exploreRows = [
 export default function OfficialLinksPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="rune-stones" variant="full" focus="52% 55%" />
+      <PageBackdrop name="rune-stones" variant="full" focus="55% 56%" mobileFocus="58% 58%" />
       <PageHero
         compact
         tone="ink"
@@ -107,15 +107,19 @@ export default function OfficialLinksPage() {
         id="verify"
         title="Verify, then trust."
         lead="Midgard is in pre-alpha. We will never DM you first, and we will never ask for your seed phrase or private keys. There is no Midgard token today — no sale, no airdrop — and fees are paid in ADA."
+        cols
       >
-        <Statement line="If a link, wallet, or token claims to be Midgard and is not listed on this page, treat it as fake." />
+        <Statement
+          align="left"
+          line="If a link, wallet, or token claims to be Midgard and is not listed on this page, treat it as fake."
+        />
       </Section>
 
-      <Section id="links" title="The canonical list.">
+      <Section id="links" title="The canonical list." cols>
         <DataRows rows={canonicalRows} ariaLabel="Canonical Midgard links" />
       </Section>
 
-      <Section id="explore" title="Keep exploring." tight>
+      <Section id="explore" title="Keep exploring." tight cols>
         <DataRows rows={exploreRows} ariaLabel="Related Midgard pages" />
       </Section>
     </main>

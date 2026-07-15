@@ -86,14 +86,14 @@
 @media (min-width: 1760px) {
   :root {
     --gut: clamp(80px, 4.8vw, 132px);
-    --maxw: min(2200px, calc(100vw - 2 * var(--gut) - 84px));
+    --maxw: min(2200px, calc(100vw - 2 * var(--gut)));
   }
 }
 
 @media (min-width: 2400px) {
   :root {
     --gut: clamp(96px, 4.6vw, 156px);
-    --maxw: min(2800px, calc(100vw - 2 * var(--gut) - 84px));
+    --maxw: min(2800px, calc(100vw - 2 * var(--gut)));
   }
 }
 
@@ -2068,8 +2068,8 @@ button.panel:hover {
 @media (min-width: 1200px) {
   .section__inner--cols {
     display: grid;
-    grid-template-columns: minmax(320px, 0.72fr) minmax(0, 1.28fr);
-    gap: clamp(40px, 4.5vw, 96px);
+    grid-template-columns: clamp(320px, 24vw, 460px) minmax(0, 1fr);
+    gap: clamp(32px, 3.5vw, 80px);
     align-items: start;
   }
   .section__inner--cols > .section__head {
@@ -2148,7 +2148,7 @@ button.panel:hover {
 }
 .card-grid--2 {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
-  max-width: 1040px;
+  max-width: 1280px;
 }
 .card-grid--3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2736,7 +2736,9 @@ a.card:focus-visible {
 /* ---- callout (safety) ---- */
 .callout {
   margin-top: 28px;
-  max-width: 740px;
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
   padding: 24px 26px;
   border-radius: var(--r-lg);
   border: 1px solid var(--gold-line);
@@ -2760,6 +2762,26 @@ a.card:focus-visible {
 .callout li {
   font-size: 14px;
   color: var(--text-dim);
+}
+
+@media (min-width: 1000px) {
+  .callout {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.62fr) minmax(0, 1fr);
+    gap: clamp(28px, 4vw, 64px);
+    align-items: start;
+    padding: 28px 32px;
+  }
+
+  .callout p {
+    margin-top: 1px;
+  }
+}
+
+@media (min-width: 1760px) {
+  .page-hero {
+    justify-content: flex-start;
+  }
 }
 
 /* ---- cta band ---- */

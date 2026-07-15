@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function GlossaryPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="trunk-mist" variant="full" focus="60% 46%" />
+      <PageBackdrop name="trunk-mist" variant="full" focus="64% 48%" mobileFocus="72% 50%" />
       <PageHero
         compact
         tone="ink"

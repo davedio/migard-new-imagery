@@ -24,11 +24,14 @@ export function PageBackdrop({
   name,
   variant = "full",
   focus = "58% 42%",
+  mobileFocus,
   vivid = false,
 }: {
   name: string;
   variant?: BackdropVariant;
   focus?: string;
+  /** Portrait crop focal point. Landscape plates lose most of their width on phones. */
+  mobileFocus?: string;
   /** For intrinsically pale plates (terraces, canopy washes) that would
       otherwise disappear under the legibility scrim. */
   vivid?: boolean;
@@ -39,7 +42,12 @@ export function PageBackdrop({
   return (
     <div
       className={`page-backdrop page-backdrop--${variant}${vivid ? " page-backdrop--vivid" : ""}${needsDarkWash ? " page-backdrop--dark-pale" : ""}`}
-      style={{ "--backdrop-pos": focus } as CSSProperties}
+      style={
+        {
+          "--backdrop-pos": focus,
+          "--backdrop-pos-mobile": mobileFocus ?? focus,
+        } as CSSProperties
+      }
       aria-hidden="true"
     >
       <picture>

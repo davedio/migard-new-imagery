@@ -120,7 +120,7 @@ const SECTIONS: readonly LegalSection[] = [
 export default function SecurityPolicyPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="tree-vista-wide" variant="full" focus="50% 45%" />
+      <PageBackdrop name="tree-vista-wide" variant="full" focus="66% 54%" mobileFocus="76% 58%" />
       <PageHero
         compact
         tone="ink"

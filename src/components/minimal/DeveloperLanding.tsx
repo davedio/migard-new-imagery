@@ -21,7 +21,7 @@ export default function DeveloperLanding() {
     <main className="page-main developer-page">
       {/* Dave's pick (2026-07-11): the original forest-path tree stays on
           Developers — the stone-gateway experiment is retired. */}
-      <PageBackdrop name="forest-path" focus="54% 48%" />
+      <PageBackdrop name="forest-path" focus="54% 48%" mobileFocus="70% 54%" />
       <PageHero
         compact
         tone="tree"
@@ -57,6 +57,7 @@ export default function DeveloperLanding() {
         title="Choose your developer path."
         lead="One sequence for everyone, then four tracks with different next steps."
         glow="green"
+        cols
       >
         <div className="motion-band">
           <IntegrationSteps
@@ -85,6 +86,7 @@ export default function DeveloperLanding() {
         id="economics"
         title="Economics for builders."
         lead="No new asset in your integration, no separate fee market to explain to users."
+        cols
       >
         <DataRows
           ariaLabel="Builder economics"
@@ -120,6 +122,7 @@ export default function DeveloperLanding() {
         id="defense"
         title="How the protocol defends itself."
         lead="An invalid transaction, a bad commitment, withheld data, an operator gone dark: each is a fault, and each can be checked on Cardano. Fault is broader than fraud on purpose — not every failure is intentional."
+        cols
       >
         <CardGrid cols={2}>
           <Card
@@ -166,6 +169,7 @@ export default function DeveloperLanding() {
         title="Keep these handy."
         lead="Midgard is pre-alpha. The node, contracts, and SDK are open source and you can build against them today; a hosted public RPC endpoint arrives with a later phase. For now, run against the local node and Cardano preprod."
         tight
+        cols
       >
         <CardGrid cols={2}>
           <Card

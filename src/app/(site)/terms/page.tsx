@@ -318,7 +318,7 @@ const SECTIONS: readonly LegalSection[] = [
 export default function TermsPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="stone-gateway" variant="full" focus="50% 48%" />
+      <PageBackdrop name="stone-gateway" variant="full" focus="65% 52%" mobileFocus="73% 55%" />
       <PageHero
         compact
         tone="ink"

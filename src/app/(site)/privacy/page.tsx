@@ -236,7 +236,7 @@ const SECTIONS: readonly LegalSection[] = [
 export default function PrivacyPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="valley" variant="full" focus="50% 52%" />
+      <PageBackdrop name="valley" variant="full" focus="52% 54%" mobileFocus="55% 54%" />
       <PageHero
         compact
         tone="ink"

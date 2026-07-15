@@ -122,7 +122,7 @@ const SECTIONS: readonly LegalSection[] = [
 export default function CookiesPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="canopy-light" variant="full" focus="50% 40%" vivid />
+      <PageBackdrop name="canopy-light" variant="full" focus="54% 42%" mobileFocus="62% 40%" vivid />
       <PageHero
         compact
         tone="ink"

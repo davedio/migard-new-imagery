@@ -29,6 +29,7 @@ export function ContractsReference() {
         eyebrow="Contracts"
         title="Inspect the contract path."
         lead="Verify Midgard preprod contract addresses, inspect state anchors, and trace bootstrap history."
+        cols
       >
         <Prose
           items={[
@@ -105,6 +106,7 @@ export function ContractsReference() {
         id="contracts-anchors"
         title="State anchors."
         lead="Each anchor is an NFT-marked UTxO that records protocol state in this snapshot."
+        cols
       >
         <div className={styles.refList}>
           {STATE_ANCHORS.map((anchor) => (
@@ -121,6 +123,7 @@ export function ContractsReference() {
         id="contracts-history"
         title="Genesis deployment history."
         lead={`From protocol initialization to the first confirmed state in about ${CONTRACTS_META.genesisToConfirmed}.`}
+        cols
       >
         <div className={styles.timeline}>
           {GENESIS_TIMELINE.map((event) => (
@@ -143,6 +146,7 @@ export function ContractsReference() {
         id="query"
         title="Query the contracts yourself."
         lead="Use the listed State Queue address with your own preprod tooling."
+        cols
       >
         <div className={styles.codeBlock}>
           <div className={styles.codeHead}>

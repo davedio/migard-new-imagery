@@ -5,10 +5,11 @@
    ============================================================ */
 
 .list {
-  columns: 2;
-  column-gap: 56px;
-  max-width: 980px;
-  margin: 18px auto 0;
+  column-width: 320px;
+  column-count: auto;
+  column-gap: clamp(32px, 3vw, 56px);
+  max-width: none;
+  margin: 18px 0 0;
   padding: 12px 18px;
   border-top: 1px solid rgba(244, 241, 230, 0.14);
   border: 1px solid rgba(244, 241, 230, 0.12);
@@ -61,6 +62,7 @@
 
 @media (max-width: 720px) {
   .list {
-    columns: 1;
+    column-width: auto;
+    column-count: 1;
   }
 }

@@ -123,7 +123,7 @@ const exploreRows = [
 export default function StatusPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="signal-cairn" variant="full" focus="74% 46%" />
+      <PageBackdrop name="signal-cairn" variant="full" focus="74% 56%" mobileFocus="72% 58%" />
       <PageHero
         compact
         tone="ink"
@@ -158,23 +158,23 @@ export default function StatusPage() {
         <DataRows rows={legendRows} ariaLabel="Status label legend" />
       </Section>
 
-      <Section id="deployment" title="Deployment.">
+      <Section id="deployment" title="Deployment." cols>
         <DataRows rows={deploymentRows} ariaLabel="Deployment status" />
       </Section>
 
-      <Section id="access" title="Access.">
+      <Section id="access" title="Access." cols>
         <DataRows rows={accessRows} ariaLabel="Access status" />
       </Section>
 
-      <Section id="performance" title="Performance.">
+      <Section id="performance" title="Performance." cols>
         <DataRows rows={performanceRows} ariaLabel="Performance status" />
       </Section>
 
-      <Section id="mainnet" title="Path to mainnet.">
+      <Section id="mainnet" title="Path to mainnet." cols>
         <DataRows rows={mainnetRows} ariaLabel="Path to mainnet status" />
       </Section>
 
-      <Section title="Keep exploring." tight>
+      <Section title="Keep exploring." tight cols>
         <DataRows rows={exploreRows} ariaLabel="Related pages" />
       </Section>
     </main>

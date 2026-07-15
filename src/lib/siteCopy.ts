@@ -19,7 +19,7 @@ export const SITE_COPY = {
     { k: "Confirmations", v: "Seconds", s: "estimated, not minutes" },
     { k: "Fees", v: "In ADA", s: "a fraction of L1, estimated" },
     { k: "Security", v: "Cardano", s: "verified state settles through the base layer" },
-    { k: "Contracts", v: "Open source", s: "formal methods in progress, on preprod today" },
+    { k: "Contracts", v: "Open source", s: "formal methods in progress" },
   ],
   /** The home "Choose your path" cards — verb-led per the 2026-07-03 call
       (use / build / participate), with the earn hook stated as an estimate. */

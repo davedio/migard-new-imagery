@@ -56,7 +56,7 @@ const exploreRows = [
 export default function RoadmapPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="winding-road" variant="full" focus="45% 55%" />
+      <PageBackdrop name="winding-road" variant="full" focus="48% 58%" mobileFocus="50% 64%" />
       <PageHero
         compact
         tone="cobalt"
@@ -84,7 +84,7 @@ export default function RoadmapPage() {
         <Statement line="Everything grows from Cardano." />
       </Section>
 
-      <Section id="explore" title="Keep exploring." tight>
+      <Section id="explore" title="Keep exploring." tight cols>
         <DataRows rows={exploreRows} ariaLabel="Where to go next" />
       </Section>
     </main>

@@ -121,7 +121,7 @@ const SECTIONS: readonly LegalSection[] = [
 export default function OfficialChannelsPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="trunk-runes" variant="full" focus="50% 45%" />
+      <PageBackdrop name="trunk-runes" variant="full" focus="53% 48%" mobileFocus="54% 48%" />
       <PageHero
         compact
         tone="ink"

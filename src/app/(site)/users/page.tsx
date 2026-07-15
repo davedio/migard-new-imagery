@@ -86,7 +86,7 @@ export default function UsersPage() {
     <main className="page-main">
       {/* The terraced "steps" — Dave's pick for this page (2026-07-11),
           inherited from the retired /economics page. */}
-      <PageBackdrop name="terraces" variant="full" focus="55% 70%" vivid />
+      <PageBackdrop name="terraces" variant="full" focus="58% 68%" mobileFocus="63% 66%" vivid />
       <PageHero
         compact
         tone="moss"
@@ -112,6 +112,7 @@ export default function UsersPage() {
         id="benefits"
         title="Why it feels different."
         lead="Midgard is designed for a faster app experience while verified state settles through Cardano L1."
+        cols
       >
         <DataRows rows={benefitRows} ariaLabel="User benefits" />
       </Section>
@@ -120,6 +121,7 @@ export default function UsersPage() {
         id="economics"
         title="Fees and settlement."
         lead="Pay in ADA. Hold nothing new. Settle through Cardano L1."
+        cols
       >
         <DataRows rows={economicsRows} ariaLabel="User economics" />
       </Section>
@@ -140,7 +142,7 @@ export default function UsersPage() {
         <DataRows rows={simplePathRows} ariaLabel="Simple Midgard user path" />
       </Section>
 
-      <Section id="status" title="What to know right now." tight>
+      <Section id="status" title="What to know right now." tight cols>
         <DataRows rows={statusRows} ariaLabel="User status and safety notes" />
       </Section>
     </main>

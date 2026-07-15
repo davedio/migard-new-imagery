@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function FaqPage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="forest-path" variant="full" focus="50% 48%" />
+      <PageBackdrop name="forest-path" variant="full" focus="54% 48%" mobileFocus="70% 54%" />
       <PageHero
         compact
         tone="moss"

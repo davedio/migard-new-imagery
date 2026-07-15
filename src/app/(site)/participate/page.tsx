@@ -65,7 +65,7 @@ const differentCards = [
 export default function ParticipatePage() {
   return (
     <main className="page-main">
-      <PageBackdrop name="sentinel-watch" focus="62% 48%" />
+      <PageBackdrop name="sentinel-watch" focus="66% 52%" mobileFocus="73% 56%" />
       <PageHero
         compact
         tone="tree"
