@@ -163,6 +163,7 @@ export default function MinimalHome() {
           closed by the trust line the page exists to say. */}
       <section
         className="minimal-section minimal-section--descent minimal-section--descent-cols"
+        data-tree-handoff
         aria-labelledby="minimal-descent-title"
       >
         <div className="minimal-section__head">

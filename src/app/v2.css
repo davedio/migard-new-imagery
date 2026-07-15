@@ -3776,8 +3776,8 @@ h2 em,
 .hero-tree-stage__mover {
   position: absolute;
   inset: 0;
-  transform: scale(1.02);
-  transform-origin: 60% 34%; /* zoom toward the canopy */
+  transform: scale(1);
+  transform-origin: 72% 28%; /* anchored to the wide plate's actual tree */
   will-change: transform;
 }
 .hero-tree-stage__sap {
@@ -3786,6 +3786,7 @@ h2 em,
   width: 100%;
   height: 100%;
   pointer-events: none;
+  mix-blend-mode: screen;
 }
 .hero-tree-stage__img {
   position: absolute;
@@ -3824,7 +3825,7 @@ h2 em,
     object-position: 50% 30%;
   }
   .hero-tree-stage__mover {
-    transform-origin: 50% 26%;
+    transform-origin: 55% 34%;
   }
   .hero-tree-stage__scrim {
     background: linear-gradient(
@@ -3863,8 +3864,8 @@ h2 em,
       rgba(4, 7, 5, 0.42) 0%,
       transparent 20%,
       transparent 52%,
-      rgba(4, 7, 5, 0.86) 92%,
-      rgb(4, 7, 5) 100%
+      rgba(4, 7, 5, 0.74) 92%,
+      rgba(4, 7, 5, 0.88) 100%
     );
 }
 @media (max-aspect-ratio: 4 / 5) {
@@ -3874,8 +3875,8 @@ h2 em,
       rgba(4, 7, 5, 0.66) 0%,
       rgba(4, 7, 5, 0.3) 26%,
       rgba(4, 7, 5, 0.2) 46%,
-      rgba(4, 7, 5, 0.88) 88%,
-      rgb(4, 7, 5) 100%
+      rgba(4, 7, 5, 0.78) 88%,
+      rgba(4, 7, 5, 0.9) 100%
     );
   }
 }

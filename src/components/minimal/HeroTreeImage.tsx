@@ -4,8 +4,7 @@
    HeroTreeImage — the light-mode home hero.
 
    A single painterly World Tree plate sits fixed behind the hero
-   copy and slowly ZOOMS IN as you scroll down the first screen, so
-   the canopy fills the frame while the headline stays put. Art-
+   copy and follows a long canopy-to-roots scroll sequence. Art-
    directed: the wide dawn vista on landscape viewports, the tall
    single tree on portrait/phones. Motion respects the reduced-
    motion preference (the same hook the particle hero uses), and the
@@ -13,10 +12,9 @@
 
    The zoom transform now lives on a MOVER wrapper (not the <img>)
    so the HeroSapHelix orb canvas inside the same wrapper is carried
-   by the exact same motion — sap orbs ride the painted tree, then
-   break into the double-helix as the descent progresses (the ported
-   gateway hero animation). The eased descent value is shared with
-   the orbs via progressRef.
+   by the exact same motion. The scroll sequence is keyed to the
+   transaction section, rather than disappearing after a fixed short
+   distance, and the shared progress value carries the sap field.
    ============================================================ */
 
 import { useEffect, useRef } from "react";
@@ -50,36 +48,88 @@ export function HeroTreeImage() {
     if (!motionOn) {
       const style = window.getComputedStyle(img);
       const baseLift = Number.parseFloat(style.getPropertyValue("--hero-tree-base-lift")) || 0;
-      mover.style.transform = `scale(1.02) translate3d(0, ${baseLift.toFixed(2)}%, 0)`;
+      mover.style.transform = `scale(1) translate3d(0, ${baseLift.toFixed(2)}%, 0)`;
       stage.style.opacity = "1";
       return;
     }
 
     let raf = 0;
     let current = 0;
+    let target = 0;
+    let runway = Math.max(1, window.innerHeight * 3.2);
+    let baseLift = 0;
+    let portrait = false;
+    let last = performance.now();
 
-    const frame = () => {
-      // progress over the first ~1.6 screens of scroll — long enough that the
-      // descent is still running while the three value cards pass the viewport
-      const runway = Math.max(1, window.innerHeight * 1.6);
-      const target = smooth01(window.scrollY / runway);
-      // ease toward target so a flung scroll glides instead of snapping
-      current += (target - current) * 0.12;
-      progressRef.current = current;
+    const measure = () => {
       const style = window.getComputedStyle(img);
-      const baseLift = Number.parseFloat(style.getPropertyValue("--hero-tree-base-lift")) || 0;
-      const scale = 1.02 + current * 0.2; // 1.02 → ~1.22, zooms along the tree
-      const lift = baseLift + current * -2.4; // baseline framing lift + gentle scroll drift (%)
-      mover.style.transform = `scale(${scale.toFixed(4)}) translate3d(0, ${lift.toFixed(2)}%, 0)`;
-      // travel DOWN the tree as we zoom: canopy → trunk → roots
-      mover.style.transformOrigin = `50% ${(24 + current * 52).toFixed(1)}%`;
-      // dissolve the fixed plate into the page as the descent completes
-      stage.style.opacity = (1 - smooth01((current - 0.55) / 0.45)).toFixed(3);
-      raf = requestAnimationFrame(frame);
+      baseLift = Number.parseFloat(style.getPropertyValue("--hero-tree-base-lift")) || 0;
+      portrait = window.matchMedia("(max-aspect-ratio: 4 / 5)").matches;
+      const handoff = document.querySelector<HTMLElement>("[data-tree-handoff]");
+      const handoffTop = handoff
+        ? handoff.getBoundingClientRect().top + window.scrollY
+        : window.innerHeight * 2.7;
+      /* Three-plus screens gives the plate room to establish, travel through
+         the role cards, and hand off only as the transaction story arrives. */
+      runway = Math.max(
+        window.innerHeight * 3.2,
+        handoffTop + (handoff?.offsetHeight || 0) * 0.34,
+      );
     };
 
-    raf = requestAnimationFrame(frame);
-    return () => cancelAnimationFrame(raf);
+    const applyFrame = () => {
+      progressRef.current = current;
+      const camera = smooth01((current - 0.02) / 0.84);
+      const scale = 1 + camera * (portrait ? 0.075 : 0.1);
+      const lift = baseLift - camera * (portrait ? 1.1 : 1.6);
+      const originX = portrait ? 55 : 72;
+      const originY = portrait
+        ? 34 + smooth01((current - 0.14) / 0.7) * 40
+        : 28 + smooth01((current - 0.14) / 0.7) * 50;
+      mover.style.transform = `scale(${scale.toFixed(4)}) translate3d(0, ${lift.toFixed(2)}%, 0)`;
+      mover.style.transformOrigin = `${originX}% ${originY.toFixed(1)}%`;
+      stage.style.opacity = (1 - smooth01((current - 0.88) / 0.12)).toFixed(3);
+    };
+
+    const frame = (now: number) => {
+      const delta = Math.min(0.05, Math.max(0, (now - last) / 1000));
+      last = now;
+      /* Frame-rate-independent damping: a trackpad fling glides, but scroll
+         position remains the source of truth. */
+      const amount = 1 - Math.exp(-delta / 0.18);
+      current += (target - current) * amount;
+      if (Math.abs(target - current) < 0.0001) current = target;
+      applyFrame();
+      if (current !== target) {
+        raf = requestAnimationFrame(frame);
+      } else {
+        raf = 0;
+      }
+    };
+
+    const schedule = () => {
+      target = clamp01(window.scrollY / runway);
+      if (raf) return;
+      last = performance.now();
+      raf = requestAnimationFrame(frame);
+    };
+    const onResize = () => {
+      measure();
+      schedule();
+    };
+
+    measure();
+    target = clamp01(window.scrollY / runway);
+    current = target;
+    applyFrame();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", onResize);
+    };
   }, [motionOn]);
 
   const pfx = theme === "dark" ? "/dark" : "";

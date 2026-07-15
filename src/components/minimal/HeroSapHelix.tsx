@@ -1,504 +1,413 @@
 "use client";
 
 /* ============================================================
-   HeroSapHelix — the gateway hero's "sick helix" (sap orbs that
-   ride the tree, then break into a spinning double-helix on
-   scroll), ported to the painterly light-mode World Tree.
+   HeroSapHelix — art-directed sap moving through the World Tree.
 
-   The painted plate has no bioluminescent veins to sample, so the
-   engine reads TREE-vs-SKY instead: a tracking centroid walks the
-   dark painted mass down from the canopy, yielding the trunk's
-   centerline + width per row. Ambient phase: sap orbs are born in
-   the canopy and meander down that anatomy. As the hero's descent
-   progress rises (the same eased value that drives the plate zoom),
-   the orbs detach into a phase-coherent double-helix wrapped around
-   the measured trunk — fully reversible on scroll-up.
+   The hero plates are fixed artwork, so the animation follows a
+   hand-calibrated spine for each crop instead of trying to infer a
+   trunk from painterly pixels at runtime. That keeps the complete
+   particle field — cores, bloom, and tails — on the canopy, trunk,
+   and root crown at every viewport size.
 
-   Placement: the canvas lives INSIDE the hero's transformed mover,
-   so the plate zoom/lift carries the orbs with zero re-projection.
-   Palette is theme-aware: deep-emerald ink beads with pale hearts
-   on the light plate (additive neon vanishes on cream), the
-   original luminous set when the dark plates land.
-
-   Perf: parked when the tab is hidden or the plate has dissolved
-   (descent > ~0.99); everything else matches the proven engine.
+   Scroll carries the field slowly down the tree and gradually
+   resolves it into a restrained double helix. Idle movement stays
+   intentionally slow; the plate should feel alive, never busy.
    ============================================================ */
 
 import { useEffect, useRef, type RefObject } from "react";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme } from "@/lib/theme";
 
-const ROWS = 96;
-const TAIL = 7;
-const CURSOR_R = 100;
-const CURSOR_BOOST = 2.0;
+const TAU = Math.PI * 2;
+const TAIL = 6;
+const CURSOR_R = 110;
 
-const clamp = (v: number, lo: number, hi: number) =>
-  Math.max(lo, Math.min(hi, v));
-const clamp01 = (v: number) => clamp(v, 0, 1);
-const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const smooth01 = (x: number) => {
-  const c = clamp01(x);
-  return c * c * (3 - 2 * c);
+const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, value));
+const clamp01 = (value: number) => clamp(value, 0, 1);
+const lerp = (from: number, to: number, amount: number) =>
+  from + (to - from) * amount;
+const smooth01 = (value: number) => {
+  const amount = clamp01(value);
+  return amount * amount * (3 - 2 * amount);
+};
+const fract = (value: number) => value - Math.floor(value);
+
+type SpinePoint = {
+  u: number;
+  v: number;
+  /** Safe source-image half-width around the authored centreline. */
+  half: number;
 };
 
+/* Source-space paths verified against both responsive hero plates. The wide
+   tree sits at ~71% of the source; the portrait trunk resolves at ~55%, not
+   the 50% axis used by the previous image sampler. */
+const WIDE_SPINE: readonly SpinePoint[] = [
+  { u: 0.716, v: 0.22, half: 0.013 },
+  { u: 0.715, v: 0.28, half: 0.013 },
+  { u: 0.712, v: 0.34, half: 0.012 },
+  { u: 0.71, v: 0.4, half: 0.011 },
+  { u: 0.706, v: 0.46, half: 0.01 },
+  { u: 0.704, v: 0.52, half: 0.009 },
+  { u: 0.707, v: 0.58, half: 0.009 },
+  { u: 0.706, v: 0.64, half: 0.009 },
+  { u: 0.701, v: 0.7, half: 0.01 },
+  { u: 0.704, v: 0.76, half: 0.011 },
+  { u: 0.71, v: 0.82, half: 0.012 },
+  { u: 0.695, v: 0.88, half: 0.013 },
+];
+
+const PORTRAIT_SPINE: readonly SpinePoint[] = [
+  { u: 0.49, v: 0.31, half: 0.014 },
+  { u: 0.505, v: 0.36, half: 0.014 },
+  { u: 0.52, v: 0.42, half: 0.013 },
+  { u: 0.536, v: 0.48, half: 0.012 },
+  { u: 0.547, v: 0.54, half: 0.011 },
+  { u: 0.552, v: 0.6, half: 0.009 },
+  { u: 0.553, v: 0.66, half: 0.009 },
+  { u: 0.543, v: 0.72, half: 0.01 },
+  { u: 0.528, v: 0.77, half: 0.011 },
+  { u: 0.512, v: 0.82, half: 0.012 },
+  { u: 0.495, v: 0.87, half: 0.013 },
+  { u: 0.487, v: 0.91, half: 0.014 },
+];
+
 type Orb = {
-  u: number; // image-space fraction 0..1
-  v: number;
-  drift: number; // personal lane offset within the trunk width (-1..1)
+  seed: number;
+  phase: number;
+  speed: number;
   size: number;
-  speed: number; // v-fraction per second
-  alpha: number;
-  tail: { x: number; y: number }[];
-  dying: boolean;
-  theta: number;
   strand: 0 | 1;
-  anchorV: number | null;
-  flow: number;
-  mix: number; // helix participation (a minority keeps riding the bark)
+  helixMix: number;
+  tail: { x: number; y: number }[];
+};
+
+const seededRandom = (seed: number) => {
+  let state = seed >>> 0;
+  return () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+const catmull = (a: number, b: number, c: number, d: number, t: number) => {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  return (
+    0.5 *
+    (2 * b +
+      (-a + c) * t +
+      (2 * a - 5 * b + 4 * c - d) * t2 +
+      (-a + 3 * b - 3 * c + d) * t3)
+  );
+};
+
+const sampleSpine = (spine: readonly SpinePoint[], position: number): SpinePoint => {
+  const scaled = clamp01(position) * (spine.length - 1);
+  const index = Math.min(spine.length - 2, Math.floor(scaled));
+  const local = scaled - index;
+  const p0 = spine[Math.max(0, index - 1)];
+  const p1 = spine[index];
+  const p2 = spine[index + 1];
+  const p3 = spine[Math.min(spine.length - 1, index + 2)];
+  return {
+    u: catmull(p0.u, p1.u, p2.u, p3.u, local),
+    v: catmull(p0.v, p1.v, p2.v, p3.v, local),
+    half: catmull(p0.half, p1.half, p2.half, p3.half, local),
+  };
+};
+
+const makeGlowSprite = () => {
+  const sprite = document.createElement("canvas");
+  sprite.width = 96;
+  sprite.height = 96;
+  const context = sprite.getContext("2d");
+  if (!context) return sprite;
+  const glow = context.createRadialGradient(48, 48, 0, 48, 48, 48);
+  glow.addColorStop(0, "rgba(248, 255, 250, 1)");
+  glow.addColorStop(0.09, "rgba(220, 255, 231, 0.98)");
+  glow.addColorStop(0.2, "rgba(105, 255, 154, 0.78)");
+  glow.addColorStop(0.48, "rgba(24, 242, 104, 0.24)");
+  glow.addColorStop(1, "rgba(0, 210, 82, 0)");
+  context.fillStyle = glow;
+  context.fillRect(0, 0, 96, 96);
+  return sprite;
 };
 
 export function HeroSapHelix({
   imgRef,
   progressRef,
 }: {
-  /** the hero <img> — sampled for anatomy, mirrored for geometry */
   imgRef: RefObject<HTMLImageElement | null>;
-  /** the hero's eased descent progress (0..1), written by HeroTreeImage */
   progressRef: RefObject<number>;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { motionOn } = useMotionPref();
   const { theme } = useTheme();
-  /* DARK MODE ONLY (direction 2026-07-13): the luminous sap belongs to the
-     night plate. */
   const active = motionOn && theme === "dark";
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const img = imgRef.current;
+    const image = imgRef.current;
     const host = canvas?.parentElement;
-    if (!canvas || !img || !host || !active) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!canvas || !image || !host || !active) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
 
+    const mask = document.createElement("canvas");
+    const maskContext = mask.getContext("2d");
+    if (!maskContext) return;
+    const sprite = makeGlowSprite();
+
+    let width = 0;
+    let height = 0;
+    let offsetX = 0;
+    let offsetY = 0;
+    let drawScale = 1;
+    let dpr = 1;
+    let portrait = false;
+    let mobile = false;
+    let spine = WIDE_SPINE;
+    let elapsed = 0;
+    let last = performance.now();
     let raf = 0;
+    let wakeTimer = 0;
     let running = false;
     let disposed = false;
 
-    /* ---- anatomy: centerline + width per row, canopy sites ---- */
-    const cLine = new Float32Array(ROWS).fill(0.68);
-    const wLine = new Float32Array(ROWS).fill(0.07);
-    let treeTopV = 0.06;
-    let rootsV = 0.9;
-    let trunkU = 0.72;
-    let anatReady = false;
-    const canopySites: { u: number; v: number }[] = [];
+    const orbs: Orb[] = [];
+    const cursor = { x: -9999, y: -9999 };
 
-    const rowAt = (arr: Float32Array, v: number) => {
-      const f = clamp01(v) * (ROWS - 1);
-      const i = Math.floor(f);
-      return lerp(arr[i], arr[Math.min(ROWS - 1, i + 1)], f - i);
+    const toX = (u: number) => u * (image.naturalWidth || 1) * drawScale + offsetX;
+    const toY = (v: number) => v * (image.naturalHeight || 1) * drawScale + offsetY;
+
+    const helixRadiusPx = (point: SpinePoint) => {
+      const sourceHalf = point.half * (image.naturalWidth || 1) * drawScale;
+      return clamp(sourceHalf * 0.7, mobile ? 4.2 : 6, mobile ? 6.6 : 10.5);
     };
-    const cAt = (v: number) => rowAt(cLine, v);
-    const wAt = (v: number) => rowAt(wLine, v);
-    /* The crown can spread laterally, but the sap should visibly funnel into
-       the trunk. Blend the sampled canopy centre toward the stable mid-trunk
-       axis as V increases, rather than following every painted side branch. */
-    const pathCenterAt = (v: number) => {
-      const funnel = smooth01(
-        (v - (treeTopV + 0.08)) / Math.max(0.01, rootsV - treeTopV - 0.08),
+
+    const resetOrbs = () => {
+      const count = mobile ? 26 : 44;
+      const random = seededRandom(portrait ? 0x51a9f2 : 0x72bc41);
+      orbs.length = 0;
+      for (let index = 0; index < count; index += 1) {
+        orbs.push({
+          seed: fract((index + random() * 0.42) / count),
+          phase: (random() - 0.5) * 0.5,
+          speed: 0.0052 + random() * 0.0028,
+          size: 0.72 + random() * 0.7,
+          strand: index % 2 === 0 ? 0 : 1,
+          helixMix: random() < 0.72 ? 1 : 0.18 + random() * 0.1,
+          tail: [],
+        });
+      }
+    };
+
+    const rebuildMask = () => {
+      mask.width = canvas.width;
+      mask.height = canvas.height;
+      maskContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+      maskContext.clearRect(0, 0, width, height);
+      maskContext.lineCap = "round";
+      maskContext.lineJoin = "round";
+
+      const samples = Array.from({ length: 121 }, (_, index) =>
+        sampleSpine(spine, index / 120),
       );
-      return lerp(cAt(v), trunkU, funnel * 0.92);
+
+      /* A soft corridor clips cores, trails, and bloom — not just orb centres.
+         It is built only on resize/source changes, so the feather costs nothing
+         in the animation loop. */
+      for (let pass = 0; pass < 2; pass += 1) {
+        maskContext.strokeStyle = pass === 0 ? "rgba(255,255,255,0.42)" : "white";
+        maskContext.shadowColor = pass === 0 ? "rgba(255,255,255,0.72)" : "transparent";
+        maskContext.shadowBlur = pass === 0 ? 5 : 0;
+        for (let index = 1; index < samples.length; index += 1) {
+          const from = samples[index - 1];
+          const to = samples[index];
+          const radius = (helixRadiusPx(from) + helixRadiusPx(to)) * 0.5;
+          maskContext.lineWidth = (radius + (pass === 0 ? 7 : 3.5)) * 2;
+          maskContext.beginPath();
+          maskContext.moveTo(toX(from.u), toY(from.v));
+          maskContext.lineTo(toX(to.u), toY(to.v));
+          maskContext.stroke();
+        }
+      }
+      maskContext.shadowBlur = 0;
     };
-    /* The visible sap corridor narrows as it leaves the canopy. This keeps
-       ambient orbs and both helix strands on the painted tree instead of in
-       the surrounding sky, even where the sampled canopy is very broad. */
-    const pathHalfAt = (v: number) => {
-      const downTree = smooth01((v - treeTopV) / Math.max(0.01, rootsV - treeTopV));
-      const sampled = wAt(v) * lerp(0.62, 0.42, downTree);
-      return clamp(sampled, 0.012, lerp(0.085, 0.034, downTree));
-    };
-
-    const sampleAnatomy = () => {
-      if (!img.complete || img.naturalWidth === 0) return;
-      const gw = 160;
-      const gh = Math.max(2, Math.round((img.naturalHeight / img.naturalWidth) * gw));
-      const off = document.createElement("canvas");
-      off.width = gw;
-      off.height = gh;
-      const octx = off.getContext("2d", { willReadFrequently: true });
-      if (!octx) return;
-      try {
-        octx.drawImage(img, 0, 0, gw, gh);
-      } catch {
-        return; // decode race — the load listener will call us again
-      }
-      const data = octx.getImageData(0, 0, gw, gh).data;
-      const portraitPlate = img.naturalHeight > img.naturalWidth * 1.1;
-      const seedU = portraitPlate ? 0.5 : 0.72;
-      cLine.fill(seedU);
-      /* treeness = deviation from the SKY, measured from the plate itself
-         (top-left patch). Works on the pale dawn sky AND the night plate
-         when it lands — whatever the sky is, the tree isn't it. */
-      let skySum = 0;
-      let skyN = 0;
-      for (let gy = 0; gy < Math.max(2, Math.floor(gh * 0.07)); gy++) {
-        for (let gx = 0; gx < Math.floor(gw * 0.3); gx++) {
-          const i = (gy * gw + gx) * 4;
-          skySum += (data[i] + data[i + 1] + data[i + 2]) / 3;
-          skyN++;
-        }
-      }
-      const skyL = skyN > 0 ? skySum / skyN : 235;
-      const score = (gx: number, gy: number) => {
-        const i = (gy * gw + gx) * 4;
-        const l = (data[i] + data[i + 1] + data[i + 2]) / 3;
-        return Math.max(0, Math.abs(skyL - l) - 16);
-      };
-
-      /* first row with real mass = the canopy top */
-      let firstRow = -1;
-      const rowMass: number[] = [];
-      const seedHalf = portraitPlate ? 0.38 : 0.34;
-      const seedLo = Math.max(0, Math.floor((seedU - seedHalf) * gw));
-      const seedHi = Math.min(gw, Math.ceil((seedU + seedHalf) * gw));
-      for (let gy = 0; gy < gh; gy++) {
-        let m = 0;
-        for (let gx = seedLo; gx < seedHi; gx++) if (score(gx, gy) > 46) m++;
-        rowMass.push(m);
-        if (firstRow < 0 && m > (seedHi - seedLo) * 0.055) firstRow = gy;
-      }
-      if (firstRow < 0) return;
-      treeTopV = firstRow / gh;
-
-      /* tracking centroid: full-width seed at the canopy, then a window
-         around the previous row's centre — the left valley/cliffs never
-         capture the line because they sit outside the window */
-      let prevC: number | null = seedU;
-      let prevW = portraitPlate ? 0.075 : 0.085;
-      for (let r = 0; r < ROWS; r++) {
-        const v = r / (ROWS - 1);
-        const gy = Math.min(gh - 1, Math.round(v * (gh - 1)));
-        const win = r === 0 ? seedHalf : 0.11; // fraction of width
-        const lo = Math.max(0, Math.floor(((prevC ?? seedU) - win) * gw));
-        const hi = Math.min(gw, Math.ceil(((prevC ?? seedU) + win) * gw));
-        let sum = 0;
-        let sx = 0;
-        let sxx = 0;
-        for (let gx = lo; gx < hi; gx++) {
-          const s = score(gx, gy);
-          if (s > 46) {
-            sum += s;
-            sx += s * gx;
-            sxx += s * gx * gx;
-          }
-        }
-        if (sum > 0 && gy >= firstRow) {
-          const mean = sx / sum;
-          const std = Math.sqrt(Math.max(0, sxx / sum - mean * mean));
-          prevC = mean / gw;
-          prevW = clamp((std * 1.35) / gw, 0.018, 0.14);
-        }
-        cLine[r] = prevC ?? 0.68;
-        wLine[r] = prevW;
-      }
-      for (let pass = 0; pass < 2; pass++) {
-        for (let r = 1; r < ROWS - 1; r++) {
-          cLine[r] = (cLine[r - 1] + cLine[r] * 2 + cLine[r + 1]) / 4;
-          wLine[r] = (wLine[r - 1] + wLine[r] * 2 + wLine[r + 1]) / 4;
-        }
-      }
-
-      /* trunk axis = centroid of the mid band; roots edge = where mass
-         stops thinning back out near the bottom */
-      let tw = 0;
-      let tx = 0;
-      for (let r = Math.floor(ROWS * 0.4); r < Math.floor(ROWS * 0.8); r++) {
-        tw += 1;
-        tx += cLine[r];
-      }
-      trunkU = clamp(tw > 0 ? tx / tw : seedU, seedU - 0.035, seedU + 0.035);
-      rootsV = clamp(treeTopV + 0.82, 0.8, 0.94);
-
-      /* canopy spark sites: strong cells in the crown band, near the line */
-      canopySites.length = 0;
-      const cTop = firstRow;
-      const cBot = Math.min(gh - 1, Math.floor(firstRow + gh * 0.24));
-      for (let gy = cTop; gy <= cBot; gy++) {
-        for (let gx = 0; gx < gw; gx++) {
-          const u = gx / gw;
-          if (
-            score(gx, gy) > 70 &&
-            Math.abs(u - pathCenterAt(gy / gh)) < pathHalfAt(gy / gh) * 0.95 &&
-            canopySites.length < 360
-          ) {
-            canopySites.push({ u, v: gy / gh });
-          }
-        }
-      }
-      if (canopySites.length === 0) {
-        canopySites.push({ u: trunkU, v: treeTopV + 0.05 });
-      }
-      anatReady = true;
-    };
-
-    /* ---- geometry: image (u,v) -> canvas px (object-fit cover + position).
-       The canvas shares the transformed mover, so the zoom needs no math. */
-    let W = 0;
-    let H = 0;
-    let offX = 0;
-    let offY = 0;
-    let drawScale = 1;
-    const DPR = Math.min(window.devicePixelRatio || 1, 2);
 
     const fit = () => {
-      W = host.clientWidth;
-      H = host.clientHeight;
-      canvas.width = Math.round(W * DPR);
-      canvas.height = Math.round(H * DPR);
-      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-      const iw = img.naturalWidth || 1;
-      const ih = img.naturalHeight || 1;
-      const pos = window.getComputedStyle(img).objectPosition.split(" ");
-      const px = (Number.parseFloat(pos[0]) || 50) / 100;
-      const py = (Number.parseFloat(pos[1]) || 50) / 100;
-      drawScale = Math.max(W / iw, H / ih);
-      offX = (W - iw * drawScale) * px;
-      offY = (H - ih * drawScale) * py;
-    };
-    const tX = (u: number) => u * (img.naturalWidth || 1) * drawScale + offX;
-    const tY = (v: number) => v * (img.naturalHeight || 1) * drawScale + offY;
+      if (!image.naturalWidth || !image.naturalHeight) return;
+      width = host.clientWidth;
+      height = host.clientHeight;
+      mobile = width <= 760;
+      portrait = image.naturalHeight > image.naturalWidth * 1.1;
+      spine = portrait ? PORTRAIT_SPINE : WIDE_SPINE;
+      dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.25 : 1.5);
+      canvas.width = Math.max(1, Math.round(width * dpr));
+      canvas.height = Math.max(1, Math.round(height * dpr));
+      context.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    /* ---- cursor (canvas space, through the ancestor transforms) ---- */
-    const cursor = { x: -9999, y: -9999 };
-    const onMove = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect();
-      if (r.width === 0) return;
-      cursor.x = ((e.clientX - r.left) / r.width) * W;
-      cursor.y = ((e.clientY - r.top) / r.height) * H;
+      const imageWidth = image.naturalWidth;
+      const imageHeight = image.naturalHeight;
+      const position = window.getComputedStyle(image).objectPosition.split(" ");
+      const positionX = (Number.parseFloat(position[0]) || 50) / 100;
+      const positionY = (Number.parseFloat(position[1]) || 50) / 100;
+      drawScale = Math.max(width / imageWidth, height / imageHeight);
+      offsetX = (width - imageWidth * drawScale) * positionX;
+      offsetY = (height - imageHeight * drawScale) * positionY;
+
+      resetOrbs();
+      rebuildMask();
     };
 
-    /* ---- orbs ---- */
-    const orbCount = () => (window.innerWidth <= 760 ? 30 : 56);
-    const orbs: Orb[] = [];
-
-    const spawn = (o?: Orb): Orb => {
-      const site = canopySites.length
-        ? canopySites[(Math.random() * canopySites.length) | 0]
-        : { u: trunkU, v: treeTopV + 0.05 };
-      const size = 0.8 + Math.random() * 1.5;
-      const orb: Orb =
-        o ??
-        ({
-          u: 0, v: 0, drift: 0, size, speed: 0, alpha: 0, tail: [],
-          dying: false, theta: 0, strand: 0, anchorV: null, flow: 0, mix: 1,
-        } as Orb);
-      orb.u = site.u + (Math.random() - 0.5) * 0.012;
-      orb.v = site.v;
-      orb.drift = (Math.random() - 0.5) * 1.7;
-      orb.size = size;
-      orb.speed = (0.045 - size * 0.011) * (0.85 + Math.random() * 0.3);
-      orb.alpha = 0;
-      orb.tail = [];
-      orb.dying = false;
-      orb.theta = Math.random() * Math.PI * 2;
-      orb.strand = Math.random() < 0.5 ? 0 : 1;
-      orb.anchorV = null;
-      orb.flow = 0;
-      orb.mix = Math.random() < 0.2 ? 0.1 + Math.random() * 0.15 : 1;
-      return orb;
+    const onPointerMove = (event: PointerEvent) => {
+      const bounds = canvas.getBoundingClientRect();
+      if (!bounds.width || !bounds.height) return;
+      cursor.x = ((event.clientX - bounds.left) / bounds.width) * width;
+      cursor.y = ((event.clientY - bounds.top) / bounds.height) * height;
     };
 
-    let helixT = 0;
-    let last = performance.now();
+    const drawOrb = (
+      orb: Orb,
+      x: number,
+      y: number,
+      depth: number,
+      alpha: number,
+      cursorLift: number,
+    ) => {
+      const core = orb.size * lerp(0.72, 1.08, depth) * (mobile ? 0.86 : 1);
+      const bloom = core * (10.5 + cursorLift * 1.4);
+
+      for (let index = orb.tail.length - 1; index >= 1; index -= 1) {
+        const point = orb.tail[index];
+        const life = 1 - index / orb.tail.length;
+        const size = core * (3.3 + life * 1.4);
+        context.globalAlpha = alpha * life * 0.12;
+        context.drawImage(sprite, point.x - size / 2, point.y - size / 2, size, size);
+      }
+
+      context.globalAlpha = alpha * (0.58 + cursorLift * 0.1);
+      context.drawImage(sprite, x - bloom / 2, y - bloom / 2, bloom, bloom);
+      context.globalAlpha = alpha;
+      context.beginPath();
+      context.arc(x, y, Math.max(0.55, core * 0.72), 0, TAU);
+      context.fillStyle = "rgba(242, 255, 247, 0.96)";
+      context.fill();
+    };
 
     const tick = (now: number) => {
-      raf = requestAnimationFrame(tick);
-      /* self-heal zero-size mounts (prerender/background tab) */
-      if (W === 0 && host.clientWidth > 0) fit();
-      const dt = Math.min(0.05, (now - last) / 1000);
+      if (disposed) return;
+      const delta = Math.min(0.05, Math.max(0, (now - last) / 1000));
       last = now;
-      if (!anatReady || W === 0) return;
+      elapsed += delta;
+      const scrollProgress = clamp01(progressRef.current || 0);
 
-      const c = clamp01(progressRef.current ?? 0);
-      if (c > 0.99) {
-        // the plate has dissolved into the page — draw nothing
-        ctx.clearRect(0, 0, W, H);
+      if (scrollProgress > 0.998 || !width || !height) {
+        context.clearRect(0, 0, width, height);
+        running = false;
+        raf = 0;
         return;
       }
-      /* the transformation: forms through the first half of the descent,
-         then holds while the plate zooms toward the roots */
-      const d = smooth01((c - 0.1) / 0.32);
-      helixT += dt;
 
-      const want = Math.round(orbCount() * (1 + d * 0.35));
-      while (orbs.length < want) {
-        const o = spawn();
-        o.v += Math.random() * Math.min(0.34, Math.max(0, rootsV - o.v - 0.04));
-        /* Initial fill used to move only V, leaving each orb's canopy X
-           floating through open sky until it eased back to the trunk. */
-        o.u = pathCenterAt(o.v) + o.drift * pathHalfAt(o.v) * 0.55;
-        orbs.push(o);
+      const helixBlend = smooth01((scrollProgress - 0.16) / 0.52);
+      context.clearRect(0, 0, width, height);
+      context.globalCompositeOperation = "source-over";
+
+      for (const orb of orbs) {
+        /* Scroll carries the field only partway down the tree; the remainder is
+           a very slow autonomous sap flow. Full canopy-to-root travel takes
+           roughly 2–3 minutes at idle instead of racing through in seconds. */
+        const position = fract(orb.seed + elapsed * orb.speed + scrollProgress * 0.3);
+        const point = sampleSpine(spine, position);
+        const radius = helixRadiusPx(point) * lerp(0.12, 1, helixBlend) * orb.helixMix;
+        const angle =
+          orb.phase +
+          position * TAU * 2.15 +
+          elapsed * 0.16 +
+          scrollProgress * Math.PI * 0.45 +
+          (orb.strand ? Math.PI : 0);
+        const depth = 0.5 + 0.5 * Math.sin(angle + Math.PI / 2);
+        const x = toX(point.u) + Math.cos(angle) * radius;
+        const y = toY(point.v);
+        const cursorDistance = Math.hypot(x - cursor.x, y - cursor.y);
+        const cursorLift = cursorDistance < CURSOR_R ? 1 - cursorDistance / CURSOR_R : 0;
+        const edgeFade = smooth01(position / 0.055) * smooth01((1 - position) / 0.065);
+        const backHalf = lerp(0.5, 1, depth);
+        const alpha = edgeFade * backHalf * (0.76 + cursorLift * 0.16);
+
+        orb.tail.unshift({ x, y });
+        if (orb.tail.length > TAIL) orb.tail.pop();
+        drawOrb(orb, x, y, depth, alpha, cursorLift);
       }
-      if (orbs.length > want + 10) orbs.length = want + 10;
 
-      ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = "lighter";
-
-      for (const o of orbs) {
-        if (o.dying) {
-          o.alpha -= dt * 1.6;
-          if (o.alpha <= 0) {
-            spawn(o);
-            continue;
-          }
-        } else {
-          o.alpha = Math.min(1, o.alpha + dt * 1.2);
-        }
-
-        /* ambient anatomy flow: descend, easing into the lane the tree
-           actually paints at this height */
-        const laneHalf = pathHalfAt(o.v);
-        const laneU = pathCenterAt(o.v) + o.drift * laneHalf * 0.55;
-        const sway = Math.sin(now / 900 + o.theta * 3) * laneHalf * 0.05;
-        o.u += (laneU + sway - o.u) * Math.min(1, dt * 3.2);
-        const boostD = Math.hypot(tX(o.u) - cursor.x, tY(o.v) - cursor.y);
-        const boost =
-          boostD < CURSOR_R ? CURSOR_BOOST - (boostD / CURSOR_R) * (CURSOR_BOOST - 1) : 1;
-        o.v += o.speed * boost * dt;
-        if (o.v > rootsV && d * o.mix < 0.4) o.dying = true;
-
-        /* Helix detach: both strands now travel canopy -> trunk -> roots,
-           following the measured tree centreline instead of orbiting one
-           fixed page axis. */
-        let iu = o.u;
-        let iv = o.v;
-        let depthMod = 1;
-        const di = d * o.mix;
-        if (di > 0.01) {
-          if (o.anchorV === null) o.anchorV = clamp(o.v, treeTopV + 0.01, rootsV - 0.04);
-          o.flow += dt * 0.035 * di;
-          let hv = o.anchorV + o.flow;
-          if (hv > rootsV) {
-            o.flow = 0;
-            o.anchorV = clamp(treeTopV + 0.015 + Math.random() * 0.07, 0, 0.96);
-            hv = o.anchorV;
-          }
-          const phase =
-            helixT * 1.05 +
-            hv * Math.PI * 4.6 +
-            (o.strand ? Math.PI : 0) +
-            (o.theta % 0.6) * 0.6;
-          const R = clamp(pathHalfAt(hv) * (0.28 + 0.12 * d), 0.006, 0.026);
-          const hu = pathCenterAt(hv) + Math.cos(phase) * R;
-          depthMod = 0.62 + 0.38 * Math.sin(phase + Math.PI / 2);
-          iu = lerp(o.u, hu, di);
-          iv = lerp(o.v, hv, di);
-        } else if (o.anchorV !== null) {
-          o.anchorV = null;
-          o.flow = 0;
-        }
-
-        /* Last-resort corridor clamp: sampling can be imperfect on painterly
-           edges, but no rendered orb is allowed outside the tree path. */
-        const renderHalf = pathHalfAt(iv);
-        iu = clamp(iu, pathCenterAt(iv) - renderHalf, pathCenterAt(iv) + renderHalf);
-
-        const cx = tX(iu);
-        const cy = tY(iv);
-        o.tail.unshift({ x: cx, y: cy });
-        if (o.tail.length > TAIL) o.tail.pop();
-
-        const r =
-          o.size * lerp(1, depthMod, d) * (1 + d * 0.28) *
-          (window.innerWidth <= 760 ? 0.85 : 1);
-        const tailN = Math.min(
-          o.tail.length,
-          Math.max(2, Math.round(o.tail.length * (1 - d * 0.55))),
-        );
-
-        /* the luminous night set — white-hot hearts, green glow */
-        for (let i = tailN - 1; i >= 1; i--) {
-          const t = i / tailN;
-          const tp = o.tail[i];
-          ctx.beginPath();
-          ctx.arc(tp.x, tp.y, r * (1 - t * 0.72), 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 255, 102, ${(o.alpha * 0.2 * (1 - t)).toFixed(3)})`;
-          ctx.fill();
-        }
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(51, 255, 51, ${(o.alpha * (0.14 + d * 0.16)).toFixed(3)})`;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * 0.9, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * 0.94 * lerp(1, depthMod, d * 0.5)).toFixed(3)})`;
-        ctx.shadowColor = "rgba(0, 255, 102, 0.9)";
-        ctx.shadowBlur = 8 + d * 7;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-      ctx.globalCompositeOperation = "source-over";
+      context.globalAlpha = 1;
+      context.globalCompositeOperation = "destination-in";
+      context.drawImage(mask, 0, 0, width, height);
+      context.globalCompositeOperation = "source-over";
+      raf = requestAnimationFrame(tick);
     };
 
     const start = () => {
-      if (running || disposed) return;
+      if (running || disposed || document.hidden) return;
       running = true;
-      fit();
       last = performance.now();
       raf = requestAnimationFrame(tick);
     };
     const stop = () => {
       running = false;
       cancelAnimationFrame(raf);
+      raf = 0;
     };
-
-    /* (re)sample on every source swap (responsive/theme), but only once the
-       new frame is actually decodable — and keep the previous anatomy live
-       until the new one lands, so a decode race can never park the engine */
-    const onImg = () => {
-      const attempt = () => {
+    const onScroll = () => {
+      start();
+      window.clearTimeout(wakeTimer);
+      /* HeroTreeImage damps toward its new scroll target. If this field was
+         parked after the final fade, wake it once more after that shared
+         progress has moved so a single fast scroll-up always restores sap. */
+      wakeTimer = window.setTimeout(start, 220);
+    };
+    const onVisibility = () => (document.hidden ? stop() : start());
+    const onImage = () => {
+      const ready = () => {
         if (disposed) return;
-        sampleAnatomy();
         fit();
+        start();
       };
-      if (typeof img.decode === "function") {
-        img.decode().then(attempt).catch(() => window.setTimeout(attempt, 160));
+      if (typeof image.decode === "function") {
+        image.decode().then(ready).catch(() => window.setTimeout(ready, 120));
       } else {
-        attempt();
+        ready();
       }
     };
-    if (img.complete && img.naturalWidth > 0) onImg();
-    img.addEventListener("load", onImg);
 
-    const onVis = () => (document.hidden ? stop() : start());
-    const ro = new ResizeObserver(() => {
-      fit();
-    });
-    ro.observe(host);
-    document.addEventListener("visibilitychange", onVis);
-    window.addEventListener("pointermove", onMove, { passive: true });
+    const resizeObserver = new ResizeObserver(fit);
+    resizeObserver.observe(host);
+    image.addEventListener("load", onImage);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    if (image.complete && image.naturalWidth) onImage();
     start();
 
     return () => {
       disposed = true;
       stop();
-      ro.disconnect();
-      img.removeEventListener("load", onImg);
-      document.removeEventListener("visibilitychange", onVis);
-      window.removeEventListener("pointermove", onMove);
+      window.clearTimeout(wakeTimer);
+      resizeObserver.disconnect();
+      image.removeEventListener("load", onImage);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onPointerMove);
     };
   }, [imgRef, progressRef, active]);
 
   if (!active) return null;
-  return (
-    <canvas
-      ref={canvasRef}
-      className="hero-tree-stage__sap"
-      aria-hidden
-    />
-  );
+  return <canvas ref={canvasRef} className="hero-tree-stage__sap" aria-hidden />;
 }
 
 export default HeroSapHelix;
