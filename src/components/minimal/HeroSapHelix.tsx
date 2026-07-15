@@ -29,7 +29,7 @@ import { useMotionPref } from "@/lib/motion";
 import { useTheme } from "@/lib/theme";
 
 const ROWS = 96;
-const TAIL = 8;
+const TAIL = 7;
 const CURSOR_R = 100;
 const CURSOR_BOOST = 2.0;
 
@@ -54,7 +54,7 @@ type Orb = {
   theta: number;
   strand: 0 | 1;
   anchorV: number | null;
-  rise: number;
+  flow: number;
   mix: number; // helix participation (a minority keeps riding the bark)
 };
 
@@ -88,7 +88,7 @@ export function HeroSapHelix({
 
     /* ---- anatomy: centerline + width per row, canopy sites ---- */
     const cLine = new Float32Array(ROWS).fill(0.68);
-    const wLine = new Float32Array(ROWS).fill(0.08);
+    const wLine = new Float32Array(ROWS).fill(0.07);
     let treeTopV = 0.06;
     let rootsV = 0.9;
     let trunkU = 0.72;
@@ -102,6 +102,23 @@ export function HeroSapHelix({
     };
     const cAt = (v: number) => rowAt(cLine, v);
     const wAt = (v: number) => rowAt(wLine, v);
+    /* The crown can spread laterally, but the sap should visibly funnel into
+       the trunk. Blend the sampled canopy centre toward the stable mid-trunk
+       axis as V increases, rather than following every painted side branch. */
+    const pathCenterAt = (v: number) => {
+      const funnel = smooth01(
+        (v - (treeTopV + 0.08)) / Math.max(0.01, rootsV - treeTopV - 0.08),
+      );
+      return lerp(cAt(v), trunkU, funnel * 0.92);
+    };
+    /* The visible sap corridor narrows as it leaves the canopy. This keeps
+       ambient orbs and both helix strands on the painted tree instead of in
+       the surrounding sky, even where the sampled canopy is very broad. */
+    const pathHalfAt = (v: number) => {
+      const downTree = smooth01((v - treeTopV) / Math.max(0.01, rootsV - treeTopV));
+      const sampled = wAt(v) * lerp(0.62, 0.42, downTree);
+      return clamp(sampled, 0.012, lerp(0.085, 0.034, downTree));
+    };
 
     const sampleAnatomy = () => {
       if (!img.complete || img.naturalWidth === 0) return;
@@ -118,6 +135,9 @@ export function HeroSapHelix({
         return; // decode race — the load listener will call us again
       }
       const data = octx.getImageData(0, 0, gw, gh).data;
+      const portraitPlate = img.naturalHeight > img.naturalWidth * 1.1;
+      const seedU = portraitPlate ? 0.5 : 0.72;
+      cLine.fill(seedU);
       /* treeness = deviation from the SKY, measured from the plate itself
          (top-left patch). Works on the pale dawn sky AND the night plate
          when it lands — whatever the sky is, the tree isn't it. */
@@ -140,11 +160,14 @@ export function HeroSapHelix({
       /* first row with real mass = the canopy top */
       let firstRow = -1;
       const rowMass: number[] = [];
+      const seedHalf = portraitPlate ? 0.38 : 0.34;
+      const seedLo = Math.max(0, Math.floor((seedU - seedHalf) * gw));
+      const seedHi = Math.min(gw, Math.ceil((seedU + seedHalf) * gw));
       for (let gy = 0; gy < gh; gy++) {
         let m = 0;
-        for (let gx = 0; gx < gw; gx++) if (score(gx, gy) > 46) m++;
+        for (let gx = seedLo; gx < seedHi; gx++) if (score(gx, gy) > 46) m++;
         rowMass.push(m);
-        if (firstRow < 0 && m > gw * 0.04) firstRow = gy;
+        if (firstRow < 0 && m > (seedHi - seedLo) * 0.055) firstRow = gy;
       }
       if (firstRow < 0) return;
       treeTopV = firstRow / gh;
@@ -152,14 +175,14 @@ export function HeroSapHelix({
       /* tracking centroid: full-width seed at the canopy, then a window
          around the previous row's centre — the left valley/cliffs never
          capture the line because they sit outside the window */
-      let prevC: number | null = null;
-      let prevW = 0.09;
+      let prevC: number | null = seedU;
+      let prevW = portraitPlate ? 0.075 : 0.085;
       for (let r = 0; r < ROWS; r++) {
         const v = r / (ROWS - 1);
         const gy = Math.min(gh - 1, Math.round(v * (gh - 1)));
-        const win = prevC === null ? 1 : 0.15; // fraction of width
-        const lo = prevC === null ? 0 : Math.max(0, Math.floor((prevC - win) * gw));
-        const hi = prevC === null ? gw : Math.min(gw, Math.ceil((prevC + win) * gw));
+        const win = r === 0 ? seedHalf : 0.11; // fraction of width
+        const lo = Math.max(0, Math.floor(((prevC ?? seedU) - win) * gw));
+        const hi = Math.min(gw, Math.ceil(((prevC ?? seedU) + win) * gw));
         let sum = 0;
         let sx = 0;
         let sxx = 0;
@@ -175,7 +198,7 @@ export function HeroSapHelix({
           const mean = sx / sum;
           const std = Math.sqrt(Math.max(0, sxx / sum - mean * mean));
           prevC = mean / gw;
-          prevW = clamp((std * 1.8) / gw, 0.02, 0.2);
+          prevW = clamp((std * 1.35) / gw, 0.018, 0.14);
         }
         cLine[r] = prevC ?? 0.68;
         wLine[r] = prevW;
@@ -195,7 +218,7 @@ export function HeroSapHelix({
         tw += 1;
         tx += cLine[r];
       }
-      trunkU = tw > 0 ? tx / tw : 0.72;
+      trunkU = clamp(tw > 0 ? tx / tw : seedU, seedU - 0.035, seedU + 0.035);
       rootsV = clamp(treeTopV + 0.82, 0.8, 0.94);
 
       /* canopy spark sites: strong cells in the crown band, near the line */
@@ -207,7 +230,7 @@ export function HeroSapHelix({
           const u = gx / gw;
           if (
             score(gx, gy) > 70 &&
-            Math.abs(u - cAt(gy / gh)) < 0.3 &&
+            Math.abs(u - pathCenterAt(gy / gh)) < pathHalfAt(gy / gh) * 0.95 &&
             canopySites.length < 360
           ) {
             canopySites.push({ u, v: gy / gh });
@@ -257,7 +280,7 @@ export function HeroSapHelix({
     };
 
     /* ---- orbs ---- */
-    const orbCount = () => (window.innerWidth <= 760 ? 34 : 72);
+    const orbCount = () => (window.innerWidth <= 760 ? 30 : 56);
     const orbs: Orb[] = [];
 
     const spawn = (o?: Orb): Orb => {
@@ -269,11 +292,11 @@ export function HeroSapHelix({
         o ??
         ({
           u: 0, v: 0, drift: 0, size, speed: 0, alpha: 0, tail: [],
-          dying: false, theta: 0, strand: 0, anchorV: null, rise: 0, mix: 1,
+          dying: false, theta: 0, strand: 0, anchorV: null, flow: 0, mix: 1,
         } as Orb);
-      orb.u = site.u + (Math.random() - 0.5) * 0.02;
+      orb.u = site.u + (Math.random() - 0.5) * 0.012;
       orb.v = site.v;
-      orb.drift = (Math.random() - 0.5) * 2;
+      orb.drift = (Math.random() - 0.5) * 1.7;
       orb.size = size;
       orb.speed = (0.045 - size * 0.011) * (0.85 + Math.random() * 0.3);
       orb.alpha = 0;
@@ -282,7 +305,7 @@ export function HeroSapHelix({
       orb.theta = Math.random() * Math.PI * 2;
       orb.strand = Math.random() < 0.5 ? 0 : 1;
       orb.anchorV = null;
-      orb.rise = 0;
+      orb.flow = 0;
       orb.mix = Math.random() < 0.2 ? 0.1 + Math.random() * 0.15 : 1;
       return orb;
     };
@@ -309,10 +332,13 @@ export function HeroSapHelix({
       const d = smooth01((c - 0.1) / 0.32);
       helixT += dt;
 
-      const want = Math.round(orbCount() * (1 + d * 1.1));
+      const want = Math.round(orbCount() * (1 + d * 0.35));
       while (orbs.length < want) {
         const o = spawn();
-        o.v += Math.random() * 0.4; // stagger the initial fill down the tree
+        o.v += Math.random() * Math.min(0.34, Math.max(0, rootsV - o.v - 0.04));
+        /* Initial fill used to move only V, leaving each orb's canopy X
+           floating through open sky until it eased back to the trunk. */
+        o.u = pathCenterAt(o.v) + o.drift * pathHalfAt(o.v) * 0.55;
         orbs.push(o);
       }
       if (orbs.length > want + 10) orbs.length = want + 10;
@@ -333,27 +359,30 @@ export function HeroSapHelix({
 
         /* ambient anatomy flow: descend, easing into the lane the tree
            actually paints at this height */
-        const laneU = cAt(o.v) + o.drift * wAt(o.v) * 0.8;
-        const sway = Math.sin(now / 900 + o.theta * 3) * wAt(o.v) * 0.12;
-        o.u += (laneU + sway - o.u) * Math.min(1, dt * 2.2);
+        const laneHalf = pathHalfAt(o.v);
+        const laneU = pathCenterAt(o.v) + o.drift * laneHalf * 0.55;
+        const sway = Math.sin(now / 900 + o.theta * 3) * laneHalf * 0.05;
+        o.u += (laneU + sway - o.u) * Math.min(1, dt * 3.2);
         const boostD = Math.hypot(tX(o.u) - cursor.x, tY(o.v) - cursor.y);
         const boost =
           boostD < CURSOR_R ? CURSOR_BOOST - (boostD / CURSOR_R) * (CURSOR_BOOST - 1) : 1;
         o.v += o.speed * boost * dt;
         if (o.v > rootsV && d * o.mix < 0.4) o.dying = true;
 
-        /* helix detach (identical grammar to the gateway engine) */
+        /* Helix detach: both strands now travel canopy -> trunk -> roots,
+           following the measured tree centreline instead of orbiting one
+           fixed page axis. */
         let iu = o.u;
         let iv = o.v;
         let depthMod = 1;
         const di = d * o.mix;
         if (di > 0.01) {
-          if (o.anchorV === null) o.anchorV = o.v;
-          o.rise += dt * 0.012 * di;
-          let hv = o.anchorV - o.rise;
-          if (hv < treeTopV) {
-            o.rise = 0;
-            o.anchorV = clamp(rootsV - 0.06 + Math.random() * 0.08, 0, 0.96);
+          if (o.anchorV === null) o.anchorV = clamp(o.v, treeTopV + 0.01, rootsV - 0.04);
+          o.flow += dt * 0.035 * di;
+          let hv = o.anchorV + o.flow;
+          if (hv > rootsV) {
+            o.flow = 0;
+            o.anchorV = clamp(treeTopV + 0.015 + Math.random() * 0.07, 0, 0.96);
             hv = o.anchorV;
           }
           const phase =
@@ -361,15 +390,20 @@ export function HeroSapHelix({
             hv * Math.PI * 4.6 +
             (o.strand ? Math.PI : 0) +
             (o.theta % 0.6) * 0.6;
-          const R = 0.015 + 0.11 * d;
-          const hu = trunkU + Math.cos(phase) * R;
+          const R = clamp(pathHalfAt(hv) * (0.28 + 0.12 * d), 0.006, 0.026);
+          const hu = pathCenterAt(hv) + Math.cos(phase) * R;
           depthMod = 0.62 + 0.38 * Math.sin(phase + Math.PI / 2);
           iu = lerp(o.u, hu, di);
           iv = lerp(o.v, hv, di);
         } else if (o.anchorV !== null) {
           o.anchorV = null;
-          o.rise = 0;
+          o.flow = 0;
         }
+
+        /* Last-resort corridor clamp: sampling can be imperfect on painterly
+           edges, but no rendered orb is allowed outside the tree path. */
+        const renderHalf = pathHalfAt(iv);
+        iu = clamp(iu, pathCenterAt(iv) - renderHalf, pathCenterAt(iv) + renderHalf);
 
         const cx = tX(iu);
         const cy = tY(iv);
@@ -377,7 +411,7 @@ export function HeroSapHelix({
         if (o.tail.length > TAIL) o.tail.pop();
 
         const r =
-          o.size * lerp(1, depthMod, d) * (1 + d * 0.7) *
+          o.size * lerp(1, depthMod, d) * (1 + d * 0.28) *
           (window.innerWidth <= 760 ? 0.85 : 1);
         const tailN = Math.min(
           o.tail.length,
@@ -401,7 +435,7 @@ export function HeroSapHelix({
         ctx.arc(cx, cy, r * 0.9, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(232, 255, 242, ${(o.alpha * 0.94 * lerp(1, depthMod, d * 0.5)).toFixed(3)})`;
         ctx.shadowColor = "rgba(0, 255, 102, 0.9)";
-        ctx.shadowBlur = 10 + d * 12;
+        ctx.shadowBlur = 8 + d * 7;
         ctx.fill();
         ctx.shadowBlur = 0;
       }
