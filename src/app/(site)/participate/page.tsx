@@ -70,7 +70,7 @@ export default function ParticipatePage() {
         compact
         tone="tree"
         title="Run the protocol."
-        sub="Watchers and Operators keep Midgard honest, and the protocol rewards them for it. Learn the roles, review the economics, and choose yours."
+        sub="Operators earn fees for sequencing transactions. Watchers verify commitments and can earn from a valid fault proof. Both help secure Midgard."
         actions={[
           { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
           { label: "Open GitHub", href: OFFICIAL_LINKS.github, variant: "ghost", icon: <GitHubIcon size={15} /> },

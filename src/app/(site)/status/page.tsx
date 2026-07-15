@@ -69,7 +69,7 @@ const accessRows = [
 const performanceRows = [
   {
     label: "Soft confirmation",
-    body: "Seconds — usable, pre-settlement confirmation.",
+    body: "Seconds (estimated) — usable, pre-settlement confirmation.",
     meta: "Preview",
   },
   {

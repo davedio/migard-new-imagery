@@ -22,7 +22,7 @@ const faqGroups = [
     items: [
       {
         q: "What is Midgard?",
-        a: "Midgard is an optimistic rollup for UTXO finance. Applications execute faster, while verified state settles through Cardano L1.",
+        a: "Midgard is a Cardano-native optimistic rollup for UTXO finance, designed for faster, lower-cost execution while verified state settles through Cardano L1.",
       },
       {
         q: "Is Midgard live?",
@@ -101,7 +101,7 @@ const faqGroups = [
     ],
   },
   {
-    title: "Protocol Roles and status",
+    title: "Protocol roles and status",
     items: [
       {
         q: "Can anyone run an Operator or Watcher today?",
@@ -144,8 +144,8 @@ const basicsRail = [
     detail: "Claims, attack surface, Watchers, and UTXO fit.",
   },
   {
-    label: "Protocol Roles",
-    href: `#${faqGroupId("Protocol Roles and status")}`,
+    label: "Protocol roles",
+    href: `#${faqGroupId("Protocol roles and status")}`,
     detail: "Who runs the network, how roles earn, and where to report.",
   },
 ] as const;
@@ -205,8 +205,6 @@ export default function FaqSections() {
     <>
       <Section
         id="faq"
-        title="Questions."
-        lead="Short answers on what Midgard is, how its security works, and what to check before relying on it."
       >
         <div className="faq-basics-shell">
           {/* flat static rows — no reveal slabs (rhythm rule: Rows are simply there) */}

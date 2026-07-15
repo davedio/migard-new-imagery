@@ -8,7 +8,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "Users | Midgard",
   description:
-    "What users get from Midgard: faster app interactions, fees in ADA, and settlement rooted back to Cardano.",
+    "A faster Cardano app experience, fees in ADA, and verified state settlement through Cardano L1.",
   openGraph: {
     title: "Users | Midgard",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const benefitRows = [
   {
     label: "Faster app feel",
-    body: "Transactions can become usable in seconds while final settlement continues underneath.",
+    body: "Transactions are designed to become usable in seconds (estimated) while verified state continues toward Cardano L1 settlement.",
   },
   {
     label: "A clearer exit path",
@@ -40,7 +40,7 @@ const economicsRows = [
   },
   {
     label: "Where value settles",
-    body: "Every commitment lands back on Cardano after verification — the same base layer securing your L1 funds.",
+    body: "Commitments are posted to Cardano before the challenge window; verified state settles through Cardano L1 after the verification path clears.",
   },
   {
     label: "The whole picture",
@@ -91,8 +91,8 @@ export default function UsersPage() {
         compact
         tone="moss"
         label="Users"
-        title="What users get from Midgard."
-        sub="A faster app experience for Cardano users, without asking you to leave ADA behind or trust a private operator database."
+        title="Fast interactions. Settlement through Cardano L1."
+        sub="Use apps with confirmations in seconds (estimated), fees in ADA, and verified state settling through Cardano L1."
         actions={[
           { label: "Learn how it works", href: "/learn", variant: "primary" },
           { label: "Read FAQ", href: "/faq", variant: "ghost" },
@@ -110,16 +110,16 @@ export default function UsersPage() {
 
       <Section
         id="benefits"
-        title="What changes for users."
-        lead="Midgard is meant to make Cardano apps feel faster without changing the thing users already understand: value settles back to Cardano."
+        title="Why it feels different."
+        lead="Midgard is designed for a faster app experience while verified state settles through Cardano L1."
       >
         <DataRows rows={benefitRows} ariaLabel="User benefits" />
       </Section>
 
       <Section
         id="economics"
-        title="What it costs you."
-        lead="Pay in ADA, hold nothing new, settle back to Cardano."
+        title="Fees and settlement."
+        lead="Pay in ADA. Hold nothing new. Settle through Cardano L1."
       >
         <DataRows rows={economicsRows} ariaLabel="User economics" />
       </Section>

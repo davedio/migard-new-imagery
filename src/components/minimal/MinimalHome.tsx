@@ -70,7 +70,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Register interest",
-    body: "Builders, Protocol Roles, infrastructure partners, and testnet participation.",
+    body: "Builders, protocol roles, infrastructure partners, and testnet participation.",
     href: OFFICIAL_LINKS.intakeForm,
     external: true,
     meta: "↗",
@@ -202,7 +202,7 @@ export default function MinimalHome() {
             align="left"
             kicker="Scale without the trade-off"
             line="Midgard anchors its security to Cardano through fault proofs."
-            sub="While targeting up to 300x the throughput (estimated) at lower cost."
+            sub="Midgard targets up to 300x throughput and lower execution costs (both estimated)."
           />
         </div>
         <CardGrid cols={2}>
@@ -214,7 +214,7 @@ export default function MinimalHome() {
           <Card
             num="02"
             title="High-frequency apps"
-            body="Games and real-time state that update constantly, confirmed in seconds."
+            body="Games and real-time state that update constantly, with confirmations in seconds (estimated)."
             delay={50}
           />
           <Card
@@ -226,7 +226,7 @@ export default function MinimalHome() {
           <Card
             num="04"
             title="Cheaper infrastructure"
-            body="Run apps and services at lower cost, with the same scripts and tooling."
+            body="Infrastructure designed to cost less, using the same scripts and tooling."
             delay={150}
           />
         </CardGrid>

@@ -120,7 +120,7 @@ function useDocTheme(): "light" | "dark" | null {
 
 const STAGE_LABELS = ["Execute", "Verify", "Settle"] as const;
 const STAGE_CAPTIONS = [
-  "Confirmed in the canopy — usable in seconds.",
+  "Confirmed in the canopy — usable in seconds (estimated).",
   "Watchers verify the commitment on the way down the trunk\u2026",
   "Settled on Cardano L1 at the roots.",
 ] as const;

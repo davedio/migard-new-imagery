@@ -28,7 +28,13 @@ export default function GlossaryPage() {
           { label: "Learn how it works", href: "/learn", variant: "ghost" },
         ]}
       />
-      <Section id="glossary" title="Protocol terms." lead="Flat definitions, no hidden glossary cards." tight cols>
+      <Section
+        id="glossary"
+        title="Protocol terms."
+        lead="The language of execution, verification, and settlement — defined in plain English."
+        tight
+        cols
+      >
         <GlossaryList />
       </Section>
     </main>

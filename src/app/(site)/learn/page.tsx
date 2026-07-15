@@ -33,7 +33,7 @@ const audienceRows = [
     href: "/developers",
   },
   {
-    label: "Protocol Roles",
+    label: "Protocol roles",
     body: SITE_COPY.paths[2].body,
     href: "/participate",
   },
@@ -66,16 +66,16 @@ const primerSteps = [
   {
     n: "01",
     kicker: "What it is",
-    title: "Midgard is a scaling layer for UTXO finance.",
-    body: "Apps execute activity on Midgard so they can feel faster and cost less than doing every action directly on Cardano L1.",
-    takeaway: "The app experience moves faster; the final settlement layer does not change.",
+    title: "Midgard is an execution layer for UTXO finance.",
+    body: "Midgard is designed for faster, lower-cost execution while verified state settles through Cardano L1.",
+    takeaway: "Execution moves faster; the final settlement layer does not change.",
     tone: "green",
   },
   {
     n: "02",
     kicker: "What users feel",
     title: "A transaction becomes usable before it becomes final.",
-    body: "A soft confirmation gives the app a fast signal in seconds. Blocks then seal that activity into an ordered record.",
+    body: "A soft confirmation gives the app a fast signal in seconds (estimated). Blocks then seal that activity into an ordered record.",
     takeaway: "Fast confirmation and final settlement are two different moments.",
     tone: "cobalt",
   },
@@ -185,7 +185,7 @@ export default function LearnPage() {
             id="flow"
             eyebrow="What users feel first"
             title="Watch transactions soft-confirm."
-            lead="Transactions become usable in seconds while blocks seal behind them and commit down to Cardano — simulated here."
+            lead="Transactions become usable in seconds (estimated) while blocks seal behind them and commit down to Cardano — simulated here."
           >
             <SoftConfirmFeed />
           </Section>
@@ -245,7 +245,7 @@ export default function LearnPage() {
           <Statement
             align="left"
             kicker="Same protocol, different jobs"
-            line="Users move value, builders integrate apps, Protocol Roles keep the path checkable."
+            line="Users move value, builders integrate apps, protocol roles keep the path checkable."
           />
         }
       >

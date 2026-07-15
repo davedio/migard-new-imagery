@@ -99,7 +99,7 @@ export default function DeveloperLanding() {
             },
             {
               label: "What your users pay",
-              body: "A fraction of L1 cost (estimated), with confirmation in seconds — the same contracts underneath.",
+              body: "Designed for a fraction of L1 cost and confirmations in seconds; both are estimates pending benchmarks.",
             },
             {
               label: "The whole picture",

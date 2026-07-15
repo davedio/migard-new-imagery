@@ -62,7 +62,7 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
 
   await expect(
     page.getByRole("heading", {
-      name: /The scaling layer for UTXO finance/i,
+      name: /The execution layer for UTXO finance/i,
     }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: "Start here: choose your path" })).toHaveCount(0);
@@ -72,7 +72,7 @@ test("home hero and dark-mode heading hover stay readable", async ({ page }, tes
     "href",
     "/learn",
   );
-  await expect(page.getByRole("link", { name: /Start building/i })).toHaveAttribute(
+  await expect(page.getByRole("link", { name: "Start building", exact: true })).toHaveAttribute(
     "href",
     "/developers",
   );
@@ -170,7 +170,7 @@ test("mobile menu lists the flat page links", async ({ page }, testInfo) => {
 test("Learn, Users, FAQ, and Glossary pages start on their own content", async ({ page }, testInfo) => {
   await page.goto("/learn");
   await expect(page).toHaveURL(/\/learn$/);
-  await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Midgard Overview/i })).toBeVisible();
   await expect(page.locator(".hiw-act")).toHaveCount(1);
   await expect(page.getByRole("heading", { name: /Proof metrics/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Start with the path/i })).toBeVisible();
@@ -179,9 +179,9 @@ test("Learn, Users, FAQ, and Glossary pages start on their own content", async (
 
   await page.goto("/users");
   await expect(page).toHaveURL(/\/users$/);
-  await expect(page.getByRole("heading", { name: "What users get from Midgard." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Fast interactions/i })).toBeVisible();
   await expect(page.locator(".hiw-act")).toHaveCount(0);
-  await expect(page.getByText("Fees in ADA")).toBeVisible();
+  await expect(page.locator(".datarows__body").filter({ hasText: "Fees in ADA" })).toBeVisible();
   await expect(page.getByText("Deposit. Transact. Withdraw.")).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("users.png"), fullPage: true });
 
@@ -208,17 +208,17 @@ test("legacy and child routes land on current pages", async ({ page }) => {
 
   await page.goto("/how-it-works");
   await expect(page).toHaveURL(/\/learn$/);
-  await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Midgard Overview/i })).toBeVisible();
 
   await page.goto("/contracts");
   await expect(page).toHaveURL(/\/developers#contracts$/);
-  await expect(page.getByRole("heading", { name: /Build fast apps that settle on Cardano/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Build fast apps with Cardano-rooted settlement/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Core validators/i })).toBeVisible();
 });
 
 test("Learn and Participate no longer end in blank hidden content", async ({ page }, testInfo) => {
   await page.goto("/learn");
-  await expect(page.getByRole("heading", { name: /Flow of a transaction/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Now follow one transaction/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Proof metrics/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Security, in plain language/i })).toBeVisible();
   await expect(page.locator(".hiw-act")).toHaveCount(1);
@@ -227,7 +227,7 @@ test("Learn and Participate no longer end in blank hidden content", async ({ pag
   await page.screenshot({ path: testInfo.outputPath("learn-hub.png"), fullPage: true });
 
   await page.goto("/participate");
-  await expect(page.getByRole("heading", { name: /Participate in Midgard/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Run the protocol/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Operators and Watchers/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Economics/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Use the official path/i })).toBeVisible();

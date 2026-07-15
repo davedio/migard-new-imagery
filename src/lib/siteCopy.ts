@@ -4,11 +4,11 @@ export const SITE_COPY = {
   hero: {
     /* Homepage positioning line. Keep titleLines in sync so the interactive
        heading preserves the intended line break. */
-    title: "The scaling layer for UTXO finance.",
+    title: "The execution layer for UTXO finance.",
     /** The H1 line break — kept separate so ShatterHeading can split cleanly. */
-    titleLines: ["The scaling layer", "for UTXO finance."],
+    titleLines: ["The execution layer", "for UTXO finance."],
     lead:
-      "Midgard is an optimistic rollup that helps apps run faster and at a lower cost while keeping settlement and security anchored on Cardano.",
+      "Midgard is an optimistic rollup designed for faster, lower-cost execution, with verification and settlement anchored to Cardano L1.",
     primaryCta: { label: "See how it works", href: "/learn" },
     secondaryCta: { label: "Start building", href: "/developers" },
     tertiaryCta: { label: "Participate", href: "/participate" },
@@ -18,7 +18,7 @@ export const SITE_COPY = {
   stats: [
     { k: "Confirmations", v: "Seconds", s: "estimated, not minutes" },
     { k: "Fees", v: "In ADA", s: "a fraction of L1, estimated" },
-    { k: "Security", v: "Cardano", s: "every block settles on the base layer" },
+    { k: "Security", v: "Cardano", s: "verified state settles through the base layer" },
     { k: "Contracts", v: "Open source", s: "formal methods in progress, on preprod today" },
   ],
   /** The home "Choose your path" cards — verb-led per the 2026-07-03 call
@@ -26,7 +26,7 @@ export const SITE_COPY = {
   paths: [
     {
       title: "Use",
-      body: "Deposit, transact, withdraw. Use apps with confirmation in seconds while final settlement completes on Cardano after verification.",
+      body: "Deposit, transact, withdraw. Use apps with confirmations in seconds (estimated) while verified state settles through Cardano L1.",
       cta: "See the user path",
       href: "/users",
     },
@@ -38,7 +38,7 @@ export const SITE_COPY = {
     },
     {
       title: "Participate",
-      body: "Run the network and earn for it. Operators sequence blocks for fees; Watchers who catch a bad block earn a share of the slashed bond.",
+      body: "Help run the network. Operators earn fees for sequencing; Watchers can earn from a valid fault proof.",
       cta: "Explore protocol roles",
       href: "/participate",
     },
@@ -60,7 +60,7 @@ export const SITE_COPY = {
     resolved: {
       kicker: "Why that's safe",
       title: "You don't have to watch the pipeline — Watchers do it for you.",
-      body: "Operators sequence and commit your activity in seconds — that's the speed you feel. Every commitment stays open to challenge while its data is public. One honest Watcher, out of any number, is enough to stop a bad block before it settles; after that, state settles through Cardano's own L1 consensus.",
+      body: "Operators sequence and commit your activity — that's the speed you feel. Every commitment stays open to challenge while its data is public. One honest Watcher, out of any number, is enough to stop a bad block before it settles; after that, state settles through Cardano's own L1 consensus.",
     },
     badges: [
       {
@@ -73,7 +73,7 @@ export const SITE_COPY = {
       },
       {
         label: "Cardano L1",
-        detail: "Final settlement lands on the same base layer securing all of Cardano.",
+        detail: "Verified state settles through the same base layer securing all of Cardano.",
       },
     ],
   },
@@ -81,12 +81,12 @@ export const SITE_COPY = {
     {
       k: "Soft confirmations",
       v: "Seconds",
-      s: "Your transaction is usable in seconds (estimated), while final settlement completes behind it.",
+      s: "Your transaction is usable in seconds (estimated), while verified state continues toward settlement through Cardano L1.",
     },
     {
       k: "Settlement security",
       v: "Cardano L1",
-      s: "Verified state settles on the same base layer that secures all of Cardano.",
+      s: "Verified state settles through the same base layer that secures all of Cardano.",
     },
     {
       k: "Execution model",
@@ -129,7 +129,7 @@ export const SITE_COPY = {
     {
       intent: "Register interest",
       title: "Intake form",
-      body: "Builders, Protocol Roles, infrastructure partners, and testnet participation.",
+      body: "Builders, protocol roles, infrastructure partners, and testnet participation.",
       cta: "Open intake form",
       href: OFFICIAL_LINKS.intakeForm,
     },
@@ -145,11 +145,11 @@ export const SITE_COPY = {
 
 export const DEVELOPER_COPY = {
   hero: {
-    title: "Build fast apps that settle on Cardano.",
+    title: "Build fast apps with Cardano-rooted settlement.",
     /** The page's ONE telling of the wallet-action / app-interaction /
         data-availability / fallback sentence (reading-rhythm redesign). */
     lead:
-      "Start with the source, inspect the contract path, then map one UTXO flow to Midgard: wallet action, app interaction, data availability, fallback.",
+      "Build with familiar UTXO logic on an execution path designed for speed. The source, contracts, and Cardano L1 settlement path are open to inspect.",
   },
   /** The page's SINGLE telling of the source → contracts → app flow →
       trust path sequence, rendered as the horizontal IntegrationSteps
@@ -190,7 +190,7 @@ export const DEVELOPER_COPY = {
       cta: "Inspect contracts",
     },
     {
-      title: "Protocol Roles",
+      title: "Protocol roles",
       body: "Run the network instead of building on it: Operators post a bond and produce blocks, Watchers replay commitments and file fault proofs. Register interest for the current testnet phase.",
       href: "/participate",
       cta: "Open Participate",
