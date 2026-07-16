@@ -4,9 +4,11 @@ import "./globals.css";
 import "./v2.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "./providers";
+import { SITE_COPY } from "@/lib/siteCopy";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 const SITE_URL = "https://migard-new-imagery.vercel.app";
+const HOME_SHARE_IMAGE = "/img/tree/tree-hero-vista-1920.webp?share=2026-07-16";
 
 /* Type system: Fraunces — a high-contrast "wonky" old-style serif with
    ball terminals — sets the headlines (the new editorial direction);
@@ -38,23 +40,22 @@ const syne = Syne({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Midgard | The execution layer for UTXO finance",
-  description:
-    "Midgard is an optimistic rollup designed for faster, lower-cost execution, with verification and settlement anchored to Cardano L1.",
+  description: SITE_COPY.hero.lead,
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Midgard | The execution layer for UTXO finance",
-    description:
-      "An optimistic rollup designed for faster, lower-cost execution, with verification and settlement anchored to Cardano L1.",
+    description: SITE_COPY.hero.lead,
     url: "/",
     siteName: "Midgard",
     images: [
       {
-        url: "/og/home.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Midgard - the execution layer for UTXO finance",
+        url: HOME_SHARE_IMAGE,
+        width: 1920,
+        height: 1072,
+        alt: "Midgard's watercolor World Tree overlooking the Cardano landscape",
+        type: "image/webp",
       },
     ],
     type: "website",
@@ -62,9 +63,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Midgard | The execution layer for UTXO finance",
-    description:
-      "An optimistic rollup designed for faster, lower-cost execution, with verification and settlement anchored to Cardano L1.",
-    images: ["/og/home.jpg"],
+    description: SITE_COPY.hero.lead,
+    images: [HOME_SHARE_IMAGE],
   },
   icons: {
     icon: "/midgard-icon.png",
