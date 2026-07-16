@@ -4,6 +4,7 @@ import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import styles from "./users.module.css";
 
 export const metadata: Metadata = {
   title: "Users | Midgard",
@@ -101,12 +102,28 @@ export default function UsersPage() {
 
       <JumpChips
         items={[
+          { id: "applications", label: "Applications" },
           { id: "benefits", label: "Benefits" },
           { id: "economics", label: "Economics" },
           { id: "path", label: "Simple path" },
           { id: "status", label: "Status" },
         ]}
       />
+
+      <Section id="applications" title="Applications running on Midgard." tight>
+        <div
+          className={styles.applicationBoard}
+          role="img"
+          aria-label="Applications running on Midgard. Coming soon."
+        >
+          <div className={styles.applicationTiles} aria-hidden="true">
+            {Array.from({ length: 6 }, (_, index) => (
+              <span className={styles.applicationTile} key={index} />
+            ))}
+          </div>
+          <p className={styles.applicationStatus}>Coming soon</p>
+        </div>
+      </Section>
 
       <Section
         id="benefits"

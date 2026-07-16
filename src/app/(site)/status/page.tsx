@@ -51,7 +51,7 @@ const deploymentRows = [
 const accessRows = [
   {
     label: "SDK and source",
-    body: "Open source — node, contracts, and TypeScript SDK in one repo.",
+    body: "Open source: node, contracts, and TypeScript SDK in one repo.",
     meta: "Available now",
   },
   {
@@ -79,12 +79,12 @@ const accessRows = [
 const performanceRows = [
   {
     label: "Soft confirmation",
-    body: "Seconds (estimated) — usable, pre-settlement confirmation.",
+    body: "Seconds (estimated): usable, pre-settlement confirmation.",
     meta: "Preview",
   },
   {
     label: "Throughput",
-    body: "Up to 300x — estimated design target, unbenchmarked.",
+    body: "Up to 300x: estimated design target, unbenchmarked.",
     meta: "Target",
   },
 ] as const;

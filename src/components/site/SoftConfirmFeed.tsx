@@ -78,7 +78,7 @@ function makeEntry(n: number): Entry {
       id: n,
       kind,
       label: `Block #${4291 + countKind("block", n)}`,
-      status: "Sealed — holds the TXs above",
+      status: "Sealed: holds the TXs above",
     };
   }
   if (kind === "commit") {

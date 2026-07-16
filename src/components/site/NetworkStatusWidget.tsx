@@ -266,7 +266,7 @@ export function NetworkStatusWidget() {
               transition={{ duration: motionOn ? 0.3 : 0, ease: "easeOut" }}
               style={{ overflow: "hidden" }}
               role="status"
-              aria-label="Challenge window is open — simulated dispute period active"
+              aria-label="Challenge window is open: simulated dispute period active"
             >
               <span className={css.challengeLabel}>Challenge window</span>
               <span className={css.challengeValue}>
@@ -300,10 +300,10 @@ export function NetworkStatusWidget() {
           style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap" }}
         >
           {proofStatus === "settled"
-            ? "Proof settled — L2 batch anchored"
+            ? "Proof settled: L2 batch anchored"
             : proofStatus === "generated"
-              ? "Proof generated — challenge window open"
-              : "Proof pending — batch assembling"}
+              ? "Proof generated: challenge window open"
+              : "Proof pending: batch assembling"}
         </span>
       </div>
     </HudFrame>

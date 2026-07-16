@@ -9,9 +9,9 @@ export type LegalSection = {
   after?: ReactNode;
 };
 
-/** Bright, explicit marker for wording that still needs legal or team review. */
-export function LegalReview({ children }: { children: ReactNode }) {
-  return <mark className={styles.reviewFlag}>{children}</mark>;
+/** Marks an unresolved policy decision for internal CEO/counsel review. */
+export function ReviewFlag({ children }: { children: ReactNode }) {
+  return <strong className={styles.reviewFlag}>{children}</strong>;
 }
 
 /**

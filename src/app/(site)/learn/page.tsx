@@ -23,24 +23,6 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/og/how-it-works.jpg"] },
 };
 
-const audienceRows = [
-  {
-    label: "Users",
-    body: "Use apps with faster confirmations, lower fees, and final settlement on Cardano.",
-    href: "/users",
-  },
-  {
-    label: "Builders",
-    body: "Build apps with faster execution and lower fees. Your contracts, tests, and tooling carry over; switching is close to one endpoint change.",
-    href: "/developers",
-  },
-  {
-    label: "Protocol roles",
-    body: "Help run the network. Operators earn fees for ordering transactions into blocks; Watchers earn by stopping bad blocks before they settle.",
-    href: "/participate",
-  },
-] as const;
-
 const securityRows = [
   {
     label: "At launch: contract addresses",
@@ -113,11 +95,6 @@ const stripCells = [
     v: "UTXO-native",
     s: "Applications keep their UTXO design and gain faster execution, with no EVM translation layer.",
   },
-  {
-    k: "Status",
-    v: "Pre-alpha testnet",
-    s: "Coming soon on Cardano preprod. Mainnet follows audits and parameter finalization.",
-  },
 ] as const;
 
 export default function LearnPage() {
@@ -140,7 +117,6 @@ export default function LearnPage() {
               { id: "flow", label: "Soft confirms" },
               { id: "security", label: "Security" },
               { id: "full-journey", label: "Full journey" },
-              { id: "paths", label: "Paths" },
               { id: "faq", label: "FAQs" },
               { id: "glossary", label: "Glossary" },
             ]}
@@ -168,7 +144,7 @@ export default function LearnPage() {
           <Section
             id="proof-metrics"
             title="The key numbers."
-            lead="Six indicators: estimated where forward-looking, checkable where source is public."
+            lead="Five indicators: estimated where forward-looking, checkable where live."
           >
             <div className={styles.strip} role="list" aria-label="Key performance and security indicators">
               {stripCells.map((item) => (
@@ -213,16 +189,7 @@ export default function LearnPage() {
       }
     >
 
-      <Section
-        id="paths"
-        title="Choose what suits you."
-        lead="Users move value, builders integrate apps, and protocol roles keep the network checkable."
-      >
-        <DataRows rows={audienceRows} ariaLabel="Midgard reader paths" />
-      </Section>
-
       <FaqSections cols />
-
       <Section
         id="glossary"
         title="Glossary."

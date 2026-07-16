@@ -23,7 +23,7 @@ export function StackChips() {
             href={s.href}
             target="_blank"
             rel="noreferrer"
-            aria-label={`${s.name} — ${s.role} (opens ${s.href} in a new tab)`}
+            aria-label={`${s.name}: ${s.role} (opens ${s.href} in a new tab)`}
           >
             <span className={styles.stackName}>
               {s.name}

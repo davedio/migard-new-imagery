@@ -88,7 +88,7 @@ export function DeveloperSwitch() {
       </div>
 
       <div className={styles.switchCaption}>
-        Same UTXO model, scripts, and tooling — only the endpoint and network
+        Same UTXO model, scripts, and tooling. Only the endpoint and network
         change. Endpoint shown is illustrative (pre-alpha).
       </div>
     </div>

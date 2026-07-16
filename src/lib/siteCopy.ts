@@ -58,8 +58,8 @@ export const SITE_COPY = {
     lead: "Deposit once, transact as much as you like, and withdraw when you're done. Midgard runs everything else underneath.",
     resolved: {
       kicker: "Why that's safe",
-      title: "You don't have to watch the pipeline — Watchers do it for you.",
-      body: "Operators sequence and commit your activity — that's the speed you feel. Every commitment stays open to challenge while its data is public. One honest Watcher, out of any number, is enough to stop a bad block before it settles; after that, state settles through Cardano's own L1 consensus.",
+      title: "You don't have to watch the pipeline. Watchers do it for you.",
+      body: "Operators sequence and commit your activity. That is the speed you feel. Every commitment stays open to challenge while its data is public. One honest Watcher, out of any number, is enough to stop a bad block before it settles; after that, state settles through Cardano's own L1 consensus.",
     },
     badges: [
       {
@@ -179,7 +179,7 @@ export const DEVELOPER_COPY = {
     title: "Security.",
     lead: "The trust path is inspectable end to end: fast confirmations up front, fault proofs and independent Watchers behind them, Cardano L1 settlement underneath.",
     prose: [
-      "One honest Watcher, out of any number, is enough to catch and stop a bad block. Committed state stays open to challenge for the full window before it settles — fast confirmations up front never shortcut it.",
+      "One honest Watcher, out of any number, is enough to catch and stop a bad block. Committed state stays open to challenge for the full window before it settles. Fast confirmations up front never shortcut it.",
       "When a Watcher finds an invalid commitment, it is contested with an on-chain fault proof before it can become settled state. Security is enforced by Cardano L1, not by trusting Operators.",
     ],
     rows: [
@@ -235,7 +235,7 @@ export const ECONOMICS_MATRIX = {
     },
     {
       who: "Cardano",
-      pay: "—",
+      pay: "N/A",
       get: "Fees are paid in ADA, and Midgard state settles on the base layer that secures it.",
       href: "/learn#security",
       cta: "Security model",

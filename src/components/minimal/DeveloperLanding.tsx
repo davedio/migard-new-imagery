@@ -25,12 +25,10 @@ export default function DeveloperLanding() {
         title={DEVELOPER_COPY.hero.title}
         sub={DEVELOPER_COPY.hero.lead}
         actions={[
-          { label: "Preprod launch", href: "/status", variant: "primary" },
-          { label: "Security", href: "/learn#security", variant: "ghost" },
           {
             label: "GitHub",
             href: OFFICIAL_LINKS.github,
-            variant: "ghost",
+            variant: "primary",
             icon: <GitHubIcon size={15} />,
           },
         ]}

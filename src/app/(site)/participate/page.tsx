@@ -54,7 +54,7 @@ const differentCards = [
   },
   {
     title: "Non-custodial",
-    body: "Funds stay in Cardano smart contracts—not with a company, Operator, or multisig bridge.",
+    body: "Funds stay in Cardano smart contracts, not with a company, Operator, or multisig bridge.",
   },
   {
     title: "Never stranded",
@@ -110,7 +110,7 @@ export default function ParticipatePage() {
           <Card
             title="Watcher"
             delay={60}
-            body="Anyone can run a Watcher—no bond or selection required. Watchers replay committed blocks and earn an estimated 30–50% of a slashed bond for a valid fault proof."
+            body="Anyone can run a Watcher, with no bond or selection required. Watchers replay committed blocks and earn an estimated 30–50% of a slashed bond for a valid fault proof."
           />
         </CardGrid>
         <div className={styles.rolesCta}>
@@ -121,12 +121,6 @@ export default function ParticipatePage() {
             ]}
           />
         </div>
-        {/* Keeps stale #security links useful while the full security model lives on Learn. */}
-        <p id="security" className={styles.securityPointer}>
-          The full security model, trust path, fault proofs, audit status, and the
-          disclosure route live with Learn.{" "}
-          <Link href="/learn#security">Read the security model →</Link>
-        </p>
       </Section>
 
       <Section
@@ -148,11 +142,17 @@ export default function ParticipatePage() {
             <Card key={card.title} title={card.title} body={card.body} delay={i * 50} />
           ))}
         </CardGrid>
+        {/* Keeps stale #security links useful while the full security model lives on Learn. */}
+        <p id="security" className={styles.securityPointer}>
+          The full security model, trust path, fault proofs, audit status, and the
+          disclosure route live with Learn.{" "}
+          <Link href="/learn#security">Read the security model →</Link>
+        </p>
       </Section>
 
       <div id="register">
         <CtaBand
-          title="Use the official path."
+          title="Get in touch."
           lead="Register interest for Operator, Watcher, infrastructure, or deeper testnet participation."
           actions={[
             { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },

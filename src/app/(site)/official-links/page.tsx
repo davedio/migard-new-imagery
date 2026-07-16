@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const canonicalRows = [
   {
     label: "GitHub",
-    body: "The node, the contracts, and the SDK source — Anastasia-Labs/midgard.",
+    body: "The node, contracts, and SDK source: Anastasia-Labs/midgard.",
     meta: "↗",
     href: OFFICIAL_LINKS.github,
     external: true,
@@ -51,7 +51,7 @@ const canonicalRows = [
   },
   {
     label: "Intake form",
-    body: "Register interest — the only official form.",
+    body: "Register interest through the only official form.",
     meta: "↗",
     href: OFFICIAL_LINKS.intakeForm,
     external: true,

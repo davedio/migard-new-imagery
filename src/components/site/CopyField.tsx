@@ -58,7 +58,7 @@ export function CopyField({
           href={href}
           target="_blank"
           rel="noreferrer"
-          title={`${label ? `${label} — ` : ""}open on explorer`}
+          title={`${label ? `${label}: ` : ""}open on explorer`}
         >
           {value}
         </a>

@@ -1,0 +1,120 @@
+.applicationBoard {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  min-height: clamp(174px, 22vw, 228px);
+  place-items: center;
+  max-width: 760px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--panel-edge-strong) 78%, var(--green-bright));
+  border-radius: 12px;
+  background:
+    radial-gradient(52% 120% at 50% 0%, color-mix(in srgb, var(--green-bright) 16%, transparent), transparent 72%),
+    linear-gradient(135deg, color-mix(in srgb, var(--basalt) 88%, transparent), color-mix(in srgb, var(--obsidian) 96%, transparent));
+  box-shadow:
+    0 24px 52px color-mix(in srgb, var(--obsidian) 18%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 14%, transparent);
+}
+
+.applicationBoard::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 18%, color-mix(in srgb, var(--green-bright) 8%, transparent) 50%, transparent 82%);
+  content: "";
+}
+
+.applicationTiles {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(104px, 1fr));
+  gap: 14px;
+  width: min(86%, 610px);
+  transform: translate(-50%, -50%);
+}
+
+.applicationTile {
+  display: block;
+  min-height: 72px;
+  border: 1px solid color-mix(in srgb, var(--panel-edge-strong) 84%, var(--green-bright));
+  border-radius: 9px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, white 9%, transparent), transparent 52%),
+    color-mix(in srgb, var(--basalt) 76%, transparent);
+  box-shadow:
+    0 14px 24px color-mix(in srgb, var(--obsidian) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 10%, transparent);
+  opacity: 0.64;
+}
+
+.applicationTile:nth-child(2),
+.applicationTile:nth-child(5) {
+  transform: translateY(8px);
+}
+
+.applicationStatus {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 10px 15px;
+  border: 1px solid color-mix(in srgb, var(--green-bright) 48%, var(--panel-edge-strong));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--basalt) 84%, transparent);
+  box-shadow:
+    0 12px 30px color-mix(in srgb, var(--obsidian) 32%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 15%, transparent);
+  color: var(--text-hi);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+:global([data-theme="light"]) .applicationBoard {
+  background:
+    radial-gradient(52% 120% at 50% 0%, color-mix(in srgb, var(--green-bright) 12%, transparent), transparent 72%),
+    color-mix(in srgb, var(--paper) 88%, transparent);
+  box-shadow:
+    0 24px 52px color-mix(in srgb, var(--obsidian) 12%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 72%, transparent);
+}
+
+:global([data-theme="light"]) .applicationTile {
+  background:
+    linear-gradient(145deg, color-mix(in srgb, white 88%, transparent), transparent 60%),
+    color-mix(in srgb, var(--paper) 78%, transparent);
+  box-shadow:
+    0 14px 24px color-mix(in srgb, var(--obsidian) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 82%, transparent);
+}
+
+:global([data-theme="light"]) .applicationStatus {
+  background: color-mix(in srgb, white 86%, transparent);
+  color: var(--deep-ink);
+}
+
+@media (max-width: 600px) {
+  .applicationBoard {
+    min-height: 168px;
+  }
+
+  .applicationTiles {
+    gap: 9px;
+    width: min(92%, 430px);
+  }
+
+  .applicationTile {
+    min-height: 58px;
+  }
+
+  .applicationStatus {
+    padding: 9px 12px;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+  }
+}

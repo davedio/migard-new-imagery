@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LegalDoc, { LegalReview, type LegalSection } from "@/components/site/LegalDoc";
+import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -29,12 +29,12 @@ const SECTIONS: readonly LegalSection[] = [
         to these Terms (together, the &lsquo;Site&rsquo;). The Site is operated by Midgard Labs,
         Inc. (&lsquo;Midgard Labs&rsquo;, &lsquo;we&rsquo;, &lsquo;us&rsquo;, or &lsquo;our&rsquo;).
         The canonical website address is{" "}
-        <LegalReview>[TBD: confirm final production URL before publication]</LegalReview>. You can
+        <ReviewFlag>[TBD: confirm final production URL before publication]</ReviewFlag>. You can
         reach us at {contact}{" "}
-        <LegalReview>
+        <ReviewFlag>
           [single contact route for the staging period; replace with dedicated legal, privacy,
           support, and security routes when confirmed]
-        </LegalReview>.
+        </ReviewFlag>.
       </>,
     ],
   },
@@ -236,7 +236,7 @@ const SECTIONS: readonly LegalSection[] = [
         AMOUNTS YOU HAVE PAID US FOR USE OF THE SITE IN THE TWELVE MONTHS BEFORE THE CLAIM AROSE.
         SOME JURISDICTIONS DO NOT ALLOW CERTAIN EXCLUSIONS OR LIMITATIONS, SO SOME OF THE ABOVE
         MAY NOT APPLY TO YOU.{" "}
-        <LegalReview>[Counsel: confirm consumer-law carve-outs by jurisdiction.]</LegalReview>
+        <ReviewFlag>[Counsel: confirm consumer-law carve-outs by jurisdiction]</ReviewFlag>.
       </>,
     ],
   },
@@ -269,7 +269,7 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Governing Law and Dispute Resolution",
     paragraphs: [
       <>
-        <LegalReview>
+        <ReviewFlag>
           [COUNSEL DECISION REQUIRED. Per the peer pattern across comparable projects (Arbitrum
           Foundation, Optimism, Base), the expected structure is: governing law tied to the
           operating entity&rsquo;s jurisdiction; mandatory individual arbitration under a named rules
@@ -278,18 +278,18 @@ const SECTIONS: readonly LegalSection[] = [
           filing; and a one-year claims period. Do not publish this section until counsel selects
           governing law, venue, arbitration body, and consumer carve-outs for Midgard Labs, Inc.
           The placeholder text below marks the structure only.]
-        </LegalReview>
+        </ReviewFlag>
       </>,
       <>
-        These Terms are governed by the laws of <LegalReview>[jurisdiction]</LegalReview>, without regard to
+        These Terms are governed by the laws of <ReviewFlag>[jurisdiction]</ReviewFlag>, without regard to
         conflict-of-laws principles. Any dispute arising out of or relating to these Terms or the
         Site will be resolved by binding individual arbitration administered by{" "}
-        <LegalReview>[arbitration body]</LegalReview>
+        <ReviewFlag>[arbitration body]</ReviewFlag>
         under its rules then in effect, except that either party may bring qualifying claims in
         small-claims court or seek injunctive relief in court to protect intellectual property
         rights. YOU AND MIDGARD LABS EACH WAIVE THE RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A
         CLASS OR REPRESENTATIVE ACTION.{" "}
-        <LegalReview>[Confirm enforceability and required consumer exceptions by jurisdiction.]</LegalReview>
+        <ReviewFlag>[Confirm enforceability and required consumer exceptions by jurisdiction.]</ReviewFlag>
       </>,
     ],
   },
@@ -317,7 +317,7 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         Questions about these Terms: {contact}{" "}
-        <LegalReview>[replace with dedicated legal route when confirmed]</LegalReview>.
+        <ReviewFlag>[replace with dedicated legal route when confirmed]</ReviewFlag>.
       </>,
     ],
   },
@@ -339,13 +339,13 @@ export default function TermsPage() {
           meta="Midgard Labs, Inc. · Last updated: July 16, 2026"
           sections={SECTIONS}
           footnote={
-            <LegalReview>
+            <ReviewFlag>
               Open counsel items: canonical URL; governing law, venue, arbitration body, and
               consumer carve-outs (Section 15); jurisdiction-specific limitation-of-liability
               adjustments (Section 12); confirmation of the single staging contact route; final
               entity details and any required legal notices (e.g., registered address) by
               jurisdiction.
-            </LegalReview>
+            </ReviewFlag>
           }
         />
       </Section>

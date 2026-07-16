@@ -155,16 +155,21 @@
 }
 
 .reviewFlag {
-  padding: 0.08em 0.22em 0.1em;
-  border: 1px solid #d8c300;
+  padding: 0.08em 0.28em;
+  border: 1px solid #ff5964;
   border-radius: 3px;
-  background: #fff200;
-  color: #1d1a00;
+  background: rgba(235, 38, 52, 0.2);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset, 0 2px 9px rgba(255, 232, 0, 0.28);
+  color: #ff7079;
   font-style: normal;
-  font-weight: 650;
+  font-weight: 800;
+}
+
+[data-theme="light"] .reviewFlag {
+  border-color: #d91f32;
+  background: rgba(217, 31, 50, 0.14);
+  color: #b41428;
 }
 
 [data-theme="light"] .toc {

@@ -1573,7 +1573,7 @@ h2 em,
   color: var(--text-dim);
 }
 .v2-duel__side li::before {
-  content: "—";
+  content: "•";
   position: absolute;
   left: 0;
   color: var(--text-faint);

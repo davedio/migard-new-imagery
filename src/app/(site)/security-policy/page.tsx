@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import LegalDoc, { LegalReview, type LegalSection } from "@/components/site/LegalDoc";
+import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -38,7 +38,7 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         In scope: the Midgard website and its infrastructure{" "}
-        <LegalReview>[canonical URL TBD]</LegalReview>; Midgard
+        <ReviewFlag>[canonical URL TBD]</ReviewFlag>; Midgard
         open-source repositories under the official{" "}
         <a href={OFFICIAL_LINKS.github} target="_blank" rel="noopener noreferrer">
           GitHub organization
@@ -60,19 +60,19 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         Report vulnerabilities to {contact}{" "}
-        <LegalReview>
+        <ReviewFlag>
           [replace with dedicated security route, e.g. security@, when confirmed; publish a
           security.txt file at the canonical domain referencing this policy and the contact]
-        </LegalReview>. Include: a description of the issue and its impact; the
+        </ReviewFlag>. Include: a description of the issue and its impact; the
         affected component, address, or URL; reproduction steps or a proof of concept; and how we
         can reach you for follow-up. If the report is sensitive, ask us for an encrypted channel
         before sending details{" "}
-        <LegalReview>[PGP key or secure intake to be published]</LegalReview>. Please give us a
+        <ReviewFlag>[PGP key or secure intake to be published]</ReviewFlag>. Please give us a
         reasonable opportunity to remediate before any public disclosure, and coordinate
         disclosure timing with us; our default coordination window is{" "}
-        <LegalReview>
+        <ReviewFlag>
           90 days from acknowledgment, extendable by agreement for complex protocol issues.
-        </LegalReview>
+        </ReviewFlag>
       </>,
     ],
   },
@@ -82,7 +82,7 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         We will acknowledge your report promptly{" "}
-        <LegalReview>[target: within 3 business days]</LegalReview>, keep you
+        <ReviewFlag>[target: within 3 business days]</ReviewFlag>, keep you
         informed of progress, remediate confirmed issues as quickly as severity warrants, and
         credit you in our disclosure if you want credit. This policy itself does not create a
         bounty or payment obligation; any rewards exist only under a separately published bounty
@@ -95,7 +95,7 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Safe Harbor and Rules",
     paragraphs: [
       <>
-        <LegalReview>
+        <ReviewFlag>
           We will not pursue or support legal action against you for good-faith security research
           that follows this policy, and we will consider such research authorized under applicable
           anti-hacking and anti-circumvention laws to the extent we can grant that authorization.
@@ -108,7 +108,7 @@ const SECTIONS: readonly LegalSection[] = [
           or real-fund exposure; do not test out-of-scope systems; and comply with applicable law.
           We cannot authorize research against third-party systems, and this safe harbor does not
           bind third parties or authorities.
-        </LegalReview>
+        </ReviewFlag>
       </>,
     ],
   },
@@ -118,7 +118,7 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         Security contact: {contact}{" "}
-        <LegalReview>[dedicated security route pending]</LegalReview>.{" "}
+        <ReviewFlag>[dedicated security route pending]</ReviewFlag>.{" "}
         We may update this policy
         from time to time; the &lsquo;Last updated&rsquo; date will change accordingly.
       </>,
@@ -142,12 +142,12 @@ export default function SecurityPolicyPage() {
           meta="Midgard Labs, Inc. · Last updated: July 16, 2026"
           sections={SECTIONS}
           footnote={
-            <LegalReview>
+            <ReviewFlag>
               Open items: dedicated security route and monitoring owner; PGP key or encrypted
               intake; security.txt publication; acknowledgment SLA confirmation; alignment with
               the future testnet bug bounty terms; counsel review of the safe-harbor wording by
               jurisdiction.
-            </LegalReview>
+            </ReviewFlag>
           }
         />
       </Section>

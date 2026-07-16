@@ -132,7 +132,7 @@ export default function CookiesPage() {
       />
       <Section tight>
         <Callout
-          title="Draft for counsel review — not approved for publication"
+          title="Draft for counsel review (not approved for publication)"
           body="Last updated: June 11, 2026. Bracketed items are open decisions."
         />
         <LegalDoc
