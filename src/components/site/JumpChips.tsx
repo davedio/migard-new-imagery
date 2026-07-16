@@ -183,6 +183,7 @@ export default function JumpChips({
               className={[styles.chip, isActive ? styles.chipActive : null]
                 .filter(Boolean)
                 .join(" ")}
+              aria-controls={item.id}
               aria-current={isActive ? "true" : undefined}
               onClick={() => jump(item.id)}
             >

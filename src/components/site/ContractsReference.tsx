@@ -1,5 +1,6 @@
 import { ContractTopology } from "@/components/site/ContractTopology";
 import { CopyField } from "@/components/site/CopyField";
+import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 import { Prose, Section } from "@/components/site/ui";
 import {
   CONTRACTS,
@@ -51,6 +52,7 @@ export function ContractsReference() {
           <span>Genesis: {CONTRACTS_META.genesisDate}</span>
           <a className={styles.metaLink} href={CONTRACTS_META.explorer} target="_blank" rel="noreferrer">
             cexplorer.io
+            <ExternalLinkNotice />
           </a>
         </div>
         <div id="contracts-topology" className={styles.topologyBlock}>

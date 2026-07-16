@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { useTheme } from "@/lib/theme";
 
@@ -44,6 +44,7 @@ export function SiteNav() {
   const pathname = usePathname();
   const [menu, setMenu] = useState({ pathname: "", open: false });
   const [scrolled, setScrolled] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { theme, toggle: toggleTheme } = useTheme();
 
   const open = menu.open && menu.pathname === pathname;
@@ -70,14 +71,15 @@ export function SiteNav() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key !== "Escape" || !open) return;
       setMenu({ pathname, open: false });
+      requestAnimationFrame(() => menuButtonRef.current?.focus());
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [pathname]);
+  }, [open, pathname]);
 
   const closeMenu = () => setMenu({ pathname, open: false });
   const toggleMenu = () =>
@@ -98,7 +100,7 @@ export function SiteNav() {
 
   return (
     <>
-      <nav className="site-nav" data-scrolled={scrolled}>
+      <nav className="site-nav" data-scrolled={scrolled} aria-label="Primary navigation">
         <Link href="/" className="site-nav__logo" aria-label="Midgard home">
           <Image src="/midgard-icon.png" alt="" aria-hidden width={28} height={28} priority unoptimized />
           <span className="wm">Midgard</span>
@@ -141,10 +143,12 @@ export function SiteNav() {
             )}
           </button>
           <button
+            ref={menuButtonRef}
             type="button"
             className="site-nav__burger"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
+            aria-controls="site-nav-mobile"
             onClick={toggleMenu}
           >
             {open ? "✕" : "☰"}
@@ -153,7 +157,14 @@ export function SiteNav() {
       </nav>
 
       {/* Mobile menu — the same flat page list. */}
-      <div className="site-nav__mobile" data-open={open} aria-hidden={!open} inert={!open}>
+      <nav
+        id="site-nav-mobile"
+        className="site-nav__mobile"
+        data-open={open}
+        aria-label="Mobile navigation"
+        aria-hidden={!open}
+        inert={!open}
+      >
         {NAV_LINKS.map((item) => (
           <Link
             key={item.label}
@@ -172,7 +183,7 @@ export function SiteNav() {
           showLabels
           onNavigate={closeMenu}
         />
-      </div>
+      </nav>
     </>
   );
 }

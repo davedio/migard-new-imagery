@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
 import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
+import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Vulnerability Disclosure Policy | Midgard",
-  description:
-    "How to report security vulnerabilities in the Midgard website, repositories, and test-network deployments.",
-  /* Counsel draft — keep out of search indexes until publication is approved. */
-  robots: { index: false, follow: false },
-};
+export const metadata = createPageMetadata("securityPolicy");
 
 /* Source of truth: Midgard_Vulnerability_Disclosure_Policy_CLEAN_2026-06-11.docx
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are
@@ -41,7 +36,7 @@ const SECTIONS: readonly LegalSection[] = [
         <ReviewFlag>[canonical URL TBD]</ReviewFlag>; Midgard
         open-source repositories under the official{" "}
         <a href={OFFICIAL_LINKS.github} target="_blank" rel="noopener noreferrer">
-          GitHub organization
+          GitHub organization<ExternalLinkNotice />
         </a>
         ; and Midgard smart contracts and node software when deployed on test networks (preprod
         and any published testnet environments). Out of scope: third-party services we link to or rely on

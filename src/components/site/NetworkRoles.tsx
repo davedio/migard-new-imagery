@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { Section } from "./ui";
 import { Reveal } from "./Reveal";
+import { ExternalLinkNotice } from "./ExternalLinkNotice";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 /* =========================================================================
@@ -77,6 +78,7 @@ export function NetworkRoles() {
               rel="noreferrer"
             >
               Review Watcher requirements →
+              <ExternalLinkNotice />
             </a>
           </div>
         </Reveal>
@@ -98,6 +100,7 @@ export function NetworkRoles() {
               rel="noreferrer"
             >
               Register Interest →
+              <ExternalLinkNotice />
             </a>
           </div>
         </Reveal>

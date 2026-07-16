@@ -1007,6 +1007,11 @@ button.panel:hover {
   opacity: 1;
   transform: none;
 }
+/* Never leave a keyboard-focused control inside an unrevealed, invisible wrapper. */
+.reveal:focus-within {
+  opacity: 1;
+  transform: none;
+}
 /* Stagger mode: the wrapper stays visible, direct children cascade in 80ms
    apart (design audit 2026-06-10, finding 03). */
 .reveal.reveal--stagger {
@@ -1019,6 +1024,10 @@ button.panel:hover {
   transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
 }
 .reveal--stagger.in > * {
+  opacity: 1;
+  transform: none;
+}
+.reveal.reveal--stagger:focus-within > * {
   opacity: 1;
   transform: none;
 }

@@ -1,16 +1,10 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy | Midgard",
-  description:
-    "How Midgard Labs collects, uses, shares, and retains information on the Midgard website.",
-  /* Counsel draft — keep out of search indexes until publication is approved. */
-  robots: { index: false, follow: false },
-};
+export const metadata = createPageMetadata("privacy");
 
 /* Source of truth: Midgard_Website_Privacy_Policy_CLEAN_2026-06-11.docx
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are

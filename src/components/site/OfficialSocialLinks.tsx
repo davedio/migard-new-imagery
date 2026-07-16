@@ -72,7 +72,7 @@ export function OfficialSocialLinks({
   onNavigate?: () => void;
 }) {
   return (
-    <div className={className} aria-label="Official channels">
+    <div className={className} role="group" aria-label="Official channels">
       {OFFICIAL_SOCIAL_LINKS.map((item) => (
         <a
           key={item.id}
@@ -80,7 +80,7 @@ export function OfficialSocialLinks({
           href={item.href}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={item.action}
+          aria-label={`${item.action} (opens in a new tab)`}
           title={item.label}
           onClick={onNavigate}
         >

@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
-import FaqSections from "@/components/site/FaqSections";
+import FaqSections, { FAQ_GROUPS } from "@/components/site/FaqSections";
+import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 import GlossaryList from "@/components/site/GlossaryList";
 import JumpChips from "@/components/site/JumpChips";
 import LearnMovedSectionRedirect from "@/components/site/LearnMovedSectionRedirect";
@@ -9,19 +9,11 @@ import { DataRows } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { DEVELOPER_COPY } from "@/lib/siteCopy";
+import { createPageMetadata } from "@/lib/siteMetadata";
 import styles from "../how-it-works/page.module.css";
 import learnStyles from "@/components/site/learn.module.css";
 
-export const metadata: Metadata = {
-  title: "Learn Midgard",
-  description:
-    "Overview of Midgard, how it works, security standards, common questions, and protocol terms.",
-  openGraph: {
-    title: "Learn Midgard",
-    images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image", images: ["/og/how-it-works.jpg"] },
-};
+export const metadata = createPageMetadata("learn");
 
 const securityRows = [
   {
@@ -97,11 +89,33 @@ const stripCells = [
   },
 ] as const;
 
+const FAQ_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_GROUPS.flatMap((group) =>
+    group.items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  ),
+};
+
 export default function LearnPage() {
   return (
-    <HowItWorksExperience
-      beforeJourney={
-        <>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(FAQ_JSONLD).replace(/</g, "\\u003c"),
+        }}
+      />
+      <HowItWorksExperience
+        beforeJourney={
+          <>
           <LearnMovedSectionRedirect />
           <PageHero
             compact
@@ -160,6 +174,7 @@ export default function LearnPage() {
                       rel="noreferrer"
                     >
                       {item.cta} →
+                      <ExternalLinkNotice />
                     </a>
                   ) : null}
                 </div>
@@ -185,19 +200,20 @@ export default function LearnPage() {
           >
             <DataRows rows={securityRows} ariaLabel="Security assumptions" />
           </Section>
-        </>
-      }
-    >
-
-      <FaqSections cols />
-      <Section
-        id="glossary"
-        title="Glossary."
-        lead="The language of execution, verification, and settlement, defined in plain English."
-        cols
+          </>
+        }
       >
-        <GlossaryList />
-      </Section>
-    </HowItWorksExperience>
+
+        <FaqSections cols />
+        <Section
+          id="glossary"
+          title="Glossary."
+          lead="The language of execution, verification, and settlement, defined in plain English."
+          cols
+        >
+          <GlossaryList />
+        </Section>
+      </HowItWorksExperience>
+    </>
   );
 }

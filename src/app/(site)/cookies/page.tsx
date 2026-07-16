@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import styles from "@/components/site/LegalDoc.module.css";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { Callout, PageHero, Section } from "@/components/site/ui";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Cookie Notice | Midgard",
-  description: "How the Midgard website uses cookies and similar technologies.",
-  /* Counsel draft — keep out of search indexes until publication is approved. */
-  robots: { index: false, follow: false },
-};
+export const metadata = createPageMetadata("cookies");
 
 /* Source of truth: Midgard_Cookie_Notice_CLEAN_2026-06-11.docx
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are

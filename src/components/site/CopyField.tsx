@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./contracts.module.css";
+import { ExternalLinkNotice } from "./ExternalLinkNotice";
 
 function copyWithSelection(value: string) {
   const activeElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -61,6 +62,7 @@ export function CopyField({
           title={`${label ? `${label}: ` : ""}open on explorer`}
         >
           {value}
+          <ExternalLinkNotice />
         </a>
       ) : (
         <span className={styles.copyValue}>{value}</span>

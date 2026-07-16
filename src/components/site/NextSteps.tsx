@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ExternalLinkNotice } from "./ExternalLinkNotice";
 
 export type NextStepItem = {
   label: string;
@@ -67,6 +68,7 @@ export function NextSteps({
                 rel="noopener noreferrer"
               >
                 {inner}
+                <ExternalLinkNotice />
               </a>
             ) : (
               <Link key={item.href} className="next-steps__card panel" href={item.href}>

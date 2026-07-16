@@ -7,6 +7,7 @@ import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard"
 import EconomicsMatrix from "@/components/site/EconomicsMatrix";
 import MidgardComparison from "@/components/site/MidgardComparison";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
+import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
 import { Card, CardGrid } from "@/components/site/ui";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
@@ -30,6 +31,7 @@ function SmartLink({
     return (
       <a className={className} href={href} target="_blank" rel="noopener noreferrer">
         {children}
+        <ExternalLinkNotice />
       </a>
     );
   }

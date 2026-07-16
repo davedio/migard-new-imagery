@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import JumpChips from "@/components/site/JumpChips";
@@ -7,18 +6,10 @@ import EconomicsFlow from "@/components/site/EconomicsFlow";
 import { Statement } from "@/components/site/rhythm";
 import { Actions, Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { createPageMetadata } from "@/lib/siteMetadata";
 import styles from "./participate.module.css";
 
-export const metadata: Metadata = {
-  title: "Participate | Midgard",
-  description:
-    "Operator and Watcher roles, network economics, and how to register interest.",
-  openGraph: {
-    title: "Participate | Midgard",
-    images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image", images: ["/og/security.jpg"] },
-};
+export const metadata = createPageMetadata("participate");
 
 /* Reading rhythm (see .review/card-rhythm-redesign-2026-07-02.md):
    hero → chips → Statement + the page's ONE Grid (roles) → the economics

@@ -1,17 +1,11 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import styles from "@/components/site/LegalDoc.module.css";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { Callout, PageHero, Section } from "@/components/site/ui";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Official Channels & Scam Safety | Midgard",
-  description:
-    "The policy record of which Midgard channels are real, what we will never do, and how to report impersonations.",
-  /* Counsel draft — keep out of search indexes until publication is approved. */
-  robots: { index: false, follow: false },
-};
+export const metadata = createPageMetadata("officialChannels");
 
 /* Source of truth: Midgard_Official_Channels_Scam_Safety_CLEAN_2026-06-11.docx
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are

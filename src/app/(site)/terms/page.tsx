@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Terms of Use | Midgard",
-  description: "The Terms of Use governing the Midgard website and documentation pages.",
-  /* Counsel draft — keep out of search indexes until publication is approved. */
-  robots: { index: false, follow: false },
-};
+export const metadata = createPageMetadata("terms");
 
 /* Source of truth: Midgard_Website_Terms_of_Use_CLEAN_2026-06-11.docx
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are

@@ -1,21 +1,12 @@
 /* Built but deliberately unlinked — the team flips it on when phases firm up.
    No nav, footer, or sitemap entry points here yet. */
 
-import type { Metadata } from "next";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { Card, CardGrid, PageHero, Section } from "@/components/site/ui";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Roadmap | Midgard",
-  description:
-    "The Midgard roadmap from Cardano preprod to mainnet: work-paced, date-free, and checkable.",
-  openGraph: {
-    title: "Roadmap | Midgard",
-    images: [{ url: "/og/roadmap.jpg", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image", images: ["/og/roadmap.jpg"] },
-};
+export const metadata = createPageMetadata("roadmap");
 
 const phases = [
   {

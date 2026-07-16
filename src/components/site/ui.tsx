@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Reveal } from "./Reveal";
 import { CopyField } from "./CopyField";
+import { ExternalLinkNotice } from "./ExternalLinkNotice";
 
 /* =========================================================================
    Page primitives — server components that compose the shared CSS classes
@@ -34,6 +35,7 @@ export function LinkButton({ label, href, variant = "ghost", icon }: ActionLink)
     return (
       <a className={cls} href={href} target="_blank" rel="noreferrer">
         {inner}
+        <ExternalLinkNotice />
       </a>
     );
   }
@@ -276,6 +278,7 @@ export function Card({
           rel="noreferrer"
         >
           {inner}
+          <ExternalLinkNotice />
         </a>
       ) : href ? (
         <Link href={href} className={cardClass} style={{ width: "100%" }}>
@@ -440,6 +443,7 @@ export function LinksTable({ rows }: { rows: LinkRow[] }) {
           ) : /^https?:\/\//.test(r.href) ? (
             <a className="v" href={r.href} target="_blank" rel="noreferrer">
               {r.v}
+              <ExternalLinkNotice />
             </a>
           ) : (
             <Link className="v" href={r.href}>

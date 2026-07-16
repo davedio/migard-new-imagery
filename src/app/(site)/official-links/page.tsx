@@ -1,20 +1,11 @@
-import type { Metadata } from "next";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Official Links | Midgard",
-  description:
-    "The canonical Midgard links: GitHub, an upcoming whitepaper, contracts, Discord, and X. Verify before you trust. Midgard is pre-alpha; there is no token or sale today.",
-  openGraph: {
-    title: "Official Links | Midgard",
-    images: [{ url: "/og/official-links.jpg", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image", images: ["/og/official-links.jpg"] },
-};
+export const metadata = createPageMetadata("officialLinks");
 
 /* The canonical-website row is deliberately omitted pending the team's
    domain decision. */

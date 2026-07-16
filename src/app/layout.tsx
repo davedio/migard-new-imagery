@@ -4,11 +4,14 @@ import "./globals.css";
 import "./v2.css";
 import { Analytics } from "@vercel/analytics/next";
 import { Providers } from "./providers";
-import { SITE_COPY } from "@/lib/siteCopy";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { SITE_LANGUAGE, SITE_URL } from "@/lib/siteConfig";
+import {
+  createPageMetadata,
+  INDEXABLE_PAGE_METADATA,
+  PAGE_METADATA,
+} from "@/lib/siteMetadata";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
-
-const SITE_URL = "https://migard-new-imagery.vercel.app";
-const HOME_SHARE_IMAGE = "/img/tree/tree-hero-vista-1920.webp?share=2026-07-16";
 
 /* Type system: Fraunces — a high-contrast "wonky" old-style serif with
    ball terminals — sets the headlines (the new editorial direction);
@@ -39,60 +42,49 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Midgard | The execution layer for UTXO finance",
-  description: SITE_COPY.hero.lead,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    title: "Midgard | The execution layer for UTXO finance",
-    description: SITE_COPY.hero.lead,
-    url: "/",
-    siteName: "Midgard",
-    images: [
-      {
-        url: HOME_SHARE_IMAGE,
-        width: 1920,
-        height: 1072,
-        alt: "Midgard's watercolor World Tree overlooking the Cardano landscape",
-        type: "image/webp",
-      },
-    ],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Midgard | The execution layer for UTXO finance",
-    description: SITE_COPY.hero.lead,
-    images: [HOME_SHARE_IMAGE],
-  },
+  ...createPageMetadata("home"),
+  applicationName: "Midgard",
+  creator: "Midgard Labs, Inc.",
+  publisher: "Midgard Labs, Inc.",
   icons: {
     icon: "/midgard-icon.png",
     apple: "/midgard-icon.png",
   },
 };
 
-/* Organization + WebSite structured data — emitted once, sitewide. */
+/* Organization, WebSite, and canonical public WebPage data, emitted once sitewide. */
 const ORG_JSONLD = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
       "@id": `${SITE_URL}/#org`,
-      name: "Midgard Labs",
+      name: "Midgard Labs, Inc.",
       url: SITE_URL,
       logo: `${SITE_URL}/midgard-icon.png`,
-      sameAs: [
-        "https://github.com/Anastasia-Labs/midgard",
-        "https://x.com/midgardprotocol",
-        "https://discord.gg/ZpjgHKWaZx",
-      ],
+      sameAs: [OFFICIAL_LINKS.github, OFFICIAL_LINKS.x, OFFICIAL_LINKS.discord],
     },
     {
       "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
       name: "Midgard",
       url: SITE_URL,
+      description: PAGE_METADATA.home.description,
+      inLanguage: SITE_LANGUAGE,
       publisher: { "@id": `${SITE_URL}/#org` },
+      hasPart: INDEXABLE_PAGE_METADATA.map((page) => {
+        const url = page.path === "/" ? SITE_URL : `${SITE_URL}${page.path}`;
+        return {
+          "@type": "WebPage",
+          "@id": `${url}#webpage`,
+          url,
+          name: page.title,
+          description: page.description,
+          inLanguage: SITE_LANGUAGE,
+          isPartOf: { "@id": `${SITE_URL}/#website` },
+          about: { "@id": `${SITE_URL}/#org` },
+        };
+      }),
     },
   ],
 };
@@ -102,7 +94,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="en"
+      lang={SITE_LANGUAGE}
       className={`${display.variable} ${body.variable} ${mono.variable} ${syne.variable}`}
       suppressHydrationWarning
     >

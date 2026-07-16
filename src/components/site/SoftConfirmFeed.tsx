@@ -120,6 +120,7 @@ export default function SoftConfirmFeed() {
     <div
       className={css.feed}
       data-motion={motionOn ? "on" : "off"}
+      role="group"
       aria-label="Simulated transaction flow"
     >
       <div className={css.overline}>

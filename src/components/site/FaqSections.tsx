@@ -13,7 +13,7 @@ import { faqGroupId, Section } from "@/components/site/ui";
    slabs. Styles come from the existing .faq-* and .faq-basics-shell classes.
    ========================================================================= */
 
-const faqGroups = [
+export const FAQ_GROUPS = [
   {
     title: "Product status",
     items: [
@@ -122,7 +122,7 @@ const faqGroups = [
       },
     ],
   },
-];
+] as const;
 
 export default function FaqSections({ cols = false }: { cols?: boolean }) {
   return (
@@ -135,7 +135,7 @@ export default function FaqSections({ cols = false }: { cols?: boolean }) {
       <div className="faq-basics-shell">
         {/* flat static rows — no reveal slabs (rhythm rule: Rows are simply there) */}
         <div className="faq">
-          {faqGroups.map((g) => (
+          {FAQ_GROUPS.map((g) => (
             <div
               className="faq-group"
               id={faqGroupId(g.title)}
@@ -143,13 +143,21 @@ export default function FaqSections({ cols = false }: { cols?: boolean }) {
               key={g.title}
             >
               <h3>{g.title}</h3>
-              <div className="faq-list">
-                {g.items.map((qa) => (
-                  <div className="faq-item" key={qa.q}>
-                    <div className="q">{qa.q}</div>
-                    <div className="a">{qa.a}</div>
-                  </div>
-                ))}
+              <div className="faq-list" role="list">
+                {g.items.map((qa, index) => {
+                  const questionId = `${faqGroupId(g.title)}-question-${index + 1}`;
+                  return (
+                    <article
+                      className="faq-item"
+                      role="listitem"
+                      aria-labelledby={questionId}
+                      key={qa.q}
+                    >
+                      <h4 className="q" id={questionId}>{qa.q}</h4>
+                      <p className="a">{qa.a}</p>
+                    </article>
+                  );
+                })}
               </div>
             </div>
           ))}

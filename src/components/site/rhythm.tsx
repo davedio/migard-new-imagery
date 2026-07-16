@@ -19,6 +19,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ExternalLinkNotice } from "./ExternalLinkNotice";
 
 /* ---- Statement ---- */
 
@@ -67,12 +68,14 @@ export function DataRows({
   return (
     <div className="datarows" role="list" aria-label={ariaLabel}>
       {rows.map((r) => {
+        const meta = r.meta ?? (r.href ? "→" : "");
+        const metaIsDecorative = Boolean(r.href && (meta === "→" || meta === "↗"));
         const inner = (
           <>
             <span className="datarows__label">{r.label}</span>
             {r.body ? <span className="datarows__body">{r.body}</span> : null}
-            <span className="datarows__meta">
-              {r.meta ?? (r.href ? "→" : "")}
+            <span className="datarows__meta" aria-hidden={metaIsDecorative || undefined}>
+              {meta}
             </span>
           </>
         );
@@ -87,6 +90,7 @@ export function DataRows({
               rel="noopener noreferrer"
             >
               {inner}
+              <ExternalLinkNotice />
             </a>
           );
         }

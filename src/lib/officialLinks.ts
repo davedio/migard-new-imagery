@@ -1,5 +1,7 @@
+import { SITE_URL } from "@/lib/siteConfig";
+
 export const OFFICIAL_LINKS = {
-  website: "https://migard-new-imagery.vercel.app",
+  website: SITE_URL,
   docs: "https://github.com/Anastasia-Labs/midgard",
   github: "https://github.com/Anastasia-Labs/midgard",
   x: "https://x.com/midgardprotocol",

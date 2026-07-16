@@ -4,6 +4,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { NetworkChip } from "@/components/site/NetworkChip";
+import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 
 type FooterLink = {
   label: string;
@@ -91,6 +92,7 @@ export function SiteFooter() {
                     >
                       {l.label}
                       {l.github ? <GitHubIcon size={14} aria-hidden /> : null}
+                      <ExternalLinkNotice />
                     </a>
                   ) : (
                     <Link href={l.href}>{l.label}</Link>

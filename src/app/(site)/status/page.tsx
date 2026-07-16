@@ -1,19 +1,10 @@
-import type { Metadata } from "next";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
+import { createPageMetadata } from "@/lib/siteMetadata";
 
-export const metadata: Metadata = {
-  title: "Network Status | Midgard",
-  description:
-    "Honest, labeled status for Midgard: what is available now, what is coming soon on Cardano preprod, and what remains planned.",
-  openGraph: {
-    title: "Network Status | Midgard",
-    images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image", images: ["/og/security.jpg"] },
-};
+export const metadata = createPageMetadata("status");
 
 const legendRows = [
   {

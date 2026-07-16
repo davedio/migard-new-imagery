@@ -1,21 +1,12 @@
-import type { Metadata } from "next";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { createPageMetadata } from "@/lib/siteMetadata";
 import styles from "./users.module.css";
 
-export const metadata: Metadata = {
-  title: "Users | Midgard",
-  description:
-    "Familiar Cardano apps with faster confirmations, lower estimated fees in ADA, and verified settlement through Cardano L1.",
-  openGraph: {
-    title: "Users | Midgard",
-    images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image", images: ["/og/how-it-works.jpg"] },
-};
+export const metadata = createPageMetadata("users");
 
 const benefitRows = [
   {

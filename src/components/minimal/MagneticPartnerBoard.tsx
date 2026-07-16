@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 import type { EcosystemPartner } from "@/lib/ecosystemPartners";
 import { useTheme } from "@/lib/theme";
 import type {
@@ -245,6 +246,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                   data-slot={index + 1}
                   data-tone={partner.tone}
                   aria-haspopup="dialog"
+                  aria-controls="partner-exit-dialog"
                   aria-label={`Visit ${partner.name} website`}
                   key={partner.name}
                   onClick={(event) => openExitWarning(event, partner)}
@@ -273,8 +275,9 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
       </nav>
 
       <dialog
-        aria-describedby="partner-exit-description"
-        aria-labelledby="partner-exit-title"
+        id="partner-exit-dialog"
+        aria-describedby={pendingPartner ? "partner-exit-description" : undefined}
+        aria-labelledby={pendingPartner ? "partner-exit-title" : undefined}
         className="partner-exit-dialog"
         onCancel={(event) => {
           event.preventDefault();
@@ -318,6 +321,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                 target="_blank"
               >
                 Continue to {pendingPartner.name}
+                <ExternalLinkNotice />
               </a>
             </div>
           </div>
