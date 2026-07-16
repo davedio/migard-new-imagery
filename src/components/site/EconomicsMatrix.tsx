@@ -7,8 +7,8 @@ import css from "./EconomicsMatrix.module.css";
  * (Users / Builders / Operators / Watchers / Cardano), rendered on
  * /#economics. A real table: rows are entities, columns are what
  * they pay and what they get, each row linking to the page that tells
- * its side in full. Static markup, no client JS. Wide content scrolls
- * inside its own container on small screens.
+ * its side in full. Static markup, no client JS. On phones the same
+ * semantic table reflows into labeled participant cards.
  * ------------------------------------------------------------------ */
 
 export default function EconomicsMatrix() {
@@ -28,8 +28,18 @@ export default function EconomicsMatrix() {
             {ECONOMICS_MATRIX.rows.map((row) => (
               <tr key={row.who}>
                 <th scope="row">{row.who}</th>
-                <td>{row.pay}</td>
-                <td>{row.get}</td>
+                <td>
+                  <span className={css.mobileLabel} aria-hidden="true">
+                    What you pay
+                  </span>
+                  {row.pay}
+                </td>
+                <td>
+                  <span className={css.mobileLabel} aria-hidden="true">
+                    What you get
+                  </span>
+                  {row.get}
+                </td>
                 <td className={css.linkCell}>
                   <Link href={row.href}>{row.cta} →</Link>
                 </td>

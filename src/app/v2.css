@@ -5096,7 +5096,7 @@ h2 em,
   .minimal-section--verify .minimal-section__head {
     position: static;
     display: grid;
-    grid-template-columns: max-content minmax(280px, 1fr) max-content;
+    grid-template-columns: max-content minmax(0, 1fr) max-content;
     gap: 18px;
     align-items: center;
     max-width: none;
@@ -5110,6 +5110,7 @@ h2 em,
     white-space: nowrap;
   }
   .minimal-section--verify .minimal-channel-socials {
+    grid-column: 3;
     flex-wrap: nowrap;
   }
   .minimal-section--verify > .datarows {
@@ -5565,5 +5566,111 @@ h2 em,
   [data-theme] .page-main:has(.page-backdrop--full) .section {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+
+  [data-theme] .page-main:has(.page-backdrop--full) .card,
+  [data-theme] .page-main:has(.page-backdrop--full) .layer-row,
+  [data-theme] .page-main:has(.page-backdrop--full) .callout,
+  [data-theme] .page-main:has(.page-backdrop--full) .links-table,
+  [data-theme] .page-main:has(.page-backdrop--full) .faq-decision-card,
+  [data-theme] .page-main:has(.page-backdrop--full) .faq-model-card,
+  [data-theme] .page-main:has(.page-backdrop--full) .faq-trust-path__step {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Mobile keeps the same visual language with shorter sections, calmer image
+   layers, and controls sized for touch. Desktop and laptop composition is
+   intentionally unchanged. */
+@media (max-width: 640px) {
+  .minimal-section {
+    padding-block: 46px;
+  }
+
+  .minimal-section--descent {
+    padding-top: 34px;
+  }
+
+  .faq-decision-card {
+    padding: 18px;
+  }
+
+  .faq-decision-card h3 {
+    margin-top: 14px;
+  }
+
+  .faq-decision-card dl {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .faq-decision-card div {
+    gap: 5px;
+    padding-top: 10px;
+  }
+
+  .site-nav__right {
+    gap: 8px;
+  }
+
+  .site-nav__theme,
+  .site-nav__burger,
+  .site-footer__social-link {
+    width: 44px;
+    height: 44px;
+  }
+
+  .site-footer {
+    padding-top: 44px;
+    padding-bottom: 48px;
+  }
+}
+
+@media (min-width: 380px) and (max-width: 640px) {
+  .partner-magnet-board__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .partner-magnet-card {
+    height: 64px;
+    padding: 6px;
+  }
+
+  .partner-magnet-card__logo {
+    flex-basis: 36px;
+    height: 36px;
+  }
+
+  .partner-magnet-card[data-show-name="true"] {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .partner-magnet-card[data-show-name="true"] .partner-magnet-card__logo {
+    flex: 0 0 26px;
+    width: 26px;
+    height: 26px;
+    margin: 0 auto;
+  }
+
+  .partner-magnet-card__name {
+    font-size: 10.5px;
+    line-height: 1;
+    text-align: center;
+  }
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+  [data-motion="on"] .hero-tree-stage__frame,
+  [data-motion="on"] .page-backdrop__img {
+    animation: none;
+    will-change: auto;
+  }
+}
+
+@media (pointer: coarse) {
+  .partner-magnet-card {
+    will-change: auto;
   }
 }

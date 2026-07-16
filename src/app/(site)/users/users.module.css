@@ -104,6 +104,7 @@
   }
 
   .applicationTiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 9px;
     width: min(92%, 430px);
   }

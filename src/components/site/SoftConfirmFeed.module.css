@@ -370,6 +370,17 @@
     padding: 8px 10px 8px 8px;
   }
 
+  .stream .row:nth-child(n + 6) {
+    display: none;
+  }
+
+  .overline {
+    max-width: 100%;
+    white-space: nowrap;
+    font-size: 14px;
+    letter-spacing: 0.09em;
+  }
+
   .dot,
   .kind {
     grid-row: 1 / span 2;

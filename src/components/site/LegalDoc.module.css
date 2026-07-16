@@ -235,7 +235,32 @@
 
 @media (max-width: 640px) {
   .toc {
+    display: block;
     margin-inline: -8px;
+    overflow-x: hidden;
+  }
+
+  .tocLabel {
+    margin: 0 0 8px;
+  }
+
+  .tocList {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+  }
+
+  .tocList::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tocList li {
+    flex: 0 0 auto;
+  }
+
+  .tocList a {
+    min-height: 44px;
   }
 
   .table {

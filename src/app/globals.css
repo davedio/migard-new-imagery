@@ -1779,15 +1779,17 @@ button.panel:hover {
   }
   .site-nav__burger {
     display: inline-flex;
+    width: 44px;
+    height: 44px;
   }
   .site-nav__mobile {
     position: fixed;
-    inset: 64px 10px auto 10px;
+    inset: 72px 10px auto 10px;
     z-index: 90;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-height: calc(100svh - 78px);
+    max-height: calc(100svh - 86px);
     overflow-y: auto;
     padding: 12px 14px 18px;
     background:
@@ -2873,7 +2875,7 @@ a.card:focus-visible {
 
 /* This grid sits inside the narrow half of a split section. Let the card copy
    use two readable columns until the section body itself has room for three. */
-@media (min-width: 981px) and (max-width: 1519px) {
+@media (min-width: 981px) and (max-width: 1439px) {
   #different .card-grid--3 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -3658,7 +3660,19 @@ a.card:focus-visible {
 }
 @media (max-width: 560px) {
   .site-footer__top--sitemap {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
+    row-gap: 30px;
+  }
+  .site-footer__top--sitemap .site-footer__brand,
+  .site-footer__top--sitemap .site-footer__col:nth-of-type(4),
+  .site-footer__top--sitemap .site-footer__col:last-child {
+    grid-column: 1 / -1;
+  }
+  .site-footer__top--sitemap .site-footer__col:nth-of-type(4) ul,
+  .site-footer__top--sitemap .site-footer__col:last-child ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 18px;
   }
 }
 
@@ -4039,6 +4053,49 @@ a.card:focus-visible {
   }
 }
 
+/* Compact and reduced-motion journeys use one calm tree frame, then hand the
+   explanation to the existing static six-step recap below. */
+.hiw-act[data-static="true"] {
+  min-height: auto;
+  padding-inline: 0;
+}
+.hiw-act[data-static="true"] .hiw-act__viewport {
+  position: relative;
+  min-height: clamp(460px, 68svh, 620px);
+}
+.hiw-act[data-static="true"] .hiw-act__beats,
+.hiw-act[data-static="true"] .hiw-act__cue {
+  display: none;
+}
+.hiw-act[data-static="true"] .hiw-act__intro {
+  opacity: 1;
+}
+@media (max-width: 900px), (pointer: coarse) {
+  .hiw-act,
+  .hiw-act[data-static="false"] {
+    min-height: auto;
+    padding-inline: 0;
+  }
+  .hiw-act .hiw-act__viewport,
+  .hiw-act[data-static="false"] .hiw-act__viewport {
+    position: relative;
+    min-height: clamp(460px, 68svh, 620px);
+  }
+  .hiw-act .hiw-act__beats,
+  .hiw-act .hiw-act__cue,
+  .hiw-act[data-static="false"] .hiw-act__beats,
+  .hiw-act[data-static="false"] .hiw-act__cue {
+    display: none;
+  }
+  .hiw-act .hiw-act__intro,
+  .hiw-act[data-static="false"] .hiw-act__intro {
+    opacity: 1;
+  }
+  .hiw-explainer {
+    padding-block: 58px;
+  }
+}
+
 /* ---- sticky in-page TOC bar (long reference pages, e.g. /contracts) ---- */
 .page-sticky-toc {
   position: sticky;
@@ -4077,7 +4134,7 @@ a.card:focus-visible {
 }
 /* anchor offset so sticky chrome never covers section headings */
 .page-main section[id] {
-  scroll-margin-top: 128px;
+  scroll-margin-top: 140px;
 }
 
 /* ---- FAQ glossary ---- */

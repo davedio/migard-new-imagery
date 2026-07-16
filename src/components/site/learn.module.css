@@ -97,12 +97,25 @@
 
 @media (max-width: 620px) {
   .primerStep {
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: 38px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 10px;
+  }
+
+  .primerNumber {
+    grid-column: 1;
+    grid-row: 1;
+    padding-top: 3px;
+  }
+
+  .primerTitle {
+    grid-column: 2;
+    grid-row: 1;
   }
 
   .primerBody {
-    grid-column: 1;
+    grid-column: 2;
+    grid-row: 2;
   }
 
   .primerHandoff {

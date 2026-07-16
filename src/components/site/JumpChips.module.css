@@ -120,4 +120,9 @@
     justify-content: flex-start;
     padding: 0 12px;
   }
+
+  .chip {
+    min-height: 44px;
+    padding-inline: 16px;
+  }
 }

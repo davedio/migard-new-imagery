@@ -49,7 +49,8 @@ export function useSmoothScroll(
     const root = document.querySelector<HTMLElement>("[data-scroll-content]");
 
     const coarse = window.matchMedia("(pointer: coarse)").matches;
-    const smoothEnabled = motionOn && !coarse && !!root;
+    const compact = window.matchMedia("(max-width: 900px)").matches;
+    const smoothEnabled = motionOn && !coarse && !compact && !!root;
 
     const maxScroll = () =>
       Math.max(1, document.documentElement.scrollHeight - window.innerHeight);

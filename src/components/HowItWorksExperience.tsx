@@ -168,12 +168,15 @@ function JourneyAct({
   actRef,
   beatsRef,
   onJumpToBeat,
+  staticMode,
 }: {
   actRef: React.RefObject<HTMLElement | null>;
   /** written each frame (parent's rAF) with the currently active beat index — a
       DOM ref, not React state, so the 6 buttons don't re-render every frame */
   beatsRef: React.RefObject<HTMLOListElement | null>;
   onJumpToBeat: (index: number) => void;
+  /** Compact/coarse and motion-off viewports use one calm frame instead of the scroll ride. */
+  staticMode: boolean;
 }) {
   return (
     <section
@@ -181,6 +184,7 @@ function JourneyAct({
       className="hiw-act"
       aria-labelledby="full-journey-title"
       ref={actRef}
+      data-static={staticMode ? "true" : "false"}
     >
       <div className="hiw-act__viewport">
         <div className="hiw-act__scrim" aria-hidden />
@@ -198,7 +202,10 @@ function JourneyAct({
                   type="button"
                   className="hiw-act__beat-btn"
                   data-layer={b.layer}
-                  onClick={() => onJumpToBeat(i)}
+                  onClick={() => {
+                    if (!staticMode) onJumpToBeat(i);
+                  }}
+                  disabled={staticMode}
                   aria-label={`Jump to ${b.name}`}
                 >
                   <span className="hiw-act__beat-n">{b.stage}</span>
@@ -286,7 +293,20 @@ export default function HowItWorksExperience({
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  const journeyOn = motionOn && !shortViewport;
+  // The full pinned ride needs both visual room and a precise pointer. Phones,
+  // small tablets, and primary coarse-pointer devices get a calm plate plus
+  // the existing static six-step explainer instead of a long unlabeled canvas.
+  const [compactViewport, setCompactViewport] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 900px), (pointer: coarse)");
+    const apply = () => setCompactViewport(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  const journeyOn = motionOn && !shortViewport && !compactViewport;
   const advanced = journeyOn && finePointer;
 
   // Always use the TALL plate so EVERY viewport (incl. desktop) genuinely
@@ -300,7 +320,7 @@ export default function HowItWorksExperience({
   // progress for the scene (the journey is scoped to the ACT, below); we keep
   // the hook for the buttery transform that the act-progress then inherits.
   const smoothProgressRef = useRef(0);
-  useSmoothScroll(smoothProgressRef, motionOn);
+  useSmoothScroll(smoothProgressRef, journeyOn);
 
   // --- journey progress, scoped to the ACT span ---
   // The scene plays the FULL canopy -> L1 descent across the tall act, so the
@@ -408,7 +428,12 @@ export default function HowItWorksExperience({
           sections below stay opaque. */}
       <main className="page-main page-main--how-it-works page-main--hiw-experience">
         {beforeJourney}
-        <JourneyAct actRef={actRef} beatsRef={beatsRef} onJumpToBeat={jumpToBeat} />
+        <JourneyAct
+          actRef={actRef}
+          beatsRef={beatsRef}
+          onJumpToBeat={jumpToBeat}
+          staticMode={!journeyOn}
+        />
         <HowItWorksExplainer visuallyHidden={journeyOn} />
         {children}
       </main>

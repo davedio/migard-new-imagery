@@ -165,5 +165,30 @@
 :global([data-theme="light"]) .caption[data-stage="1"] { color: #8a6115; }
 :global([data-theme="light"]) .caption[data-stage="2"] { color: #2b6cb0; }
 @media (max-width: 640px) {
-  .caption { max-width: 88%; font-size: 14.5px; }
+  /* The desktop frame is intentionally cinematic. Phones get a shorter
+     version with the caption above a full-width action, never underneath it. */
+  :global(.minimal-descent-stage) {
+    height: clamp(360px, 52svh, 420px);
+  }
+
+  .caption {
+    right: 14px;
+    bottom: 76px;
+    left: 14px;
+    max-width: none;
+    font-size: 14.5px;
+    line-height: 1.35;
+  }
+
+  .cta {
+    right: 14px;
+    bottom: 12px;
+    left: 14px;
+    z-index: 4;
+  }
+
+  .cta :global(.minimal-btn) {
+    width: 100%;
+    padding-inline: 18px;
+  }
 }

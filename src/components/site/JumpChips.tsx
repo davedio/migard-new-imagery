@@ -8,7 +8,7 @@
    · Horizontal row of pill buttons on a backdrop-blur panel;
      scrollable with a hidden scrollbar on narrow screens.
    · Click → smooth-scrolls to document.getElementById(id) with
-     ~96px scroll-margin compensation (scrollIntoView + inline
+     ~138px fixed-nav + sticky-chip compensation (scrollIntoView + inline
      scroll-margin-top applied to targets that don't already set
      one), and mirrors the hash via history.replaceState.
    · An IntersectionObserver tracks which target section is most
@@ -28,7 +28,7 @@ import styles from "./JumpChips.module.css";
 
 export type JumpChipItem = { id: string; label: string };
 
-const NAV_OFFSET = 96;
+const NAV_OFFSET = 138;
 /* ignore observer updates briefly after a click, so the chip the user
    chose doesn't flicker through intermediate sections mid-scroll */
 const CLICK_LOCK_MS = 900;
@@ -126,7 +126,7 @@ export default function JumpChips({
       },
       {
         /* bias the measurement window below the fixed nav */
-        rootMargin: "-86px 0px -25% 0px",
+        rootMargin: `-${NAV_OFFSET}px 0px -25% 0px`,
         threshold: [0, 0.15, 0.3, 0.5, 0.75, 1],
       },
     );

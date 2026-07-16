@@ -256,7 +256,7 @@ export function MagneticPartnerBoard({ partners }: { partners: readonly Ecosyste
                       src={logo}
                       alt=""
                       fill
-                      loading="eager"
+                      loading="lazy"
                       sizes="180px"
                       style={logoImageStyle}
                       unoptimized={isSvgLogo(logo)}
