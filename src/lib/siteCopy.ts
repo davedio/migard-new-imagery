@@ -156,22 +156,22 @@ export const DEVELOPER_COPY = {
   integrationPath: [
     {
       title: "Source",
-      body: "Clone the node and the contract implementation: the code you integrate against is the code you can read.",
+      body: "Read the node and contracts.",
       tone: "green",
     },
     {
       title: "Contracts",
-      body: "Confirm the preprod topology, validator addresses, and state anchors below against a public explorer.",
+      body: "Verify preprod addresses and state anchors.",
       tone: "green",
     },
     {
       title: "App flow",
-      body: "Prototype the flow end to end against the bridge and State Queue validators: deposit in, transact, withdraw out.",
+      body: "Deposit, transact, withdraw.",
       tone: "gold",
     },
     {
       title: "Trust path",
-      body: "Before you rely on the flow, check what protects it: fault proofs, independent Watchers, Cardano L1 settlement.",
+      body: "Review fault proofs, Watchers, and Cardano settlement.",
       tone: "cobalt",
     },
   ],
