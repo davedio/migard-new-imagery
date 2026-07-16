@@ -756,36 +756,59 @@ export default function PhotorealBackdrop({
       if (!octx) return;
       octx.drawImage(plateImg, 0, 0, gw, gh);
       const data = octx.getImageData(0, 0, gw, gh).data;
-      /* Tree-mass score (2026-07-16): how far the pixel sits BELOW the pale
-         mist background, by luma. The old green-dominance metric only fired
-         on the painted mint sap-vein (the sage/olive foliage has g ≈ r), so
-         the measured "trunk" was really the vein and the packet drifted on
-         plates without one — including the hero plate this page now uses.
-         Dark-on-cream is the one invariant of every Painted-Yggdrasil plate. */
-      const mass = (gx: number, gy: number) => {
+      const lumaAt = (gx: number, gy: number) => {
         const i = (gy * gw + gx) * 4;
-        const luma =
-          0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-        return Math.max(0, 205 - luma);
+        return 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
       };
+      /* Tree-mass score (2026-07-16): distance from the plate's background,
+         by luma. The old green-dominance metric only fired on the painted
+         mint sap-vein (the sage/olive foliage has g ≈ r), so the measured
+         "trunk" was really the vein and the packet drifted on plates
+         without one — including the hero plate this page now uses.
+         Light plates: the tree is the DARK mass on pale mist. Dark plates
+         (night hero, median luma ~30): the tree's glowing sap-light is the
+         BRIGHT mass on near-black — same anatomy, opposite sign, chosen by
+         the plate's median luma. */
+      const lumas: number[] = [];
+      for (let gy = 0; gy < gh; gy++)
+        for (let gx = 0; gx < gw; gx++) lumas.push(lumaAt(gx, gy));
+      lumas.sort((a, b) => a - b);
+      const median = lumas[Math.floor(lumas.length / 2)];
+      const darkPlate = median < 110;
+      const mass = darkPlate
+        ? (gx: number, gy: number) => Math.max(0, lumaAt(gx, gy) - 90)
+        : (gx: number, gy: number) => Math.max(0, 205 - lumaAt(gx, gy));
       const blue = (gx: number, gy: number) => {
         const i = (gy * gw + gx) * 4;
         return Math.max(0, data[i + 2] - Math.max(data[i], data[i + 1]));
       };
-      /* centerline + width per row (mass-weighted centroid + std dev) */
+      /* centerline + width per row (mass-weighted centroid + std dev).
+         Once a row has anchored, later rows weight their mass by a gaussian
+         around the previous centroid — the line FOLLOWS the trunk instead of
+         teleporting between disconnected bright/dark clusters (the dark
+         plate's split root glow was yanking rows 0.24u sideways). Sigma
+         tracks the measured width, so wide canopy rows stay unconstrained. */
       let prevC = 0.5;
       let prevW = 0.18;
+      let anchored = false;
       for (let r = 0; r < ROWS; r++) {
         const gy = Math.min(gh - 1, Math.round((r / (ROWS - 1)) * (gh - 1)));
         let sum = 0;
         let sx = 0;
         let sxx = 0;
         for (let gx = 0; gx < gw; gx++) {
-          const s = mass(gx, gy);
+          let s = mass(gx, gy);
           if (s > 12) {
-            sum += s;
-            sx += s * gx;
-            sxx += s * gx * gx;
+            if (anchored) {
+              const d = Math.abs(gx / gw - prevC);
+              const sig = prevW * 1.5 + 0.02;
+              s *= Math.exp(-(d * d) / (2 * sig * sig));
+            }
+            if (s > 3) {
+              sum += s;
+              sx += s * gx;
+              sxx += s * gx * gx;
+            }
           }
         }
         if (sum > 0) {
@@ -793,6 +816,7 @@ export default function PhotorealBackdrop({
           const std = Math.sqrt(Math.max(0, sxx / sum - mean * mean));
           prevC = mean / gw;
           prevW = clamp(Math.max(std * 1.7, 4) / gw, 0.025, 0.3);
+          anchored = true;
         }
         anat.c[r] = prevC;
         anat.w[r] = prevW;
@@ -804,12 +828,15 @@ export default function PhotorealBackdrop({
           anat.w[r] = (anat.w[r - 1] + anat.w[r] * 2 + anat.w[r + 1]) / 4;
         }
       }
-      /* canopy spark sites (foliage-mass cells in the crown band) */
+      /* canopy spark sites (foliage-mass cells in the crown band). Night
+         plates keep their foliage close to the sky's darkness, so the site
+         threshold relaxes there — the sparks seed from the upper sap-glow. */
       const vTop = Math.floor(gh * 0.03);
       const vBot = Math.floor(gh * 0.34);
+      const siteMin = darkPlate ? 30 : 55;
       for (let gy = vTop; gy < vBot; gy++) {
         for (let gx = 0; gx < gw; gx++) {
-          if (mass(gx, gy) > 55 && anat.canopy.length < 420) {
+          if (mass(gx, gy) > siteMin && anat.canopy.length < 420) {
             anat.canopy.push({ u: gx / gw, v: gy / gh });
           }
         }
