@@ -5,7 +5,7 @@ import css from "./EconomicsMatrix.module.css";
 /* ------------------------------------------------------------------ *
  * EconomicsMatrix — the single cross-entity view of network economics
  * (Users / Builders / Operators / Watchers / Cardano), rendered on
- * /learn#economics. A real table: rows are entities, columns are what
+ * /#economics. A real table: rows are entities, columns are what
  * they pay and what they get, each row linking to the page that tells
  * its side in full. Static markup, no client JS. Wide content scrolls
  * inside its own container on small screens.

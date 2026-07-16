@@ -9,6 +9,11 @@ export type LegalSection = {
   after?: ReactNode;
 };
 
+/** Bright, explicit marker for wording that still needs legal or team review. */
+export function LegalReview({ children }: { children: ReactNode }) {
+  return <mark className={styles.reviewFlag}>{children}</mark>;
+}
+
 /**
  * Long-form policy renderer for /terms and /privacy. The section text is
  * counsel-drafted and must stay verbatim — bracketed [open decisions] and the

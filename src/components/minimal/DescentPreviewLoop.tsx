@@ -5,25 +5,24 @@
    teaser of the transaction descent, for the home page.
 
    The ~12s loop, over the watercolor trunk plate:
-     · a glowing packet (radial-gradient sprite + short fading tail)
-       travels down a gentle S-curve, canopy → roots
+     · a fine moving trace travels down a gentle S-curve, canopy → roots
      · GREEN through the canopy third            (execution)
      · GOLD pulse + brief mid-trunk hold with a
        subtle expanding ring                     (verification beat)
      · COBALT as it sinks into the roots, then a
-       soft blue flash at the bottom             (settled)
+       clean blue ring at the bottom             (settled)
      · 1.5s rest, loop.
 
    Overlay: three tiny stage labels (Execute · Verify · Settle) that
-   highlight as the packet passes their band, plus a bottom-right CTA
+   highlight as the trace passes their band, plus a bottom-right CTA
    slot via `children` ("Watch it happen →" etc.).
 
    Engineering laws honored (see reference_r3f_canvas_gotchas /
    PhotorealBackdrop):
      · ONE rAF loop, and it only runs while the component is
        in-viewport (IntersectionObserver) AND motionOn
-     · glow = pre-rendered radial-gradient sprites stamped with
-       drawImage — no shadowBlur, no per-frame gradient allocation
+     · the route uses simple canvas strokes — no shadowBlur or
+       per-frame gradient allocation
      · devicePixelRatio clamped to 1.5, ResizeObserver-aware
      · motion off → ONE static settled frame, zero loops
 
@@ -60,7 +59,7 @@ const REST_MS = 1500;
 const TOTAL_MS = TRAVEL_MS + REST_MS;
 const HOLD_A = 0.38; // verification hold begins (t, 0..1 of travel)
 const HOLD_B = 0.52; // hold ends
-const LAND = 0.9; // packet reaches the roots; settle flash begins
+const LAND = 0.9; // trace reaches the roots; settle cue begins
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const smooth = (t: number) => {
@@ -159,34 +158,6 @@ export default function DescentPreviewLoop({
     /* glows and lines: 1.5 is visually clean at half the fill cost of 2 */
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    /* ---- pre-rendered glow sprites, quantized along the color ramp —
-            the no-shadowBlur law ---- */
-    const SPR = 64;
-    const RAMP_N = 13;
-    const makeSprite = (rgb: RGB) => {
-      const c = document.createElement("canvas");
-      c.width = SPR;
-      c.height = SPR;
-      const x = c.getContext("2d")!;
-      const g = x.createRadialGradient(SPR / 2, SPR / 2, 0, SPR / 2, SPR / 2, SPR / 2);
-      g.addColorStop(0, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 1)`);
-      g.addColorStop(0.38, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.56)`);
-      g.addColorStop(1, `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0)`);
-      x.fillStyle = g;
-      x.fillRect(0, 0, SPR, SPR);
-      return c;
-    };
-    const sprites: HTMLCanvasElement[] = [];
-    for (let i = 0; i < RAMP_N; i++) sprites.push(makeSprite(rampRGB(i / (RAMP_N - 1))));
-    const spriteAt = (u: number) =>
-      sprites[Math.max(0, Math.min(RAMP_N - 1, Math.round(u * (RAMP_N - 1))))];
-    const stamp = (spr: HTMLCanvasElement, x: number, y: number, r: number, a: number) => {
-      if (a <= 0.005 || r <= 0.1) return;
-      ctx.globalAlpha = Math.min(1, a);
-      ctx.drawImage(spr, x - r, y - r, r * 2, r * 2);
-      ctx.globalAlpha = 1;
-    };
-
     /* ---- the gentle S-curve, canopy → roots ---- */
     const pathX = (s: number) =>
       W *
@@ -208,7 +179,7 @@ export default function DescentPreviewLoop({
         themeRef.current === "light" ? "source-over" : "lighter";
     };
 
-    /* ---- short fading tail ---- */
+    /* ---- a restrained moving trace, not a glowing orb ---- */
     const TAIL = 18;
     const tail: { x: number; y: number }[] = [];
     let lastT = -1;
@@ -229,11 +200,16 @@ export default function DescentPreviewLoop({
       ctx.clearRect(0, 0, W, H);
       beginGlow();
 
-      /* tail — oldest faintest, stamped sprites, no gradients allocated */
-      const spr = spriteAt(u);
-      for (let i = 0; i < tail.length - 1; i++) {
-        const k = (i + 1) / tail.length; // 0 old → 1 new
-        stamp(spr, tail[i].x, tail[i].y, 3 + k * 8, k * k * 0.42);
+      if (tail.length > 1) {
+        ctx.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.36)`;
+        ctx.lineWidth = 1.2;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        tail.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.stroke();
       }
 
       /* verification beat — gold pulse + one clean expanding ring */
@@ -247,10 +223,9 @@ export default function DescentPreviewLoop({
         ctx.stroke();
       }
 
-      /* settle flash — soft blue bloom + ring at the roots */
+      /* settle cue — one clean blue ring at the roots */
       if (t >= LAND) {
         const f = clamp01((t - LAND) / (1 - LAND));
-        stamp(sprites[RAMP_N - 1], x, y, 24 + f * 52, (1 - f) * 0.8);
         const rr = 8 + smooth(f) * 44;
         ctx.strokeStyle = `rgba(${COBALT[0]}, ${COBALT[1]}, ${COBALT[2]}, ${(0.5 * (1 - f)).toFixed(3)})`;
         ctx.lineWidth = 1.25;
@@ -259,33 +234,12 @@ export default function DescentPreviewLoop({
         ctx.stroke();
       }
 
-      /* the packet — glow sprite + hot core (pulses during the hold) */
-      const holdPulse =
-        t >= HOLD_A && t < HOLD_B
-          ? 1 + 0.18 * Math.sin(((t - HOLD_A) / (HOLD_B - HOLD_A)) * Math.PI * 3)
-          : 1;
-      stamp(spr, x, y, 18 * holdPulse, 1);
-      ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.95)`;
-      ctx.beginPath();
-      ctx.arc(x, y, 3.4 * holdPulse, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
-      ctx.beginPath();
-      ctx.arc(x, y, 1.6, 0, Math.PI * 2);
-      ctx.fill();
-
       ctx.globalCompositeOperation = "source-over";
       setStageSafe(stageOf(t));
     };
 
-    const drawRestFrame = (rt: number) => {
-      /* settled ember at the roots, slowly exhaling */
+    const drawRestFrame = () => {
       ctx.clearRect(0, 0, W, H);
-      beginGlow();
-      const x = pathX(1);
-      const y = pathY(1);
-      stamp(sprites[RAMP_N - 1], x, y, 22 * (1 - rt * 0.35), 0.45 * (1 - rt));
-      ctx.globalCompositeOperation = "source-over";
       setStageSafe(2);
       tail.length = 0;
       lastT = -1;
@@ -295,7 +249,7 @@ export default function DescentPreviewLoop({
     const drawStatic = () => {
       ctx.clearRect(0, 0, W, H);
       beginGlow();
-      /* faint vein hint of the full route, then the settled packet */
+      /* faint vein hint of the full route */
       const STEPS = 36;
       ctx.lineWidth = 1.25;
       for (let i = 0; i < STEPS; i++) {
@@ -308,13 +262,6 @@ export default function DescentPreviewLoop({
         ctx.lineTo(pathX(s1), pathY(s1));
         ctx.stroke();
       }
-      const x = pathX(1);
-      const y = pathY(1);
-      stamp(sprites[RAMP_N - 1], x, y, 20, 0.7);
-      ctx.fillStyle = `rgba(${COBALT[0]}, ${COBALT[1]}, ${COBALT[2]}, 0.95)`;
-      ctx.beginPath();
-      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
-      ctx.fill();
       ctx.globalCompositeOperation = "source-over";
       setStageSafe(2);
     };
@@ -326,7 +273,7 @@ export default function DescentPreviewLoop({
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
       const ms = now % TOTAL_MS; // global clock — resumes anywhere in the loop
-      if (ms >= TRAVEL_MS) drawRestFrame((ms - TRAVEL_MS) / REST_MS);
+      if (ms >= TRAVEL_MS) drawRestFrame();
       else drawTravelFrame(ms / TRAVEL_MS);
     };
     const start = () => {

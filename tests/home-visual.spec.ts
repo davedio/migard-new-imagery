@@ -121,16 +121,17 @@ test("desktop nav is a flat page row with correct active state", async ({ page }
   // no dropdown machinery remains
   await expect(page.locator(".site-nav__group, .site-nav__dropdown")).toHaveCount(0);
 
-  // Learn stays lit on its family pages (/faq, /glossary)
+  // Legacy reference routes resolve into Learn.
   await page.goto("/faq");
+  await expect(page).toHaveURL(/\/learn#faq$/);
   await expect(page.locator('.site-nav__links a[href="/learn"]')).toHaveAttribute("data-active", "true");
 
   await page.screenshot({ path: testInfo.outputPath("nav-flat.png") });
 });
 
-test("/economics permanently redirects into the Learn economics table", async ({ page }) => {
+test("/economics permanently redirects into the home economics table", async ({ page }) => {
   await page.goto("/economics");
-  await expect(page).toHaveURL(/\/learn#economics$/);
+  await expect(page).toHaveURL(/\/#economics$/);
 });
 
 test("mobile menu lists the flat page links", async ({ page }, testInfo) => {
@@ -186,15 +187,17 @@ test("Learn, Users, FAQ, and Glossary pages start on their own content", async (
   await page.screenshot({ path: testInfo.outputPath("users.png"), fullPage: true });
 
   await page.goto("/faq");
-  await expect(page).toHaveURL(/\/faq$/);
-  await expect(page.getByRole("heading", { name: "Questions." }).first()).toBeVisible();
-  await expect(page.locator(".hiw-act")).toHaveCount(0);
-  await expect(page.getByLabel("FAQ topic shortcuts")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/learn#faq$/);
+  await expect(page.getByRole("heading", { name: "Frequently asked questions." })).toBeVisible();
+  await expect(page.locator(".hiw-act")).toHaveCount(1);
+
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "How Midgard compares." })).toBeVisible();
   await expect(page.locator(".faq-decision-card")).toHaveCount(3);
-  await page.screenshot({ path: testInfo.outputPath("faq.png"), fullPage: true });
+  await page.screenshot({ path: testInfo.outputPath("home-comparison.png"), fullPage: true });
 
   await page.goto("/glossary");
-  await expect(page).toHaveURL(/\/glossary$/);
+  await expect(page).toHaveURL(/\/learn#glossary$/);
   await expect(page.getByRole("heading", { name: "Glossary." })).toBeVisible();
   await expect(page.locator("dt").filter({ hasText: "UTXO" })).toBeVisible();
   await expect(page.locator("dt").filter({ hasText: "fault proof" })).toBeVisible();
@@ -203,17 +206,21 @@ test("Learn, Users, FAQ, and Glossary pages start on their own content", async (
 
 test("legacy and child routes land on current pages", async ({ page }) => {
   await page.goto("/faqs");
-  await expect(page).toHaveURL(/\/faq$/);
-  await expect(page.getByRole("heading", { name: "Questions." }).first()).toBeVisible();
+  await expect(page).toHaveURL(/\/learn#faq$/);
+  await expect(page.getByRole("heading", { name: "Frequently asked questions." })).toBeVisible();
+
+  await page.goto("/learn#comparison");
+  await expect(page).toHaveURL(/\/#comparison$/);
+  await expect(page.getByRole("heading", { name: "How Midgard compares." })).toBeVisible();
 
   await page.goto("/how-it-works");
   await expect(page).toHaveURL(/\/learn$/);
   await expect(page.getByRole("heading", { name: /Midgard Overview/i })).toBeVisible();
 
   await page.goto("/contracts");
-  await expect(page).toHaveURL(/\/developers#contracts$/);
-  await expect(page.getByRole("heading", { name: /Build fast apps with Cardano-rooted settlement/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Core validators/i })).toBeVisible();
+  await expect(page).toHaveURL(/\/status$/);
+  await expect(page.getByRole("heading", { name: "Honest status." })).toBeVisible();
+  await expect(page.getByText("Midgard will be live soon on Cardano preprod.").first()).toBeVisible();
 });
 
 test("Learn and Participate no longer end in blank hidden content", async ({ page }, testInfo) => {
@@ -222,8 +229,10 @@ test("Learn and Participate no longer end in blank hidden content", async ({ pag
   await expect(page.getByRole("heading", { name: /Proof metrics/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Security, in plain language/i })).toBeVisible();
   await expect(page.locator(".hiw-act")).toHaveCount(1);
-  await expect(page.locator('.datarows__row[href="/faq"]')).toContainText("FAQ");
-  await expect(page.locator('.datarows__row[href="/glossary"]')).toContainText("Glossary");
+  await expect(page.getByRole("button", { name: "FAQs" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Glossary" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Frequently asked questions." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Glossary." })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("learn-hub.png"), fullPage: true });
 
   await page.goto("/participate");

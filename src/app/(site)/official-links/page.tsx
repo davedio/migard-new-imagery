@@ -8,17 +8,13 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "Official Links | Midgard",
   description:
-    "The canonical Midgard links: GitHub, whitepaper, contracts, Discord, and X. Verify before you trust. Midgard is pre-alpha; there is no token or sale today.",
+    "The canonical Midgard links: GitHub, an upcoming whitepaper, contracts, Discord, and X. Verify before you trust. Midgard is pre-alpha; there is no token or sale today.",
   openGraph: {
     title: "Official Links | Midgard",
     images: [{ url: "/og/official-links.jpg", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", images: ["/og/official-links.jpg"] },
 };
-
-/* Whitepaper lives outside OFFICIAL_LINKS for now — kept local until the
-   constant is promoted alongside the domain decision. */
-const whitepaper = "https://anastasia-labs.github.io/midgard/midgard.pdf";
 
 /* The canonical-website row is deliberately omitted pending the team's
    domain decision. */
@@ -31,16 +27,13 @@ const canonicalRows = [
     external: true,
   },
   {
-    label: "Whitepaper",
-    body: "The full protocol design, end to end.",
-    meta: "↗",
-    href: whitepaper,
-    external: true,
+    label: "Whitepaper (coming soon)",
+    body: "The full protocol design will be published soon.",
   },
   {
-    label: "Contract addresses",
-    body: "Verify every validator and state anchor on Cardano preprod.",
-    href: "/developers#contracts",
+    label: "Preprod contracts",
+    body: "Contract addresses and state anchors will be published at launch.",
+    href: "/status",
   },
   {
     label: "Discord",
@@ -77,9 +70,9 @@ const exploreRows = [
     href: "/learn#security",
   },
   {
-    label: "Questions",
+    label: "FAQs",
     body: "Common questions, including how to avoid scams.",
-    href: "/faq",
+    href: "/learn#faq",
   },
 ] as const;
 

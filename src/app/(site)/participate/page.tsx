@@ -3,7 +3,7 @@ import Link from "next/link";
 import { GitHubIcon } from "@/components/site/BrandIcons";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import EconomicsCycle from "@/components/site/EconomicsCycle";
+import EconomicsFlow from "@/components/site/EconomicsFlow";
 import { Statement } from "@/components/site/rhythm";
 import { Actions, Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 /* Reading rhythm (see .review/card-rhythm-redesign-2026-07-02.md):
    hero → chips → Statement + the page's ONE Grid (roles) → the economics
-   loop (three cards circulating value, closed by the Statement) → CtaBand.
+   flow (three cards joined by direct arrows) → CtaBand.
    The register band is the page's only glowing ask. */
 
 const economicsSteps = [
@@ -50,15 +50,15 @@ const economicsSteps = [
 const differentCards = [
   {
     title: "Verifiable security",
-    body: "A bad state transition can be checked against the exact inputs and scripts it touched instead of relying on broad trust. Because each UTXO transaction stands alone, a dispute only has to re-run that one transaction, and Cardano itself can run the check.",
+    body: "Committed transactions can be replayed against their inputs and scripts. A valid fault proof stops bad state before settlement.",
   },
   {
     title: "Non-custodial",
-    body: "Your funds are held by Cardano smart contracts, not a company or a multisig bridge. There is no operator key that can move your money — deposits, withdrawals, commitments, challenges, and settlement are all enforced by scripts.",
+    body: "Funds stay in Cardano smart contracts—not with a company, Operator, or multisig bridge.",
   },
   {
     title: "Never stranded",
-    body: "If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. By design, funds can never be permanently stranded; the escape path is enforced by the protocol, not by trust.",
+    body: "If Operators stop, you can still submit directly to the L1 state queue. The protocol preserves the exit path.",
   },
 ] as const;
 
@@ -105,12 +105,12 @@ export default function ParticipatePage() {
         <CardGrid cols={2}>
           <Card
             title="Operator"
-            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts, and they stake a bond to do it. If a fault proof succeeds against a block they committed, that bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
+            body="Operators sequence and commit blocks to Cardano, earning fees from the activity they commit. They post a bond that is slashed for a valid fault proof."
           />
           <Card
             title="Watcher"
             delay={60}
-            body="The permissionless role. No bond, no selection: anyone can run a Watcher. Watchers replay committed blocks against the posted data and submit a fault proof when a commitment doesn't hold; one honest Watcher is enough. A valid fault proof earns the Watcher an estimated 30–50% of the slashed bond."
+            body="Anyone can run a Watcher—no bond or selection required. Watchers replay committed blocks and earn an estimated 30–50% of a slashed bond for a valid fault proof."
           />
         </CardGrid>
         <div className={styles.rolesCta}>
@@ -129,26 +129,19 @@ export default function ParticipatePage() {
         </p>
       </Section>
 
-      <Section id="economics" title="Economics.">
-        <div className="motion-band">
-          <EconomicsCycle steps={economicsSteps} ariaLabel="How network economics fit together" />
-        </div>
-        <Statement line="A slashed bond costs more than honest sequencing ever earns." />
+      <Section
+        id="economics"
+        title="Economics."
+        lead="Get paid to operate and protect the network. A slashed bond costs more than honest sequencing ever earns."
+      >
+        <EconomicsFlow steps={economicsSteps} ariaLabel="How network economics fit together" />
       </Section>
 
       <Section
         id="different"
         title="Security you can verify."
-        lead="Most Layer 2s force a new trust model onto you: an operator set or a multisig bridge. Midgard asks you to trust Cardano and verifiable computation."
+        lead="Cardano settles the state. Operators post bonds, and Watchers can prove a fault. Attacking the network costs more than playing fair."
         cols
-        aside={
-          <Statement
-            align="left"
-            kicker="Security as an incentive"
-            line="Attacking the network costs more than playing fair."
-            sub="Operators are bonded, Watchers are rewarded for catching them, and no block settles before its challenge window closes."
-          />
-        }
       >
         <CardGrid cols={3}>
           {differentCards.map((card, i) => (

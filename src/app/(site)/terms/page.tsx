@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
+import LegalDoc, { LegalReview, type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Callout, PageHero, Section } from "@/components/site/ui";
+import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 export const metadata: Metadata = {
@@ -28,9 +28,13 @@ const SECTIONS: readonly LegalSection[] = [
         website, documentation pages, launch materials, official links page, and forms that link
         to these Terms (together, the &lsquo;Site&rsquo;). The Site is operated by Midgard Labs,
         Inc. (&lsquo;Midgard Labs&rsquo;, &lsquo;we&rsquo;, &lsquo;us&rsquo;, or &lsquo;our&rsquo;).
-        The canonical website address is [TBD: confirm final production URL before publication].
-        You can reach us at {contact} [single contact route for the staging period; replace with
-        dedicated legal, privacy, support, and security routes when confirmed].
+        The canonical website address is{" "}
+        <LegalReview>[TBD: confirm final production URL before publication]</LegalReview>. You can
+        reach us at {contact}{" "}
+        <LegalReview>
+          [single contact route for the staging period; replace with dedicated legal, privacy,
+          support, and security routes when confirmed]
+        </LegalReview>.
       </>,
     ],
   },
@@ -39,8 +43,8 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "The Site Is Not the Protocol",
     paragraphs: [
       <>
-        Midgard is an open-source, permissionless blockchain protocol implemented in smart
-        contracts deployed on public blockchain infrastructure. The protocol is not part of the
+        Midgard is an open-source, permissionless blockchain protocol designed for smart
+        contracts on public blockchain infrastructure. The protocol is not part of the
         Site and is not offered as a service through the Site. We do not, through the Site or
         otherwise, custody digital assets, control user wallets, execute transactions on
         anyone&rsquo;s behalf, or have the unilateral ability to alter, reverse, or censor
@@ -52,7 +56,7 @@ const SECTIONS: readonly LegalSection[] = [
         conditions on protocol-level activity. If we publish specific programs (for example
         testnet participation, bug bounties, or grants), those programs will carry their own
         published terms, which will govern together with these Terms. As of the date above, the
-        protocol is pre-alpha software running in test environments. Nothing on the Site is an
+        protocol is pre-alpha software intended for test environments. Nothing on the Site is an
         invitation to commit real funds to any Midgard environment, and no page should be read as
         a statement that the protocol is production-ready, fully audited, or safe for real value
         unless that page expressly and currently says so.
@@ -231,7 +235,8 @@ const SECTIONS: readonly LegalSection[] = [
         OR THE SITE WILL NOT EXCEED THE GREATER OF ONE HUNDRED U.S. DOLLARS (USD 100) OR THE
         AMOUNTS YOU HAVE PAID US FOR USE OF THE SITE IN THE TWELVE MONTHS BEFORE THE CLAIM AROSE.
         SOME JURISDICTIONS DO NOT ALLOW CERTAIN EXCLUSIONS OR LIMITATIONS, SO SOME OF THE ABOVE
-        MAY NOT APPLY TO YOU. [Counsel: confirm consumer-law carve-outs by jurisdiction.]
+        MAY NOT APPLY TO YOU.{" "}
+        <LegalReview>[Counsel: confirm consumer-law carve-outs by jurisdiction.]</LegalReview>
       </>,
     ],
   },
@@ -264,24 +269,27 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Governing Law and Dispute Resolution",
     paragraphs: [
       <>
-        [COUNSEL DECISION REQUIRED. Per the peer pattern across comparable projects (Arbitrum
-        Foundation, Optimism, Base), the expected structure is: governing law tied to the
-        operating entity&rsquo;s jurisdiction; mandatory individual arbitration under a named
-        rules body; a class-action and jury-trial waiver; carve-outs for small-claims court and
-        for injunctive relief protecting intellectual property; an informal-resolution step before
-        filing; and a one-year claims period. Do not publish this section until counsel selects
-        governing law, venue, arbitration body, and consumer carve-outs for Midgard Labs, Inc. The
-        placeholder text below marks the structure only.]
+        <LegalReview>
+          [COUNSEL DECISION REQUIRED. Per the peer pattern across comparable projects (Arbitrum
+          Foundation, Optimism, Base), the expected structure is: governing law tied to the
+          operating entity&rsquo;s jurisdiction; mandatory individual arbitration under a named rules
+          body; a class-action and jury-trial waiver; carve-outs for small-claims court and for
+          injunctive relief protecting intellectual property; an informal-resolution step before
+          filing; and a one-year claims period. Do not publish this section until counsel selects
+          governing law, venue, arbitration body, and consumer carve-outs for Midgard Labs, Inc.
+          The placeholder text below marks the structure only.]
+        </LegalReview>
       </>,
       <>
-        These Terms are governed by the laws of [jurisdiction], without regard to
+        These Terms are governed by the laws of <LegalReview>[jurisdiction]</LegalReview>, without regard to
         conflict-of-laws principles. Any dispute arising out of or relating to these Terms or the
-        Site will be resolved by binding individual arbitration administered by [arbitration body]
+        Site will be resolved by binding individual arbitration administered by{" "}
+        <LegalReview>[arbitration body]</LegalReview>
         under its rules then in effect, except that either party may bring qualifying claims in
         small-claims court or seek injunctive relief in court to protect intellectual property
         rights. YOU AND MIDGARD LABS EACH WAIVE THE RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A
-        CLASS OR REPRESENTATIVE ACTION. [Confirm enforceability and required consumer exceptions
-        by jurisdiction.]
+        CLASS OR REPRESENTATIVE ACTION.{" "}
+        <LegalReview>[Confirm enforceability and required consumer exceptions by jurisdiction.]</LegalReview>
       </>,
     ],
   },
@@ -308,8 +316,8 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Contact",
     paragraphs: [
       <>
-        Questions about these Terms: {contact} [replace with dedicated legal route when
-        confirmed].
+        Questions about these Terms: {contact}{" "}
+        <LegalReview>[replace with dedicated legal route when confirmed]</LegalReview>.
       </>,
     ],
   },
@@ -327,21 +335,17 @@ export default function TermsPage() {
         sub="The terms that govern access to and use of the Midgard website and documentation pages."
       />
       <Section tight>
-        <Callout
-          title="Draft for counsel review — not approved for publication"
-          body="Last updated: June 11, 2026. No public effective date is used until launch approval. Bracketed items are open decisions."
-        />
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: June 11, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 16, 2026"
           sections={SECTIONS}
           footnote={
-            <>
+            <LegalReview>
               Open counsel items: canonical URL; governing law, venue, arbitration body, and
               consumer carve-outs (Section 15); jurisdiction-specific limitation-of-liability
               adjustments (Section 12); confirmation of the single staging contact route; final
               entity details and any required legal notices (e.g., registered address) by
               jurisdiction.
-            </>
+            </LegalReview>
           }
         />
       </Section>

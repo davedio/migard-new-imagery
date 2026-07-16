@@ -9,7 +9,7 @@ import { Card, CardGrid, PageHero, Section } from "@/components/site/ui";
 export const metadata: Metadata = {
   title: "Roadmap | Midgard",
   description:
-    "The Midgard roadmap from pre-alpha to mainnet: work-paced, date-free, and checkable. See what is live on Cardano preprod today and what comes next.",
+    "The Midgard roadmap from Cardano preprod to mainnet: work-paced, date-free, and checkable.",
   openGraph: {
     title: "Roadmap | Midgard",
     images: [{ url: "/og/roadmap.jpg", width: 1200, height: 630 }],
@@ -19,14 +19,14 @@ export const metadata: Metadata = {
 
 const phases = [
   {
-    num: "01 · Now · Preprod",
-    title: "Pre-alpha testnet",
-    body: "Core validators are deployed on Cardano preprod, verifiable on the developers page. The core optimistic lifecycle (submit, sequence, commit, watch, settle) runs on preprod, with data-availability attestation and the full fault-proof catalogue in active development.",
+    num: "01 · Next · Preprod",
+    title: "Cardano preprod",
+    body: "Midgard will be live soon on Cardano preprod. The core optimistic lifecycle and fault-proof coverage are being prepared for that phase.",
   },
   {
     num: "02 · Next",
     title: "Public testnet",
-    body: "Run by the internal team at first, then broader Operator and Watcher registration as parameters mature. Fuller fault-proof coverage across transaction types, broader wallet support, a public explorer, and hardening under real-world load.",
+    body: "Follows the preprod phase, with broader Operator and Watcher registration as parameters mature. Fuller fault-proof coverage, broader wallet support, a public explorer, and hardening under real-world load.",
   },
   {
     num: "03 · Later",
@@ -42,9 +42,9 @@ const exploreRows = [
     href: "/learn",
   },
   {
-    label: "Verify the contracts",
-    body: "Check the Cardano preprod deployment.",
-    href: "/developers#contracts",
+    label: "Launch updates",
+    body: "Follow the Cardano preprod launch and contract publication.",
+    href: "/official-links",
   },
   {
     label: "Official links",
@@ -68,7 +68,7 @@ export default function RoadmapPage() {
       <Section
         id="phases"
         title="Three phases, all checkable."
-        lead="The contracts are on preprod, the source is open, and the claims trace back to the whitepaper. Check any phase yourself."
+        lead="The source is open. The whitepaper is coming soon. Check each phase yourself."
       >
         <CardGrid cols={3}>
           {phases.map((p, i) => (

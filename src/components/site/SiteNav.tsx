@@ -14,18 +14,15 @@ import { useTheme } from "@/lib/theme";
 type NavLink = {
   label: string;
   href: string;
-  /** Extra pathnames that should light this item up (e.g. /faq lives in the
-      Learn family even though it is not nested under /learn). */
-  family?: readonly string[];
 };
 
 /* Flat by design (Dave, 2026-07-11): the dropdowns mixed same-page anchors
    with other pages and confused people. Every page now orients visitors
-   with its own sticky JumpChips bar instead; FAQ/Glossary stay reachable
-   from the footer, /learn, and each other. */
+   with its own sticky JumpChips bar instead; FAQs and the glossary are
+   directly bookmarked within Learn. */
 const NAV_LINKS: readonly NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Learn", href: "/learn", family: ["/faq", "/glossary"] },
+  { label: "Learn", href: "/learn" },
   { label: "Developers", href: "/developers" },
   { label: "Participate", href: "/participate" },
   { label: "Use", href: "/users" },
@@ -97,8 +94,7 @@ export function SiteNav() {
     return href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
   };
 
-  const isNavItemActive = (item: NavLink) =>
-    isActive(item.href) || item.family?.some((href) => isActive(href)) === true;
+  const isNavItemActive = (item: NavLink) => isActive(item.href);
 
   return (
     <>

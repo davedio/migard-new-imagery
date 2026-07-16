@@ -8,7 +8,7 @@ import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 export const metadata: Metadata = {
   title: "Users | Midgard",
   description:
-    "A faster Cardano app experience, fees in ADA, and verified state settlement through Cardano L1.",
+    "Familiar Cardano apps with faster confirmations, lower estimated fees in ADA, and verified settlement through Cardano L1.",
   openGraph: {
     title: "Users | Midgard",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -28,7 +28,7 @@ const benefitRows = [
 ] as const;
 
 /* The user side of network economics — /economics folded into the audience
-   pages 2026-07-11; the cross-entity table lives on /learn#economics. */
+   pages 2026-07-11; the cross-entity table lives on /#economics. */
 const economicsRows = [
   {
     label: "What you pay",
@@ -45,7 +45,7 @@ const economicsRows = [
   {
     label: "The whole picture",
     body: "Compare what every participant pays and earns across the network.",
-    href: "/learn#economics",
+    href: "/#economics",
   },
 ] as const;
 
@@ -67,7 +67,7 @@ const simplePathRows = [
 const statusRows = [
   {
     label: "Pre-alpha testnet",
-    body: "Midgard is live on Cardano preprod today. Do not treat testnet activity as mainnet use.",
+    body: "Midgard will be live soon on Cardano preprod. Do not treat testnet activity as mainnet use.",
   },
   {
     label: "No seed phrases",
@@ -83,7 +83,7 @@ const statusRows = [
 
 export default function UsersPage() {
   return (
-    <main className="page-main">
+    <main className="page-main page-main--users">
       {/* The terraced "steps" — Dave's pick for this page (2026-07-11),
           inherited from the retired /economics page. */}
       <PageBackdrop name="terraces" variant="full" focus="58% 68%" mobileFocus="63% 66%" vivid />
@@ -91,11 +91,11 @@ export default function UsersPage() {
         compact
         tone="moss"
         label="Users"
-        title="Fast interactions. Settlement through Cardano L1."
-        sub="Use apps with confirmations in seconds (estimated), fees in ADA, and verified state settling through Cardano L1."
+        title="Same apps. Same Cardano security. New speed."
+        sub="Use familiar Cardano apps with confirmations in seconds (estimated), fees in ADA estimated 10 to 30x cheaper than L1, and verified settlement through Cardano L1."
         actions={[
           { label: "Learn how it works", href: "/learn", variant: "primary" },
-          { label: "Read FAQ", href: "/faq", variant: "ghost" },
+          { label: "Read FAQs", href: "/learn#faq", variant: "ghost" },
         ]}
       />
 

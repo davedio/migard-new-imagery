@@ -107,7 +107,7 @@ export const SITE_COPY = {
     {
       k: "Status",
       v: "Pre-alpha testnet",
-      s: "Live on a pre-alpha testnet on Cardano preprod today. Mainnet follows audits and parameter finalization.",
+      s: "Coming soon on Cardano preprod. Mainnet follows audits and parameter finalization.",
     },
   ],
   channels: [
@@ -150,55 +150,26 @@ export const DEVELOPER_COPY = {
     lead:
       "Build with familiar UTXO logic on an execution path designed for speed. The source, contracts, and Cardano L1 settlement path are open to inspect.",
   },
-  /** The page's SINGLE telling of the source → contracts → app flow →
-      trust path sequence, rendered as the horizontal IntegrationSteps
-      stepper above the track grid. */
-  integrationPath: [
+  /** Three concise ways into the developer experience. Each card is a
+      complete starting point, rather than a step in a required sequence. */
+  paths: [
     {
-      title: "Source",
-      body: "Read the node and contracts.",
-      tone: "green",
+      title: "Build with Midgard",
+      body: "Review the public source and prepare your UTXO app for Cardano preprod.",
+      href: OFFICIAL_LINKS.github,
+      cta: "Open GitHub",
     },
     {
-      title: "Contracts",
-      body: "Verify preprod addresses and state anchors.",
-      tone: "green",
-    },
-    {
-      title: "App flow",
-      body: "Deposit, transact, withdraw.",
-      tone: "gold",
-    },
-    {
-      title: "Trust path",
-      body: "Review fault proofs, Watchers, and Cardano settlement.",
-      tone: "cobalt",
-    },
-  ],
-  tracks: [
-    {
-      title: "Application builders",
-      body: "Map one UTXO app flow to Midgard.",
-      href: "/developers#query",
-      cta: "Run the first query",
-    },
-    {
-      title: "Protocol reviewers",
-      body: "Audit the deployment itself: seven validator addresses, six reference-script hashes, and the genesis history are published below with explorer links.",
-      href: "/developers#contracts",
-      cta: "Inspect contracts",
-    },
-    {
-      title: "Protocol roles",
-      body: "Run the network instead of building on it: Operators post a bond and produce blocks; Watchers replay commitments and file fault proofs. Register interest for the current testnet phase.",
-      href: "/participate",
-      cta: "Open Participate",
-    },
-    {
-      title: "Midgard Stack",
-      body: "Deploy the same machinery as your own L2: reusable infrastructure and deeper partner integrations once the base protocol path is clear.",
+      title: "Prepare to run the network",
+      body: "Register interest to operate or watch Midgard when Cardano preprod opens.",
       href: OFFICIAL_LINKS.intakeForm,
-      cta: "Discuss stack path",
+      cta: "Register interest",
+    },
+    {
+      title: "Extend the stack",
+      body: "Use Midgard's infrastructure for a deeper integration or your own L2.",
+      href: OFFICIAL_LINKS.intakeForm,
+      cta: "Discuss the stack",
     },
   ],
   /** The security section content — folded into /learn#security.
@@ -214,7 +185,7 @@ export const DEVELOPER_COPY = {
     rows: [
       {
         label: "Testnet and audit status",
-        body: "The pre-alpha testnet is live on Cardano preprod; public testnet is targeted for Q3 2026. Independent audits are planned ahead of mainnet, and formal-methods work is in progress.",
+        body: "The pre-alpha testnet will be live soon on Cardano preprod. Public testnet follows; independent audits are planned ahead of mainnet, and formal-methods work is in progress.",
       },
       {
         label: "Responsible disclosure",
@@ -228,7 +199,7 @@ export const DEVELOPER_COPY = {
 /* The /economics page was folded into the audience pages (2026-07-11):
    each of /users, /developers, /participate carries its own economics
    section, and this matrix is the single cross-entity comparison view
-   rendered on /learn#economics. Claims rules: estimates stated as
+   rendered on /#economics. Claims rules: estimates stated as
    estimates, no hard parameters, token-silent. */
 export const ECONOMICS_MATRIX = {
   title: "Economics, across the network.",

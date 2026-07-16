@@ -1,6 +1,6 @@
 import { permanentRedirect } from "next/navigation";
 
-/* Legacy plural route: keep it working, but send visitors to the real FAQ page. */
+/* Legacy plural route: keep it working, but send visitors to Learn's FAQ. */
 export default function FaqsRedirect() {
-  permanentRedirect("/faq");
+  permanentRedirect("/learn#faq");
 }

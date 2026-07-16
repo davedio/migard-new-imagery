@@ -1,8 +1,7 @@
 import { faqGroupId, Section } from "@/components/site/ui";
 
 /* =========================================================================
-   FaqSections — the grouped Q&A for the standalone /faq page, plus a single compact
-   "How Midgard compares" block (the page's ONE card grid).
+   FaqSections — the grouped Q&A embedded on /learn.
 
    Copy-alignment expansion (2026-07-08): grew back from 12 to ~21 questions,
    adopting the high-value visitor-anxiety answers from the aligned copy doc
@@ -11,9 +10,7 @@ import { faqGroupId, Section } from "@/components/site/ui";
    only (Base-style: state today's facts, promise nothing about the future),
    percentages carry "estimated", no hard-finality durations, no wallet
    names, no "mathematically verified". Rows render statically — no reveal
-   slabs; the decision grid gets the page's single group entrance. Styles
-   come from the existing .faq-*, .faq-basics-shell, and .faq-decision-*
-   classes.
+   slabs. Styles come from the existing .faq-* and .faq-basics-shell classes.
    ========================================================================= */
 
 const faqGroups = [
@@ -26,7 +23,7 @@ const faqGroups = [
       },
       {
         q: "Is Midgard live?",
-        a: "Midgard is live on a pre-alpha testnet on Cardano preprod, not mainnet yet, and the broader public-testnet phase is still ahead. Check the network status page and GitHub before integrating.",
+        a: "Midgard will be live soon on Cardano preprod. It is not on mainnet, and broader public-testnet access follows. Check the network status page and GitHub before integrating.",
       },
       {
         q: "Does Midgard have a token?",
@@ -127,99 +124,37 @@ const faqGroups = [
   },
 ];
 
-const decisionGrid = [
-  {
-    label: "Midgard",
-    title: "UTXO apps that need faster execution",
-    best: "Applications that want faster activity without leaving the UTXO model.",
-    caution: "Pre-alpha testnet today; verify current benchmarks and parameters before integrating.",
-    inspect: "Security model, contracts, source, and current testnet status.",
-    tone: "midgard",
-  },
-  {
-    label: "EVM rollups",
-    title: "EVM apps that need mature tooling",
-    best: "Teams optimizing for EVM liquidity, wallets, infrastructure, and existing app patterns.",
-    caution: "Bridge, sequencer, proof, upgrade, and escape rules can change the real trust model.",
-    inspect: "Bridge design, fraud or validity proof rules, sequencer controls, and upgrade keys.",
-    tone: "neutral",
-  },
-  {
-    label: "Sidechains / appchains",
-    title: "Apps that need custom execution",
-    best: "Teams that want a separate execution environment with more control over chain parameters.",
-    caution: "Security often depends on a separate validator set, bridge custody, and governance process.",
-    inspect: "Validator set, bridge assumptions, withdrawal path, and who can change the rules.",
-    tone: "watch",
-  },
-] as const;
-
-function DecisionCard({ card }: { card: (typeof decisionGrid)[number] }) {
+export default function FaqSections({ cols = false }: { cols?: boolean }) {
   return (
-    <article className="faq-decision-card" data-tone={card.tone}>
-      <span className="faq-decision-card__label">{card.label}</span>
-      <h3>{card.title}</h3>
-      <dl>
-        <div>
-          <dt>Best for</dt>
-          <dd>{card.best}</dd>
-        </div>
-        <div>
-          <dt>Main caution</dt>
-          <dd>{card.caution}</dd>
-        </div>
-        <div>
-          <dt>Inspect first</dt>
-          <dd>{card.inspect}</dd>
-        </div>
-      </dl>
-    </article>
-  );
-}
-
-export default function FaqSections() {
-  return (
-    <>
-      <Section
-        id="faq"
-      >
-        <div className="faq-basics-shell">
-          {/* flat static rows — no reveal slabs (rhythm rule: Rows are simply there) */}
-          <div className="faq">
-            {faqGroups.map((g) => (
-              <div
-                className="faq-group"
-                id={faqGroupId(g.title)}
-                style={{ scrollMarginTop: 110 }}
-                key={g.title}
-              >
-                <h3>{g.title}</h3>
-                <div className="faq-list">
-                  {g.items.map((qa) => (
-                    <div className="faq-item" key={qa.q}>
-                      <div className="q">{qa.q}</div>
-                      <div className="a">{qa.a}</div>
-                    </div>
-                  ))}
-                </div>
+    <Section
+      id="faq"
+      title="Frequently asked questions."
+      lead="Short answers on what Midgard is, how its security works, and what to check before relying on it."
+      cols={cols}
+    >
+      <div className="faq-basics-shell">
+        {/* flat static rows — no reveal slabs (rhythm rule: Rows are simply there) */}
+        <div className="faq">
+          {faqGroups.map((g) => (
+            <div
+              className="faq-group"
+              id={faqGroupId(g.title)}
+              style={{ scrollMarginTop: 110 }}
+              key={g.title}
+            >
+              <h3>{g.title}</h3>
+              <div className="faq-list">
+                {g.items.map((qa) => (
+                  <div className="faq-item" key={qa.q}>
+                    <div className="q">{qa.q}</div>
+                    <div className="a">{qa.a}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </Section>
-
-      <Section
-        id="comparison"
-        title="How Midgard compares."
-        lead="Three common paths side by side."
-        tight
-      >
-        <div className="faq-decision-grid" aria-label="Decision grid for common L2 patterns">
-          {decisionGrid.map((card) => (
-            <DecisionCard key={card.label} card={card} />
+            </div>
           ))}
         </div>
-      </Section>
-    </>
+      </div>
+    </Section>
   );
 }

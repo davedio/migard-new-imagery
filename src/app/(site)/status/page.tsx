@@ -7,7 +7,7 @@ import { PageHero, Section } from "@/components/site/ui";
 export const metadata: Metadata = {
   title: "Network Status | Midgard",
   description:
-    "Honest, labeled status for Midgard: what is live on Cardano preprod, what is shown as a preview, what is a target, and what is still planned. Every line carries its real state.",
+    "Honest, labeled status for Midgard: what is available now, what is coming soon on Cardano preprod, and what remains planned.",
   openGraph: {
     title: "Network Status | Midgard",
     images: [{ url: "/og/security.jpg", width: 1200, height: 630 }],
@@ -17,32 +17,42 @@ export const metadata: Metadata = {
 
 const legendRows = [
   {
-    label: "Live",
-    body: "Working now.",
+    label: "Available now",
+    body: "Public source, documentation, and official channels.",
   },
   {
-    label: "Preprod · Preview · Target",
-    body: "Real, but pre-alpha: deployed on preprod, shown as an example, or a goal not yet measured.",
+    label: "Coming soon",
+    body: "The next Cardano preprod phase.",
   },
   {
-    label: "Planned / Coming soon",
-    body: "Not built yet.",
+    label: "Target / Planned",
+    body: "A design goal or later phase, not yet measured or released.",
   },
 ] as const;
 
 const deploymentRows = [
-  { label: "Testnet", body: "Cardano preprod", meta: "Preprod" },
-  { label: "Network era", body: "Conway", meta: "Live" },
-  { label: "Core validators deployed", body: "7 of 13", meta: "Preprod" },
-  { label: "State anchors", body: "6", meta: "Preprod" },
-  { label: "First deployed", body: "25 Apr 2026", meta: "Preprod" },
+  {
+    label: "Cardano preprod",
+    body: "Midgard will be live soon on Cardano preprod.",
+    meta: "Coming soon",
+  },
+  {
+    label: "Public testnet",
+    body: "Follows the preprod phase.",
+    meta: "Planned",
+  },
+  {
+    label: "Mainnet",
+    body: "Follows audits and parameter finalization.",
+    meta: "Planned",
+  },
 ] as const;
 
 const accessRows = [
   {
     label: "SDK and source",
     body: "Open source — node, contracts, and TypeScript SDK in one repo.",
-    meta: "Live",
+    meta: "Available now",
   },
   {
     label: "Wallet support",
@@ -51,7 +61,7 @@ const accessRows = [
   },
   {
     label: "Operator registration",
-    body: "Team-run today; broader registration opens as parameters mature.",
+    body: "Opens as testnet phases mature.",
     meta: "Planned",
   },
   {
@@ -104,9 +114,9 @@ const mainnetRows = [
 
 const exploreRows = [
   {
-    label: "Verify the contracts",
-    body: "Check the Cardano preprod deployment yourself.",
-    href: "/developers#contracts",
+    label: "Launch updates",
+    body: "Follow the Cardano preprod launch and contract publication.",
+    href: "/official-links",
   },
   {
     label: "Official links",
@@ -114,9 +124,9 @@ const exploreRows = [
     href: "/official-links",
   },
   {
-    label: "Questions",
+    label: "FAQs",
     body: "Common questions about status, safety, and roles.",
-    href: "/faq",
+    href: "/learn#faq",
   },
 ] as const;
 
@@ -129,7 +139,7 @@ export default function StatusPage() {
         tone="ink"
         label="Network status"
         title="Honest status."
-        sub="Every line carries its real state: live, on preprod, preview, a target, or planned. Nothing here pretends to be more finished than it is."
+        sub="Every line carries its real state: available now, coming soon, a target, or planned. Nothing here pretends to be more finished than it is."
       />
 
       <JumpChips
@@ -150,9 +160,9 @@ export default function StatusPage() {
           <Statement
             align="left"
             variant="supporting"
-            kicker="Pre-alpha testnet"
-            line="Midgard is a pre-alpha testnet on Cardano preprod. No real funds."
-            sub="These figures describe the preprod deployment, not mainnet; verify the contracts yourself on the developers page."
+            kicker="Cardano preprod"
+            line="Midgard will be live soon on Cardano preprod. No real funds."
+            sub="This is a pre-alpha launch phase, not mainnet. Verify the source and contracts yourself on the developers page."
           />
         }
       >

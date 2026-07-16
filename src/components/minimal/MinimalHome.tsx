@@ -4,12 +4,14 @@ import ShatterHeading from "@/components/v2/ShatterHeading";
 import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
+import EconomicsMatrix from "@/components/site/EconomicsMatrix";
+import MidgardComparison from "@/components/site/MidgardComparison";
 import { OfficialSocialLinks } from "@/components/site/OfficialSocialLinks";
 import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
 import { Card, CardGrid } from "@/components/site/ui";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { SITE_COPY } from "@/lib/siteCopy";
+import { ECONOMICS_MATRIX, SITE_COPY } from "@/lib/siteCopy";
 
 function isExternal(href: string) {
   return /^https?:\/\//.test(href);
@@ -48,7 +50,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Network status",
-    body: "Every metric labeled with its real state: live, preprod, preview, target, or planned.",
+    body: "Every metric labeled with its real state: available, coming soon, preview, target, or planned.",
     href: "/status",
   },
   {
@@ -57,9 +59,9 @@ const VERIFY_ROWS: readonly DataRow[] = [
     href: "/learn#security",
   },
   {
-    label: "Contract surface",
-    body: "Preprod validators, state anchors, reference scripts, and topology.",
-    href: "/developers#contracts",
+    label: "Preprod contracts",
+    body: "Contract addresses and state anchors will be published at launch.",
+    href: "/status",
   },
   {
     label: "Source review",
@@ -127,68 +129,8 @@ export default function MinimalHome() {
         <div className="minimal-hero__visual-space" aria-hidden />
       </section>
 
-      {/* Choose your path — the role router, called up early per the
-          2026-07-03 call ("why do I need to be here?" answered first).
-          Verb-led cards from SITE_COPY.paths; earn hook stated as an
-          estimate per the 2026-07-08 claims ruling. */}
-      <section
-        id="paths"
-        className="minimal-section minimal-section--paths"
-        aria-labelledby="minimal-paths-title"
-      >
-        <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Choose your path.</h2>
-          <p>Build, participate, or use Midgard.</p>
-        </div>
-        <CardGrid cols={3}>
-          {SITE_COPY.paths.map((path, i) => (
-            <Card
-              key={path.title}
-              num={String(i + 1).padStart(2, "0")}
-              title={path.title}
-              body={path.body}
-              cta={path.cta}
-              href={path.href}
-              delay={i * 50}
-            />
-          ))}
-        </CardGrid>
-      </section>
-
-      {/* The pipeline lives ONCE on the site — told in full on
-          /learn. Home keeps only this canvas trailer for it,
-          closed by the trust line the page exists to say. */}
-      <section
-        className="minimal-section minimal-section--descent minimal-section--descent-cols"
-        data-tree-handoff
-        aria-labelledby="minimal-descent-title"
-      >
-        <div className="minimal-section__head">
-          <h2 id="minimal-descent-title">Watch the transaction lifecycle.</h2>
-          <p>
-            Follow a transaction from execution through verification to final settlement.
-          </p>
-          <Statement
-            align="left"
-            variant="supporting"
-            kicker={SITE_COPY.trustFlow.resolved.kicker}
-            line="Anyone can verify commitments during the challenge period."
-            sub="One honest Watcher is enough to stop a bad block before it settles."
-          />
-        </div>
-        <div className="minimal-descent-stage">
-          <DescentPreviewLoop>
-            <SmartLink className="minimal-btn minimal-btn--ghost" href="/learn">
-              Follow a transaction →
-            </SmartLink>
-          </DescentPreviewLoop>
-        </div>
-      </section>
-
-      {/* Problem → solution — per the 2026-07-10 call, the problem prose is
-          gone entirely: the heading states the tension, the Statement carries
-          the solution (the "second sentence only" decision), throughput still
-          qualified as an estimate per the 2026-07-08 claims ruling. */}
+      {/* Scale without the security tradeoff — lead with the practical uses,
+          then let visitors choose the path that fits them. */}
       <section
         id="problem"
         className="minimal-section minimal-section--problem"
@@ -227,6 +169,98 @@ export default function MinimalHome() {
             delay={150}
           />
         </CardGrid>
+      </section>
+
+      {/* Explain the tradeoffs before asking visitors to choose a role. */}
+      <section
+        id="comparison"
+        className="minimal-section minimal-section--comparison"
+        aria-labelledby="minimal-comparison-title"
+      >
+        <div className="minimal-section__head">
+          <h2 id="minimal-comparison-title">How Midgard compares.</h2>
+          <p>Three common paths side by side.</p>
+        </div>
+        <MidgardComparison />
+      </section>
+
+      {/* Choose your path — the role router, called up early per the
+          2026-07-03 call ("why do I need to be here?" answered first).
+          Verb-led cards from SITE_COPY.paths; earn hook stated as an
+          estimate per the 2026-07-08 claims ruling. */}
+      <section
+        id="paths"
+        className="minimal-section minimal-section--paths"
+        aria-labelledby="minimal-paths-title"
+      >
+        <div className="minimal-section__head">
+          <h2 id="minimal-paths-title">Choose your path.</h2>
+          <p>Build, participate, or use Midgard.</p>
+        </div>
+        <CardGrid cols={3}>
+          {SITE_COPY.paths.map((path, i) => (
+            <Card
+              key={path.title}
+              num={String(i + 1).padStart(2, "0")}
+              title={path.title}
+              body={path.body}
+              cta={path.cta}
+              href={path.href}
+              delay={i * 50}
+            />
+          ))}
+        </CardGrid>
+      </section>
+
+      {/* The network-wide economics view follows the role router: first choose
+          your path, then see how every participant pays and earns. */}
+      <section
+        id="economics"
+        className="minimal-section minimal-section--economics"
+        aria-labelledby="minimal-economics-title"
+      >
+        <div className="minimal-section__head">
+          <h2 id="minimal-economics-title">{ECONOMICS_MATRIX.title}</h2>
+          <p>{ECONOMICS_MATRIX.lead}</p>
+          <Statement
+            align="left"
+            kicker={ECONOMICS_MATRIX.thesis.kicker}
+            line={ECONOMICS_MATRIX.thesis.line}
+          />
+        </div>
+        <div className="minimal-economics-matrix">
+          <EconomicsMatrix />
+        </div>
+      </section>
+
+      {/* The pipeline lives ONCE on the site — told in full on
+          /learn. Home keeps only this canvas trailer for it,
+          closed by the trust line the page exists to say. */}
+      <section
+        className="minimal-section minimal-section--descent minimal-section--descent-cols"
+        data-tree-handoff
+        aria-labelledby="minimal-descent-title"
+      >
+        <div className="minimal-section__head">
+          <h2 id="minimal-descent-title">Watch the transaction lifecycle.</h2>
+          <p>
+            Follow a transaction from execution through verification to final settlement.
+          </p>
+          <div className="statement statement--left statement--supporting">
+            <p className="statement__kicker">{SITE_COPY.trustFlow.resolved.kicker}</p>
+            <p className="statement__sub">
+              Anyone can verify commitments during the challenge period. One honest Watcher is
+              enough to stop a bad block before it settles.
+            </p>
+          </div>
+        </div>
+        <div className="minimal-descent-stage">
+          <DescentPreviewLoop>
+            <SmartLink className="minimal-btn minimal-btn--ghost" href="/learn">
+              Follow a transaction →
+            </SmartLink>
+          </DescentPreviewLoop>
+        </div>
       </section>
 
       <EcosystemPartners />

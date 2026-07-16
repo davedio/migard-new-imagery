@@ -1,8 +1,6 @@
 import { GitHubIcon } from "@/components/site/BrandIcons";
-import { ContractsReference } from "@/components/site/ContractsReference";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import IntegrationSteps from "@/components/site/IntegrationSteps";
 import { DataRows } from "@/components/site/rhythm";
 import { Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -10,11 +8,10 @@ import { DEVELOPER_COPY } from "@/lib/siteCopy";
 
 /* /developers — reading-rhythm layout (see .review/card-rhythm-redesign-2026-07-02.md):
    hero (the one telling of the wallet-action…fallback sentence) → ONE sticky
-   JumpChips bar tracking the whole page → ONE Grid (developer paths, with the
-   integration-path stepper as the page's single path telling) → contracts
-   reference (header band, topology set-piece, table of record, genesis, query)
-   → one closing CTA band. Security now lives in the Learn section.
-   Motion: the Grid keeps its group entrance; everything else is static. */
+   JumpChips bar tracking the whole page → ONE three-card developer-path grid
+   → preprod-contract launch note → one closing CTA band. Security now lives
+   in the Learn section.
+   Motion: the cards use the site’s quiet stagger; everything else is static. */
 
 export default function DeveloperLanding() {
   return (
@@ -28,7 +25,7 @@ export default function DeveloperLanding() {
         title={DEVELOPER_COPY.hero.title}
         sub={DEVELOPER_COPY.hero.lead}
         actions={[
-          { label: "Contracts", href: "/developers#contracts", variant: "primary" },
+          { label: "Preprod launch", href: "/status", variant: "primary" },
           { label: "Security", href: "/learn#security", variant: "ghost" },
           {
             label: "GitHub",
@@ -39,14 +36,12 @@ export default function DeveloperLanding() {
         ]}
       />
 
-      {/* The page's ONE sticky nav — tracks the whole page, including the
-          contracts reference (which no longer carries its own toc). */}
+      {/* The page's ONE sticky nav tracks the developer launch path. */}
       <JumpChips
         items={[
           { id: "start", label: "Paths" },
           { id: "economics", label: "Economics" },
           { id: "contracts", label: "Contracts" },
-          { id: "query", label: "Query" },
           { id: "defense", label: "Fault proofs" },
           { id: "reference", label: "Reference" },
         ]}
@@ -55,25 +50,19 @@ export default function DeveloperLanding() {
       <Section
         id="start"
         title="Choose your developer path."
-        lead="One sequence for everyone, then four tracks with different next steps."
+        lead="Build with Midgard, help run the network, or extend the stack."
         glow="green"
-        cols
       >
-        <div className="motion-band">
-          <IntegrationSteps
-            ariaLabel="Developer integration path"
-            steps={DEVELOPER_COPY.integrationPath}
-          />
-        </div>
-        <CardGrid cols={2}>
-          {DEVELOPER_COPY.tracks.map((track, i) => (
+        <CardGrid cols={3}>
+          {DEVELOPER_COPY.paths.map((path, i) => (
             <Card
-              key={track.title}
+              key={path.title}
               num={String(i + 1).padStart(2, "0")}
-              title={track.title}
-              body={track.body}
-              cta={track.cta}
-              href={track.href}
+              title={path.title}
+              body={path.body}
+              cta={path.cta}
+              href={path.href}
+              ctaGlow
               delay={i * 50}
             />
           ))}
@@ -81,7 +70,7 @@ export default function DeveloperLanding() {
       </Section>
 
       {/* The builder side of network economics — /economics folded into the
-          audience pages 2026-07-11; the cross-view lives on /learn#economics. */}
+          audience pages 2026-07-11; the cross-view lives on /#economics. */}
       <Section
         id="economics"
         title="Economics for builders."
@@ -106,13 +95,35 @@ export default function DeveloperLanding() {
             {
               label: "The whole picture",
               body: "Compare what every participant pays and earns across the network.",
-              href: "/learn#economics",
+              href: "/#economics",
             },
           ]}
         />
       </Section>
 
-      <ContractsReference />
+      <Section
+        id="contracts"
+        title="Preprod contracts, coming soon."
+        lead="Midgard will be live soon on Cardano preprod. Contract addresses, state anchors, and explorer links will be published at launch."
+        cols
+      >
+        <DataRows
+          ariaLabel="Preprod contract publication"
+          rows={[
+            {
+              label: "Public source",
+              body: "Review the protocol source and implementation history on GitHub.",
+              href: OFFICIAL_LINKS.github,
+              external: true,
+            },
+            {
+              label: "Launch status",
+              body: "Follow the Cardano preprod launch and contract publication.",
+              href: "/status",
+            },
+          ]}
+        />
+      </Section>
 
       {/* Technical security depth lives HERE per the 2026-07-08 persona
           split: Learn keeps the plain-language summary, Participate keeps
@@ -167,7 +178,7 @@ export default function DeveloperLanding() {
       <Section
         id="reference"
         title="Keep these handy."
-        lead="Midgard is pre-alpha. The open-source node, contracts, and SDK run against the local node and Cardano preprod today. A hosted public RPC endpoint arrives later."
+        lead="Midgard is pre-alpha. The source is open; Cardano preprod access arrives soon. A hosted public RPC endpoint follows later."
         tight
         cols
       >
@@ -180,22 +191,20 @@ export default function DeveloperLanding() {
             ctaIcon={<GitHubIcon size={14} />}
           />
           <Card
-            title="Whitepaper"
-            body="The full protocol design, end to end."
-            cta="Read the spec"
-            href="https://anastasia-labs.github.io/midgard/midgard.pdf"
+            title="Whitepaper (coming soon)"
+            body="The full protocol design will be published soon."
             delay={50}
           />
           <Card
-            title="Contract addresses"
-            body="Validators and state anchors on Cardano preprod."
-            cta="Inspect contracts"
-            href="/developers#contracts"
+            title="Preprod contracts"
+            body="Contract addresses and state anchors will be published at launch."
+            cta="Follow launch status"
+            href="/status"
             delay={100}
           />
           <Card
             title="Discord"
-            body="Pre-alpha testnet access and developer support."
+            body="Developer support and updates on the upcoming pre-alpha testnet."
             cta="Join Discord"
             href={OFFICIAL_LINKS.discord}
             delay={150}
@@ -205,7 +214,7 @@ export default function DeveloperLanding() {
 
       <CtaBand
         title="Bring a concrete flow."
-        lead="Bring the flow your app depends on: it can be mapped, tested on preprod, and challenged in the open."
+        lead="Bring the flow your app depends on: it can be mapped, prepared for preprod, and challenged in the open."
         actions={[
           {
             label: "Open GitHub",

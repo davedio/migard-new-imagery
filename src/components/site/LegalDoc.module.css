@@ -154,6 +154,19 @@
   color: var(--text-dim);
 }
 
+.reviewFlag {
+  padding: 0.08em 0.22em 0.1em;
+  border: 1px solid #d8c300;
+  border-radius: 3px;
+  background: #fff200;
+  color: #1d1a00;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset, 0 2px 9px rgba(255, 232, 0, 0.28);
+  font-style: normal;
+  font-weight: 650;
+}
+
 [data-theme="light"] .toc {
   border-color: rgba(27, 23, 16, 0.15);
   background:

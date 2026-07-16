@@ -62,20 +62,6 @@
   line-height: 1.62;
 }
 
-.primerTakeaway {
-  margin: 12px 0 0;
-  padding-left: 10px;
-  border-left: 2px solid var(--primer-accent);
-  color: var(--text-dim);
-  font-size: 16px;
-  line-height: 1.52;
-}
-
-.primerTakeaway strong {
-  color: var(--text-hi);
-  font-weight: 600;
-}
-
 .primerHandoff {
   display: flex;
   align-items: center;

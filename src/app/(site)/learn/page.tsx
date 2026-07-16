@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
-import EconomicsMatrix from "@/components/site/EconomicsMatrix";
+import FaqSections from "@/components/site/FaqSections";
+import GlossaryList from "@/components/site/GlossaryList";
 import JumpChips from "@/components/site/JumpChips";
+import LearnMovedSectionRedirect from "@/components/site/LearnMovedSectionRedirect";
 import SoftConfirmFeed from "@/components/site/SoftConfirmFeed";
-import { DataRows, Statement } from "@/components/site/rhythm";
+import { DataRows } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { DEVELOPER_COPY, ECONOMICS_MATRIX } from "@/lib/siteCopy";
+import { DEVELOPER_COPY } from "@/lib/siteCopy";
 import styles from "../how-it-works/page.module.css";
 import learnStyles from "@/components/site/learn.module.css";
 
 export const metadata: Metadata = {
   title: "Learn Midgard",
   description:
-    "Overview of Midgard, how it works, security standards, and the basic economics.",
+    "Overview of Midgard, how it works, security standards, common questions, and protocol terms.",
   openGraph: {
     title: "Learn Midgard",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -41,9 +43,9 @@ const audienceRows = [
 
 const securityRows = [
   {
-    label: "Before use: public contracts",
-    body: "Anyone can inspect the public contracts before using Midgard.",
-    href: "/developers#contracts",
+    label: "At launch: contract addresses",
+    body: "Contract addresses and state anchors will be published when Midgard is live on Cardano preprod.",
+    href: "/status",
   },
   {
     label: "During confirmation: Watchers",
@@ -60,22 +62,19 @@ const primerSteps = [
   {
     n: "01",
     title: "Midgard is the execution layer for UTXO finance.",
-    body: "Midgard is designed for faster, lower-cost execution, with verification and settlement anchored to Cardano.",
-    takeaway: "Execution moves faster; final settlement remains on Cardano.",
+    body: "Midgard gives UTXO finance faster, lower-cost execution while verification and final settlement remain anchored to Cardano.",
     tone: "green",
   },
   {
     n: "02",
     title: "A transaction becomes usable before it becomes final.",
-    body: "A soft confirmation gives the app a usable signal in seconds. Blocks then seal that activity into an ordered record.",
-    takeaway: "Fast confirmation and final settlement are two different moments.",
+    body: "A soft confirmation gives an app a usable signal in seconds. Blocks then seal that activity into an ordered record, making fast confirmation and final settlement two distinct moments.",
     tone: "cobalt",
   },
   {
     n: "03",
     title: "Committed state stays public, available, and challengeable.",
-    body: "Block data must remain available so independent Watchers can replay the state and challenge an invalid commitment.",
-    takeaway: "Operators order transactions; Watchers check correctness.",
+    body: "Operators order transactions, while independent Watchers replay the publicly available block data to check correctness and challenge an invalid commitment.",
     tone: "gold",
   },
   {
@@ -117,7 +116,7 @@ const stripCells = [
   {
     k: "Status",
     v: "Pre-alpha testnet",
-    s: "Live on Cardano preprod. Mainnet follows audits and parameter finalization.",
+    s: "Coming soon on Cardano preprod. Mainnet follows audits and parameter finalization.",
   },
 ] as const;
 
@@ -126,23 +125,24 @@ export default function LearnPage() {
     <HowItWorksExperience
       beforeJourney={
         <>
+          <LearnMovedSectionRedirect />
           <PageHero
             compact
             label="Learn Midgard"
             title="Midgard Overview."
-            sub="Overview of Midgard, how it works, security standards, and the basic economics."
-            body="Learn what users experience, what happens underneath, and where trust comes from."
+            sub="Overview of Midgard, how it works, security standards, common questions, and protocol terms."
           />
 
           <JumpChips
             items={[
               { id: "basics", label: "Overview" },
-              { id: "flow", label: "Soft confirms" },
               { id: "proof-metrics", label: "Key numbers" },
+              { id: "flow", label: "Soft confirms" },
               { id: "security", label: "Security" },
               { id: "full-journey", label: "Full journey" },
               { id: "paths", label: "Paths" },
-              { id: "economics", label: "Economics" },
+              { id: "faq", label: "FAQs" },
+              { id: "glossary", label: "Glossary" },
             ]}
           />
 
@@ -153,36 +153,22 @@ export default function LearnPage() {
             <ol className={learnStyles.primerList} aria-label="Midgard overview">
               {primerSteps.map((step) => (
                 <li key={step.n} className={learnStyles.primerStep} data-tone={step.tone}>
-                  <span className={learnStyles.primerNumber}>{step.n} / 04</span>
+                  <span className={learnStyles.primerNumber}>{step.n}</span>
                   <div className={learnStyles.primerTitle}>
                     <h3>{step.title}</h3>
                   </div>
                   <div className={learnStyles.primerBody}>
                     <p>{step.body}</p>
-                    {"takeaway" in step ? (
-                      <p className={learnStyles.primerTakeaway}>{step.takeaway}</p>
-                    ) : null}
                   </div>
                 </li>
               ))}
             </ol>
           </Section>
 
-          {/* The soft-confirm feed — agreed on the 2026-07-10 call: the
-              per-transaction view (TXs soft-confirm, blocks seal them, commits
-              settle down to Cardano). Simulated and labelled as such. */}
-          <Section
-            id="flow"
-            title="Watch transactions soft-confirm."
-            lead="Transactions soft-confirm in seconds (estimated) while blocks seal behind them and commitments move to Cardano (simulated here)."
-          >
-            <SoftConfirmFeed />
-          </Section>
-
           <Section
             id="proof-metrics"
             title="The key numbers."
-            lead="Six indicators: estimated where forward-looking, checkable where live."
+            lead="Six indicators: estimated where forward-looking, checkable where source is public."
           >
             <div className={styles.strip} role="list" aria-label="Key performance and security indicators">
               {stripCells.map((item) => (
@@ -205,10 +191,21 @@ export default function LearnPage() {
             </div>
           </Section>
 
+          {/* The soft-confirm feed — agreed on the 2026-07-10 call: the
+              per-transaction view (TXs soft-confirm, blocks seal them, commits
+              settle down to Cardano). Simulated and labelled as such. */}
+          <Section
+            id="flow"
+            title="Watch transactions soft-confirm."
+            lead="Transactions soft-confirm in seconds (estimated) while blocks seal behind them and commitments move to Cardano (simulated here)."
+          >
+            <SoftConfirmFeed />
+          </Section>
+
           <Section
             id="security"
             title="Security, in plain language."
-            lead="Midgard is checked at three points: public contracts before use, independent Watchers during the challenge period, and final state secured on Cardano after verification."
+            lead="Midgard’s security model is built around public source, independent Watchers during the challenge period, and final state secured on Cardano after verification."
           >
             <DataRows rows={securityRows} ariaLabel="Security assumptions" />
           </Section>
@@ -224,22 +221,15 @@ export default function LearnPage() {
         <DataRows rows={audienceRows} ariaLabel="Midgard reader paths" />
       </Section>
 
-      {/* The cross-entity economics view — the /economics page folded into
-          this table on 2026-07-11; each audience page tells its own side. */}
+      <FaqSections cols />
+
       <Section
-        id="economics"
-        title={ECONOMICS_MATRIX.title}
-        lead={ECONOMICS_MATRIX.lead}
+        id="glossary"
+        title="Glossary."
+        lead="The language of execution, verification, and settlement, defined in plain English."
         cols
-        aside={
-          <Statement
-            align="left"
-            kicker={ECONOMICS_MATRIX.thesis.kicker}
-            line={ECONOMICS_MATRIX.thesis.line}
-          />
-        }
       >
-        <EconomicsMatrix />
+        <GlossaryList />
       </Section>
     </HowItWorksExperience>
   );

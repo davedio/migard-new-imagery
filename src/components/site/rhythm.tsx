@@ -8,8 +8,8 @@
               reference and routing content.
 
    (Sequential content gets a bespoke structure per page: a static
-   explainer grid on /learn, IntegrationSteps on /developers,
-   EconomicsCycle on /participate — and the pipeline text is told
+   explainer grid on /learn, a concise path grid on /developers,
+   EconomicsFlow on /participate — and the pipeline text is told
    ONCE, on /learn.)
 
    Pacing law lives in the doc: never two identical patterns

@@ -18,7 +18,6 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Home", href: "/" },
       { label: "Learn", href: "/learn" },
-      { label: "Economics", href: "/learn#economics" },
       { label: "Developers", href: "/developers" },
       { label: "Participate", href: "/participate" },
       { label: "Users", href: "/users" },
@@ -28,7 +27,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Developers",
     links: [
       { label: "Developer Overview", href: "/developers" },
-      { label: "Contracts", href: "/developers#contracts" },
+      { label: "Preprod contracts", href: "/status" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "Intake form", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
@@ -38,10 +37,8 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "How Midgard works", href: "/learn" },
       { label: "Users", href: "/users" },
-      { label: "Security", href: "/learn#security" },
-      { label: "Questions", href: "/faq" },
-      { label: "Glossary", href: "/glossary" },
-      { label: "Security policy", href: OFFICIAL_LINKS.securityPolicy },
+      { label: "FAQs", href: "/learn#faq" },
+      { label: "Glossary", href: "/learn#glossary" },
     ],
   },
   {
@@ -49,20 +46,17 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Official links", href: "/official-links" },
       { label: "Network status", href: "/status" },
-      { label: "Whitepaper", href: "https://anastasia-labs.github.io/midgard/midgard.pdf", external: true },
+      { label: "Whitepaper (coming soon)" },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
       { label: "X · @midgardprotocol", href: OFFICIAL_LINKS.x, external: true },
+      { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy },
+      { label: "Terms of Use", href: "/terms" },
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Cookie Notice", href: "/cookies" },
+      { label: "Official Channels", href: "/official-channels" },
     ],
   },
 ];
-
-const LEGAL = [
-  { label: "Terms of Use", href: "/terms" },
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Cookie Notice", href: "/cookies" },
-  { label: "Official Channels", href: "/official-channels" },
-  { label: "Security Policy", href: "/security-policy" },
-] as const;
 
 /**
  * Shared footer for the (site) route group — the full sitemap. Static server
@@ -110,13 +104,6 @@ export function SiteFooter() {
       </div>
 
       <div className="site-footer__bottom">
-        <div className="site-footer__legal">
-          {LEGAL.map((l) => (
-            <Link href={l.href} key={l.label}>
-              {l.label}
-            </Link>
-          ))}
-        </div>
         <NetworkChip />
         <span className="meta">© 2026 Midgard Labs, Inc.</span>
       </div>
