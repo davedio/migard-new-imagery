@@ -26,12 +26,12 @@ const phases = [
   {
     num: "02 · Next",
     title: "Public testnet",
-    body: "Follows the preprod phase, with broader Operator and Watcher registration as parameters mature. Fuller fault-proof coverage, broader wallet support, a public explorer, and hardening under real-world load.",
+    body: "Follows preprod, with broader role registration as parameters mature. It adds fuller fault-proof coverage, wallet support, a public explorer, and load hardening.",
   },
   {
     num: "03 · Later",
     title: "Mainnet",
-    body: "Independent security audits of the on-chain and off-chain code. Full validator coverage with economic parameters finalized. Archive nodes so anyone can keep the full chain history. Mainnet deployment on Cardano.",
+    body: "Independent audits, full validator coverage, finalized economic parameters, and archive nodes. Then mainnet on Cardano.",
   },
 ] as const;
 
@@ -62,7 +62,7 @@ export default function RoadmapPage() {
         tone="cobalt"
         label="Roadmap"
         title="Paced by the work."
-        sub="No dates. Midgard ships when the work is proven sound. Here is the path from pre-alpha to mainnet, and where we are on it."
+        sub="No dates. Midgard ships when the work is sound. Here is the path from pre-alpha to mainnet."
       />
 
       <Section

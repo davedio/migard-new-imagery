@@ -121,43 +121,37 @@ const EXPLAINER_STEPS = [
     n: "01",
     title: "Submit",
     tone: "green",
-    what: "A user submits a transaction to Midgard, usually through an app or wallet.",
-    why: "The user can get a faster usable signal without waiting for final settlement.",
+    what: "A user submits a transaction through an app or wallet and receives a usable signal before final settlement.",
   },
   {
     n: "02",
     title: "Sequence",
     tone: "green",
-    what: "An operator orders valid activity into an L2 block.",
-    why: "Applications get fast execution while the order remains inspectable.",
+    what: "An Operator orders valid activity into an L2 block for fast, inspectable execution.",
   },
   {
     n: "03",
     title: "Commit",
     tone: "green",
-    what: "The operator posts a compact state commitment to Cardano.",
-    why: "Midgard does not ask users to trust a private operator database.",
+    what: "The Operator posts a compact state commitment to Cardano for public review.",
   },
   {
     n: "04",
     title: "Data availability check",
     tone: "gold",
-    what: "Block data is made available so commitments can be replayed and inspected.",
-    why: "A commitment is not useful if the underlying data cannot be checked.",
+    what: "Block data remains available so the commitment can be replayed and checked.",
   },
   {
     n: "05",
     title: "Watch",
     tone: "gold",
-    what: "Watchers replay committed blocks; a valid fault proof keeps bad state from settling.",
-    why: "Independent Watchers check correctness before settlement.",
+    what: "Watchers replay the block; a valid fault proof prevents bad state from settling.",
   },
   {
     n: "06",
     title: "Settle",
     tone: "cobalt",
-    what: "After verification clears, state becomes final on Cardano.",
-    why: "Fast execution and final settlement stay separate and reviewable.",
+    what: "After verification, state becomes final on Cardano.",
   },
 ] as const;
 
@@ -245,7 +239,6 @@ function HowItWorksExplainer({ visuallyHidden = false }: { visuallyHidden?: bool
               <span className="hiw-explainer__card-n">{step.n}</span>
               <strong className="hiw-explainer__card-title">{step.title}</strong>
               <p className="hiw-explainer__card-what">{step.what}</p>
-              <p className="hiw-explainer__card-why">{step.why}</p>
             </li>
           );
         })}

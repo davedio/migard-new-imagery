@@ -51,7 +51,7 @@ const deploymentRows = [
 const accessRows = [
   {
     label: "SDK and source",
-    body: "Open source: node, contracts, and TypeScript SDK in one repo.",
+    body: "Open source: node, contracts, and TypeScript SDK.",
     meta: "Available now",
   },
   {
@@ -79,7 +79,7 @@ const accessRows = [
 const performanceRows = [
   {
     label: "Soft confirmation",
-    body: "Seconds (estimated): usable, pre-settlement confirmation.",
+    body: "Seconds (estimated): usable before settlement.",
     meta: "Preview",
   },
   {
@@ -139,7 +139,7 @@ export default function StatusPage() {
         tone="ink"
         label="Network status"
         title="Honest status."
-        sub="Every line carries its real state: available now, coming soon, a target, or planned. Nothing here pretends to be more finished than it is."
+        sub="Every line is labeled: available now, coming soon, target, or planned. Nothing claims to be more finished than it is."
       />
 
       <JumpChips
@@ -162,7 +162,7 @@ export default function StatusPage() {
             variant="supporting"
             kicker="Cardano preprod"
             line="Midgard will be live soon on Cardano preprod. No real funds."
-            sub="This is a pre-alpha launch phase, not mainnet. Verify the source and contracts yourself on the developers page."
+            sub="Pre-alpha launch phase; no real funds. Verify source and contracts before use."
           />
         }
       >

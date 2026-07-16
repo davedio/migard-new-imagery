@@ -148,7 +148,7 @@ export const DEVELOPER_COPY = {
     /** The page's ONE telling of the wallet-action / app-interaction /
         data-availability / fallback sentence (reading-rhythm redesign). */
     lead:
-      "Build with familiar UTXO logic on an execution path designed for speed. The source, contracts, and Cardano L1 settlement path are open to inspect.",
+      "Build with familiar UTXO logic for faster execution. The source, contracts, and Cardano settlement path are open to inspect.",
   },
   /** Three concise ways into the developer experience. Each card is a
       complete starting point, rather than a step in a required sequence. */
@@ -203,7 +203,7 @@ export const DEVELOPER_COPY = {
    estimates, no hard parameters, token-silent. */
 export const ECONOMICS_MATRIX = {
   title: "Economics, across the network.",
-  lead: "One view of what every participant pays and earns. Each audience page tells its own side in full.",
+  lead: "What each participant pays and earns. Each audience page has the detail.",
   rows: [
     {
       who: "Users",

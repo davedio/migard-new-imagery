@@ -85,7 +85,7 @@ export default function OfficialLinksPage() {
         tone="ink"
         label="Trust & safety"
         title="Official links."
-        sub="One page of canonical links, so you can tell the real Midgard from the fakes. If it is not listed here, it is not us."
+        sub="Official Midgard links. If it is not listed here, it is not us."
       />
 
       <JumpChips
@@ -99,13 +99,13 @@ export default function OfficialLinksPage() {
       <Section
         id="verify"
         title="Verify, then trust."
-        lead="Midgard is in pre-alpha. We will never DM you first, and we will never ask for your seed phrase or private keys. There is no Midgard token today (no sale, no airdrop) and fees are paid in ADA."
+        lead="Midgard is pre-alpha. We never DM first or ask for your seed phrase or private keys. There is no token, sale, or airdrop; fees are paid in ADA."
         cols
       >
         <Statement
           align="left"
           variant="supporting"
-          line="If a link, wallet, or token claims to be Midgard and is not listed on this page, treat it as fake."
+          line="Anything claiming to be Midgard but not listed here is fake."
         />
       </Section>
 

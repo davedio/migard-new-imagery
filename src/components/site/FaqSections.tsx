@@ -23,19 +23,19 @@ const faqGroups = [
       },
       {
         q: "Is Midgard live?",
-        a: "Midgard will be live soon on Cardano preprod. It is not on mainnet, and broader public-testnet access follows. Check the network status page and GitHub before integrating.",
+        a: "Midgard will be live soon on Cardano preprod, not mainnet. Check Network Status and GitHub before integrating.",
       },
       {
         q: "Does Midgard have a token?",
-        a: "There is no Midgard token today: no sale, and no airdrop. Fees are paid in ADA. Anything about the protocol's future would come through official channels first; anyone selling a Midgard token now is a scam, so check the official links page.",
+        a: "There is no Midgard token, sale, or airdrop. Fees are paid in ADA; anyone selling a Midgard token is a scam. Check official links.",
       },
       {
         q: "How is Midgard different from Hydra?",
-        a: "They are complementary. Hydra is a state channel: a small group locks funds and transacts among themselves, which is ideal when the participants are known and online. Midgard is an optimistic rollup: an open Layer 2 anyone can use, with shared state secured by fault proofs on Cardano.",
+        a: "Hydra is a state channel for known, online participants. Midgard is an open optimistic rollup with shared state secured by fault proofs on Cardano.",
       },
       {
         q: "Is Midgard a bridge or a sidechain?",
-        a: "Neither. A bridge moves your assets into another system's custody, and a sidechain runs its own consensus with its own security assumptions. Midgard is a rollup: L2 execution, committed state, fault-proof verification, and settlement through Cardano L1.",
+        a: "Neither. A bridge changes asset custody, and a sidechain has its own consensus. Midgard is a rollup whose state is verified and settled through Cardano L1.",
       },
       {
         q: "When is mainnet?",
@@ -46,8 +46,8 @@ const faqGroups = [
         a: "That is the goal: give UTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
       },
       {
-        q: "What does LayerZero or another bridge change?",
-        a: "Bridge integrations can affect liquidity and user reach, but a bridge's own security assumptions are separate from Midgard protocol guarantees. Midgard can settle through Cardano L1 while bridge security still depends on the bridge configuration.",
+        q: "How does third-party bridge security relate to Midgard?",
+        a: "A bridge can change liquidity and reach, but its security is separate from Midgard’s. Midgard settles through Cardano while a bridge depends on its own configuration.",
       },
     ],
   },
@@ -56,7 +56,7 @@ const faqGroups = [
     items: [
       {
         q: "What does it cost to use Midgard?",
-        a: "Fees are paid in ADA. Midgard is designed to lower costs by executing off-chain and committing compact data to Cardano; measured fee comparisons will be published once benchmarked.",
+        a: "Fees are paid in ADA. Midgard executes off-chain and commits compact data to Cardano; comparisons follow benchmarks.",
       },
       {
         q: "Do I need a new wallet or asset?",
@@ -68,11 +68,11 @@ const faqGroups = [
       },
       {
         q: "Who holds my funds?",
-        a: "No one holds them but the protocol. Funds are locked by Cardano smart contracts, not by a company or a multisig bridge, so there is no operator key that can move your money.",
+        a: "Funds are locked by Cardano smart contracts, not a company or multisig bridge. No Operator key can move them.",
       },
       {
         q: "What if every operator goes offline?",
-        a: "By design, your funds can never be permanently stranded. If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. That escape path is enforced by the protocol, not by trust.",
+        a: "Your funds cannot be permanently stranded. If every Operator stops, you can submit directly to the L1 state queue; the protocol enforces that exit path.",
       },
     ],
   },
@@ -81,7 +81,7 @@ const faqGroups = [
     items: [
       {
         q: "What is the main security claim?",
-        a: "Finalized state settles through Cardano L1 after verification. The security model depends on contracts anyone can read, fault proofs that re-check one transaction at a time, block data staying available to check, and at least one honest Watcher.",
+        a: "Finalized state settles through Cardano L1. Security relies on public contracts, available block data, fault proofs, and at least one honest Watcher.",
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
@@ -89,7 +89,7 @@ const faqGroups = [
       },
       {
         q: "What do Watchers do?",
-        a: "Watchers inspect committed blocks, replay the relevant state transition, and raise a fault proof if an Operator commits invalid state. Midgard safety requires at least one honest Watcher with the data needed to check the block.",
+        a: "Watchers replay committed blocks and submit fault proofs against invalid state. Safety requires one honest Watcher with the block data.",
       },
       {
         q: "Why does UTXO matter?",
@@ -102,15 +102,15 @@ const faqGroups = [
     items: [
       {
         q: "Can anyone run an Operator or Watcher today?",
-        a: "Midgard is pre-alpha. Participation is staged: initial operation is internal-team-led, with broader Operator and Watcher registration opened as parameters mature.",
+        a: "Midgard is pre-alpha. Initial operation is internal-team-led; broader registration opens as parameters mature.",
       },
       {
         q: "How do Operators and Watchers earn?",
-        a: "Operators sequence and commit blocks in rotating shifts and earn fees from L2 transactions, deposits, and withdrawals. Watchers who submit a valid fault proof earn an estimated 30–50% of the slashed operator bond. Exact parameters are finalized during testnet.",
+        a: "Operators earn from committed transactions, deposits, and withdrawals. A valid fault proof targets an estimated 30–50% of the slashed bond; parameters finalize during testnet.",
       },
       {
         q: "How do I avoid scams?",
-        a: "Only trust links listed on the official links page. Midgard will never DM you first or ask for your seed phrase, and there is no token to buy today.",
+        a: "Use only official links. Midgard will never DM first or request seed phrases; there is no token to buy.",
       },
       {
         q: "What should I check before relying on Midgard?",

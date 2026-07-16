@@ -72,7 +72,7 @@ export default function DeveloperLanding() {
       <Section
         id="economics"
         title="Economics for builders."
-        lead="No new asset in your integration and no separate fee market to explain to users."
+        lead="No new asset or separate fee market."
         cols
       >
         <DataRows
@@ -130,45 +130,41 @@ export default function DeveloperLanding() {
       <Section
         id="defense"
         title="How the protocol defends itself."
-        lead="An invalid transaction, a bad commitment, withheld data, an operator gone dark: each is a fault, and each can be checked on Cardano. Fault is broader than fraud on purpose; not every failure is intentional."
+        lead="Faults, including invalid transactions, bad commitments, unavailable data, or an Operator gone dark, can be checked on Cardano."
         cols
       >
         <CardGrid cols={2}>
           <Card
             num="01"
             title="Operators commit and bond"
-            body="An Operator sequences a block, commits its header to the L1 state queue, and locks a bond as collateral against that commitment."
+            body="An Operator commits a block to the L1 state queue and locks a bond as collateral."
           />
           <Card
             num="02"
             title="Watchers verify"
-            body="Watchers run independently. They replay every committed block against the posted data, the UTXO rules, and the L1 header."
+            body="Watchers independently replay committed blocks against posted data, UTXO rules, and the L1 header."
             delay={50}
           />
           <Card
             num="03"
             title="A fault proof slashes"
-            body="If a block is faulty, a Watcher submits a compact fault proof to Cardano. It slashes the Operator's bond, reverts the block, and rewards the prover."
+            body="A valid fault proof on Cardano slashes the bond, reverts the block, and rewards the prover."
             delay={100}
           />
           <Card
             num="04"
             title="The window is the guarantee"
-            body="A block folds into confirmed state only after its challenge window passes with no valid fault proof. Fast confirmations up front never shortcut it."
+            body="A block becomes confirmed only after its challenge window closes with no valid fault proof."
             delay={150}
           />
         </CardGrid>
         <div className="prose">
           <p className="dim">
-            The protocol enforces custody (scripts, not keys),
-            validity (fault proofs), and settlement on Cardano. What an app, RPC, or
-            explorer <em>shows</em> you still depends on the data source it reads: a
-            compromised RPC feed can lie about what you see (RPC poisoning) but cannot
-            rewrite Midgard&apos;s canonical state, which lives on Cardano. For the strongest
-            assurance, verify against your own node. Block-data retrievability is designed
-            to be handled by a dedicated data-availability layer with committee
-            attestation; that layer is in active development, with long-term history
-            planned for separate archive nodes.
+            The protocol enforces custody through scripts, validity through fault proofs,
+            and settlement on Cardano. Apps, RPCs, and explorers can still misreport what
+            you see; verify against your own node for the strongest assurance. A dedicated
+            data-availability layer is in development, with archive nodes planned for
+            long-term history.
           </p>
         </div>
       </Section>
@@ -176,7 +172,7 @@ export default function DeveloperLanding() {
       <Section
         id="reference"
         title="Keep these handy."
-        lead="Midgard is pre-alpha. The source is open; Cardano preprod access arrives soon. A hosted public RPC endpoint follows later."
+        lead="Source is open; Cardano preprod access is coming soon. A hosted public RPC follows later."
         tight
         cols
       >

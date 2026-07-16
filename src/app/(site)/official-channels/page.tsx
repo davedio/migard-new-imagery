@@ -55,10 +55,8 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Why This Page Exists",
     paragraphs: [
       <>
-        Scammers impersonate blockchain projects. This page is the single source of truth for
-        which Midgard channels are real. If a website, account, message, or &lsquo;claim
-        page&rsquo; is not listed here, treat it as unofficial and assume it is hostile. Bookmark
-        this page and check it before acting on anything that claims to be Midgard.
+        This page is the source of truth for Midgard channels. If a website, account, message, or
+        claim page is not listed here, treat it as hostile and check before acting.
       </>,
     ],
   },
@@ -92,13 +90,10 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "What We Will Never Do",
     paragraphs: [
       <>
-        We will never direct-message you first. We will never ask for your seed phrase, private
-        keys, passwords, or remote access to your device. We will never ask you to send funds to
-        &lsquo;verify&rsquo; a wallet, &lsquo;unlock&rsquo; a reward, or &lsquo;migrate&rsquo;
-        assets. We will never announce a token, airdrop, points program, or claim page through
-        unofficial channels; as of the date above there is no Midgard token, and any page or
-        message claiming otherwise is a scam. Official support, where available, happens only in
-        the public channels listed above, never in private messages.
+        We never DM first or ask for seed phrases, private keys, passwords, or device access. We
+        never ask you to send funds to verify a wallet, unlock a reward, or migrate assets. There
+        is no Midgard token; any claim otherwise is a scam. Official support occurs only in the
+        public channels above.
       </>,
     ],
   },
@@ -107,12 +102,10 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "How to Verify and How to Report",
     paragraphs: [
       <>
-        Verify by navigating to this page directly (not through links in messages) and comparing
-        addresses character by character; lookalike domains and handles are the most common trick.
-        If you encounter an impersonation, fake site, or scam claiming to be Midgard, report it to{" "}
-        {contact} with links and screenshots, and report it on the platform where you found it. If
-        you have sent funds or exposed keys to a scammer, treat the affected wallet as compromised
-        immediately and move remaining assets from a clean device.
+        Open this page directly and compare addresses character by character; lookalike domains
+        and handles are common. Report impersonation with links and screenshots to {contact} and
+        to the relevant platform. If you exposed keys or sent funds, treat the wallet as
+        compromised and move remaining assets from a clean device.
       </>,
     ],
   },

@@ -50,7 +50,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Network status",
-    body: "Every metric labeled with its real state: available, coming soon, preview, target, or planned.",
+    body: "Current state for every metric: available, coming soon, preview, target, or planned.",
     href: "/status",
   },
   {
@@ -65,7 +65,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Source review",
-    body: "Node code, contracts, and implementation history, public on GitHub.",
+    body: "Node code, contracts, and implementation history on GitHub.",
     href: OFFICIAL_LINKS.github,
     external: true,
     meta: "↗",
@@ -179,7 +179,6 @@ export default function MinimalHome() {
       >
         <div className="minimal-section__head">
           <h2 id="minimal-comparison-title">How Midgard compares.</h2>
-          <p>Three common paths side by side.</p>
         </div>
         <MidgardComparison />
       </section>
@@ -243,9 +242,7 @@ export default function MinimalHome() {
       >
         <div className="minimal-section__head">
           <h2 id="minimal-descent-title">Watch the transaction lifecycle.</h2>
-          <p>
-            Follow a transaction from execution through verification to final settlement.
-          </p>
+          <p>Follow a transaction from execution to final settlement.</p>
           <div className="statement statement--left statement--supporting">
             <p className="statement__kicker">{SITE_COPY.trustFlow.resolved.kicker}</p>
             <p className="statement__sub">
@@ -276,7 +273,6 @@ export default function MinimalHome() {
           {/* Renamed from "Inspect the claims." — Dave on the 7/3 call:
               "I don't know what inspect the claims means." */}
           <h2 id="minimal-verify-title">Quick links</h2>
-          <p>Helpful links to route you to the right place.</p>
           <OfficialSocialLinks
             className="minimal-channel-socials"
             linkClassName="minimal-channel-social"

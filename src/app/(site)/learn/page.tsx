@@ -26,16 +26,16 @@ export const metadata: Metadata = {
 const securityRows = [
   {
     label: "At launch: contract addresses",
-    body: "Contract addresses and state anchors will be published when Midgard is live on Cardano preprod.",
+    body: "Contract addresses and state anchors will be published at launch.",
     href: "/status",
   },
   {
     label: "During confirmation: Watchers",
-    body: "Watchers replay commitments during the challenge period; one honest Watcher is enough to stop invalid state.",
+    body: "During the challenge period, Watchers replay commitments. One honest Watcher can stop invalid state.",
   },
   {
     label: "After verification: Cardano",
-    body: "After verification clears, finalized state is secured on Cardano.",
+    body: "After verification, final state is secured on Cardano.",
   },
   ...DEVELOPER_COPY.security.rows,
 ] as const;
@@ -107,7 +107,7 @@ export default function LearnPage() {
             compact
             label="Learn Midgard"
             title="Midgard Overview."
-            sub="Overview of Midgard, how it works, security standards, common questions, and protocol terms."
+            sub="How Midgard works, what makes it checkable, and the terms used across the protocol."
           />
 
           <JumpChips
@@ -144,7 +144,7 @@ export default function LearnPage() {
           <Section
             id="proof-metrics"
             title="The key numbers."
-            lead="Five indicators: estimated where forward-looking, checkable where live."
+            lead="Five indicators: estimated where forward-looking, checkable where source is public."
           >
             <div className={styles.strip} role="list" aria-label="Key performance and security indicators">
               {stripCells.map((item) => (
@@ -173,7 +173,7 @@ export default function LearnPage() {
           <Section
             id="flow"
             title="Watch transactions soft-confirm."
-            lead="Transactions soft-confirm in seconds (estimated) while blocks seal behind them and commitments move to Cardano (simulated here)."
+            lead="A simulated view of soft confirmation, block sealing, and settlement on Cardano."
           >
             <SoftConfirmFeed />
           </Section>
@@ -181,7 +181,7 @@ export default function LearnPage() {
           <Section
             id="security"
             title="Security, in plain language."
-            lead="Midgard’s security model is built around public source, independent Watchers during the challenge period, and final state secured on Cardano after verification."
+            lead="What is public, who checks it, and where final state settles."
           >
             <DataRows rows={securityRows} ariaLabel="Security assumptions" />
           </Section>

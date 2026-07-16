@@ -41,7 +41,7 @@ const economicsRows = [
   },
   {
     label: "Where value settles",
-    body: "Commitments are posted to Cardano before the challenge window; verified state settles through Cardano L1 after the verification path clears.",
+    body: "Commitments are posted to Cardano before the challenge window; verified state settles after verification.",
   },
   {
     label: "The whole picture",
@@ -93,7 +93,7 @@ export default function UsersPage() {
         tone="moss"
         label="Users"
         title="Same apps. Same Cardano security. New speed."
-        sub="Use familiar Cardano apps with confirmations in seconds (estimated), fees in ADA estimated 10 to 30x cheaper than L1, and verified settlement through Cardano L1."
+        sub="Use familiar Cardano apps with estimated-second confirmations, ADA fees estimated 10 to 30x lower than L1, and verified Cardano settlement."
         actions={[
           { label: "Learn how it works", href: "/learn", variant: "primary" },
           { label: "Read FAQs", href: "/learn#faq", variant: "ghost" },
@@ -136,7 +136,6 @@ export default function UsersPage() {
       <Section
         id="economics"
         title="Fees and settlement."
-        lead="Pay in ADA. Hold nothing new. Settle through Cardano L1."
         cols
       >
         <DataRows rows={economicsRows} ariaLabel="User economics" />
@@ -151,7 +150,7 @@ export default function UsersPage() {
             align="left"
             kicker="User path"
             line="Deposit. Transact. Withdraw."
-            sub="The verification machinery stays visible for reviewers, but normal users should not have to think about it."
+            sub="Normal users should not need to manage the verification path."
           />
         }
       >

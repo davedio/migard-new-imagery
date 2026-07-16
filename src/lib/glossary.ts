@@ -23,7 +23,7 @@ export const GLOSSARY = {
   },
   operator: {
     term: "Operator",
-    def: "A bonded participant who runs Midgard infrastructure, ordering transactions into blocks and committing them to Cardano, and posting collateral that can be slashed for invalid commitments.",
+    def: "A bonded participant who orders transactions into blocks and commits them to Cardano; invalid commitments can slash its collateral.",
   },
   settlement: {
     term: "settlement",
@@ -35,7 +35,7 @@ export const GLOSSARY = {
   },
   "state-commitment": {
     term: "state commitment",
-    def: "A compact cryptographic summary of Layer 2 state that an Operator posts to Cardano for anyone to verify or challenge.",
+    def: "A compact cryptographic summary an Operator posts to Cardano for public verification or challenge.",
   },
   "layer-2": {
     term: "Layer 2",
@@ -59,7 +59,7 @@ export const GLOSSARY = {
   },
   "data-availability": {
     term: "data availability",
-    def: "The property that a block's full data is published and retrievable so anyone can replay and check it; Midgard's dedicated DA layer is in active development.",
+    def: "Block data being public and retrievable so anyone can replay it; Midgard's dedicated layer is in development.",
   },
   "da-committee": {
     term: "data availability committee",

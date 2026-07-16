@@ -28,12 +28,12 @@ export const metadata: Metadata = {
 const economicsSteps = [
   {
     title: "Fees fund the network",
-    body: "Users pay fees in ADA, estimated 10 to 30x cheaper than L1. Those fees fund the Operators and Watchers who keep the network running and checkable.",
+    body: "Users pay ADA fees, estimated 10 to 30x cheaper than L1, to fund Operators and Watchers.",
     tone: "green",
   },
   {
     title: "Roles earn for the work",
-    body: "Operators earn fees from every L2 transaction, deposit, and withdrawal they commit; Watchers earn a share of a slashed bond for a valid fault proof. Full parameters are finalized during testnet.",
+    body: "Operators earn transaction, deposit, and withdrawal fees. Watchers earn from valid fault proofs; parameters finalize during testnet.",
     tone: "gold",
   },
   {
@@ -105,12 +105,12 @@ export default function ParticipatePage() {
         <CardGrid cols={2}>
           <Card
             title="Operator"
-            body="Operators sequence and commit blocks to Cardano, earning fees from the activity they commit. They post a bond that is slashed for a valid fault proof."
+            body="Operators sequence and commit blocks to Cardano. They earn fees and post a bond that a valid fault proof can slash."
           />
           <Card
             title="Watcher"
             delay={60}
-            body="Anyone can run a Watcher, with no bond or selection required. Watchers replay committed blocks and earn an estimated 30–50% of a slashed bond for a valid fault proof."
+            body="Anyone can run a Watcher, with no bond or selection. Watchers replay blocks and earn an estimated 30–50% of a slashed bond for a valid fault proof."
           />
         </CardGrid>
         <div className={styles.rolesCta}>
@@ -134,7 +134,7 @@ export default function ParticipatePage() {
       <Section
         id="different"
         title="Security you can verify."
-        lead="Cardano settles the state. Operators post bonds, and Watchers can prove a fault. Attacking the network costs more than playing fair."
+        lead="Cardano settles the state. Bonds and fault proofs make honest sequencing the better incentive."
         cols
       >
         <CardGrid cols={3}>
@@ -144,9 +144,7 @@ export default function ParticipatePage() {
         </CardGrid>
         {/* Keeps stale #security links useful while the full security model lives on Learn. */}
         <p id="security" className={styles.securityPointer}>
-          The full security model, trust path, fault proofs, audit status, and the
-          disclosure route live with Learn.{" "}
-          <Link href="/learn#security">Read the security model →</Link>
+          <Link href="/learn#security">Read the full security model on Learn →</Link>
         </p>
       </Section>
 

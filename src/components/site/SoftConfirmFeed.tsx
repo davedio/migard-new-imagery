@@ -128,8 +128,7 @@ export default function SoftConfirmFeed() {
       </div>
 
       <p className={css.srOnly}>
-        Transactions use a circle and solid edge, sealed blocks use a diamond
-        and dashed edge, and commits to Cardano use a ring and a second edge.
+        Circles are transactions, diamonds are sealed blocks, and rings are Cardano commits.
       </p>
 
       {/* The stream churns rows every 1.6s — hidden from assistive tech;

@@ -25,7 +25,7 @@ const NAV_LINKS: readonly NavLink[] = [
   { label: "Learn", href: "/learn" },
   { label: "Developers", href: "/developers" },
   { label: "Participate", href: "/participate" },
-  { label: "Use", href: "/users" },
+  { label: "Users", href: "/users" },
 ] as const;
 
 /* ------------------------------------------------------------------ */
