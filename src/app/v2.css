@@ -690,6 +690,7 @@ h2 em,
 }
 .site-footer__col h4 {
   color: var(--text-faint);
+  font-size: var(--type-label);
   letter-spacing: 0.3em;
 }
 .site-footer__col a {
