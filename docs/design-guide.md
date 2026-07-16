@@ -112,7 +112,8 @@ its sentence):
 
 | Asset | Page | Scene sentence (summary) | Ref |
 |---|---|---|---|
-| `journey-flow-tall` (9:16) | /learn journey plate | One immense tree top-to-bottom: sunlit canopy at top, mossy bark descending, roots dissolving into cloud at bottom; a thin mint sap-light ribbon winds down the full trunk like a waterfall of light | forest-path |
+| `journey-descent-hero` (1440×1661) | /learn journey plate | **Not generated from a prompt.** The actual home-hero painting (`tree-hero-portrait`, light + dark) outpainted to 9:16 (sky above, cliff continued below), then cropped full-width from just above the canopy to the bottom (2026-07-16: the journey tree must BE the hero tree; generated lookalikes were rejected). No painted sap-vein needed — the canvas orb draws its own light down the measured trunk. | hero itself |
+| `journey-flow-tall` (9:16) | (superseded as /learn plate; home descent teaser still uses `trunk-flow-tall`) | One immense tree top-to-bottom: sunlit canopy at top, mossy bark descending, roots dissolving into cloud at bottom; a thin mint sap-light ribbon winds down the full trunk like a waterfall of light | forest-path |
 | `sentinel-watch` | /participate | Two weathered sentinel standing stones on a mossy terraced hillside, right third, overlooking a valley of ridgelines fading into fog; faint mint beacon glow between them | rune-stones |
 | `trunk-mist` | /glossary | Broad mossy trunk of one ancient tree at respectful distance, right side, half dissolved in rolling fog; one thin mint sap-vein traces up the bark | rune-stones |
 | `stepping-stones` | (retired as a page backdrop — file kept, available) | Broad flat stepping stones crossing a calm shallow forest stream, lower right, far bank glowing warm; faint mint shimmer on the water | forest-path |
