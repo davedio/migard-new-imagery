@@ -168,7 +168,7 @@ const EXPLAINER_STEPS = [
    at each stop: sunlit canopy -> a gnarled branch fork -> a weathered
    trunk hollow -> mossy roots over boulders -> the sap-light pooling into
    a glowing basin at the base (the "Settle" payoff). */
-const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-descent.avif";
+const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-descent-candidate-f.avif";
 
 function JourneyAct({
   actRef,
