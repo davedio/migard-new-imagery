@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const economicsSteps = [
   {
     title: "Fees fund the network",
-    body: "Users pay fees in ADA — estimated at a fraction of L1 cost. Those fees fund the Operators and Watchers who keep the network running and checkable.",
+    body: "Users pay fees in ADA, estimated 10 to 30x cheaper than L1. Those fees fund the Operators and Watchers who keep the network running and checkable.",
     tone: "green",
   },
   {
@@ -50,7 +50,7 @@ const economicsSteps = [
 const differentCards = [
   {
     title: "Verifiable security",
-    body: "A bad state transition can be checked against the exact inputs and scripts it touched — instead of relying on broad trust. UTXO execution is deterministic and local, so validity can be checked on Cardano itself.",
+    body: "A bad state transition can be checked against the exact inputs and scripts it touched instead of relying on broad trust. Because each UTXO transaction stands alone, a dispute only has to re-run that one transaction, and Cardano itself can run the check.",
   },
   {
     title: "Non-custodial",
@@ -58,7 +58,7 @@ const differentCards = [
   },
   {
     title: "Never stranded",
-    body: "If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. Funds can never be permanently stranded — the escape path is enforced by the protocol, not by trust.",
+    body: "If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. By design, funds can never be permanently stranded; the escape path is enforced by the protocol, not by trust.",
   },
 ] as const;
 
@@ -105,12 +105,12 @@ export default function ParticipatePage() {
         <CardGrid cols={2}>
           <Card
             title="Operator"
-            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts — and they stake a bond to do it. If a fault proof succeeds against a block they committed, that bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
+            body="The bonded role. Operators sequence transactions and commit blocks to Cardano in rotating shifts, and they stake a bond to do it. If a fault proof succeeds against a block they committed, that bond is slashed. In exchange, Operators earn fees from every L2 transaction, deposit, and withdrawal they commit (parameters estimated during testnet)."
           />
           <Card
             title="Watcher"
             delay={60}
-            body="The permissionless role. No bond, no selection — anyone can run a Watcher. Watchers replay committed blocks against the posted data and submit a fault proof when a commitment doesn't hold; one honest Watcher is enough. A valid fault proof earns the Watcher an estimated 30–50% of the slashed bond."
+            body="The permissionless role. No bond, no selection: anyone can run a Watcher. Watchers replay committed blocks against the posted data and submit a fault proof when a commitment doesn't hold; one honest Watcher is enough. A valid fault proof earns the Watcher an estimated 30–50% of the slashed bond."
           />
         </CardGrid>
         <div className={styles.rolesCta}>
@@ -123,8 +123,8 @@ export default function ParticipatePage() {
         </div>
         {/* Keeps stale #security links useful while the full security model lives on Learn. */}
         <p id="security" className={styles.securityPointer}>
-          The full security model — trust path, fault proofs, audit status, and the
-          disclosure route — lives with Learn.{" "}
+          The full security model, trust path, fault proofs, audit status, and the
+          disclosure route, lives with Learn.{" "}
           <Link href="/learn#security">Read the security model →</Link>
         </p>
       </Section>

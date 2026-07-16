@@ -21,7 +21,7 @@ const phases = [
   {
     num: "01 · Now · Preprod",
     title: "Pre-alpha testnet",
-    body: "Core validators are deployed on Cardano preprod, verifiable on the developers page. The core optimistic lifecycle runs on preprod — submit, sequence, commit, watch, settle — with data-availability attestation and the full fault-proof catalogue in active development.",
+    body: "Core validators are deployed on Cardano preprod, verifiable on the developers page. The core optimistic lifecycle (submit, sequence, commit, watch, settle) runs on preprod, with data-availability attestation and the full fault-proof catalogue in active development.",
   },
   {
     num: "02 · Next",

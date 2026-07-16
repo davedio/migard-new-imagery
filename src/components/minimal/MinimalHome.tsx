@@ -43,7 +43,7 @@ function SmartLink({
 const VERIFY_ROWS: readonly DataRow[] = [
   {
     label: "Official links",
-    body: "The canonical list — if a link is not on it, it is not us.",
+    body: "The canonical list: if a link is not on it, it is not us.",
     href: "/official-links",
   },
   {
@@ -63,7 +63,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Source review",
-    body: "Node code, contracts, and implementation history — public on GitHub.",
+    body: "Node code, contracts, and implementation history, public on GitHub.",
     href: OFFICIAL_LINKS.github,
     external: true,
     meta: "↗",
@@ -121,9 +121,6 @@ export default function MinimalHome() {
               <SmartLink className="minimal-btn minimal-btn--ghost" href={SITE_COPY.hero.secondaryCta.href}>
                 {SITE_COPY.hero.secondaryCta.label}
               </SmartLink>
-              <SmartLink className="minimal-btn minimal-btn--quiet" href={SITE_COPY.hero.tertiaryCta.href}>
-                {SITE_COPY.hero.tertiaryCta.label}
-              </SmartLink>
             </div>
           </div>
         </div>
@@ -140,8 +137,8 @@ export default function MinimalHome() {
         aria-labelledby="minimal-paths-title"
       >
         <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Three roles. One protocol.</h2>
-          <p>Use it, build on it, or run it — each path has its own page.</p>
+          <h2 id="minimal-paths-title">Choose your path. Build, run, or use the network</h2>
+          <p>Build, use, or participate in Midgard</p>
         </div>
         <CardGrid cols={3}>
           {SITE_COPY.paths.map((path, i) => (
@@ -169,20 +166,19 @@ export default function MinimalHome() {
         <div className="minimal-section__head">
           <h2 id="minimal-descent-title">Watch a transaction travel the tree.</h2>
           <p>
-            Execution in the canopy, verification in the trunk, settlement at the roots —
-            the same journey every Midgard transaction makes.
+            Follow transactions from execution through verification to final settlement: the same journey every Midgard transaction makes.
           </p>
           <Statement
             align="left"
             kicker={SITE_COPY.trustFlow.resolved.kicker}
-            line={SITE_COPY.trustFlow.resolved.title}
-            sub="Every commitment stays open to challenge — and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
+            line="Watchers (and anyone) verify during challenge period to ensure safety and validity."
+            sub="Every commitment stays open during the challenge period, and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
           />
         </div>
         <div className="minimal-descent-stage">
           <DescentPreviewLoop>
             <SmartLink className="minimal-btn minimal-btn--ghost" href="/learn">
-              Watch it happen -&gt;
+              Follow a transaction →
             </SmartLink>
           </DescentPreviewLoop>
         </div>
@@ -198,36 +194,34 @@ export default function MinimalHome() {
         aria-labelledby="minimal-problem-title"
       >
         <div className="minimal-section__head">
-          <h2 id="minimal-problem-title">Security shouldn&apos;t be the price you pay for scale.</h2>
+          <h2 id="minimal-problem-title">Scale without the security tradeoff</h2>
           <Statement
             align="left"
-            kicker="Scale without the trade-off"
-            line="Midgard anchors its security to Cardano through fault proofs."
-            sub="Midgard targets up to 300x throughput and lower execution costs (both estimated)."
+            line="Midgard anchors its security to Cardano unlike other L2s that ask you to accept a new security model."
           />
         </div>
         <CardGrid cols={2}>
           <Card
             num="01"
             title="DeFi without congestion"
-            body="Swaps, lending, and orderbooks that keep moving when the base chain is busy, then settle back to Cardano."
+            body="Swaps, lending, and orderbooks that keep moving when the base chain is busy."
           />
           <Card
             num="02"
             title="High-frequency apps"
-            body="Games and real-time state that update constantly, with confirmations in seconds (estimated)."
+            body="Real-time state that updates constantly, with confirmations in seconds (estimated)."
             delay={50}
           />
           <Card
             num="03"
-            title="Everyday payments"
-            body="Low-fee transfers in ADA, with nothing new to hold."
+            title="Easy payments"
+            body="Low-fee transfers paid in ADA"
             delay={100}
           />
           <Card
             num="04"
             title="Cheaper infrastructure"
-            body="Infrastructure designed to cost less, using the same scripts and tooling."
+            body="The same scripts and tooling, designed to run at lower cost."
             delay={150}
           />
         </CardGrid>
@@ -245,11 +239,8 @@ export default function MinimalHome() {
         <div className="minimal-section__head">
           {/* Renamed from "Inspect the claims." — Dave on the 7/3 call:
               "I don't know what inspect the claims means." */}
-          <h2 id="minimal-verify-title">Check it yourself.</h2>
-          <p>
-            Every claim on this page has a place you can check it — and every question
-            has an official channel.
-          </p>
+          <h2 id="minimal-verify-title">Quick links</h2>
+          <p>Helpful links to route you to the right place.</p>
           <OfficialSocialLinks
             className="minimal-channel-socials"
             linkClassName="minimal-channel-social"

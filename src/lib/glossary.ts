@@ -11,7 +11,7 @@ export const GLOSSARY = {
   },
   "optimistic-rollup": {
     term: "optimistic rollup",
-    def: "A Layer 2 design that assumes batches are valid by default and relies on fault proofs during a challenge window to catch bad state.",
+    def: "A Layer 2 design that assumes blocks are valid by default and relies on fault proofs during a challenge window to catch bad state.",
   },
   "challenge-window": {
     term: "challenge window",
@@ -23,7 +23,7 @@ export const GLOSSARY = {
   },
   operator: {
     term: "Operator",
-    def: "A bonded participant who runs Midgard infrastructure — ordering transactions into blocks and committing them to Cardano — posting collateral that can be slashed for invalid commitments.",
+    def: "A bonded participant who runs Midgard infrastructure, ordering transactions into blocks and committing them to Cardano, and posting collateral that can be slashed for invalid commitments.",
   },
   settlement: {
     term: "settlement",
@@ -51,7 +51,7 @@ export const GLOSSARY = {
   },
   "soft-confirmation": {
     term: "soft confirmation",
-    def: "The confirmation you can act on — reached in seconds (estimated), backed by the Operator's bond, ahead of final settlement.",
+    def: "The confirmation you can act on: reached in seconds (estimated), backed by the Operator's bond, ahead of final settlement.",
   },
   "state-queue": {
     term: "state queue",

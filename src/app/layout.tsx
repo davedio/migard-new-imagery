@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: "Midgard | The execution layer for UTXO finance",
   description:
-    "Midgard is an optimistic rollup designed for faster, lower-cost execution, with verification and settlement anchored to Cardano L1.",
+    "Midgard is an optimistic rollup designed for faster, cheaper execution, securely verified and settled to the Cardano blockchain.",
   alternates: {
     canonical: "/",
   },

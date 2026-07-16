@@ -29,12 +29,12 @@ const audienceRows = [
   },
   {
     label: "Builders",
-    body: SITE_COPY.paths[1].body,
+    body: "Same transaction logic, new speed. Your validators, tests, and tooling carry over; switching is close to one endpoint change.",
     href: "/developers",
   },
   {
     label: "Protocol roles",
-    body: SITE_COPY.paths[2].body,
+    body: "Help run the network. Operators earn fees for ordering transactions into blocks; Watchers earn by proving a bad block wrong before it settles.",
     href: "/participate",
   },
 ] as const;
@@ -54,7 +54,7 @@ const securityRows = [
   },
   {
     label: "Contracts in the open",
-    body: "Public source with formal-methods work in progress, so claims can be checked.",
+    body: "The contracts are public, so security claims can be checked against code.",
     href: "/developers#contracts",
   },
   ...DEVELOPER_COPY.security.rows,
@@ -102,7 +102,7 @@ const stripCells = [
   {
     k: "Fees",
     v: "In ADA",
-    s: "A fraction of L1 cost, estimated — you pay fees in ADA.",
+    s: "Estimated 10 to 30x cheaper than L1, paid in ADA.",
   },
   {
     k: "Throughput",
@@ -121,7 +121,7 @@ export default function LearnPage() {
             label="Learn Midgard"
             title="Midgard Overview."
             sub="Start with the four ideas that make the protocol click."
-            body="Learn what users experience, what happens underneath, and where trust comes from. The full transaction journey comes after the essentials."
+            body="Learn what users experience, what happens underneath, and where trust comes from."
             chips={
               <>
                 <SectionJumpButton id="basics" label="Start the overview" variant="primary" />
@@ -144,8 +144,7 @@ export default function LearnPage() {
 
           <Section
             id="basics"
-            eyebrow="Four things to know"
-            title="The short version."
+            eyebrow="A short overview"
             lead="Work through these ideas first. They are the vocabulary for everything the tree shows later."
           >
             <ol className={learnStyles.primerList} aria-label="Midgard overview lessons">
@@ -185,15 +184,15 @@ export default function LearnPage() {
             id="flow"
             eyebrow="What users feel first"
             title="Watch transactions soft-confirm."
-            lead="Transactions become usable in seconds (estimated) while blocks seal behind them and commit down to Cardano — simulated here."
+            lead="Transactions become usable in seconds (estimated) while blocks seal behind them and commit down to Cardano (simulated here)."
           >
             <SoftConfirmFeed />
           </Section>
 
           <Section
             id="proof-metrics"
-            title="Proof metrics."
-            lead="Six indicators — estimated where forward-looking, checkable where live."
+            title="The key numbers."
+            lead="Six indicators: estimated where forward-looking, checkable where live."
           >
             <div className={styles.strip} role="list" aria-label="Proof metrics">
               {stripCells.map((item) => (
@@ -291,7 +290,7 @@ export default function LearnPage() {
             },
             {
               label: "GitHub",
-              body: "The protocol is open — inspect source, contracts, and implementation history.",
+              body: "The protocol is open: inspect source, contracts, and implementation history.",
               href: OFFICIAL_LINKS.github,
               external: true,
             },

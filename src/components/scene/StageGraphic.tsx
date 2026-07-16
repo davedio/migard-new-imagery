@@ -95,7 +95,7 @@ const STAGES: Stage[] = [
     id: "commit",
     tag: "Cardano L1 State Queue",
     name: "Commit",
-    line: "The batcher posts a compact state commitment to Cardano L1, where it enters the on-chain state queue for anyone to inspect.",
+    line: "The operator posts a compact state commitment (a small fingerprint of the block) to Cardano L1, where it enters the on-chain state queue for anyone to inspect.",
     readouts: [
       { k: "Action", v: "Post commitment", tone: "bridge" },
       { k: "Anchor", v: "Cardano L1 queue", tone: "bridge" },
@@ -119,7 +119,7 @@ const STAGES: Stage[] = [
     id: "watch",
     tag: "Challenge Window",
     name: "Watch",
-    line: "Independent watchers re-execute every transaction during the challenge window — a single fault proof removes an invalid commitment.",
+    line: "Independent Watchers re-execute every transaction during the challenge window; a single fault proof removes an invalid commitment.",
     readouts: [
       { k: "Action", v: "Replay block", tone: "bridge" },
       { k: "Check", v: "Fault proof ready", tone: "bridge" },

@@ -101,7 +101,7 @@ export const CONTRACTS: readonly Contract[] = [
     accent: "gold",
     address:
       "addr_test1wquqs7cl5zajrura775a50zzwyuglqy95et3a6c8ajsz7xc2rdhyg",
-    desc: "Finalises Cardano L1 fund distribution when a merged block carries non-empty transaction, deposit, or withdrawal commitments.",
+    desc: "Finalizes Cardano L1 fund distribution when a merged block carries non-empty transaction, deposit, or withdrawal commitments.",
   },
 ];
 

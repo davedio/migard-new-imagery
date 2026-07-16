@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 const benefitRows = [
   {
     label: "Faster app feel",
-    body: "Transactions are designed to become usable in seconds (estimated) while verified state continues toward Cardano L1 settlement.",
+    body: "Transactions become usable in seconds (estimated) while settlement continues on Cardano L1.",
   },
   {
     label: "A clearer exit path",
@@ -32,7 +32,7 @@ const benefitRows = [
 const economicsRows = [
   {
     label: "What you pay",
-    body: "Fees in ADA — a fraction of L1 cost, estimated.",
+    body: "Fees in ADA, estimated 10 to 30x cheaper than L1.",
   },
   {
     label: "What you hold",
@@ -111,7 +111,6 @@ export default function UsersPage() {
       <Section
         id="benefits"
         title="Why it feels different."
-        lead="Midgard is designed for a faster app experience while verified state settles through Cardano L1."
         cols
       >
         <DataRows rows={benefitRows} ariaLabel="User benefits" />

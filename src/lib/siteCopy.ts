@@ -9,42 +9,41 @@ export const SITE_COPY = {
     titleLines: ["The execution layer", "for UTXO finance."],
     lead:
       "Midgard gives Cardano applications faster, lower-cost execution, with settlement and security anchored to Cardano L1.",
-    primaryCta: { label: "See how it works", href: "/learn" },
-    secondaryCta: { label: "Start building", href: "/developers" },
-    tertiaryCta: { label: "Participate", href: "/participate" },
+    primaryCta: { label: "Midgard Overview", href: "/learn" },
+    secondaryCta: { label: "Developers", href: "/developers" },
   },
   /** The proof strip under the hero lead — visitor-facing numbers, not KPIs.
       Forward-looking figures say "estimated" once and state the claim plainly. */
   stats: [
-    { k: "Confirmations", v: "Seconds", s: "estimated, not minutes" },
-    { k: "Fees", v: "In ADA", s: "a fraction of L1, estimated" },
-    { k: "Security", v: "Cardano", s: "verified state settles through the base layer" },
-    { k: "Contracts", v: "Open source", s: "formal methods in progress" },
+    { k: "Confirmations", v: "Seconds", s: ", not minutes" },
+    { k: "Fees", v: "Lower cost fees, paid", s: "in ADA" },
+    { k: "Security", v: "Verified smart contracts", s: "settled securely on Cardano" },
+    { k: "Contracts", v: "Open source", s: ", formally verified fault proofs" },
   ],
   /** The home "Choose your path" cards — verb-led per the 2026-07-03 call
-      (use / build / participate), with the earn hook stated as an estimate. */
+      (build / participate / use), with the earn hook stated as an estimate. */
   paths: [
     {
-      title: "Use",
-      body: "Deposit, transact, withdraw. Use apps with confirmations in seconds (estimated) while verified state settles through Cardano L1.",
-      cta: "See the user path",
-      href: "/users",
-    },
-    {
       title: "Build",
-      body: "Same transaction logic, new speed. Your validators, tests, and tooling carry over — switching is close to one endpoint change.",
+      body: "Developers use the same transaction logic, new speed. Your validators, tests, and tooling port over easily with an endpoint change.",
       cta: "Start building",
       href: "/developers",
     },
     {
       title: "Participate",
-      body: "Help run the network. Operators earn fees for sequencing; Watchers can earn from a valid fault proof.",
+      body: "Help run the network and earn. Operators earn fees for ordering transactions into blocks; Watchers earn by proving a bad block wrong before it settles.",
       cta: "Explore protocol roles",
       href: "/participate",
     },
+    {
+      title: "Use",
+      body: "Deposit, transact, withdraw using your favorite apps. Confirmations in seconds (estimated) with the comfort that all transactions settle securely on Cardano.",
+      cta: "See the user path",
+      href: "/users",
+    },
   ],
   partnersIntro:
-    "Teams across the Cardano ecosystem building with Midgard, integrating it, or supporting the network.",
+    "Teams across the Cardano ecosystem that build with Midgard.",
   lifecycle: [
     ["Submit", "A user submits a transaction to Midgard, usually through an app or wallet."],
     ["Sequence", "An Operator orders valid transactions into an L2 block."],
@@ -91,12 +90,12 @@ export const SITE_COPY = {
     {
       k: "Execution model",
       v: "UTXO-native",
-      s: "Applications keep their UTXO design and gain faster execution — no EVM translation layer.",
+      s: "Applications keep their UTXO design and gain faster execution, with no EVM translation layer.",
     },
     {
       k: "Smart contracts",
       v: "Open source",
-      s: "Public source with formal-methods work in progress, so security claims can be checked.",
+      s: "The contracts are public, so security claims can be checked against code.",
       cta: "Read about Blaster",
       href: OFFICIAL_LINKS.blaster,
     },
@@ -157,7 +156,7 @@ export const DEVELOPER_COPY = {
   integrationPath: [
     {
       title: "Source",
-      body: "Clone the node and the contract implementation — the code you integrate against is the code you can read.",
+      body: "Clone the node and the contract implementation: the code you integrate against is the code you can read.",
       tone: "green",
     },
     {
@@ -167,7 +166,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "App flow",
-      body: "Prototype the flow end to end against the bridge and State Queue validators — deposit in, transact, withdraw out.",
+      body: "Prototype the flow end to end against the bridge and State Queue validators: deposit in, transact, withdraw out.",
       tone: "gold",
     },
     {
@@ -197,7 +196,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Midgard Stack",
-      body: "Deploy the same machinery as your own L2 — reusable infrastructure and deeper partner integrations once the base protocol path is clear.",
+      body: "Deploy the same machinery as your own L2: reusable infrastructure and deeper partner integrations once the base protocol path is clear.",
       href: OFFICIAL_LINKS.intakeForm,
       cta: "Discuss stack path",
     },
@@ -215,11 +214,11 @@ export const DEVELOPER_COPY = {
     rows: [
       {
         label: "Audit status",
-        body: "Open-source contracts with formal-methods work in progress, live on preprod. Independent audits are planned ahead of mainnet.",
+        body: "Independent audits are planned ahead of mainnet; formal-methods work is in progress now.",
       },
       {
         label: "Responsible disclosure",
-        body: "Found a vulnerability? Report it privately via the intake form with evidence preserved — never post exploits publicly. Midgard will never ask for your seed phrase or private keys.",
+        body: "Found a vulnerability? Report it privately via the intake form with evidence preserved. Never post exploits publicly. Midgard will never ask for your seed phrase or private keys.",
         href: OFFICIAL_LINKS.intakeForm,
       },
     ],
@@ -237,14 +236,14 @@ export const ECONOMICS_MATRIX = {
   rows: [
     {
       who: "Users",
-      pay: "Fees in ADA — a fraction of L1 cost, estimated. Nothing new to hold.",
+      pay: "Fees in ADA, estimated 10 to 30x cheaper than L1. Nothing new to hold.",
       get: "Confirmation in seconds (estimated), with settlement back on Cardano.",
       href: "/users#economics",
       cta: "User economics",
     },
     {
       who: "Builders",
-      pay: "The same ADA fee model your users already pay — no separate asset to integrate.",
+      pay: "The same ADA fee model your users already pay: no separate asset to integrate.",
       get: "Faster execution for unchanged UTXO contracts, with public source to verify.",
       href: "/developers#economics",
       cta: "Builder economics",
@@ -258,7 +257,7 @@ export const ECONOMICS_MATRIX = {
     },
     {
       who: "Watchers",
-      pay: "Node runtime — anyone can run one.",
+      pay: "Node runtime; anyone can run one.",
       get: "An estimated 30–50% of a slashed bond for a valid fault proof.",
       href: "/participate#economics",
       cta: "Role economics",
@@ -266,7 +265,7 @@ export const ECONOMICS_MATRIX = {
     {
       who: "Cardano",
       pay: "—",
-      get: "Every Midgard fee settles in ADA on the base layer that secures it.",
+      get: "Fees are paid in ADA, and Midgard state settles on the base layer that secures it.",
       href: "/learn#security",
       cta: "Security model",
     },
@@ -276,5 +275,5 @@ export const ECONOMICS_MATRIX = {
     line: "Most rollups take value from their base layer. Midgard is built to pay Cardano back.",
   },
   finePrint:
-    "Bond, fee, and role-incentive parameters are finalized as testnet data comes in; a full economic breakdown follows once benchmarks are approved.",
+    "Bond, fee, and role-incentive parameters are finalized as testnet data comes in; a full economic breakdown follows once benchmarks are published.",
 } as const;

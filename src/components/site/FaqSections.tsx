@@ -26,11 +26,11 @@ const faqGroups = [
       },
       {
         q: "Is Midgard live?",
-        a: "Midgard is live on a pre-alpha testnet on Cardano preprod — not mainnet yet, and the broader public-testnet phase is still ahead. Check the network status page and GitHub before integrating.",
+        a: "Midgard is live on a pre-alpha testnet on Cardano preprod, not mainnet yet, and the broader public-testnet phase is still ahead. Check the network status page and GitHub before integrating.",
       },
       {
         q: "Does Midgard have a token?",
-        a: "There is no Midgard token today — no sale, and no airdrop. Fees are paid in ADA. Anything about the protocol's future would come through official channels first; anyone selling a Midgard token now is a scam, so check the official links page.",
+        a: "There is no Midgard token today: no sale, and no airdrop. Fees are paid in ADA. Anything about the protocol's future would come through official channels first; anyone selling a Midgard token now is a scam, so check the official links page.",
       },
       {
         q: "How is Midgard different from Hydra?",
@@ -50,7 +50,7 @@ const faqGroups = [
       },
       {
         q: "What does LayerZero or another bridge change?",
-        a: "Bridge integrations can affect liquidity and user reach, but bridge and DVN assumptions are separate from Midgard protocol guarantees. Midgard can settle through Cardano L1 while bridge security still depends on the bridge configuration.",
+        a: "Bridge integrations can affect liquidity and user reach, but a bridge's own security assumptions are separate from Midgard protocol guarantees. Midgard can settle through Cardano L1 while bridge security still depends on the bridge configuration.",
       },
     ],
   },
@@ -67,15 +67,15 @@ const faqGroups = [
       },
       {
         q: "How fast are transactions?",
-        a: "You get a soft confirmation in seconds (estimated) — your transaction is usable right away. Final settlement follows on Cardano after the block's challenge window closes with no valid fault proof.",
+        a: "You get a soft confirmation in seconds (estimated); your transaction is usable right away. Final settlement follows on Cardano after the block's challenge window closes with no valid fault proof.",
       },
       {
         q: "Who holds my funds?",
-        a: "No one holds them but the protocol. Funds are locked by Cardano smart contracts — not by a company or a multisig bridge — so there is no operator key that can move your money.",
+        a: "No one holds them but the protocol. Funds are locked by Cardano smart contracts, not by a company or a multisig bridge, so there is no operator key that can move your money.",
       },
       {
         q: "What if every operator goes offline?",
-        a: "Your funds can never be permanently stranded. If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. That escape path is enforced by the protocol, not by trust.",
+        a: "By design, your funds can never be permanently stranded. If every operator stops, you can submit transactions straight to the L1 state queue without any operator's permission. That escape path is enforced by the protocol, not by trust.",
       },
     ],
   },
@@ -84,7 +84,7 @@ const faqGroups = [
     items: [
       {
         q: "What is the main security claim?",
-        a: "Finalized state settles through Cardano L1 after verification. The security model depends on openly published contracts, UTXO-local fault proofs, data availability, and at least one honest Watcher.",
+        a: "Finalized state settles through Cardano L1 after verification. The security model depends on contracts anyone can read, fault proofs that re-check one transaction at a time, block data staying available to check, and at least one honest Watcher.",
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
@@ -96,7 +96,7 @@ const faqGroups = [
       },
       {
         q: "Why does UTXO matter?",
-        a: "UTXO state is local. A fault proof can focus on referenced inputs and one disputed transition instead of replaying broad global account state.",
+        a: "In the UTXO model, each transaction carries everything needed to check it. A fault proof can re-run just the disputed transaction instead of replaying the chain's wider state.",
       },
     ],
   },
@@ -113,7 +113,7 @@ const faqGroups = [
       },
       {
         q: "How do I avoid scams?",
-        a: "Only trust links listed on the official links page. Midgard will never DM you first or ask for your seed phrase — and there is no token to buy today.",
+        a: "Only trust links listed on the official links page. Midgard will never DM you first or ask for your seed phrase, and there is no token to buy today.",
       },
       {
         q: "What should I check before relying on Midgard?",
@@ -155,7 +155,7 @@ const decisionGrid = [
     label: "Midgard",
     title: "UTXO apps that need faster execution",
     best: "Applications that want faster activity without leaving the UTXO model.",
-    caution: "Pre-alpha testnet today — verify current benchmarks and parameters before integrating.",
+    caution: "Pre-alpha testnet today; verify current benchmarks and parameters before integrating.",
     inspect: "Security model, contracts, source, and current testnet status.",
     tone: "midgard",
   },

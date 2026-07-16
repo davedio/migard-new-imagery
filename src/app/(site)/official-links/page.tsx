@@ -106,7 +106,7 @@ export default function OfficialLinksPage() {
       <Section
         id="verify"
         title="Verify, then trust."
-        lead="Midgard is in pre-alpha. We will never DM you first, and we will never ask for your seed phrase or private keys. There is no Midgard token today — no sale, no airdrop — and fees are paid in ADA."
+        lead="Midgard is in pre-alpha. We will never DM you first, and we will never ask for your seed phrase or private keys. There is no Midgard token today (no sale, no airdrop) and fees are paid in ADA."
         cols
       >
         <Statement

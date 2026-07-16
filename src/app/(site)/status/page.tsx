@@ -151,7 +151,7 @@ export default function StatusPage() {
             align="left"
             kicker="Pre-alpha testnet"
             line="Midgard is a pre-alpha testnet on Cardano preprod. No real funds."
-            sub="These figures describe the preprod deployment, not mainnet — verify the contracts yourself on the developers page."
+    sub="These figures describe the preprod deployment, not mainnet; verify the contracts yourself on the developers page."
           />
         }
       >

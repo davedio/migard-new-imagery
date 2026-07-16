@@ -93,7 +93,7 @@ export default function DeveloperLanding() {
           rows={[
             {
               label: "Fee model",
-              body: "Denominated in ADA end to end. Your users transact with the wallet and asset they already have.",
+              body: "Paid in ADA end to end. Your users transact with the wallet and asset they already have.",
             },
             {
               label: "Cost profile",
@@ -101,7 +101,7 @@ export default function DeveloperLanding() {
             },
             {
               label: "What your users pay",
-              body: "Designed for a fraction of L1 cost and confirmations in seconds; both are estimates pending benchmarks.",
+              body: "Designed for an estimated 10 to 30x lower cost than L1, and confirmations in seconds; both are estimates pending benchmarks.",
             },
             {
               label: "The whole picture",
@@ -121,7 +121,7 @@ export default function DeveloperLanding() {
       <Section
         id="defense"
         title="How the protocol defends itself."
-        lead="An invalid transaction, a bad commitment, withheld data, an operator gone dark: each is a fault, and each can be checked on Cardano. Fault is broader than fraud on purpose — not every failure is intentional."
+        lead="An invalid transaction, a bad commitment, withheld data, an operator gone dark: each is a fault, and each can be checked on Cardano. Fault is broader than fraud on purpose; not every failure is intentional."
         cols
       >
         <CardGrid cols={2}>
@@ -145,7 +145,7 @@ export default function DeveloperLanding() {
           <Card
             num="04"
             title="The window is the guarantee"
-            body="A block folds into confirmed state only after its challenge window passes with no valid fault proof — fast confirmations up front never shortcut it."
+            body="A block folds into confirmed state only after its challenge window passes with no valid fault proof. Fast confirmations up front never shortcut it."
             delay={150}
           />
         </CardGrid>
@@ -153,7 +153,7 @@ export default function DeveloperLanding() {
           <p className="dim">
             The protocol enforces custody (scripts, not keys),
             validity (fault proofs), and settlement on Cardano. What an app, RPC, or
-            explorer <em>shows</em> you still depends on the data source it reads — a
+            explorer <em>shows</em> you still depends on the data source it reads: a
             compromised RPC feed can lie about what you see (RPC poisoning) but cannot
             rewrite Midgard&apos;s canonical state, which lives on Cardano. For the strongest
             assurance, verify against your own node. Block-data retrievability is designed
@@ -174,7 +174,7 @@ export default function DeveloperLanding() {
         <CardGrid cols={2}>
           <Card
             title="GitHub"
-            body="The node, the contracts, and the TypeScript SDK — one repo."
+            body="The node, the contracts, and the TypeScript SDK, in one repo."
             cta="Open the repo"
             href={OFFICIAL_LINKS.github}
             ctaIcon={<GitHubIcon size={14} />}
@@ -205,7 +205,7 @@ export default function DeveloperLanding() {
 
       <CtaBand
         title="Bring a concrete flow."
-        lead="Bring the flow your app depends on — it can be mapped, tested on preprod, and challenged in the open."
+        lead="Bring the flow your app depends on: it can be mapped, tested on preprod, and challenged in the open."
         actions={[
           {
             label: "Open GitHub",

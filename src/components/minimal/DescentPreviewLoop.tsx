@@ -120,9 +120,9 @@ function useDocTheme(): "light" | "dark" | null {
 
 const STAGE_LABELS = ["Execute", "Verify", "Settle"] as const;
 const STAGE_CAPTIONS = [
-  "Confirmed in the canopy — usable in seconds (estimated).",
-  "Watchers verify the commitment on the way down the trunk\u2026",
-  "Settled on Cardano L1 at the roots.",
+  "Transactions confirmed, usable in seconds (estimated).",
+  "Watchers verify the commitment before final settlement.",
+  "Rooted securely to the Cardano blockchain.",
 ] as const;
 const STAGE_CLASS_KEYS = ["sGreen", "sGold", "sCobalt"] as const;
 
@@ -414,13 +414,6 @@ export default function DescentPreviewLoop({
       {/* live caption — one readable sentence narrating the current beat */}
       <p className={styles.caption} data-stage={stage} aria-hidden="true">
         {STAGE_CAPTIONS[stage]}
-      </p>
-
-      {/* screen-reader account of the loop */}
-      <p className={styles.srOnly}>
-        A transaction descends the world tree: executed in the canopy,
-        verified mid-trunk during the challenge window, settled on Cardano at
-        the roots.
       </p>
 
       {children ? <div className={styles.cta}>{children}</div> : null}
