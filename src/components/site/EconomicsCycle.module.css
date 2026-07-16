@@ -4,7 +4,7 @@
    loop (stroke-dashoffset only) and a slow highlight walks the
    cards (transform + opacity + color only). Cards never collapse.
    Everything dies under [data-motion="off"] and
-   prefers-reduced-motion; below 900px it is a static stack.
+   prefers-reduced-motion; below 1024px it is a static stack.
    ============================================================ */
 
 .cycle {
@@ -179,8 +179,8 @@
   opacity: 0.92;
 }
 
-/* ---- mobile <900px: static vertical stack, loop hidden ---- */
-@media (max-width: 899.98px) {
+/* ---- compact widths <1024px: static vertical stack, loop hidden ---- */
+@media (max-width: 1023.98px) {
   .cycle {
     padding-bottom: 0;
   }

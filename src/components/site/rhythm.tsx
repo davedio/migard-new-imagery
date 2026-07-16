@@ -27,15 +27,18 @@ export function Statement({
   line,
   sub,
   align = "center",
+  variant = "display",
 }: {
   kicker?: string;
   /** The display line itself. Keep it to ONE sentence. */
   line: ReactNode;
   sub?: ReactNode;
   align?: "center" | "left";
+  /** Supporting copy belongs beneath a section heading, not at display size. */
+  variant?: "display" | "supporting";
 }) {
   return (
-    <div className={`statement statement--${align}`}>
+    <div className={`statement statement--${align} statement--${variant}`}>
       {kicker ? <p className="statement__kicker">{kicker}</p> : null}
       <p className="statement__line">{line}</p>
       {sub ? <p className="statement__sub">{sub}</p> : null}

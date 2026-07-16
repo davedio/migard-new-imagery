@@ -80,7 +80,7 @@ const primerSteps = [
   },
   {
     n: "04",
-    title: "Verified state settles to Cardano.",
+    title: "Verified state settles on Cardano.",
     body: "After verification clears, Midgard state becomes final on Cardano.",
     tone: "cobalt",
   },

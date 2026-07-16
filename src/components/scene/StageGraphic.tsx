@@ -71,7 +71,7 @@ const STAGES: Stage[] = [
     id: "submit",
     tag: "L2 entry",
     name: "Submit",
-    line: "A transaction enters Midgard and is validated against UTXO rules immediately, with no Cardano block wait.",
+    line: "A transaction enters Midgard and is validated against UTXO rules immediately, without waiting for a Cardano block.",
     readouts: [
       { k: "Action", v: "Validate transaction" },
       { k: "Trust", v: "UTXO rules" },
@@ -83,7 +83,7 @@ const STAGES: Stage[] = [
     id: "sequence",
     tag: "L2 Operator",
     name: "Sequence",
-    line: "The operator orders incoming transactions and assembles them into a Layer 2 block, fixing the order the chain will execute.",
+    line: "The Operator orders incoming transactions and assembles them into a Layer 2 block, fixing the order the chain will execute.",
     readouts: [
       { k: "Action", v: "Order transactions" },
       { k: "Output", v: "Layer 2 block" },
@@ -95,7 +95,7 @@ const STAGES: Stage[] = [
     id: "commit",
     tag: "Cardano L1 State Queue",
     name: "Commit",
-    line: "The operator posts a compact state commitment, a fingerprint of the block, to Cardano for anyone to inspect.",
+    line: "The Operator posts a compact state commitment, a fingerprint of the block, to Cardano for anyone to inspect.",
     readouts: [
       { k: "Action", v: "Post commitment", tone: "bridge" },
       { k: "Anchor", v: "Cardano L1 queue", tone: "bridge" },

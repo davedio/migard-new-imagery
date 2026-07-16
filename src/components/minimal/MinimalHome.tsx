@@ -138,7 +138,7 @@ export default function MinimalHome() {
       >
         <div className="minimal-section__head">
           <h2 id="minimal-paths-title">Choose your path.</h2>
-          <p>Build, use, or participate in Midgard.</p>
+          <p>Build, participate, or use Midgard.</p>
         </div>
         <CardGrid cols={3}>
           {SITE_COPY.paths.map((path, i) => (
@@ -170,8 +170,9 @@ export default function MinimalHome() {
           </p>
           <Statement
             align="left"
+            variant="supporting"
             kicker={SITE_COPY.trustFlow.resolved.kicker}
-            line="Watchers, and anyone else, can verify commitments during the challenge period."
+            line="Anyone can verify commitments during the challenge period."
             sub="One honest Watcher is enough to stop a bad block before it settles."
           />
         </div>
@@ -197,7 +198,8 @@ export default function MinimalHome() {
           <h2 id="minimal-problem-title">Scale without the security tradeoff</h2>
           <Statement
             align="left"
-            line="Midgard anchors its security to Cardano unlike other L2s that ask you to accept a new security model."
+            variant="supporting"
+            line="Midgard anchors its security to Cardano, unlike other L2s that ask you to accept a new security model."
           />
         </div>
         <CardGrid cols={4}>
@@ -215,7 +217,7 @@ export default function MinimalHome() {
           <Card
             num="03"
             title="Easy payments"
-            body="Low-fee transfers paid in ADA"
+            body="Low-fee transfers paid in ADA."
             delay={100}
           />
           <Card

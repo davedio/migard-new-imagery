@@ -85,7 +85,7 @@ export default function DeveloperLanding() {
       <Section
         id="economics"
         title="Economics for builders."
-        lead="No new asset in your integration, no separate fee market to explain to users."
+        lead="No new asset in your integration and no separate fee market to explain to users."
         cols
       >
         <DataRows
@@ -97,7 +97,7 @@ export default function DeveloperLanding() {
             },
             {
               label: "Cost profile",
-              body: "Execution happens off-chain; only compact data commits to Cardano. Measured fee comparisons will be published once benchmarked.",
+              body: "Execution happens off-chain; only compact data is committed to Cardano. Measured fee comparisons will be published once benchmarked.",
             },
             {
               label: "What your users pay",
@@ -167,14 +167,14 @@ export default function DeveloperLanding() {
       <Section
         id="reference"
         title="Keep these handy."
-        lead="Midgard is pre-alpha. The node, contracts, and SDK are open source and you can build against them today; a hosted public RPC endpoint arrives with a later phase. For now, run against the local node and Cardano preprod."
+        lead="Midgard is pre-alpha. The open-source node, contracts, and SDK run against the local node and Cardano preprod today. A hosted public RPC endpoint arrives later."
         tight
         cols
       >
         <CardGrid cols={2}>
           <Card
             title="GitHub"
-            body="The node, the contracts, and the TypeScript SDK, in one repo."
+            body="Node, contracts, and TypeScript SDK."
             cta="Open the repo"
             href={OFFICIAL_LINKS.github}
             ctaIcon={<GitHubIcon size={14} />}
@@ -188,7 +188,7 @@ export default function DeveloperLanding() {
           />
           <Card
             title="Contract addresses"
-            body="Verify every validator and state anchor on Cardano preprod."
+            body="Validators and state anchors on Cardano preprod."
             cta="Inspect contracts"
             href="/developers#contracts"
             delay={100}

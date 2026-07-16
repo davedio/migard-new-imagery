@@ -30,7 +30,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "Developer Overview", href: "/developers" },
       { label: "Contracts", href: "/developers#contracts" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
-      { label: "Intake Form", href: OFFICIAL_LINKS.intakeForm, external: true },
+      { label: "Intake form", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
   },
   {

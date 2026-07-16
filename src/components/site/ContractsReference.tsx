@@ -61,7 +61,7 @@ export function ContractsReference() {
       <Section
         id="contracts-topology"
         title="How the contracts connect."
-        lead="Hover a node to trace its related contracts (green edges are Hub Oracle references, gold is the fault-proof path), then use the directory below for addresses, anchors, and bootstrap transactions."
+        lead="Hover a node to trace its related contracts (green edges are Hub Oracle references; gold edges show the fault-proof path), then use the directory below for addresses, anchors, and bootstrap transactions."
       >
         <ContractTopology />
       </Section>

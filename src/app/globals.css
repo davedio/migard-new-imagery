@@ -2141,7 +2141,7 @@ button.panel:hover {
 
 /* ---- card grid ---- */
 .card-grid {
-  margin-top: 28px;
+  margin-top: 22px;
   display: grid;
   gap: clamp(12px, 1.1vw, 17px);
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
@@ -2802,7 +2802,7 @@ a.card:focus-visible {
 
 /* ---- cta band ---- */
 .cta-band {
-  padding: clamp(42px, 6vh, 72px) var(--gut);
+  padding: clamp(36px, 5vh, 60px) var(--gut);
   border-top: 1px solid rgba(244, 241, 230, 0.08);
   background:
     radial-gradient(900px 420px at 50% 0%, rgba(78, 243, 131, 0.08), transparent 70%),
@@ -2825,8 +2825,68 @@ a.card:focus-visible {
 .cta-row {
   display: flex;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 22px;
   flex-wrap: wrap;
+}
+
+/* The developer reference is a compact directory. On a wide screen it can
+   use the whole page instead of wrapping its lead and four links into a tall
+   two-column block. */
+@media (min-width: 1200px) {
+  .developer-page #start .section__body {
+    container-type: inline-size;
+  }
+  .developer-page #reference .section__inner--cols {
+    display: block;
+  }
+  .developer-page #reference .section__head {
+    position: static;
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: clamp(26px, 4vw, 72px);
+    align-items: baseline;
+    max-width: none;
+  }
+  .developer-page #reference .section__head h2,
+  .developer-page #reference .section__head .lead {
+    margin-top: 0;
+  }
+  .developer-page #reference .section__head .lead {
+    max-width: 72ch;
+  }
+  .developer-page #reference .section__body {
+    margin-top: 18px;
+  }
+  .developer-page #reference .card-grid--2 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    max-width: none;
+    margin-top: 0;
+  }
+  .developer-page #reference .card {
+    min-height: 0;
+    padding: 16px;
+  }
+  .developer-page #reference .card h3 {
+    margin-top: 0;
+    font-size: 18px;
+  }
+  .developer-page #reference .card p {
+    margin-top: 6px;
+    font-size: 15.5px;
+    line-height: 1.42;
+  }
+  .developer-page #reference .card__cta {
+    margin-top: 10px;
+    font-size: 14px;
+  }
+}
+
+/* This grid sits inside the narrow half of a split section. Let the card copy
+   use two readable columns until the section body itself has room for three. */
+@media (min-width: 981px) and (max-width: 1519px) {
+  #different .card-grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .cta-row--center {
   justify-content: center;

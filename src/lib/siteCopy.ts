@@ -15,10 +15,10 @@ export const SITE_COPY = {
   /** The proof strip under the hero lead — visitor-facing numbers, not KPIs.
       Forward-looking figures say "estimated" once and state the claim plainly. */
   stats: [
-    { k: "Confirmations", v: "Seconds", s: ", not minutes" },
-    { k: "Fees", v: "Lower cost fees, paid", s: "in ADA" },
-    { k: "Security", v: "Verified smart contracts", s: "settled securely on Cardano" },
-    { k: "Contracts", v: "Open source", s: ", formally verified fault proofs" },
+    { k: "Confirmations", v: "Seconds", s: "Not minutes" },
+    { k: "Fees", v: "Lower-cost fees", s: "Paid in ADA" },
+    { k: "Security", v: "Verified smart contracts", s: "Settled securely on Cardano" },
+    { k: "Contracts", v: "Open source", s: "Formally verified fault proofs" },
   ],
   /** The home "Choose your path" cards — verb-led per the 2026-07-03 call
       (build / participate / use), with the earn hook stated as an estimate. */
@@ -37,7 +37,7 @@ export const SITE_COPY = {
     },
     {
       title: "Use",
-      body: "Deposit, transact, withdraw using your favorite apps. Confirmations in seconds (estimated) with the comfort that all transactions settle securely on Cardano.",
+      body: "Deposit, transact, and withdraw using your favorite apps. Get confirmations in seconds (estimated), while transactions settle securely on Cardano.",
       cta: "See the user path",
       href: "/users",
     },
@@ -190,7 +190,7 @@ export const DEVELOPER_COPY = {
     },
     {
       title: "Protocol roles",
-      body: "Run the network instead of building on it: Operators post a bond and produce blocks, Watchers replay commitments and file fault proofs. Register interest for the current testnet phase.",
+      body: "Run the network instead of building on it: Operators post a bond and produce blocks; Watchers replay commitments and file fault proofs. Register interest for the current testnet phase.",
       href: "/participate",
       cta: "Open Participate",
     },

@@ -111,6 +111,7 @@ export default function OfficialLinksPage() {
       >
         <Statement
           align="left"
+          variant="supporting"
           line="If a link, wallet, or token claims to be Midgard and is not listed on this page, treat it as fake."
         />
       </Section>

@@ -19,7 +19,7 @@
    render agree (isDesktop/inView start false → no highlight, then the
    component livens up after mount). Motion off (useMotionPref +
    [data-motion="off"] + prefers-reduced-motion): zero timers, static
-   dashes at ~.5 opacity, no lift — fully readable. Mobile <900px:
+   dashes at ~.5 opacity, no lift — fully readable. Below 1024px:
    static vertical stack, SVG hidden, no timers.
    ============================================================ */
 
@@ -39,7 +39,7 @@ export type CycleStep = {
 };
 
 const ROTATE_MS = 3500;
-const DESKTOP_QUERY = "(min-width: 900px)";
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 /* Connector geometry in the shared 1000×320 plane. The SVG stretches
    over the whole component (preserveAspectRatio="none"); vector-effect

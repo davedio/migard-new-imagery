@@ -60,7 +60,7 @@ const simplePathRows = [
   },
   {
     label: "Withdraw",
-    body: "Return settled value back through Cardano when you are done.",
+    body: "Return settled value through Cardano when you are done.",
   },
 ] as const;
 

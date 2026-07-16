@@ -6,9 +6,9 @@
      the sheen can only ever travel inside it. Rings sit at
      z-index 1 with a SOLID background — the mono step digits are
      never covered by the line, the sheen, or anything else.
-   · Entrance + sheen only exist inside the ≥820px media query and
-     only under [data-motion="on"]; below 820px the stepper is a
-     static 2×2 grid with the connector hidden.
+   · Entrance + sheen only exist once the component itself has ≥920px
+     of room; below that it remains a readable 2×2 grid with the
+     connector hidden.
    · Kill-switches: html[data-motion="off"] and
      prefers-reduced-motion both force the fully-drawn static state.
    ============================================================ */
@@ -145,9 +145,11 @@
 }
 
 /* ============================================================
-   DESKTOP ≥820px — 4 columns, connector visible, motion lives here
+   WIDE CONTAINER ≥920px — 4 columns, connector visible, motion lives here.
+   This component sits inside a split page section, so viewport width alone
+   is not a reliable measure of usable text width.
    ============================================================ */
-@media (min-width: 820px) {
+@container (min-width: 920px) {
   .root {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     row-gap: 0;
