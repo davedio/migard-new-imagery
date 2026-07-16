@@ -189,7 +189,7 @@ test("Learn, Users, FAQ, and Glossary pages start on their own content", async (
   await expect(page).toHaveURL(/\/faq$/);
   await expect(page.getByRole("heading", { name: "Questions." }).first()).toBeVisible();
   await expect(page.locator(".hiw-act")).toHaveCount(0);
-  await expect(page.getByLabel("FAQ topic shortcuts")).toBeVisible();
+  await expect(page.getByLabel("FAQ topic shortcuts")).toHaveCount(0);
   await expect(page.locator(".faq-decision-card")).toHaveCount(3);
   await page.screenshot({ path: testInfo.outputPath("faq.png"), fullPage: true });
 

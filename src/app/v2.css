@@ -401,20 +401,8 @@ h2 em,
   line-height: 1.6;
 }
 
-/* ---- FAQ comparison lead visuals ---- */
-.faq-basics-shell {
-  display: grid;
-  grid-template-columns: minmax(0, 760px) minmax(260px, 360px);
-  gap: clamp(32px, 5vw, 80px);
-  align-items: start;
-}
-
+/* ---- FAQ layout ---- */
 @media (min-width: 1200px) {
-  .faq-basics-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
-    max-width: 1680px;
-  }
-
   .faq-basics-shell .faq {
     max-width: none;
   }
@@ -435,63 +423,6 @@ h2 em,
     max-width: 1320px;
     margin-inline: auto;
   }
-}
-
-@media (max-width: 1180px) {
-  .faq-basics-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .faq-basics-shell .faq-topic-rail {
-    position: static;
-    order: -1;
-  }
-}
-
-.faq-topic-rail {
-  position: sticky;
-  top: 92px;
-  display: grid;
-  gap: 10px;
-  padding: 18px;
-  border: 1px solid var(--panel-edge);
-  border-radius: var(--r);
-  background:
-    radial-gradient(circle at 0% 0%, rgba(78, 243, 131, 0.1), transparent 18rem),
-    rgba(7, 15, 10, 0.72);
-}
-
-.faq-topic-rail > span {
-  color: var(--gold-bright);
-  font-family: var(--font-mono);
-  font-size: 14.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.faq-topic-rail a {
-  display: grid;
-  gap: 6px;
-  padding: 13px 0 0;
-  border-top: 1px solid rgba(244, 241, 230, 0.09);
-  color: inherit;
-  text-decoration: none;
-}
-
-.faq-topic-rail strong {
-  color: var(--text-hi);
-  font-size: 17px;
-  font-weight: 500;
-}
-
-.faq-topic-rail small {
-  color: var(--text-dim);
-  font-size: 14.5px;
-  line-height: 1.42;
-}
-
-.faq-topic-rail a:hover strong {
-  color: var(--green-bright);
 }
 
 .faq-model-cards {
@@ -1881,15 +1812,6 @@ h2 em,
 }
 
 @media (max-width: 760px) {
-  .faq-basics-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .faq-topic-rail {
-    position: static;
-    order: -1;
-  }
-
   .faq-trust-path {
     grid-template-columns: 1fr;
   }
@@ -2339,7 +2261,6 @@ h2 em,
 [data-theme="light"] .layer-row,
 [data-theme="light"] .callout,
 [data-theme="light"] .links-table,
-[data-theme="light"] .faq-topic-rail,
 [data-theme="light"] .faq-decision-card,
 [data-theme="light"] .faq-model-card,
 [data-theme="light"] .faq-trust-path__step {
@@ -4257,18 +4178,6 @@ h2 em,
   color: #1b1710;
 }
 
-[data-theme="light"] .faq-topic-rail {
-  border-color: rgba(27, 23, 16, 0.12);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.44), transparent 58%),
-    rgba(255, 250, 240, 0.84);
-  box-shadow: 0 16px 42px rgba(54, 45, 30, 0.08);
-}
-
-[data-theme="light"] .faq-topic-rail a {
-  border-top-color: rgba(27, 23, 16, 0.1);
-}
-
 [data-theme="light"] .stage-graphic__card {
   --sg: 7, 95, 43;
 }
@@ -4281,7 +4190,6 @@ h2 em,
   --sg: 36, 71, 184;
 }
 
-[data-theme="light"] .faq-topic-rail small,
 [data-theme="light"] .faq-item .a,
 [data-theme="light"] .faq-decision-card dd,
 [data-theme="light"] .faq-model-card li,
@@ -4553,7 +4461,6 @@ h2 em,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .layer-row,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .callout,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .links-table,
-[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-topic-rail,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-decision-card,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-model-card,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-trust-path__step,
@@ -4583,7 +4490,6 @@ h2 em,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .layer-row,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .callout,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .links-table,
-[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-topic-rail,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .faq-decision-card,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .faq-model-card,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .faq-trust-path__step,
@@ -5503,7 +5409,6 @@ h2 em,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .layer-row,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .callout,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .links-table,
-[data-theme="light"] .page-main:has(.page-backdrop--full) .faq-topic-rail,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .faq-decision-card,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .faq-model-card,
 [data-theme="light"] .page-main:has(.page-backdrop--full) .faq-trust-path__step {
@@ -5522,7 +5427,6 @@ h2 em,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .layer-row,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .callout,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .links-table,
-[data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-topic-rail,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-decision-card,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-model-card,
 [data-theme="dark"] .page-main:has(.page-backdrop--full) .faq-trust-path__step {

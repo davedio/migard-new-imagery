@@ -53,17 +53,18 @@ export function ContractsReference() {
             cexplorer.io
           </a>
         </div>
+        <div id="contracts-topology" className={styles.topologyBlock}>
+          <h3 className={styles.topologyTitle}>How the contracts connect.</h3>
+          <p className={styles.topologyLead}>
+            Hover a node to trace its related contracts (green edges are Hub Oracle references;
+            gold edges show the fault-proof path), then use the directory below for addresses,
+            anchors, and bootstrap transactions.
+          </p>
+          <ContractTopology />
+        </div>
         <p className={styles.queryTeaser}>
           <a href="#query">Prefer to check it in code? Skip to the runnable query →</a>
         </p>
-      </Section>
-
-      <Section
-        id="contracts-topology"
-        title="How the contracts connect."
-        lead="Hover a node to trace its related contracts (green edges are Hub Oracle references; gold edges show the fault-proof path), then use the directory below for addresses, anchors, and bootstrap transactions."
-      >
-        <ContractTopology />
       </Section>
 
       <Section

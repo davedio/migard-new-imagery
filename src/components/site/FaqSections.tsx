@@ -127,29 +127,6 @@ const faqGroups = [
   },
 ];
 
-const basicsRail = [
-  {
-    label: "Product status",
-    href: `#${faqGroupId("Product status")}`,
-    detail: "What Midgard is, current status, tokens, and how it compares.",
-  },
-  {
-    label: "Costs, wallets & funds",
-    href: `#${faqGroupId("Costs, wallets & funds")}`,
-    detail: "Fees, wallets, custody, speed, and the operator-offline escape path.",
-  },
-  {
-    label: "Security",
-    href: `#${faqGroupId("Security")}`,
-    detail: "Claims, attack surface, Watchers, and UTXO fit.",
-  },
-  {
-    label: "Protocol roles",
-    href: `#${faqGroupId("Protocol roles and status")}`,
-    detail: "Who runs the network, how roles earn, and where to report.",
-  },
-] as const;
-
 const decisionGrid = [
   {
     label: "Midgard",
@@ -228,15 +205,6 @@ export default function FaqSections() {
               </div>
             ))}
           </div>
-          <aside className="faq-topic-rail" aria-label="FAQ topic shortcuts">
-            <span>Jump to topic</span>
-            {basicsRail.map((item) => (
-              <a href={item.href} key={item.label}>
-                <strong>{item.label}</strong>
-                <small>{item.detail}</small>
-              </a>
-            ))}
-          </aside>
         </div>
       </Section>
 

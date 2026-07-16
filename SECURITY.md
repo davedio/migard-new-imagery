@@ -4,7 +4,8 @@ Midgard Gateway is the public website and status surface for Midgard. It should 
 
 ## Reporting
 
-Use the official routes listed on `/official-links#security-contact`. If a dedicated security contact is still marked as publishing soon, preserve evidence and report through the listed official community or support route once available.
+Report suspected vulnerabilities to `info@anastasialabs.com`. The current reporting policy is
+available at `/security-policy`; preserve evidence and include the details below.
 
 Useful evidence includes:
 

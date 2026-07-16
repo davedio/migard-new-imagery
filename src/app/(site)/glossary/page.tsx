@@ -31,7 +31,7 @@ export default function GlossaryPage() {
       <Section
         id="glossary"
         title="Protocol terms."
-        lead="The language of execution, verification, and settlement — defined in plain English."
+        lead="The language of execution, verification, and settlement, defined in plain English."
         tight
         cols
       >

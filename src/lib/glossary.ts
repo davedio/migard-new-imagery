@@ -23,7 +23,7 @@ export const GLOSSARY = {
   },
   operator: {
     term: "Operator",
-    def: "A bonded participant who runs Midgard infrastructure, orders transactions into blocks, commits them to Cardano, and posts collateral that can be slashed for invalid commitments.",
+    def: "A bonded participant who runs Midgard infrastructure, ordering transactions into blocks and committing them to Cardano, and posting collateral that can be slashed for invalid commitments.",
   },
   settlement: {
     term: "settlement",
