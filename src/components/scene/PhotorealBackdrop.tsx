@@ -756,15 +756,23 @@ export default function PhotorealBackdrop({
       if (!octx) return;
       octx.drawImage(plateImg, 0, 0, gw, gh);
       const data = octx.getImageData(0, 0, gw, gh).data;
-      const green = (gx: number, gy: number) => {
+      /* Tree-mass score (2026-07-16): how far the pixel sits BELOW the pale
+         mist background, by luma. The old green-dominance metric only fired
+         on the painted mint sap-vein (the sage/olive foliage has g ≈ r), so
+         the measured "trunk" was really the vein and the packet drifted on
+         plates without one — including the hero plate this page now uses.
+         Dark-on-cream is the one invariant of every Painted-Yggdrasil plate. */
+      const mass = (gx: number, gy: number) => {
         const i = (gy * gw + gx) * 4;
-        return Math.max(0, data[i + 1] - Math.max(data[i], data[i + 2]));
+        const luma =
+          0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+        return Math.max(0, 205 - luma);
       };
       const blue = (gx: number, gy: number) => {
         const i = (gy * gw + gx) * 4;
         return Math.max(0, data[i + 2] - Math.max(data[i], data[i + 1]));
       };
-      /* centerline + width per row (green-weighted centroid + std dev) */
+      /* centerline + width per row (mass-weighted centroid + std dev) */
       let prevC = 0.5;
       let prevW = 0.18;
       for (let r = 0; r < ROWS; r++) {
@@ -773,8 +781,8 @@ export default function PhotorealBackdrop({
         let sx = 0;
         let sxx = 0;
         for (let gx = 0; gx < gw; gx++) {
-          const s = green(gx, gy);
-          if (s > 26) {
+          const s = mass(gx, gy);
+          if (s > 12) {
             sum += s;
             sx += s * gx;
             sxx += s * gx * gx;
@@ -796,12 +804,12 @@ export default function PhotorealBackdrop({
           anat.w[r] = (anat.w[r - 1] + anat.w[r] * 2 + anat.w[r + 1]) / 4;
         }
       }
-      /* canopy spark sites (lit cells in the crown) */
+      /* canopy spark sites (foliage-mass cells in the crown band) */
       const vTop = Math.floor(gh * 0.03);
       const vBot = Math.floor(gh * 0.34);
       for (let gy = vTop; gy < vBot; gy++) {
         for (let gx = 0; gx < gw; gx++) {
-          if (green(gx, gy) > 60 && anat.canopy.length < 420) {
+          if (mass(gx, gy) > 55 && anat.canopy.length < 420) {
             anat.canopy.push({ u: gx / gw, v: gy / gh });
           }
         }
