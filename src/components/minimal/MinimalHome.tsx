@@ -137,8 +137,8 @@ export default function MinimalHome() {
         aria-labelledby="minimal-paths-title"
       >
         <div className="minimal-section__head">
-          <h2 id="minimal-paths-title">Choose your path. Build, run, or use the network</h2>
-          <p>Build, use, or participate in Midgard</p>
+          <h2 id="minimal-paths-title">Choose your path.</h2>
+          <p>Build, use, or participate in Midgard.</p>
         </div>
         <CardGrid cols={3}>
           {SITE_COPY.paths.map((path, i) => (
@@ -164,15 +164,15 @@ export default function MinimalHome() {
         aria-labelledby="minimal-descent-title"
       >
         <div className="minimal-section__head">
-          <h2 id="minimal-descent-title">Watch a transaction travel the tree.</h2>
+          <h2 id="minimal-descent-title">Watch the transaction lifecycle.</h2>
           <p>
-            Follow transactions from execution through verification to final settlement: the same journey every Midgard transaction makes.
+            Follow a transaction from execution through verification to final settlement.
           </p>
           <Statement
             align="left"
             kicker={SITE_COPY.trustFlow.resolved.kicker}
-            line="Watchers (and anyone) verify during challenge period to ensure safety and validity."
-            sub="Every commitment stays open during the challenge period, and one honest Watcher, out of any number, is enough to stop a bad block before it settles."
+            line="Watchers, and anyone else, can verify commitments during the challenge period."
+            sub="One honest Watcher is enough to stop a bad block before it settles."
           />
         </div>
         <div className="minimal-descent-stage">
@@ -200,7 +200,7 @@ export default function MinimalHome() {
             line="Midgard anchors its security to Cardano unlike other L2s that ask you to accept a new security model."
           />
         </div>
-        <CardGrid cols={2}>
+        <CardGrid cols={4}>
           <Card
             num="01"
             title="DeFi without congestion"

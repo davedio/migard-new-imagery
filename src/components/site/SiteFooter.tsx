@@ -118,7 +118,7 @@ export function SiteFooter() {
           ))}
         </div>
         <NetworkChip />
-        <span className="meta">© 2026 Midgard Labs</span>
+        <span className="meta">© 2026 Midgard Labs, Inc.</span>
       </div>
     </footer>
   );

@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import HowItWorksExperience from "@/components/HowItWorksExperience";
 import EconomicsMatrix from "@/components/site/EconomicsMatrix";
-import JumpChips, { SectionJumpButton } from "@/components/site/JumpChips";
+import JumpChips from "@/components/site/JumpChips";
 import SoftConfirmFeed from "@/components/site/SoftConfirmFeed";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { DEVELOPER_COPY, ECONOMICS_MATRIX, SITE_COPY } from "@/lib/siteCopy";
+import { DEVELOPER_COPY, ECONOMICS_MATRIX } from "@/lib/siteCopy";
 import styles from "../how-it-works/page.module.css";
 import learnStyles from "@/components/site/learn.module.css";
 
 export const metadata: Metadata = {
   title: "Learn Midgard",
   description:
-    "Follow a transaction through Midgard, then review the user path, security assumptions, and Cardano L1 settlement model.",
+    "Overview of Midgard, how it works, security standards, and the basic economics.",
   openGraph: {
     title: "Learn Midgard",
     images: [{ url: "/og/how-it-works.jpg", width: 1200, height: 630 }],
@@ -24,92 +24,102 @@ export const metadata: Metadata = {
 const audienceRows = [
   {
     label: "Users",
-    body: "Use apps with faster confirmations, fees in ADA, and final settlement rooted back to Cardano.",
+    body: "Use apps with faster confirmations, lower fees, and final settlement on Cardano.",
     href: "/users",
   },
   {
     label: "Builders",
-    body: "Same transaction logic, new speed. Your validators, tests, and tooling carry over; switching is close to one endpoint change.",
+    body: "Build apps with faster execution and lower fees. Your contracts, tests, and tooling carry over; switching is close to one endpoint change.",
     href: "/developers",
   },
   {
     label: "Protocol roles",
-    body: "Help run the network. Operators earn fees for ordering transactions into blocks; Watchers earn by proving a bad block wrong before it settles.",
+    body: "Help run the network. Operators earn fees for ordering transactions into blocks; Watchers earn by stopping bad blocks before they settle.",
     href: "/participate",
   },
 ] as const;
 
 const securityRows = [
   {
-    label: "Cardano-rooted settlement",
-    body: "Fast confirmations happen up front, but verified state settles through Cardano L1.",
-  },
-  {
-    label: "Verification before finality",
-    body: "Committed state stays public and challengeable before it becomes settled state.",
-  },
-  {
-    label: "One honest Watcher",
-    body: "One honest Watcher, out of any number, is enough to stop a bad block before it settles.",
-  },
-  {
-    label: "Contracts in the open",
-    body: "The contracts are public, so security claims can be checked against code.",
+    label: "Before use: public contracts",
+    body: "Anyone can inspect the public contracts before using Midgard.",
     href: "/developers#contracts",
+  },
+  {
+    label: "During confirmation: Watchers",
+    body: "Watchers replay commitments during the challenge period; one honest Watcher is enough to stop invalid state.",
+  },
+  {
+    label: "After verification: Cardano",
+    body: "After verification clears, finalized state is secured on Cardano.",
   },
   ...DEVELOPER_COPY.security.rows,
 ] as const;
 
-const CUT_PROOF_POINTS = new Set(["Settlement security", "Independent verification"]);
-
 const primerSteps = [
   {
     n: "01",
-    kicker: "What it is",
-    title: "Midgard is an execution layer for UTXO finance.",
-    body: "Midgard is designed for faster, lower-cost execution while verified state settles through Cardano L1.",
-    takeaway: "Execution moves faster; the final settlement layer does not change.",
+    title: "Midgard is the execution layer for UTXO finance.",
+    body: "Midgard is designed for faster, lower-cost execution, with verification and settlement anchored to Cardano.",
+    takeaway: "Execution moves faster; final settlement remains on Cardano.",
     tone: "green",
   },
   {
     n: "02",
-    kicker: "What users feel",
     title: "A transaction becomes usable before it becomes final.",
-    body: "A soft confirmation gives the app a fast signal in seconds (estimated). Blocks then seal that activity into an ordered record.",
+    body: "A soft confirmation gives the app a usable signal in seconds. Blocks then seal that activity into an ordered record.",
     takeaway: "Fast confirmation and final settlement are two different moments.",
     tone: "cobalt",
   },
   {
     n: "03",
-    kicker: "What keeps it checkable",
     title: "Committed state stays public, available, and challengeable.",
     body: "Block data must remain available so independent Watchers can replay the state and challenge an invalid commitment.",
-    takeaway: "The operator can order transactions, but does not get the final word on correctness.",
+    takeaway: "Operators order transactions; Watchers check correctness.",
     tone: "gold",
   },
   {
     n: "04",
-    kicker: "Where it ends",
-    title: "Verified state settles through Cardano L1.",
-    body: "Once the verification path clears, Midgard state becomes final through the Cardano settlement layer.",
-    takeaway: "Midgard separates responsive execution from Cardano-rooted finality.",
+    title: "Verified state settles to Cardano.",
+    body: "After verification clears, Midgard state becomes final on Cardano.",
     tone: "cobalt",
   },
 ] as const;
 
 const stripCells = [
-  ...SITE_COPY.proofPoints.filter((p) => !CUT_PROOF_POINTS.has(p.k)),
-  {
-    k: "Fees",
-    v: "In ADA",
-    s: "Estimated 10 to 30x cheaper than L1, paid in ADA.",
-  },
   {
     k: "Throughput",
     v: "Up to 300x",
-    s: "Estimated design target — unbenchmarked until measured.",
+    s: "Estimated design target.",
   },
-];
+  {
+    k: "Fees",
+    v: "Low, stable, paid in ADA",
+    s: "Estimated 10 to 30x cheaper than L1.",
+  },
+  {
+    k: "Security",
+    v: "Open source",
+    s: "Public contracts and formal verification work make security claims checkable.",
+    cta: "Review formal verification work",
+    href: OFFICIAL_LINKS.blaster,
+  },
+  {
+    k: "Soft confirmations",
+    v: "Seconds",
+    s: "Transactions become usable in seconds (estimated) while settlement continues on Cardano.",
+  },
+  {
+    k: "Execution model",
+    v: "UTXO-native",
+    s: "Applications keep their UTXO design and gain faster execution, with no EVM translation layer.",
+  },
+  {
+    k: "Status",
+    v: "Pre-alpha testnet",
+    s: "Live on Cardano preprod. Mainnet follows audits and parameter finalization.",
+  },
+] as const;
 
 export default function LearnPage() {
   return (
@@ -120,21 +130,15 @@ export default function LearnPage() {
             compact
             label="Learn Midgard"
             title="Midgard Overview."
-            sub="Start with the four ideas that make the protocol click."
+            sub="Overview of Midgard, how it works, security standards, and the basic economics."
             body="Learn what users experience, what happens underneath, and where trust comes from."
-            chips={
-              <>
-                <SectionJumpButton id="basics" label="Start the overview" variant="primary" />
-                <SectionJumpButton id="full-journey" label="Skip to the full journey" />
-              </>
-            }
           />
 
           <JumpChips
             items={[
               { id: "basics", label: "Overview" },
               { id: "flow", label: "Soft confirms" },
-              { id: "proof-metrics", label: "Proof metrics" },
+              { id: "proof-metrics", label: "Key numbers" },
               { id: "security", label: "Security" },
               { id: "full-journey", label: "Full journey" },
               { id: "paths", label: "Paths" },
@@ -144,37 +148,24 @@ export default function LearnPage() {
 
           <Section
             id="basics"
-            eyebrow="A short overview"
-            lead="Work through these ideas first. They are the vocabulary for everything the tree shows later."
+            title="Summary view."
           >
-            <ol className={learnStyles.primerList} aria-label="Midgard overview lessons">
+            <ol className={learnStyles.primerList} aria-label="Midgard overview">
               {primerSteps.map((step) => (
                 <li key={step.n} className={learnStyles.primerStep} data-tone={step.tone}>
                   <span className={learnStyles.primerNumber}>{step.n} / 04</span>
                   <div className={learnStyles.primerTitle}>
-                    <span>{step.kicker}</span>
                     <h3>{step.title}</h3>
                   </div>
                   <div className={learnStyles.primerBody}>
                     <p>{step.body}</p>
-                    <p className={learnStyles.primerTakeaway}>
-                      {step.takeaway}
-                    </p>
+                    {"takeaway" in step ? (
+                      <p className={learnStyles.primerTakeaway}>{step.takeaway}</p>
+                    ) : null}
                   </div>
                 </li>
               ))}
             </ol>
-            <div className={learnStyles.primerHandoff}>
-              <div>
-                <span>Overview complete</span>
-                <p>Next, see the fast signal a user actually experiences.</p>
-              </div>
-              <SectionJumpButton
-                id="flow"
-                label="Watch soft confirmations"
-                variant="primary"
-              />
-            </div>
           </Section>
 
           {/* The soft-confirm feed — agreed on the 2026-07-10 call: the
@@ -182,9 +173,8 @@ export default function LearnPage() {
               settle down to Cardano). Simulated and labelled as such. */}
           <Section
             id="flow"
-            eyebrow="What users feel first"
             title="Watch transactions soft-confirm."
-            lead="Transactions become usable in seconds (estimated) while blocks seal behind them and commit down to Cardano (simulated here)."
+            lead="Transactions soft-confirm in seconds (estimated) while blocks seal behind them and commitments move to Cardano (simulated here)."
           >
             <SoftConfirmFeed />
           </Section>
@@ -194,7 +184,7 @@ export default function LearnPage() {
             title="The key numbers."
             lead="Six indicators: estimated where forward-looking, checkable where live."
           >
-            <div className={styles.strip} role="list" aria-label="Proof metrics">
+            <div className={styles.strip} role="list" aria-label="Key performance and security indicators">
               {stripCells.map((item) => (
                 <div key={item.k} role="listitem" className={styles.cell}>
                   <span className={styles.cellKicker}>{item.k}</span>
@@ -218,16 +208,7 @@ export default function LearnPage() {
           <Section
             id="security"
             title="Security, in plain language."
-            lead="Midgard should be read as an optimistic rollup: responsive execution up front, public checks before final Cardano settlement."
-            cols
-            aside={
-              <Statement
-                align="left"
-                kicker="Trust path"
-                line="Speed comes first, but correctness still has to pass through verification."
-                sub="Operators can make the app feel fast. They do not get the final word on valid state."
-              />
-            }
+            lead="Midgard is checked at three points: public contracts before use, independent Watchers during the challenge period, and final state secured on Cardano after verification."
           >
             <DataRows rows={securityRows} ariaLabel="Security assumptions" />
           </Section>
@@ -237,16 +218,8 @@ export default function LearnPage() {
 
       <Section
         id="paths"
-        title="Start with the path that matches you."
-        lead="The transaction path is one protocol. The entry point depends on what you came here to do."
-        cols
-        aside={
-          <Statement
-            align="left"
-            kicker="Same protocol, different jobs"
-            line="Users move value, builders integrate apps, protocol roles keep the path checkable."
-          />
-        }
+        title="Choose what suits you."
+        lead="Users move value, builders integrate apps, and protocol roles keep the network checkable."
       >
         <DataRows rows={audienceRows} ariaLabel="Midgard reader paths" />
       </Section>
@@ -267,35 +240,6 @@ export default function LearnPage() {
         }
       >
         <EconomicsMatrix />
-      </Section>
-
-      <Section id="reference" title="Reference pages." tight cols>
-        <DataRows
-          ariaLabel="Learn reference pages"
-          rows={[
-            {
-              label: "Users",
-              body: "A simpler page about what normal users get from Midgard.",
-              href: "/users",
-            },
-            {
-              label: "FAQ",
-              body: "Short answers about product status, security, roles, and what to check.",
-              href: "/faq",
-            },
-            {
-              label: "Glossary",
-              body: "Definitions for the protocol terms used across the site.",
-              href: "/glossary",
-            },
-            {
-              label: "GitHub",
-              body: "The protocol is open: inspect source, contracts, and implementation history.",
-              href: OFFICIAL_LINKS.github,
-              external: true,
-            },
-          ]}
-        />
       </Section>
     </HowItWorksExperience>
   );

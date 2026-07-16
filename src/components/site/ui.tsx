@@ -213,7 +213,7 @@ export function CardGrid({
   cols,
 }: {
   children: ReactNode;
-  cols?: 2 | 3;
+  cols?: 2 | 3 | 4;
 }) {
   return (
     <div className={`card-grid${cols ? ` card-grid--${cols}` : ""}`}>

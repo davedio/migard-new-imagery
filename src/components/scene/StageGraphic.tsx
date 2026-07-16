@@ -69,9 +69,9 @@ type Stage = {
 const STAGES: Stage[] = [
   {
     id: "submit",
-    tag: "Off-chain · L2",
+    tag: "L2 entry",
     name: "Submit",
-    line: "A transaction enters Midgard and is validated against UTXO rules immediately, with no Cardano L1 block wait.",
+    line: "A transaction enters Midgard and is validated against UTXO rules immediately, with no Cardano block wait.",
     readouts: [
       { k: "Action", v: "Validate transaction" },
       { k: "Trust", v: "UTXO rules" },
@@ -95,7 +95,7 @@ const STAGES: Stage[] = [
     id: "commit",
     tag: "Cardano L1 State Queue",
     name: "Commit",
-    line: "The operator posts a compact state commitment (a small fingerprint of the block) to Cardano L1, where it enters the on-chain state queue for anyone to inspect.",
+    line: "The operator posts a compact state commitment, a fingerprint of the block, to Cardano for anyone to inspect.",
     readouts: [
       { k: "Action", v: "Post commitment", tone: "bridge" },
       { k: "Anchor", v: "Cardano L1 queue", tone: "bridge" },
@@ -129,9 +129,9 @@ const STAGES: Stage[] = [
   },
   {
     id: "settle",
-    tag: "Cardano L1 Confirmed",
+    tag: "Cardano L1 finality",
     name: "Settle",
-    line: "If no valid fault proof succeeds, the maturity period ends and the block merges into confirmed Cardano L1 state.",
+    line: "After verification clears, the block becomes final on Cardano.",
     readouts: [
       { k: "Action", v: "Merge state", tone: "l1" },
       { k: "Anchor", v: "Cardano L1", tone: "l1" },
@@ -323,6 +323,7 @@ export default function StageGraphic({
           <StageGlyph id={s.id} />
         </span>
         <div className="stage-graphic__body">
+          <div className="stage-graphic__name">{s.name}</div>
           <div className="stage-graphic__head">
             <span className="stage-graphic__tag">{s.tag}</span>
             <span className="stage-graphic__count">
@@ -331,7 +332,6 @@ export default function StageGraphic({
               {String(STAGES.length).padStart(2, "0")}
             </span>
           </div>
-          <div className="stage-graphic__name">{s.name}</div>
           <p className="stage-graphic__line">{s.line}</p>
           <div className="stage-graphic__rail" aria-hidden>
             {STAGES.map((stage, i) => (

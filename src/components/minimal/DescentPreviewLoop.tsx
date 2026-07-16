@@ -120,7 +120,7 @@ function useDocTheme(): "light" | "dark" | null {
 
 const STAGE_LABELS = ["Execute", "Verify", "Settle"] as const;
 const STAGE_CAPTIONS = [
-  "Transactions confirmed, usable in seconds (estimated).",
+  "Transactions confirmed in seconds (estimated).",
   "Watchers verify the commitment before final settlement.",
   "Rooted securely to the Cardano blockchain.",
 ] as const;

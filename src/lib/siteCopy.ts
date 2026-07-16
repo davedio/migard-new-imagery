@@ -25,13 +25,13 @@ export const SITE_COPY = {
   paths: [
     {
       title: "Build",
-      body: "Developers use the same transaction logic, new speed. Your validators, tests, and tooling port over easily with an endpoint change.",
+      body: "Developers keep familiar transaction logic at a new speed. Validators, tests, and tooling port over with an endpoint change.",
       cta: "Start building",
       href: "/developers",
     },
     {
       title: "Participate",
-      body: "Help run the network and earn. Operators earn fees for ordering transactions into blocks; Watchers earn by proving a bad block wrong before it settles.",
+      body: "Help run the network and earn. Operators earn fees for ordering transactions into blocks; Watchers earn by stopping bad blocks before they settle.",
       cta: "Explore protocol roles",
       href: "/participate",
     },
@@ -213,12 +213,12 @@ export const DEVELOPER_COPY = {
     ],
     rows: [
       {
-        label: "Audit status",
-        body: "Independent audits are planned ahead of mainnet; formal-methods work is in progress now.",
+        label: "Testnet and audit status",
+        body: "The pre-alpha testnet is live on Cardano preprod; public testnet is targeted for Q3 2026. Independent audits are planned ahead of mainnet, and formal-methods work is in progress.",
       },
       {
         label: "Responsible disclosure",
-        body: "Found a vulnerability? Report it privately via the intake form with evidence preserved. Never post exploits publicly. Midgard will never ask for your seed phrase or private keys.",
+        body: "Found a vulnerability? Report it privately via the intake form. Never post exploits publicly. Midgard will never ask for your seed phrase or private keys.",
         href: OFFICIAL_LINKS.intakeForm,
       },
     ],
@@ -236,14 +236,14 @@ export const ECONOMICS_MATRIX = {
   rows: [
     {
       who: "Users",
-      pay: "Fees in ADA, estimated 10 to 30x cheaper than L1. Nothing new to hold.",
-      get: "Confirmation in seconds (estimated), with settlement back on Cardano.",
+      pay: "Fees in ADA, estimated 10 to 30x cheaper than L1.",
+      get: "Confirmation in seconds, with settlement back on Cardano.",
       href: "/users#economics",
       cta: "User economics",
     },
     {
       who: "Builders",
-      pay: "The same ADA fee model your users already pay: no separate asset to integrate.",
+      pay: "The same ADA fee model for your users.",
       get: "Faster execution for unchanged UTXO contracts, with public source to verify.",
       href: "/developers#economics",
       cta: "Builder economics",
@@ -257,8 +257,8 @@ export const ECONOMICS_MATRIX = {
     },
     {
       who: "Watchers",
-      pay: "Node runtime; anyone can run one.",
-      get: "An estimated 30–50% of a slashed bond for a valid fault proof.",
+      pay: "Running a node; open to anyone.",
+      get: "Target reward: 30–50% of a slashed bond for a valid fault proof.",
       href: "/participate#economics",
       cta: "Role economics",
     },
@@ -272,7 +272,7 @@ export const ECONOMICS_MATRIX = {
   ],
   thesis: {
     kicker: "The difference",
-    line: "Most rollups take value from their base layer. Midgard is built to pay Cardano back.",
+    line: "Most rollups extract value from their base layer. Midgard is built to pay Cardano back.",
   },
   finePrint:
     "Bond, fee, and role-incentive parameters are finalized as testnet data comes in; a full economic breakdown follows once benchmarks are published.",

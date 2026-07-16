@@ -120,49 +120,43 @@ const EXPLAINER_STEPS = [
   {
     n: "01",
     title: "Submit",
-    layer: "L2 entry",
+    tone: "green",
     what: "A user submits a transaction to Midgard, usually through an app or wallet.",
-    check: "The transaction is validated against UTXO rules before it enters the ordered flow.",
     why: "The user can get a faster usable signal without waiting for final settlement.",
   },
   {
     n: "02",
     title: "Sequence",
-    layer: "Operator",
+    tone: "green",
     what: "An operator orders valid activity into an L2 block.",
-    check: "The order becomes part of the state that other parties can replay.",
     why: "Applications get fast execution while the order remains inspectable.",
   },
   {
     n: "03",
     title: "Commit",
-    layer: "Cardano L1 path",
-    what: "The operator posts a compact block header to the Cardano L1 settlement path.",
-    check: "The commitment points to state that must remain available and challengeable.",
+    tone: "green",
+    what: "The operator posts a compact state commitment to Cardano.",
     why: "Midgard does not ask users to trust a private operator database.",
   },
   {
     n: "04",
     title: "Data availability check",
-    layer: "Availability",
+    tone: "gold",
     what: "Block data is made available so commitments can be replayed and inspected.",
-    check: "Reviewers need the data required to replay the committed state.",
     why: "A commitment is not useful if the underlying data cannot be checked.",
   },
   {
     n: "05",
     title: "Watch",
-    layer: "Challenge",
+    tone: "gold",
     what: "Watchers replay committed blocks; a valid fault proof keeps bad state from settling.",
-    check: "Invalid commitments can be challenged before they become settled state.",
-    why: "Operators do not get the final word on correctness.",
+    why: "Independent Watchers check correctness before settlement.",
   },
   {
     n: "06",
     title: "Settle",
-    layer: "Cardano L1 finality",
-    what: "If no valid fault proof succeeds, verified state settles through Cardano L1.",
-    check: "After the verification path clears, finalized state inherits Cardano L1 security.",
+    tone: "cobalt",
+    what: "After verification clears, state becomes final on Cardano.",
     why: "Fast execution and final settlement stay separate and reviewable.",
   },
 ] as const;
@@ -197,14 +191,11 @@ function JourneyAct({
       <div className="hiw-act__viewport">
         <div className="hiw-act__scrim" aria-hidden />
         <div className="hiw-act__intro">
-          <p className="hiw-act__kicker">Put the 101 together</p>
           <h2 id="full-journey-title" className="hiw-act__title">
-            Now follow one{" "}
-            <span style={{ color: "var(--green-bright)" }}>transaction</span>
+            The flow of a transaction
           </h2>
           <p className="hiw-act__lead">
-            You have the model. Now watch Midgard order, publish, verify, and
-            settle one transaction down to Cardano.
+            Watch Midgard order, publish, verify, and settle.
           </p>
           <ol className="hiw-act__beats" ref={beatsRef} aria-label="Jump to a stage in the journey">
             {ACT_BEATS.map((b, i) => (
@@ -232,31 +223,26 @@ function JourneyAct({
   );
 }
 
-function HowItWorksExplainer() {
+function HowItWorksExplainer({ visuallyHidden = false }: { visuallyHidden?: boolean }) {
   /* the site's ONE textual telling of the pipeline (the journey act above
      tells it cinematically; home only trails it) — a plain static grid,
      every step's what + why always visible, no interaction required */
   return (
-    <section className="hiw-explainer" aria-labelledby="hiw-explainer-title">
+    <section
+      className={`hiw-explainer${visuallyHidden ? " visually-hidden" : ""}`}
+      aria-labelledby="hiw-explainer-title"
+    >
       <div className="hiw-explainer__head">
-        <p>Transaction path</p>
-        <h2 id="hiw-explainer-title">Fast execution first. Verification before final settlement.</h2>
+        <h2 id="hiw-explainer-title">The transaction flow</h2>
         <p className="hiw-explainer__lead">
-          Six steps take every transaction from instant soft confirmation on
-          Midgard to irreversible settlement on Cardano.
+          Six steps move a transaction from soft confirmation to final settlement.
         </p>
       </div>
       <ol className="hiw-explainer__grid" aria-label="Transaction lifecycle, step by step">
         {EXPLAINER_STEPS.map((step) => {
-          const tone = step.layer.includes("L1")
-            ? "cobalt"
-            : step.layer === "Challenge" || step.layer === "Availability"
-              ? "gold"
-              : "green";
           return (
-            <li key={step.title} className="hiw-explainer__card" data-tone={tone}>
+            <li key={step.title} className="hiw-explainer__card" data-tone={step.tone}>
               <span className="hiw-explainer__card-n">{step.n}</span>
-              <span className="hiw-explainer__card-layer">{step.layer}</span>
               <strong className="hiw-explainer__card-title">{step.title}</strong>
               <p className="hiw-explainer__card-what">{step.what}</p>
               <p className="hiw-explainer__card-why">{step.why}</p>
@@ -272,7 +258,7 @@ export default function HowItWorksExperience({
   beforeJourney,
   children,
 }: {
-  /** Plain-language lessons and proof shown before the immersive journey. */
+  /** Plain-language summary and proof shown before the immersive journey. */
   beforeJourney?: ReactNode;
   /** the detailed lifecycle sections, rendered beneath the journey act */
   children: ReactNode;
@@ -430,7 +416,7 @@ export default function HowItWorksExperience({
       <main className="page-main page-main--how-it-works page-main--hiw-experience">
         {beforeJourney}
         <JourneyAct actRef={actRef} beatsRef={beatsRef} onJumpToBeat={jumpToBeat} />
-        <HowItWorksExplainer />
+        <HowItWorksExplainer visuallyHidden={journeyOn} />
         {children}
       </main>
     </>
