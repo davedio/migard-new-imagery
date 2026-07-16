@@ -78,7 +78,7 @@
 :global([data-theme="light"]) .applicationBoard {
   background:
     radial-gradient(52% 120% at 50% 0%, color-mix(in srgb, var(--green-bright) 12%, transparent), transparent 72%),
-    color-mix(in srgb, var(--paper) 88%, transparent);
+    color-mix(in srgb, var(--panel) 88%, transparent);
   box-shadow:
     0 24px 52px color-mix(in srgb, var(--obsidian) 12%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 72%, transparent);
@@ -87,7 +87,7 @@
 :global([data-theme="light"]) .applicationTile {
   background:
     linear-gradient(145deg, color-mix(in srgb, white 88%, transparent), transparent 60%),
-    color-mix(in srgb, var(--paper) 78%, transparent);
+    color-mix(in srgb, var(--panel) 78%, transparent);
   box-shadow:
     0 14px 24px color-mix(in srgb, var(--obsidian) 10%, transparent),
     inset 0 1px 0 color-mix(in srgb, white 82%, transparent);
@@ -95,7 +95,7 @@
 
 :global([data-theme="light"]) .applicationStatus {
   background: color-mix(in srgb, white 86%, transparent);
-  color: var(--deep-ink);
+  color: var(--text-hi);
 }
 
 @media (max-width: 600px) {
