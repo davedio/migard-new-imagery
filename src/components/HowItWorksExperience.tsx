@@ -161,14 +161,14 @@ const EXPLAINER_STEPS = [
   },
 ] as const;
 
-/* Redesigned 2026-07-11: the previous plate (journey-flow-tall) was a
-   symmetric, near-uniform trunk, so the five FOCALS_TALL dwell/zoom stops
-   below all looked nearly identical as the camera panned — the descent
-   didn't read as travel. This plate is purpose-built with a distinct scene
-   at each stop: sunlit canopy -> a gnarled branch fork -> a weathered
-   trunk hollow -> mossy roots over boulders -> the sap-light pooling into
-   a glowing basin at the base (the "Settle" payoff). */
-const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-descent-candidate-f.avif";
+/* Replaced 2026-07-16 (Dave): the journey plate is now the ACTUAL home-hero
+   painting (tree-hero-portrait) outpainted to 9:16 — extra sky above, the
+   cliff extended below — so /learn descends the SAME signature tree the
+   visitor just saw on the home page. Identity over invention: candidates
+   that re-painted the tree (new forks/hollows/veins) were all rejected as
+   "not the same tree". The orb draws its own light path down the measured
+   trunk, so the plate needs no painted sap-vein. */
+const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-descent-hero.avif";
 
 function JourneyAct({
   actRef,
