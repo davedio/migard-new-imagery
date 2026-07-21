@@ -12,7 +12,7 @@ const phases = [
   {
     num: "01 · Next · Preprod",
     title: "Cardano preprod",
-    body: "Midgard will be live soon on Cardano preprod. The core optimistic lifecycle and fault-proof coverage are being prepared for that phase.",
+    body: "Protocol contracts are deployed on Cardano preprod. Public pre-alpha access and broader fault-proof coverage come next.",
   },
   {
     num: "02 · Next",
@@ -34,7 +34,7 @@ const exploreRows = [
   },
   {
     label: "Launch updates",
-    body: "Follow the Cardano preprod launch and contract publication.",
+    body: "Follow public pre-alpha access and later release phases.",
     href: "/official-links",
   },
   {
@@ -52,14 +52,14 @@ export default function RoadmapPage() {
         compact
         tone="cobalt"
         label="Roadmap"
-        title="Paced by the work."
+        title="Paced by the work"
         sub="No dates. Midgard ships when the work is sound. Here is the path from pre-alpha to mainnet."
       />
 
       <Section
         id="phases"
-        title="Three phases, all checkable."
-        lead="The source is open. The whitepaper is coming soon. Check each phase yourself."
+        title="Three phases, all checkable"
+        lead="The source and technical specification are public. Check each phase yourself."
       >
         <CardGrid cols={3}>
           {phases.map((p, i) => (

@@ -27,7 +27,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     title: "Developers",
     links: [
       { label: "Developer Overview", href: "/developers" },
-      { label: "Preprod contracts", href: "/status" },
+      { label: "Preprod contracts", href: "/developers#contracts" },
       { label: "GitHub", href: OFFICIAL_LINKS.github, external: true, github: true },
       { label: "Intake form", href: OFFICIAL_LINKS.intakeForm, external: true },
     ],
@@ -46,7 +46,7 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
     links: [
       { label: "Official links", href: "/official-links" },
       { label: "Network status", href: "/status" },
-      { label: "Whitepaper (coming soon)" },
+      { label: "Technical specification", href: OFFICIAL_LINKS.technicalSpec, external: true },
       { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
       { label: "X · @midgardprotocol", href: OFFICIAL_LINKS.x, external: true },
       { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy },

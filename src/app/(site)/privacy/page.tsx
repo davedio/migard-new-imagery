@@ -250,7 +250,7 @@ export default function PrivacyPage() {
         compact
         tone="ink"
         label="Legal"
-        title="Privacy Policy."
+        title="Privacy Policy"
         sub="How Midgard Labs collects, uses, shares, and retains information on this site."
       />
       <Section tight>

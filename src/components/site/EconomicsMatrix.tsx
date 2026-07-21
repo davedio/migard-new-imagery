@@ -48,7 +48,6 @@ export default function EconomicsMatrix() {
           </tbody>
         </table>
       </div>
-      <p className={css.fine}>{ECONOMICS_MATRIX.finePrint}</p>
     </div>
   );
 }

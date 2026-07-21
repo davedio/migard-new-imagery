@@ -1,6 +1,7 @@
 "use client";
 
-/* Light / dark theme with localStorage persistence (default light).
+/* Midgard's brand-default theme is dark. Light is a fully supported,
+   equally finished presentation, and a saved visitor preference always wins.
    Toggling cross-fades via the View Transitions API (quick ~0.32s). */
 
 import {
@@ -16,10 +17,11 @@ import {
 export type Theme = "light" | "dark";
 
 const STORAGE_KEY = "midgard:theme";
+export const BRAND_DEFAULT_THEME: Theme = "dark";
 
 /** Runs before paint via the inline script in src/app/layout.tsx. Reads the
- *  saved theme (default light) and sets data-theme so there is no flash. */
-export const THEME_BOOT_SCRIPT = `try{var t=localStorage.getItem("${STORAGE_KEY}");if(t!=="dark"&&t!=="light"){t="light";}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="light";}`;
+ * saved preference when present; otherwise applies the dark brand default. */
+export const THEME_BOOT_SCRIPT = `try{var t=localStorage.getItem("${STORAGE_KEY}");if(t!=="dark"&&t!=="light"){t="${BRAND_DEFAULT_THEME}";}document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="${BRAND_DEFAULT_THEME}";}`;
 
 /** World-tree hero plate per theme. Night assets live under /dark. */
 export const TREE_PLATES: Record<Theme, string> = {
@@ -88,8 +90,8 @@ function withTransition(run: () => void) {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const themeRef = useRef<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>(BRAND_DEFAULT_THEME);
+  const themeRef = useRef<Theme>(BRAND_DEFAULT_THEME);
 
   const set = useCallback((t: Theme) => {
     themeRef.current = t;
@@ -124,5 +126,5 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 export function useTheme(): ThemeState {
   const ctx = useContext(ThemeContext);
   if (ctx) return ctx;
-  return { theme: "light", setTheme: () => {}, toggle: () => {} };
+  return { theme: BRAND_DEFAULT_THEME, setTheme: () => {}, toggle: () => {} };
 }

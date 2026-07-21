@@ -9,8 +9,8 @@ import css from "./SoftConfirmFeed.module.css";
  * seconds, a block seals them (gold), and commits post block headers
  * down to Cardano L1 (cobalt). Adapted from the feed on the team site
  * per the 2026-07-10 call — clearly labelled simulated, never
- * presented as live network data, and no latency figures (claims
- * ruling: soft confirmation is "seconds, estimated").
+ * presented as live network data. The page-level benchmark note carries
+ * the status of the seconds-level soft-confirmation target.
  *
  * Deliberately plain: exactly MAX_VISIBLE rows in the DOM, keyed by
  * step, with a one-shot CSS entrance on the newest row. No exit
@@ -151,8 +151,8 @@ export default function SoftConfirmFeed() {
       </div>
 
       <p className={css.fine}>
-        Illustrative sequence, not live network data. Soft confirmation is
-        estimated in seconds; blocks settle through Cardano after verification.
+        Illustrative sequence, not live network data. Soft confirmations happen
+        in seconds; blocks settle through Cardano after verification.
       </p>
     </div>
   );

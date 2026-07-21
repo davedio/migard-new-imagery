@@ -1,10 +1,11 @@
 import { GitHubIcon } from "@/components/site/BrandIcons";
+import { ContractsReference } from "@/components/site/ContractsReference";
 import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows } from "@/components/site/rhythm";
 import { Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { DEVELOPER_COPY } from "@/lib/siteCopy";
+import { BENCHMARK_STATUS_NOTES, DEVELOPER_COPY } from "@/lib/siteCopy";
 
 /* /developers — reading-rhythm layout (see .review/card-rhythm-redesign-2026-07-02.md):
    hero (the one telling of the wallet-action…fallback sentence) → ONE sticky
@@ -24,6 +25,7 @@ export default function DeveloperLanding() {
         tone="tree"
         title={DEVELOPER_COPY.hero.title}
         sub={DEVELOPER_COPY.hero.lead}
+        body={BENCHMARK_STATUS_NOTES.performanceCost}
         actions={[
           {
             label: "GitHub",
@@ -48,7 +50,7 @@ export default function DeveloperLanding() {
       <Section
         id="start"
         title="Choose your developer path."
-        lead="Build with Midgard, help run the network, or extend the stack."
+        lead="Build with Midgard, help run the network, or plan a deeper integration."
         glow="green"
       >
         <CardGrid cols={3}>
@@ -71,7 +73,7 @@ export default function DeveloperLanding() {
           audience pages 2026-07-11; the cross-view lives on /#economics. */}
       <Section
         id="economics"
-        title="Economics for builders."
+        title="Economics for builders"
         lead="No new asset or separate fee market."
         cols
       >
@@ -80,15 +82,15 @@ export default function DeveloperLanding() {
           rows={[
             {
               label: "Fee model",
-              body: "Paid in ADA end to end. Your users transact with the wallet and asset they already have.",
+              body: "Fees are paid in ADA. No separate Midgard fee asset is required.",
             },
             {
               label: "Cost profile",
-              body: "Execution happens off-chain; only compact data is committed to Cardano. Measured fee comparisons will be published once benchmarked.",
+              body: "Execution happens off-chain. Only compact data is committed to Cardano.",
             },
             {
               label: "What your users pay",
-              body: "Designed for an estimated 10 to 30x lower cost than L1, and confirmations in seconds; both are estimates pending benchmarks.",
+              body: "10 to 30x lower cost than L1, with confirmations in seconds.",
             },
             {
               label: "The whole picture",
@@ -99,29 +101,7 @@ export default function DeveloperLanding() {
         />
       </Section>
 
-      <Section
-        id="contracts"
-        title="Preprod contracts, coming soon."
-        lead="Midgard will be live soon on Cardano preprod. Contract addresses, state anchors, and explorer links will be published at launch."
-        cols
-      >
-        <DataRows
-          ariaLabel="Preprod contract publication"
-          rows={[
-            {
-              label: "Public source",
-              body: "Review the protocol source and implementation history on GitHub.",
-              href: OFFICIAL_LINKS.github,
-              external: true,
-            },
-            {
-              label: "Launch status",
-              body: "Follow the Cardano preprod launch and contract publication.",
-              href: "/status",
-            },
-          ]}
-        />
-      </Section>
+      <ContractsReference />
 
       {/* Technical security depth lives HERE per the 2026-07-08 persona
           split: Learn keeps the plain-language summary, Participate keeps
@@ -129,15 +109,15 @@ export default function DeveloperLanding() {
           is allowed in this technical context (and FAQs) only. */}
       <Section
         id="defense"
-        title="How the protocol defends itself."
+        title="How the protocol defends itself"
         lead="Faults, including invalid transactions, bad commitments, unavailable data, or an Operator gone dark, can be checked on Cardano."
         cols
       >
         <CardGrid cols={2}>
           <Card
             num="01"
-            title="Operators commit and bond"
-            body="An Operator commits a block to the L1 state queue and locks a bond as collateral."
+            title="Operators commit blocks and lock a bond"
+            body="An Operator posts each block commitment to the State Queue on Cardano and locks an ADA bond as collateral."
           />
           <Card
             num="02"
@@ -162,7 +142,7 @@ export default function DeveloperLanding() {
           <p className="dim">
             The protocol enforces custody through scripts, validity through fault proofs,
             and settlement on Cardano. Apps, RPCs, and explorers can still misreport what
-            you see; verify against your own node for the strongest assurance. A dedicated
+            you see. Verify against your own node for the strongest assurance. A dedicated
             data-availability layer is in development, with archive nodes planned for
             long-term history.
           </p>
@@ -172,7 +152,7 @@ export default function DeveloperLanding() {
       <Section
         id="reference"
         title="Keep these handy."
-        lead="Source is open; Cardano preprod access is coming soon. A hosted public RPC follows later."
+        lead="Source and preprod contracts are public. Public pre-alpha access comes next, followed later by a hosted public RPC."
         tight
         cols
       >
@@ -185,15 +165,17 @@ export default function DeveloperLanding() {
             ctaIcon={<GitHubIcon size={14} />}
           />
           <Card
-            title="Whitepaper (coming soon)"
-            body="The full protocol design will be published soon."
+            title="Technical specification"
+            body="The public working draft of the protocol design, mechanisms, and economic parameters."
+            cta="Read the specification"
+            href={OFFICIAL_LINKS.technicalSpec}
             delay={50}
           />
           <Card
             title="Preprod contracts"
-            body="Contract addresses and state anchors will be published at launch."
-            cta="Follow launch status"
-            href="/status"
+            body="Protocol contracts and the static genesis snapshot are public on Cardano preprod."
+            cta="Review contract status"
+            href="/developers#contracts"
             delay={100}
           />
           <Card
@@ -207,8 +189,8 @@ export default function DeveloperLanding() {
       </Section>
 
       <CtaBand
-        title="Bring a concrete flow."
-        lead="Bring the flow your app depends on: it can be mapped, prepared for preprod, and challenged in the open."
+        title="Start with one real app flow."
+        lead="Choose a swap, loan, payment, or other core interaction, then map its wallet, contract, data, and fallback requirements for preprod."
         actions={[
           {
             label: "Open GitHub",
@@ -216,7 +198,11 @@ export default function DeveloperLanding() {
             variant: "primary",
             icon: <GitHubIcon size={15} />,
           },
-          { label: "Join Discord", href: OFFICIAL_LINKS.discord, variant: "ghost" },
+          {
+            label: "Discuss an integration",
+            href: OFFICIAL_LINKS.intakeForm,
+            variant: "ghost",
+          },
         ]}
       />
     </main>

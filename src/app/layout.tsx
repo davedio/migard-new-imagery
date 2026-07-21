@@ -99,7 +99,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        {/* applies the light site theme before first paint */}
+        {/* applies the saved theme, or Midgard's dark brand default, before paint */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
         <script
           type="application/ld+json"

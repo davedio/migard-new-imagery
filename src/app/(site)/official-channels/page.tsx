@@ -113,7 +113,7 @@ export default function OfficialChannelsPage() {
         compact
         tone="ink"
         label="Trust & safety"
-        title="Official Channels & Scam Safety."
+        title="Official Channels & Scam Safety"
         sub="The policy record of which channels are real and what we will never do."
         actions={[{ label: "See the live link list", href: "/official-links", variant: "primary" }]}
       />

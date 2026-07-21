@@ -48,7 +48,7 @@ export const PAGE_METADATA = {
     path: "/users",
     title: "Users | Midgard",
     description:
-      "Use familiar Cardano apps with estimated-second confirmations, ADA fees estimated 10 to 30x lower than L1, and verified Cardano settlement.",
+      "Faster execution for Cardano apps, with fees paid directly in ADA and settlement through Cardano L1.",
     image: "/img/watercolor/terraces.webp",
     imageWidth: 2200,
     imageHeight: 1228,
@@ -86,7 +86,7 @@ export const PAGE_METADATA = {
     path: "/status",
     title: "Network Status | Midgard",
     description:
-      "Honest, labeled status for Midgard: what is available now, what is coming soon on Cardano preprod, and what remains planned.",
+      "Current Midgard network status: what is available now, what comes next on Cardano preprod, and what remains planned.",
     image: "/img/watercolor/signal-cairn.webp",
     imageWidth: 2200,
     imageHeight: 1228,

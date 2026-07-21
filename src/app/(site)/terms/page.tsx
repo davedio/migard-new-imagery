@@ -326,7 +326,7 @@ export default function TermsPage() {
         compact
         tone="ink"
         label="Legal"
-        title="Terms of Use."
+        title="Terms of Use"
         sub="The terms that govern access to and use of the Midgard website and documentation pages."
       />
       <Section tight>

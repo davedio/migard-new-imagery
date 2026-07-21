@@ -81,34 +81,31 @@ export function DataRows({
         );
         if (r.href && r.external) {
           return (
-            <a
-              key={r.label}
-              role="listitem"
-              className="datarows__row datarows__row--link"
-              href={r.href}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {inner}
-              <ExternalLinkNotice />
-            </a>
+            <div key={r.label} role="listitem" className="datarows__item">
+              <a
+                className="datarows__row datarows__row--link"
+                href={r.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {inner}
+                <ExternalLinkNotice />
+              </a>
+            </div>
           );
         }
         if (r.href) {
           return (
-            <Link
-              key={r.label}
-              role="listitem"
-              className="datarows__row datarows__row--link"
-              href={r.href}
-            >
-              {inner}
-            </Link>
+            <div key={r.label} role="listitem" className="datarows__item">
+              <Link className="datarows__row datarows__row--link" href={r.href}>
+                {inner}
+              </Link>
+            </div>
           );
         }
         return (
-          <div key={r.label} role="listitem" className="datarows__row">
-            {inner}
+          <div key={r.label} role="listitem" className="datarows__item">
+            <div className="datarows__row">{inner}</div>
           </div>
         );
       })}

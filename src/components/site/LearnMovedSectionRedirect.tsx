@@ -11,8 +11,14 @@ const REDIRECTS: Record<string, string> = {
 
 export default function LearnMovedSectionRedirect() {
   useEffect(() => {
-    const target = REDIRECTS[window.location.hash];
-    if (target) window.location.replace(target);
+    const redirectMovedSection = () => {
+      const target = REDIRECTS[window.location.hash];
+      if (target) window.location.replace(target);
+    };
+
+    redirectMovedSection();
+    window.addEventListener("hashchange", redirectMovedSection);
+    return () => window.removeEventListener("hashchange", redirectMovedSection);
   }, []);
 
   return null;

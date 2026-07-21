@@ -129,7 +129,7 @@ export default function SecurityPolicyPage() {
         compact
         tone="ink"
         label="Trust & safety"
-        title="Vulnerability Disclosure Policy."
+        title="Vulnerability Disclosure Policy"
         sub="How to report security issues in the Midgard website, repositories, and test-network deployments."
       />
       <Section tight>

@@ -56,7 +56,7 @@ export function ContractsReference() {
           </a>
         </div>
         <div id="contracts-topology" className={styles.topologyBlock}>
-          <h3 className={styles.topologyTitle}>How the contracts connect.</h3>
+          <h3 className={styles.topologyTitle}>How the contracts connect</h3>
           <p className={styles.topologyLead}>
             Hover a node to trace its related contracts (green edges are Hub Oracle references;
             gold edges show the fault-proof path), then use the directory below for addresses,
@@ -71,7 +71,7 @@ export function ContractsReference() {
 
       <Section
         id="contracts-addresses"
-        title="Core validators."
+        title="Core validators"
         lead="Each validator is deployed once as an on-chain reference script. Open a preprod address on the explorer, or copy the address and script hash for your own tooling."
         glow="green"
       >
@@ -107,7 +107,7 @@ export function ContractsReference() {
 
       <Section
         id="contracts-anchors"
-        title="State anchors."
+        title="State anchors"
         lead="Each anchor is an NFT-marked UTxO that records protocol state in this snapshot."
         cols
       >
@@ -124,7 +124,7 @@ export function ContractsReference() {
 
       <Section
         id="contracts-history"
-        title="Genesis deployment history."
+        title="Genesis deployment history"
         lead={`From protocol initialization to the first confirmed state in about ${CONTRACTS_META.genesisToConfirmed}.`}
         cols
       >

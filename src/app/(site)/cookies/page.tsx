@@ -122,7 +122,7 @@ export default function CookiesPage() {
         compact
         tone="ink"
         label="Legal"
-        title="Cookie Notice."
+        title="Cookie Notice"
         sub="How this site uses cookies and similar technologies."
       />
       <Section tight>

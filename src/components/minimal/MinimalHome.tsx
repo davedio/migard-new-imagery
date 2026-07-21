@@ -12,7 +12,7 @@ import { DataRows, Statement, type DataRow } from "@/components/site/rhythm";
 import { Card, CardGrid } from "@/components/site/ui";
 import { ECOSYSTEM_PARTNERS } from "@/lib/ecosystemPartners";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { ECONOMICS_MATRIX, SITE_COPY } from "@/lib/siteCopy";
+import { BENCHMARK_STATUS_NOTES, ECONOMICS_MATRIX, SITE_COPY } from "@/lib/siteCopy";
 
 function isExternal(href: string) {
   return /^https?:\/\//.test(href);
@@ -52,7 +52,7 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Network status",
-    body: "Current state for every metric: available, coming soon, preview, target, or planned.",
+    body: "Current state for every metric: available, coming soon, target, or planned.",
     href: "/status",
   },
   {
@@ -62,8 +62,8 @@ const VERIFY_ROWS: readonly DataRow[] = [
   },
   {
     label: "Preprod contracts",
-    body: "Contract addresses and state anchors will be published at launch.",
-    href: "/status",
+    body: "Protocol contracts and the static genesis snapshot are public on Cardano preprod.",
+    href: "/developers#contracts",
   },
   {
     label: "Source review",
@@ -106,6 +106,9 @@ export default function MinimalHome() {
         <div className="minimal-hero__copy">
           <ShatterHeading as="h1" lines={[...SITE_COPY.hero.titleLines]} />
           <p>{SITE_COPY.hero.lead}</p>
+          <p className="minimal-hero__benchmark-note">
+            {BENCHMARK_STATUS_NOTES.performanceCostReward}
+          </p>
           <dl className="minimal-hero-stats" aria-label="Midgard at a glance">
             {SITE_COPY.stats.map((stat) => (
               <div className="minimal-hero-stat" key={stat.k}>
@@ -155,19 +158,19 @@ export default function MinimalHome() {
           <Card
             num="02"
             title="High-frequency apps"
-            body="Real-time state that updates constantly, with confirmations in seconds (estimated)."
+            body="Real-time state that updates constantly, with confirmations in seconds."
             delay={50}
           />
           <Card
             num="03"
             title="Easy payments"
-            body="Low-fee transfers paid in ADA."
+            body="Pay transaction fees directly in ADA. No new fee asset to buy or hold."
             delay={100}
           />
           <Card
             num="04"
             title="Cheaper infrastructure"
-            body="The same scripts and tooling, designed to run at lower cost."
+            body="Reuse familiar scripts and tooling at lower execution cost."
             delay={150}
           />
         </CardGrid>
@@ -180,15 +183,14 @@ export default function MinimalHome() {
         aria-labelledby="minimal-comparison-title"
       >
         <div className="minimal-section__head">
-          <h2 id="minimal-comparison-title">How Midgard compares.</h2>
+          <h2 id="minimal-comparison-title">How Midgard compares</h2>
         </div>
         <MidgardComparison />
       </section>
 
       {/* Choose your path — the role router, called up early per the
           2026-07-03 call ("why do I need to be here?" answered first).
-          Verb-led cards from SITE_COPY.paths; earn hook stated as an
-          estimate per the 2026-07-08 claims ruling. */}
+          Verb-led cards from SITE_COPY.paths. */}
       <section
         id="paths"
         className="minimal-section minimal-section--paths"

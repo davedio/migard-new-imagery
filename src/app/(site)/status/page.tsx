@@ -17,14 +17,19 @@ const legendRows = [
   },
   {
     label: "Target / Planned",
-    body: "A design goal or later phase, not yet measured or released.",
+    body: "Benchmark status: Performance figures labeled Target are current design goals. Public testnet results will replace them after benchmarking. Planned marks a later phase that has not been released.",
   },
 ] as const;
 
 const deploymentRows = [
   {
-    label: "Cardano preprod",
-    body: "Midgard will be live soon on Cardano preprod.",
+    label: "Preprod contracts",
+    body: "Protocol contracts and the genesis snapshot are public on Cardano preprod.",
+    meta: "Available now",
+  },
+  {
+    label: "Public pre-alpha access",
+    body: "The next public test phase on Cardano preprod.",
     meta: "Coming soon",
   },
   {
@@ -57,25 +62,25 @@ const accessRows = [
   },
   {
     label: "Public explorer",
-    body: "Not yet.",
-    meta: "Coming soon",
+    body: "Planned for a later release.",
+    meta: "Planned",
   },
   {
     label: "Public testnet",
-    body: "Not yet.",
-    meta: "Coming soon",
+    body: "Planned after the preprod phase.",
+    meta: "Planned",
   },
 ] as const;
 
 const performanceRows = [
   {
     label: "Soft confirmation",
-    body: "Seconds (estimated): usable before settlement.",
-    meta: "Preview",
+    body: "Seconds: usable before settlement.",
+    meta: "Target",
   },
   {
     label: "Throughput",
-    body: "Up to 300x: estimated design target, unbenchmarked.",
+    body: "Up to 300x throughput.",
     meta: "Target",
   },
 ] as const;
@@ -98,7 +103,7 @@ const mainnetRows = [
   },
   {
     label: "Mainnet",
-    body: "Not yet.",
+    body: "Release follows independent audits, full validator coverage, and parameter finalization.",
     meta: "Planned",
   },
 ] as const;
@@ -106,7 +111,7 @@ const mainnetRows = [
 const exploreRows = [
   {
     label: "Launch updates",
-    body: "Follow the Cardano preprod launch and contract publication.",
+    body: "Follow public pre-alpha access and later release phases.",
     href: "/official-links",
   },
   {
@@ -129,8 +134,8 @@ export default function StatusPage() {
         compact
         tone="ink"
         label="Network status"
-        title="Honest status."
-        sub="Every line is labeled: available now, coming soon, target, or planned. Nothing claims to be more finished than it is."
+        title="Current network status"
+        sub="What is available now, what comes next on Cardano preprod, and what remains planned."
       />
 
       <JumpChips
@@ -145,34 +150,34 @@ export default function StatusPage() {
 
       <Section
         id="legend"
-        title="How to read this page."
+        title="How to read this page"
         cols
         aside={
           <Statement
             align="left"
             variant="supporting"
             kicker="Cardano preprod"
-            line="Midgard will be live soon on Cardano preprod. No real funds."
-            sub="Pre-alpha launch phase; no real funds. Verify source and contracts before use."
+            line="Contracts are deployed on Cardano preprod. Public pre-alpha access is coming soon; mainnet is not live."
+            sub="Use test ADA, and verify source, contracts, and official links before use."
           />
         }
       >
         <DataRows rows={legendRows} ariaLabel="Status label legend" />
       </Section>
 
-      <Section id="deployment" title="Deployment." cols>
+      <Section id="deployment" title="Deployment" cols>
         <DataRows rows={deploymentRows} ariaLabel="Deployment status" />
       </Section>
 
-      <Section id="access" title="Access." cols>
+      <Section id="access" title="Access" cols>
         <DataRows rows={accessRows} ariaLabel="Access status" />
       </Section>
 
-      <Section id="performance" title="Performance." cols>
+      <Section id="performance" title="Performance" cols>
         <DataRows rows={performanceRows} ariaLabel="Performance status" />
       </Section>
 
-      <Section id="mainnet" title="Path to mainnet." cols>
+      <Section id="mainnet" title="Path to mainnet" cols>
         <DataRows rows={mainnetRows} ariaLabel="Path to mainnet status" />
       </Section>
 

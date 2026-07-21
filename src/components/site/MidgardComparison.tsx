@@ -9,7 +9,7 @@ const decisionGrid = [
     label: "Midgard",
     title: "UTXO apps that need faster execution",
     best: "Applications that want faster activity without leaving the UTXO model.",
-    caution: "Pre-alpha testnet coming soon; verify current benchmarks and parameters before integrating.",
+    caution: "Public pre-alpha access is coming soon; review the current source and network status before integrating.",
     inspect: "Security model, contracts, source, and current testnet status.",
     tone: "midgard",
   },

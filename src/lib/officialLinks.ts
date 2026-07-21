@@ -4,6 +4,7 @@ export const OFFICIAL_LINKS = {
   website: SITE_URL,
   docs: "https://github.com/Anastasia-Labs/midgard",
   github: "https://github.com/Anastasia-Labs/midgard",
+  technicalSpec: "https://anastasia-labs.github.io/midgard/midgard.pdf",
   x: "https://x.com/midgardprotocol",
   discord: "https://discord.gg/ZpjgHKWaZx",
   intakeForm:

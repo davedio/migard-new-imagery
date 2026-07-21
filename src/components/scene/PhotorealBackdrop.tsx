@@ -323,6 +323,7 @@ function buildModel(wide: boolean): Model {
 }
 
 export default function PhotorealBackdrop({
+  active,
   progressRef,
   visualProgressRef,
   packetRef,
@@ -330,6 +331,8 @@ export default function PhotorealBackdrop({
   wide,
   plateSrc = "/plates/worldtree-day-tall.avif",
 }: {
+  /** True only while the journey act owns the viewport. */
+  active: boolean;
   /** smoothed 0..1 journey progress (same ref the scene used) */
   progressRef: RefObject<number>;
   /** OUT: the scene's eased progress, used to keep every stage label aligned */
@@ -370,6 +373,10 @@ export default function PhotorealBackdrop({
     const el = plateRef.current;
     const dof = dofRef.current;
     if (!el) return;
+    if (!active) {
+      if (dof) dof.style.opacity = "0";
+      return;
+    }
     // the settle var lives on the .plate-stage parent so the sibling
     // .plate-stage__grade (cobalt L1 wash) inherits it (vars don't cross
     // siblings, only descendants).
@@ -519,12 +526,20 @@ export default function PhotorealBackdrop({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [progressRef, visualProgressRef, motionOn, wide]);
+  }, [active, progressRef, visualProgressRef, motionOn, wide]);
 
   // ---- live overlays canvas ----
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (!active || !motionOn) {
+      // Releasing the backing store prevents a hidden full-viewport canvas
+      // or a static fallback from retaining a high-DPI buffer or analyzing the
+      // full plate. The calm fallback keeps the painted plate without live FX.
+      canvas.width = 1;
+      canvas.height = 1;
+      return;
+    }
     const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
@@ -740,9 +755,10 @@ export default function PhotorealBackdrop({
        anatomy lands */
     let repaint: (() => void) | null = null;
 
+    let disposed = false;
     const plateImg = new Image();
-    plateImg.src = plateSrc;
     plateImg.onload = () => {
+      if (disposed) return;
       imgW = plateImg.naturalWidth;
       imgH = plateImg.naturalHeight;
       imgDimsRef.current = { w: imgW, h: imgH, ready: false };
@@ -866,6 +882,7 @@ export default function PhotorealBackdrop({
       rebuildOnAnatomy();
       repaint?.();
     };
+    plateImg.src = plateSrc;
 
     /* the packet's path, in image space: canopy -> down the MEASURED
        centerline -> into the vault. Replaces the old viewport path. */
@@ -998,6 +1015,8 @@ export default function PhotorealBackdrop({
       renderStatic();
       window.addEventListener("resize", renderStatic);
       return () => {
+        disposed = true;
+        plateImg.onload = null;
         window.removeEventListener("resize", resize);
         window.removeEventListener("resize", renderStatic);
       };
@@ -1505,10 +1524,12 @@ export default function PhotorealBackdrop({
 
     raf = requestAnimationFrame(render);
     return () => {
+      disposed = true;
+      plateImg.onload = null;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
     };
-  }, [model, motionOn, packetRef, progressRef, wide, plateSrc]);
+  }, [active, model, motionOn, packetRef, progressRef, wide, plateSrc]);
 
   return (
     <div

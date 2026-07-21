@@ -25,10 +25,9 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <div className="site-ambient" aria-hidden />
       <ScrollProgress />
       <SiteNav />
-      {/* `data-scroll-content` is the smooth-scroll transform root. The fixed
-          nav stays outside it; everything that scrolls (page content + footer)
-          lives inside so the inertial-scroll hook can translate them as one.
-          Inert on every route except home, where Gateway activates the hook. */}
+      {/* Keep the fixed nav outside the scrolling page-content + footer group.
+          The data attribute also provides a stable, route-agnostic styling
+          hook for pages with fixed visual layers. */}
       <div data-scroll-content id="content">
         {children}
         <SiteFooter />

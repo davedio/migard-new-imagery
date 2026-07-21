@@ -6,6 +6,7 @@ import EconomicsFlow from "@/components/site/EconomicsFlow";
 import { Statement } from "@/components/site/rhythm";
 import { Actions, Card, CardGrid, CtaBand, PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { BENCHMARK_STATUS_NOTES } from "@/lib/siteCopy";
 import { createPageMetadata } from "@/lib/siteMetadata";
 import styles from "./participate.module.css";
 
@@ -18,13 +19,13 @@ export const metadata = createPageMetadata("participate");
 
 const economicsSteps = [
   {
-    title: "Fees fund the network",
-    body: "Users pay ADA fees, estimated 10 to 30x cheaper than L1, to fund Operators and Watchers.",
+    title: "Fees pay Operators",
+    body: "Users pay ADA fees, 10 to 30x lower than L1. Operators earn transaction, deposit, and withdrawal fees.",
     tone: "green",
   },
   {
-    title: "Roles earn for the work",
-    body: "Operators earn transaction, deposit, and withdrawal fees. Watchers earn from valid fault proofs; parameters finalize during testnet.",
+    title: "Fault proofs reward Watchers",
+    body: "A valid fault proof earns its prover 30–50% of the required Operator bond.",
     tone: "gold",
   },
   {
@@ -62,6 +63,7 @@ export default function ParticipatePage() {
         tone="tree"
         title="Run the protocol."
         sub="Operators earn fees for sequencing transactions. Watchers verify commitments and can earn from a valid fault proof. Both help secure Midgard."
+        body={BENCHMARK_STATUS_NOTES.costReward}
         actions={[
           { label: "Register interest", href: OFFICIAL_LINKS.intakeForm, variant: "primary" },
           { label: "Open GitHub", href: OFFICIAL_LINKS.github, variant: "ghost", icon: <GitHubIcon size={15} /> },
@@ -79,7 +81,7 @@ export default function ParticipatePage() {
 
       <Section
         id="roles"
-        title="Operators and Watchers."
+        title="Operators and Watchers"
         cols
         aside={
           <Statement
@@ -101,7 +103,7 @@ export default function ParticipatePage() {
           <Card
             title="Watcher"
             delay={60}
-            body="Anyone can run a Watcher, with no bond or selection. Watchers replay blocks and earn an estimated 30–50% of a slashed bond for a valid fault proof."
+            body="Once public participation opens, anyone can run a Watcher without a bond or selection. Watchers replay blocks and can earn 30–50% of the required Operator bond for a valid fault proof."
           />
         </CardGrid>
         <div className={styles.rolesCta}>
@@ -116,15 +118,15 @@ export default function ParticipatePage() {
 
       <Section
         id="economics"
-        title="Economics."
-        lead="Get paid to operate and protect the network. A slashed bond costs more than honest sequencing ever earns."
+        title="Economics"
+        lead="Get paid to operate and protect the network. A valid fault proof forfeits the Operator's bond and rewards the prover."
       >
         <EconomicsFlow steps={economicsSteps} ariaLabel="How network economics fit together" />
       </Section>
 
       <Section
         id="different"
-        title="Security you can verify."
+        title="Security you can verify"
         lead="Cardano settles the state. Bonds and fault proofs make honest sequencing the better incentive."
         cols
       >

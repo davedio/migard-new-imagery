@@ -4,13 +4,13 @@
    DescentPreviewLoop — a compact, TIME-based (not scroll) looping
    teaser of the transaction descent, for the home page.
 
-   The ~12s loop, over the watercolor trunk plate:
-     · a fine moving trace travels down a gentle S-curve, canopy → roots
+   The ~10s loop, over the SAME signature tree used by the home hero:
+     · a visible signal packet travels down the painted tree, canopy → roots
      · GREEN through the canopy third            (execution)
      · GOLD pulse + brief mid-trunk hold with a
-       subtle expanding ring                     (verification beat)
+       pair of expanding rings                   (verification beat)
      · COBALT as it sinks into the roots, then a
-       clean blue ring at the bottom             (settled)
+       clean blue settlement halo at the bottom (settled)
      · 1.5s rest, loop.
 
    Overlay: three tiny stage labels (Execute · Verify · Settle) that
@@ -26,8 +26,8 @@
      · devicePixelRatio clamped to 1.5, ResizeObserver-aware
      · motion off → ONE static settled frame, zero loops
 
-   Theme: reads <html data-theme> via MutationObserver (like
-   FireflyField). Night plate under /dark, day plate otherwise.
+   Theme: reads <html data-theme> via MutationObserver so the hero-matched
+   night/day plate never flashes in the wrong mode.
 
    Layout contract: the component FILLS ITS PARENT — give the parent
    a size (it renders a position:relative wrapper; the canvas and
@@ -41,11 +41,26 @@ import {
   type ReactNode,
 } from "react";
 import { useMotionPref } from "@/lib/motion";
+import { useTheme } from "@/lib/theme";
 import styles from "./DescentPreviewLoop.module.css";
 
-/* ---- plates (night lives under /dark, same repo convention as theme.tsx) */
-const PLATE_DARK = "/dark/img/watercolor/trunk-flow-tall.avif";
-const PLATE_LIGHT = "/img/watercolor/trunk-flow-tall.avif";
+/* ---- exact home-hero vista, reused here instead of a separate tree painting */
+const HERO_TREE = {
+  dark: {
+    avif:
+      "/dark/img/tree/tree-hero-vista-1280.avif 1280w, /dark/img/tree/tree-hero-vista-1920.avif 1920w, /dark/img/tree/tree-hero-vista-2880.avif 2880w",
+    webp:
+      "/dark/img/tree/tree-hero-vista-1280.webp 1280w, /dark/img/tree/tree-hero-vista-1920.webp 1920w, /dark/img/tree/tree-hero-vista-2880.webp 2880w",
+    fallback: "/dark/img/tree/tree-hero-vista-1920.webp",
+  },
+  light: {
+    avif:
+      "/img/tree/tree-hero-vista-1280.avif 1280w, /img/tree/tree-hero-vista-1920.avif 1920w, /img/tree/tree-hero-vista-2880.avif 2880w",
+    webp:
+      "/img/tree/tree-hero-vista-1280.webp 1280w, /img/tree/tree-hero-vista-1920.webp 1920w, /img/tree/tree-hero-vista-2880.webp 2880w",
+    fallback: "/img/tree/tree-hero-vista-1920.webp",
+  },
+} as const;
 
 /* ---- stage palette (scene color language) ---- */
 const GREEN: RGB = [74, 222, 128]; // execution
@@ -54,12 +69,13 @@ const COBALT: RGB = [120, 185, 255]; // settlement
 type RGB = [number, number, number];
 
 /* ---- loop timeline ---- */
-const TRAVEL_MS = 12000;
+const TRAVEL_MS = 9000;
 const REST_MS = 1500;
 const TOTAL_MS = TRAVEL_MS + REST_MS;
-const HOLD_A = 0.38; // verification hold begins (t, 0..1 of travel)
-const HOLD_B = 0.52; // hold ends
-const LAND = 0.9; // trace reaches the roots; settle cue begins
+const HOLD_A = 0.34; // verification hold begins (t, 0..1 of travel)
+const HOLD_B = 0.51; // hold ends
+const LAND = 0.91; // signal reaches the roots; settle cue begins
+const CHECKPOINTS = [0.12, 0.5, 0.96] as const;
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
 const smooth = (t: number) => {
@@ -95,34 +111,18 @@ function sOf(t: number): number {
 
 /** Execute / Verify / Settle band for the label overlay */
 function stageOf(t: number): 0 | 1 | 2 {
-  if (t >= LAND) return 2;
-  const s = sOf(t);
-  if (s < 0.32) return 0;
-  if (s < 0.66) return 1;
+  if (t < HOLD_A) return 0;
+  if (t < HOLD_B + 0.06) return 1;
   return 2;
-}
-
-/** Watch <html data-theme>; null until mounted (avoids a wrong-plate flash
-    and any SSR/CSR mismatch — the plate renders once the theme is known). */
-function useDocTheme(): "light" | "dark" | null {
-  const [theme, setTheme] = useState<"light" | "dark" | null>(null);
-  useEffect(() => {
-    const el = document.documentElement;
-    const read = () => setTheme(el.dataset.theme === "dark" ? "dark" : "light");
-    read();
-    const mo = new MutationObserver(read);
-    mo.observe(el, { attributes: true, attributeFilter: ["data-theme"] });
-    return () => mo.disconnect();
-  }, []);
-  return theme;
 }
 
 const STAGE_LABELS = ["Execute", "Verify", "Settle"] as const;
 const STAGE_CAPTIONS = [
-  "Transactions confirmed in seconds (estimated).",
+  "Transactions confirmed in seconds.",
   "Watchers verify the commitment before final settlement.",
   "Rooted securely to the Cardano blockchain.",
 ] as const;
+const STATIC_CAPTION = "Execute, verify, and settle securely to Cardano.";
 const STAGE_CLASS_KEYS = ["sGreen", "sGold", "sCobalt"] as const;
 
 export default function DescentPreviewLoop({
@@ -134,10 +134,10 @@ export default function DescentPreviewLoop({
   children?: ReactNode;
 }) {
   const { motionOn } = useMotionPref();
-  const theme = useDocTheme();
+  const { theme } = useTheme();
   const rootRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const themeRef = useRef<"light" | "dark" | null>(theme);
+  const themeRef = useRef<"light" | "dark">(theme);
   const [stage, setStage] = useState<0 | 1 | 2>(motionOn ? 0 : 2);
   const stageRef = useRef<0 | 1 | 2>(stage);
 
@@ -158,13 +158,14 @@ export default function DescentPreviewLoop({
     /* glows and lines: 1.5 is visually clean at half the fill cost of 2 */
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 
-    /* ---- the gentle S-curve, canopy → roots ---- */
+    /* The hero vista is art-directed around x≈66%. This narrow S follows the
+       actual canopy/trunk/root spine after object-fit cropping at every size. */
     const pathX = (s: number) =>
       W *
-      (0.5 +
-        0.11 * Math.sin(s * Math.PI * 2.1 + 0.5) +
-        0.035 * Math.sin(s * Math.PI * 4.7 + 2));
-    const pathY = (s: number) => H * (0.05 + 0.9 * s);
+      (0.665 +
+        0.018 * Math.sin(s * Math.PI * 2.1 + 0.35) -
+        0.009 * Math.sin(s * Math.PI * 4.2));
+    const pathY = (s: number) => H * (0.16 + 0.68 * s);
 
     const setStageSafe = (st: 0 | 1 | 2) => {
       if (stageRef.current === st) return;
@@ -179,8 +180,46 @@ export default function DescentPreviewLoop({
         themeRef.current === "light" ? "source-over" : "lighter";
     };
 
-    /* ---- a restrained moving trace, not a glowing orb ---- */
-    const TAIL = 18;
+    const pointAt = (s: number) => ({ x: pathX(s), y: pathY(s) });
+    const drawRoute = () => {
+      ctx.globalCompositeOperation = "source-over";
+      ctx.strokeStyle =
+        themeRef.current === "light"
+          ? "rgba(20, 73, 43, 0.3)"
+          : "rgba(196, 224, 202, 0.2)";
+      ctx.lineWidth = 1.4;
+      ctx.lineCap = "round";
+      ctx.setLineDash([3, 7]);
+      ctx.beginPath();
+      for (let i = 0; i <= 44; i++) {
+        const point = pointAt(i / 44);
+        if (i === 0) ctx.moveTo(point.x, point.y);
+        else ctx.lineTo(point.x, point.y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    };
+
+    const drawCheckpoints = (progress: number, active: 0 | 1 | 2) => {
+      CHECKPOINTS.forEach((checkpoint, index) => {
+        const point = pointAt(checkpoint);
+        const color = [GREEN, GOLD, COBALT][index];
+        const reached = progress + 0.015 >= checkpoint;
+        const isActive = index === active;
+        ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${reached ? 0.9 : 0.34})`;
+        ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${reached ? 0.92 : 0.26})`;
+        ctx.lineWidth = isActive ? 1.8 : 1.15;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, isActive ? 7 : 5, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, isActive ? 2.7 : 2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+
+    /* ---- a clear but restrained signal packet + short wake ---- */
+    const TAIL = 22;
     const tail: { x: number; y: number }[] = [];
     let lastT = -1;
 
@@ -198,11 +237,12 @@ export default function DescentPreviewLoop({
       if (tail.length > TAIL) tail.shift();
 
       ctx.clearRect(0, 0, W, H);
+      drawRoute();
       beginGlow();
 
       if (tail.length > 1) {
-        ctx.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.36)`;
-        ctx.lineWidth = 1.2;
+        ctx.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.72)`;
+        ctx.lineWidth = 3;
         ctx.lineCap = "round";
         ctx.beginPath();
         tail.forEach((point, index) => {
@@ -212,56 +252,83 @@ export default function DescentPreviewLoop({
         ctx.stroke();
       }
 
-      /* verification beat — gold pulse + one clean expanding ring */
+      const active = stageOf(t);
+      drawCheckpoints(s, active);
+
+      /* The moving packet is a small diamond with a crisp halo, readable over
+         both plates without allocating a per-frame gradient or shadow blur. */
+      ctx.strokeStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.76)`;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(x, y, 10, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.98)`;
+      ctx.fillRect(-4, -4, 8, 8);
+      ctx.restore();
+
+      /* verification beat — two clearly separated gold checkpoint pulses */
       if (t >= HOLD_A && t < HOLD_B + 0.04) {
         const k = clamp01((t - HOLD_A) / (HOLD_B - HOLD_A));
-        const rr = 9 + smooth(k) * 36;
-        ctx.strokeStyle = `rgba(${GOLD[0]}, ${GOLD[1]}, ${GOLD[2]}, ${(0.55 * (1 - k)).toFixed(3)})`;
+        for (const delay of [0, 0.42]) {
+          const pulse = clamp01((k - delay) / (1 - delay));
+          const rr = 12 + smooth(pulse) * 42;
+          ctx.strokeStyle = `rgba(${GOLD[0]}, ${GOLD[1]}, ${GOLD[2]}, ${(0.62 * (1 - pulse)).toFixed(3)})`;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.arc(x, y, rr, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+
+      /* settle cue — the packet resolves into a persistent cobalt root halo */
+      if (t >= LAND) {
+        const f = clamp01((t - LAND) / (1 - LAND));
+        const rr = 12 + smooth(f) * 46;
+        ctx.strokeStyle = `rgba(${COBALT[0]}, ${COBALT[1]}, ${COBALT[2]}, ${(0.22 + 0.46 * (1 - f)).toFixed(3)})`;
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.arc(x, y, rr, 0, Math.PI * 2);
         ctx.stroke();
       }
 
-      /* settle cue — one clean blue ring at the roots */
-      if (t >= LAND) {
-        const f = clamp01((t - LAND) / (1 - LAND));
-        const rr = 8 + smooth(f) * 44;
-        ctx.strokeStyle = `rgba(${COBALT[0]}, ${COBALT[1]}, ${COBALT[2]}, ${(0.5 * (1 - f)).toFixed(3)})`;
-        ctx.lineWidth = 1.25;
-        ctx.beginPath();
-        ctx.arc(x, y, rr, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
       ctx.globalCompositeOperation = "source-over";
-      setStageSafe(stageOf(t));
+      setStageSafe(active);
     };
 
     const drawRestFrame = () => {
-      ctx.clearRect(0, 0, W, H);
-      setStageSafe(2);
-      tail.length = 0;
-      lastT = -1;
+      drawTravelFrame(1);
     };
 
     /* ---- motion-off: ONE static settled frame ---- */
     const drawStatic = () => {
       ctx.clearRect(0, 0, W, H);
+      drawRoute();
       beginGlow();
-      /* faint vein hint of the full route */
-      const STEPS = 36;
-      ctx.lineWidth = 1.25;
+      /* Full colored route + all three checkpoints: no motion is required to
+         understand Execute → Verify → Settle. */
+      const STEPS = 44;
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = "round";
       for (let i = 0; i < STEPS; i++) {
         const s0 = i / STEPS;
         const s1 = (i + 1) / STEPS;
         const c = rampRGB(colorU((s0 + s1) / 2));
-        ctx.strokeStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.22)`;
+        ctx.strokeStyle = `rgba(${c[0]}, ${c[1]}, ${c[2]}, 0.66)`;
         ctx.beginPath();
         ctx.moveTo(pathX(s0), pathY(s0));
         ctx.lineTo(pathX(s1), pathY(s1));
         ctx.stroke();
       }
+      drawCheckpoints(1, 2);
+      const settled = pointAt(1);
+      ctx.strokeStyle = `rgba(${COBALT[0]}, ${COBALT[1]}, ${COBALT[2]}, 0.5)`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(settled.x, settled.y, 20, 0, Math.PI * 2);
+      ctx.stroke();
       ctx.globalCompositeOperation = "source-over";
       setStageSafe(2);
     };
@@ -270,15 +337,20 @@ export default function DescentPreviewLoop({
     let raf = 0;
     let running = false;
     let inView = false;
+    let startedAt = 0;
     const tick = (now: number) => {
       raf = requestAnimationFrame(tick);
-      const ms = now % TOTAL_MS; // global clock — resumes anywhere in the loop
+      const ms = (now - startedAt) % TOTAL_MS;
       if (ms >= TRAVEL_MS) drawRestFrame();
       else drawTravelFrame(ms / TRAVEL_MS);
     };
     const start = () => {
       if (running) return;
       running = true;
+      startedAt = performance.now();
+      tail.length = 0;
+      lastT = -1;
+      setStageSafe(0);
       raf = requestAnimationFrame(tick);
     };
     const stop = () => {
@@ -321,46 +393,75 @@ export default function DescentPreviewLoop({
       io.disconnect();
       ro.disconnect();
     };
-  }, [motionOn]);
+  }, [motionOn, theme]);
 
-  const plateSrc =
-    theme === null ? null : theme === "dark" ? PLATE_DARK : PLATE_LIGHT;
+  const tree = HERO_TREE[theme];
 
   return (
     <div
       ref={rootRef}
       className={[styles.root, className].filter(Boolean).join(" ")}
+      data-descent-preview
+      data-motion={motionOn ? "on" : "off"}
     >
-      {plateSrc ? (
-        // eslint-disable-next-line @next/next/no-img-element -- full-bleed decorative plate; theme-swapped at runtime
+      <picture>
+        <source
+          type="image/avif"
+          srcSet={tree.avif}
+          sizes="(max-width: 640px) 100vw, (min-width: 1440px) 68vw, 1060px"
+        />
+        <source
+          type="image/webp"
+          srcSet={tree.webp}
+          sizes="(max-width: 640px) 100vw, (min-width: 1440px) 68vw, 1060px"
+        />
         <img
-          src={plateSrc}
+          src={tree.fallback}
           alt=""
           className={styles.plate}
+          data-signature-tree
           draggable={false}
+          decoding="async"
+          loading="lazy"
           aria-hidden="true"
         />
-      ) : null}
+      </picture>
       <div className={styles.veil} aria-hidden="true" />
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
 
       {/* stage readout — decorative echo of the canvas beat */}
-      <div className={styles.stages} aria-hidden="true">
+      <div
+        className={styles.stages}
+        data-stage={stage}
+        data-lifecycle-stage={STAGE_LABELS[stage].toLowerCase()}
+        aria-hidden="true"
+      >
         {STAGE_LABELS.map((label, i) => (
           <span
+            className={styles.stageUnit}
+            data-state={i < stage ? "complete" : i === stage ? "active" : "upcoming"}
             key={label}
-            className={[styles.stageLabel, styles[STAGE_CLASS_KEYS[i]]].join(" ")}
-            data-on={stage === i ? "true" : "false"}
           >
-            {i > 0 ? <i className={styles.dot}>·</i> : null}
-            {label}
+            {i > 0 ? <i className={styles.connector}>→</i> : null}
+            <span
+              className={[styles.stageLabel, styles[STAGE_CLASS_KEYS[i]]].join(" ")}
+              data-lifecycle-label={label.toLowerCase()}
+              data-state={i < stage ? "complete" : i === stage ? "active" : "upcoming"}
+            >
+              <b>{String(i + 1).padStart(2, "0")}</b>
+              {label}
+            </span>
           </span>
         ))}
       </div>
 
       {/* live caption — one readable sentence narrating the current beat */}
       <p className={styles.caption} data-stage={stage} aria-hidden="true">
-        {STAGE_CAPTIONS[stage]}
+        {motionOn ? STAGE_CAPTIONS[stage] : STATIC_CAPTION}
+      </p>
+      <p className={styles.srOnly}>
+        Transaction lifecycle illustration: execute on Midgard, verify the commitment, then settle
+        to Cardano.
       </p>
 
       {children ? <div className={styles.cta}>{children}</div> : null}

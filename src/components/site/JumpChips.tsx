@@ -151,13 +151,8 @@ export default function JumpChips({
     (id: string) => {
       const el = document.getElementById(id);
       if (!el) return;
-      /* window.scrollTo, not el.scrollIntoView — the journey page runs a
-         custom smooth-scroll hook that position:fixed + transforms the
-         [data-scroll-content] wrapper, which breaks scrollIntoView's
-         scrollable-ancestor walk (it would silently no-op there). A
-         viewport-rect-based target works on every page because it only
-         ever reads the CURRENT rendered position, transform or not —
-         the same technique the journey act's own beat-jump uses. */
+      /* Use the shared viewport-rect-based jump so sticky-nav offsets and
+         motion preferences behave consistently on every page. */
       setActiveId(id);
       lockUntilRef.current = performance.now() + CLICK_LOCK_MS;
       scrollToSection(id, motionOn);

@@ -6,7 +6,7 @@ extend, or re-skin the theme from scratch: the palette, the art style, the
 exact image-generation prompts and settings, the asset pipeline, and the rules
 for wiring art into pages without hurting readability.
 
-Last updated: 2026-07-11 (light-mode art pass). Dark mode: pending.
+Last updated: 2026-07-21 (dark brand-default and two-theme parity decision).
 
 ---
 
@@ -20,9 +20,14 @@ Last updated: 2026-07-11 (light-mode art pass). Dark mode: pending.
   diagrams, people, or UI. They set atmosphere behind real content.
 - **Calm by default, one loud moment per page.** Most of every page is still.
   Each page gets at most one self-running animation.
+- **Dark is the primary brand expression; light has equal finish.** When no
+  theme is specified, design and implementation start in dark. Light remains
+  a complete Midgard experience with the same hierarchy, polish, and care.
 - **Honesty is a design feature.** Simulated data is labelled SIMULATED.
-  Forward-looking numbers say "estimated". There is no token language
-  anywhere except scam warnings on FAQ / Official Links.
+  Forward-looking performance, cost, and reward figures use one clear
+  benchmark-status note per page or section; repeat copy states the figures
+  directly. There is no token language anywhere except scam warnings on FAQ /
+  Official Links.
 
 ## 2. Palette and type
 
@@ -210,15 +215,32 @@ Backdrop washes live in `src/app/v2.css` (~line 4015, `.page-backdrop*`):
   contexts (FAQ token question, Official Links). Everywhere else: "fees are
   paid in ADA", "nothing new to hold". When sweeping, grep `src/` INCLUDING
   `src/lib/` (copy hubs live there).
-- Forward-looking numbers carry "estimated" (300x, seconds, 30–50%).
+- Forward-looking performance, cost, and reward figures use one clear benchmark-status note per page or section. Repeat copy states the figures directly without inline qualifiers.
 - No IOG partnership claims, no wallet-brand prose on the home page
   (partners appear only as ecosystem logo bubbles).
 - Never change copy during design passes — structure and motion only.
 
-## 10. Dark mode (pending pass — the recipe that worked before)
+## 10. Theme brand policy
 
-When light mode is signed off, regenerate each plate as a **night version of
-the same composition** (pass the light image as the composition reference):
+**Dark is Midgard's primary brand expression and the first-visit default.**
+When a design, preview, or implementation does not specify a theme, start in
+dark. A saved visitor preference remains authoritative, and the nav toggle
+persists the visitor's choice.
+
+**Light mode is an equal-quality brand presentation, not a fallback.** It must
+retain the same content, hierarchy, spacing, interaction states, motion
+quality, and visual richness as dark mode. Choosing dark as the default must
+never be used to defer, simplify, or remove light-mode treatment.
+
+A theme-aware feature is not complete until:
+
+- dark and light both meet contrast and readability requirements;
+- hover, focus, active, responsive, and reduced-motion states work in both;
+- paired artwork keeps the same composition, crop, and subject placement;
+- desktop and mobile have been visually checked in both themes.
+
+Every new plate needs a **night version of the same composition** (pass the
+light image as the composition reference):
 - trees/stones stay natural and dark (silhouettes, warm bark in shadow) —
   the mint/emerald **sap-light becomes the dominant light source**, as thin
   crisp threads, never thick neon tubes
@@ -226,7 +248,7 @@ the same composition** (pass the light image as the composition reference):
   fireflies ONLY on the main tree images
 - match each light image's crop exactly (resize to the same file's
   dimensions, `fit: "cover"`), drop into `public/dark/img/watercolor/`
-  replacing the placeholder copies. No code changes needed.
+  replacing the paired asset. No component changes should be needed.
 
 ## 11. Checklist: adding a themed page from scratch
 
@@ -234,9 +256,9 @@ the same composition** (pass the light image as the composition reference):
    sentinels; user action → paths/stones/streams; reference → carved runes).
 2. Generate with the master template + correct style ref (§4). 2–3 tries;
    pick the one with the most usable negative space.
-3. Convert + install (§5), including the dark placeholder copies.
+3. Convert + install (§5), including the matching dark assets.
 4. Wire `PageBackdrop` with a sensible `focus`; add `vivid` only if pale (§6).
-5. Screenshot at desktop width in light mode; check every headline and
-   DataRow against the art. Nudge `focus` before touching scrims (§7).
+5. Screenshot at desktop width in dark and light modes; check every headline
+   and DataRow against the art. Nudge `focus` before touching scrims (§7).
 6. Keep the page's sections to the established shapes (PageHero → JumpChips
    → Section/Statement/DataRows/CardGrid) so it reads as the same book.

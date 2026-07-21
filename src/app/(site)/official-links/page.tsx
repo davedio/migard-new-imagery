@@ -18,13 +18,16 @@ const canonicalRows = [
     external: true,
   },
   {
-    label: "Whitepaper (coming soon)",
-    body: "The full protocol design will be published soon.",
+    label: "Technical specification",
+    body: "The public working draft published from the official Midgard repository.",
+    meta: "↗",
+    href: OFFICIAL_LINKS.technicalSpec,
+    external: true,
   },
   {
     label: "Preprod contracts",
-    body: "Contract addresses and state anchors will be published at launch.",
-    href: "/status",
+    body: "The public static snapshot of contract addresses, state anchors, and genesis history.",
+    href: "/developers#contracts",
   },
   {
     label: "Discord",
@@ -75,7 +78,7 @@ export default function OfficialLinksPage() {
         compact
         tone="ink"
         label="Trust & safety"
-        title="Official links."
+        title="Official links"
         sub="Official Midgard links. If it is not listed here, it is not us."
       />
 
@@ -100,7 +103,7 @@ export default function OfficialLinksPage() {
         />
       </Section>
 
-      <Section id="links" title="The canonical list." cols>
+      <Section id="links" title="The canonical list" cols>
         <DataRows rows={canonicalRows} ariaLabel="Canonical Midgard links" />
       </Section>
 

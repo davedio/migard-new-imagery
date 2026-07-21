@@ -617,7 +617,9 @@ h2 em,
   border-top: 1px solid var(--hairline);
   /* its own scrim: link contrast holds even with the lighter stage veil */
   background: linear-gradient(180deg, rgba(4, 8, 5, 0.25), rgba(4, 8, 5, 0.92) 55%);
-  padding-top: 0;
+  /* Restore a deliberate handoff from the final page section into the sitemap.
+     The V2 reset previously collapsed the shared footer's top padding to zero. */
+  padding-top: clamp(56px, 6vw, 88px);
 }
 .site-footer__col h4 {
   color: var(--text-faint);
@@ -2430,6 +2432,18 @@ h2 em,
   text-wrap: pretty;
 }
 
+.minimal-hero__copy > p.minimal-hero__benchmark-note {
+  max-width: 760px;
+  margin-top: 18px;
+  padding: 12px 14px;
+  border-left: 2px solid var(--green-bright);
+  background: color-mix(in srgb, var(--panel) 76%, transparent);
+  font-family: var(--font-mono);
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
 .minimal-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2869,6 +2883,18 @@ h2 em,
   line-height: 1.18;
   letter-spacing: 0;
   text-align: left;
+}
+
+/* FluidTokens is the longest unbroken icon-card label. Give it enough room on
+   laptop-and-up rows instead of pushing the mono label below its 14px floor. */
+@media (min-width: 641px) {
+  .partner-magnet-card[data-partner="FluidTokens"] {
+    width: 168px;
+  }
+
+  .partner-magnet-card[data-partner="FluidTokens"] .partner-magnet-card__name {
+    white-space: nowrap;
+  }
 }
 
 [data-theme="light"] .partner-magnet-card__name {
@@ -5592,6 +5618,12 @@ h2 em,
     padding-top: 34px;
   }
 
+  /* The desktop frame is intentionally cinematic. Phones get a shorter
+     version with the caption above a full-width action, never underneath it. */
+  .minimal-descent-stage {
+    height: clamp(360px, 52svh, 420px);
+  }
+
   .faq-decision-card {
     padding: 18px;
   }
@@ -5622,7 +5654,7 @@ h2 em,
   }
 
   .site-footer {
-    padding-top: 44px;
+    padding-top: clamp(48px, 13vw, 56px);
     padding-bottom: 48px;
   }
 }

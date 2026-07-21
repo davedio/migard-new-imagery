@@ -5,7 +5,7 @@
   min-height: clamp(174px, 22vw, 228px);
   place-items: center;
   max-width: 760px;
-  margin: 0 auto;
+  margin: clamp(24px, 3vw, 36px) auto 0;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--panel-edge-strong) 78%, var(--green-bright));
   border-radius: 12px;

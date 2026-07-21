@@ -180,6 +180,10 @@ a {
   z-index: 1;
   pointer-events: none;
 }
+.scene-stage[data-journey-active="false"] {
+  opacity: 0;
+  visibility: hidden;
+}
 
 /* ============================================================
    PHOTOREAL PLATE BACKDROP (How It Works variant)
@@ -2034,7 +2038,10 @@ button.panel:hover {
 .page-hero .body {
   margin-top: 16px;
   max-width: 680px;
-  font-size: clamp(16.5px, 1.48vw, 19px);
+  padding: 12px 14px;
+  border-left: 2px solid var(--green-bright);
+  background: color-mix(in srgb, var(--panel) 76%, transparent);
+  font: 14.5px/1.55 var(--font-mono);
   color: var(--text-dim);
 }
 
@@ -3150,12 +3157,10 @@ a.card:focus-visible {
    route are untouched.
    ============================================================ */
 
-/* Stacking: the smooth-scroll hook sets `position: fixed` on the
-   [data-scroll-content] wrapper, which makes it a stacking context. The
-   fixed .scene-stage (portaled to body) sits at z-index:1, so the wrapper
-   needs to win to keep page content above the 3D. Lift it only when it
-   holds the experience — scoped via :has() so every other route keeps the
-   original static layering untouched. */
+/* Stacking: the fixed .scene-stage (portaled to body) sits at z-index:1, so
+   the scrolling wrapper needs to win to keep page content above the scene.
+   Lift it only when it holds the experience — scoped via :has() so every
+   other route keeps the original static layering untouched. */
 [data-scroll-content]:has(.page-main--hiw-experience) {
   position: relative;
   z-index: 2;
@@ -4025,8 +4030,7 @@ a.card:focus-visible {
 /* ---- journey act: intro/cue fade + short-viewport static fallback ---- */
 /* The cue clears almost immediately (gone by ~4% of the act); the intro
    copy hands off to the floating stage badge by ~14%. Driven per-frame via
-   --journey-p (set in HowItWorksExperience), so it inherits the inertial
-   scroll smoothing. */
+   --journey-p (set in HowItWorksExperience) from native scroll progress. */
 .hiw-act__cue {
   opacity: calc(1 - min(var(--journey-p, 0) * 24, 1));
 }
@@ -4324,7 +4328,7 @@ a.chip:hover {
 }
 
 /* ============================================================
-   LIGHT PREVIEW THEME — data-theme="light" is forced before paint.
+   LIGHT THEME OVERRIDES — selected by a saved preference or the nav toggle.
    ============================================================ */
 :root[data-theme="light"] {
   /* proof gold deepens to stay legible on the bright plate */

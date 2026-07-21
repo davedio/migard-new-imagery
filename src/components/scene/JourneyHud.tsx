@@ -59,7 +59,7 @@ export default function JourneyHud({ progress }: { progress: MotionValue<number>
   }, [watching]);
 
   return (
-    <div className={styles.hud} aria-hidden="true">
+    <div className={styles.hud} data-journey-hud aria-hidden="true">
       <div className={styles.spineWrap}>
         <TreeSpine count={BEATS} activeIndex={beat} className={styles.spine} />
         <span className={styles.beatName} data-beat={beat}>

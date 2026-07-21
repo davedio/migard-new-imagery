@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { faqGroupId, Section } from "@/components/site/ui";
+import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 /* =========================================================================
    FaqSections — the grouped Q&A embedded on /learn.
@@ -8,8 +10,9 @@ import { faqGroupId, Section } from "@/components/site/ui";
    (token, Hydra, custody, liveness, cost, wallet, speed, earnings, mainnet)
    with the claims rulings applied — token answers are present-tense scoped
    only (Base-style: state today's facts, promise nothing about the future),
-   percentages carry "estimated", no hard-finality durations, no wallet
-   names, no "mathematically verified". Rows render statically — no reveal
+   no hard-finality durations, no wallet names, no "mathematically verified".
+   The page-level benchmark note carries performance, cost, and reward status.
+   Rows render statically — no reveal
    slabs. Styles come from the existing .faq-* and .faq-basics-shell classes.
    ========================================================================= */
 
@@ -19,11 +22,11 @@ export const FAQ_GROUPS = [
     items: [
       {
         q: "What is Midgard?",
-        a: "Midgard is a Cardano-native optimistic rollup for UTXO finance, designed for faster, lower-cost execution while verified state settles through Cardano L1.",
+        a: "Midgard is a Cardano-native optimistic rollup for faster, lower-cost UTXO finance while verified state settles through Cardano L1.",
       },
       {
         q: "Is Midgard live?",
-        a: "Midgard will be live soon on Cardano preprod, not mainnet. Check Network Status and GitHub before integrating.",
+        a: "Protocol contracts are deployed on Cardano preprod. Public pre-alpha access and mainnet are not live. Check Network Status and GitHub before integrating.",
       },
       {
         q: "Does Midgard have a token?",
@@ -43,7 +46,7 @@ export const FAQ_GROUPS = [
       },
       {
         q: "Can existing UTXO apps use Midgard?",
-        a: "That is the goal: give UTXO applications a faster execution layer while preserving familiar development and security assumptions where possible.",
+        a: "Midgard is designed for Cardano dApps that use UTXO transaction logic. Integration requirements will be documented with public pre-alpha access.",
       },
       {
         q: "How does third-party bridge security relate to Midgard?",
@@ -56,15 +59,15 @@ export const FAQ_GROUPS = [
     items: [
       {
         q: "What does it cost to use Midgard?",
-        a: "Fees are paid in ADA. Midgard executes off-chain and commits compact data to Cardano; comparisons follow benchmarks.",
+        a: "Fees are paid in ADA. Midgard executes off-chain and commits compact data to Cardano.",
       },
       {
         q: "Do I need a new wallet or asset?",
-        a: "No. You use ADA and a Cardano wallet you already have. Supported wallets are announced through official channels as each testnet phase confirms them.",
+        a: "Fees are paid in ADA, and no separate Midgard fee asset is required. Supported wallet flows will be announced through official channels.",
       },
       {
         q: "How fast are transactions?",
-        a: "You get a soft confirmation in seconds (estimated); your transaction is usable right away. Final settlement follows on Cardano after the block's challenge window closes with no valid fault proof.",
+        a: "You get a soft confirmation in seconds; your transaction is usable right away. Final settlement follows on Cardano after the block's challenge window closes with no valid fault proof.",
       },
       {
         q: "Who holds my funds?",
@@ -85,7 +88,7 @@ export const FAQ_GROUPS = [
       },
       {
         q: "Does that mean Midgard is impossible to hack?",
-        a: "No responsible protocol should promise that. The attack surface is narrower than many on-chain finance systems, and the most important logic can be inspected, challenged, and formally checked.",
+        a: "No. No protocol is immune to vulnerabilities. Midgard reduces specific risks through public contracts, fault proofs, independent Watchers, and Cardano settlement, but application code, wallets, infrastructure, data availability, and implementation bugs can still create risk.",
       },
       {
         q: "What do Watchers do?",
@@ -106,7 +109,7 @@ export const FAQ_GROUPS = [
       },
       {
         q: "How do Operators and Watchers earn?",
-        a: "Operators earn from committed transactions, deposits, and withdrawals. A valid fault proof targets an estimated 30–50% of the slashed bond; parameters finalize during testnet.",
+        a: "Operators earn from committed transactions, deposits, and withdrawals. A valid fault proof earns its prover 30–50% of the required Operator bond.",
       },
       {
         q: "How do I avoid scams?",
@@ -118,7 +121,9 @@ export const FAQ_GROUPS = [
       },
       {
         q: "Where do I report a security issue?",
-        a: "Use the official security-policy route and preserve evidence. Midgard will never ask for your seed phrase, private key, recovery phrase, or password.",
+        a: "Report it privately through the Vulnerability Disclosure Policy. Preserve logs and other evidence, and never post exploit details publicly. Midgard will never ask for your seed phrase, private key, recovery phrase, or password.",
+        href: `${OFFICIAL_LINKS.securityPolicy}#how-to-report`,
+        cta: "Open private reporting instructions",
       },
     ],
   },
@@ -128,7 +133,7 @@ export default function FaqSections({ cols = false }: { cols?: boolean }) {
   return (
     <Section
       id="faq"
-      title="Frequently asked questions."
+      title="Frequently asked questions"
       lead="Short answers on what Midgard is, how its security works, and what to check before relying on it."
       cols={cols}
     >
@@ -154,7 +159,15 @@ export default function FaqSections({ cols = false }: { cols?: boolean }) {
                       key={qa.q}
                     >
                       <h4 className="q" id={questionId}>{qa.q}</h4>
-                      <p className="a">{qa.a}</p>
+                      <p className="a">
+                        {qa.a}
+                        {"href" in qa && qa.href ? (
+                          <>
+                            {" "}
+                            <Link href={qa.href}>{qa.cta} →</Link>
+                          </>
+                        ) : null}
+                      </p>
                     </article>
                   );
                 })}

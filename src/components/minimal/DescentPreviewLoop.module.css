@@ -12,10 +12,10 @@
   overflow: hidden;
   isolation: isolate;
   border-radius: var(--r-lg, 4px);
-  background: #060a07; /* void behind the plate while it loads */
+  background: #030805; /* night matte behind the signature tree while it loads */
 }
 :global([data-theme="light"]) .root {
-  background: #e9eee3;
+  background: #eee8dc;
 }
 
 .plate {
@@ -24,32 +24,30 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 50%;
+  /* Keep the hero tree at the same visual anchor through every crop. Wide
+     screens retain the valley; narrow frames crop the valley, not the tree. */
+  object-position: 66% 50%;
+  filter: saturate(1.05) contrast(1.04) brightness(0.92);
   user-select: none;
   -webkit-user-select: none;
 }
+:global([data-theme="light"]) .plate {
+  filter: saturate(1.03) contrast(1.02) brightness(0.98);
+}
 
-/* whisper of contrast for the labels / CTA, top and bottom */
+/* Local contrast for the flow HUD and CTA while the tree remains visible. */
 .veil {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(4, 7, 5, 0.18),
-    transparent 28%,
-    transparent 62%,
-    rgba(4, 7, 5, 0.42)
-  );
+  background:
+    linear-gradient(180deg, rgba(3, 8, 5, 0.5), transparent 29%, transparent 60%, rgba(3, 8, 5, 0.58)),
+    radial-gradient(90% 110% at 66% 46%, transparent 32%, rgba(2, 6, 4, 0.2) 82%);
 }
 :global([data-theme="light"]) .veil {
-  background: linear-gradient(
-    180deg,
-    rgba(246, 241, 232, 0.12),
-    transparent 28%,
-    transparent 66%,
-    rgba(246, 241, 232, 0.4)
-  );
+  background:
+    linear-gradient(180deg, rgba(249, 245, 237, 0.24), transparent 31%, transparent 62%, rgba(238, 231, 217, 0.62)),
+    radial-gradient(90% 110% at 66% 46%, transparent 34%, rgba(238, 231, 217, 0.16) 84%);
 }
 
 .canvas {
@@ -64,58 +62,116 @@
 
 .stages {
   position: absolute;
-  top: 14px;
-  left: 16px;
+  top: 16px;
+  left: 18px;
+  z-index: 3;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  max-width: calc(100% - 36px);
+  padding: 9px 12px;
+  border: 1px solid rgba(222, 235, 225, 0.14);
+  border-radius: 999px;
+  background: rgba(4, 10, 6, 0.68);
+  backdrop-filter: blur(9px) saturate(1.05);
+  -webkit-backdrop-filter: blur(9px) saturate(1.05);
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   pointer-events: none;
+}
+:global([data-theme="light"]) .stages {
+  border-color: rgba(20, 42, 27, 0.17);
+  background: rgba(251, 247, 238, 0.78);
+}
+
+.stageUnit {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .stageLabel {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
   color: var(--text-faint, #6f7d72);
-  opacity: 0.6;
+  opacity: 0.46;
   transition:
     color 400ms ease,
-    opacity 400ms ease;
+    opacity 400ms ease,
+    transform 400ms ease;
 }
-.dot {
+.stageLabel b {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.68;
+}
+.connector {
   font-style: normal;
   color: var(--text-faint, #6f7d72);
-  opacity: 0.5;
+  opacity: 0.34;
+  transition: color 400ms ease, opacity 400ms ease;
 }
 
 /* stage accents — execution / verification / settlement */
-.stageLabel[data-on="true"] {
-  opacity: 1;
+.stageLabel[data-state="complete"] {
+  opacity: 0.72;
 }
-.sGreen[data-on="true"] {
+.stageLabel[data-state="active"] {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+.sGreen[data-state="active"],
+.sGreen[data-state="complete"] {
   color: #4ade80;
 }
-.sGold[data-on="true"] {
+.sGold[data-state="active"],
+.sGold[data-state="complete"] {
   color: #ffc840;
 }
-.sCobalt[data-on="true"] {
+.sCobalt[data-state="active"],
+.sCobalt[data-state="complete"] {
   color: #78b9ff;
 }
+.stageUnit[data-state="active"] .connector,
+.stageUnit[data-state="complete"] .connector {
+  color: currentColor;
+  opacity: 0.72;
+}
 /* deeper accents for legibility over the daylight plate */
-:global([data-theme="light"]) .sGreen[data-on="true"] {
+:global([data-theme="light"]) .sGreen[data-state="active"],
+:global([data-theme="light"]) .sGreen[data-state="complete"] {
   color: #0c7d36;
 }
-:global([data-theme="light"]) .sGold[data-on="true"] {
+:global([data-theme="light"]) .sGold[data-state="active"],
+:global([data-theme="light"]) .sGold[data-state="complete"] {
   color: #8a6115;
 }
-:global([data-theme="light"]) .sCobalt[data-on="true"] {
+:global([data-theme="light"]) .sCobalt[data-state="active"],
+:global([data-theme="light"]) .sCobalt[data-state="complete"] {
   color: #2447b8;
 }
+
+/* Reduced motion shows the full sequence as a static, fully colored key. */
+.root[data-motion="off"] .stageLabel {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.root[data-motion="off"] .connector {
+  transition: none;
+}
+.root[data-motion="off"] .sGreen { color: #4ade80; }
+.root[data-motion="off"] .sGold { color: #ffc840; }
+.root[data-motion="off"] .sCobalt { color: #78b9ff; }
+:global([data-theme="light"]) .root[data-motion="off"] .sGreen { color: #0c7d36; }
+:global([data-theme="light"]) .root[data-motion="off"] .sGold { color: #8a6115; }
+:global([data-theme="light"]) .root[data-motion="off"] .sCobalt { color: #2447b8; }
 
 /* ---- CTA slot (bottom-right) ---- */
 
@@ -147,28 +203,60 @@
   bottom: 16px;
   z-index: 3;
   margin: 0;
-  max-width: 60%;
-  font-size: 16px;
+  max-width: min(58%, 540px);
+  padding: 8px 11px;
+  border-left: 2px solid currentColor;
+  border-radius: 0 5px 5px 0;
+  background: rgba(4, 10, 6, 0.58);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  font-size: 15.5px;
   line-height: 1.4;
   color: rgba(236, 242, 234, 0.92);
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
-  transition: opacity 0.3s ease;
+  transition: color 0.3s ease, border-color 0.3s ease;
 }
-.caption[data-stage="0"] { color: #b9f0c6; }
-.caption[data-stage="1"] { color: #ffd98f; }
-.caption[data-stage="2"] { color: #b9d6ff; }
+.caption[data-stage="0"] {
+  color: #b9f0c6;
+}
+.caption[data-stage="1"] {
+  color: #ffd98f;
+}
+.caption[data-stage="2"] {
+  color: #b9d6ff;
+}
 :global([data-theme="light"]) .caption {
+  background: rgba(251, 247, 238, 0.74);
   color: rgba(20, 34, 24, 0.9);
   text-shadow: 0 1px 6px rgba(255, 252, 244, 0.6);
 }
-:global([data-theme="light"]) .caption[data-stage="0"] { color: #0c7d36; }
-:global([data-theme="light"]) .caption[data-stage="1"] { color: #8a6115; }
-:global([data-theme="light"]) .caption[data-stage="2"] { color: #2b6cb0; }
+:global([data-theme="light"]) .caption[data-stage="0"] {
+  color: #0c7d36;
+}
+:global([data-theme="light"]) .caption[data-stage="1"] {
+  color: #8a6115;
+}
+:global([data-theme="light"]) .caption[data-stage="2"] {
+  color: #2b6cb0;
+}
 @media (max-width: 640px) {
-  /* The desktop frame is intentionally cinematic. Phones get a shorter
-     version with the caption above a full-width action, never underneath it. */
-  :global(.minimal-descent-stage) {
-    height: clamp(360px, 52svh, 420px);
+  .stages {
+    top: 12px;
+    left: 12px;
+    gap: 5px;
+    max-width: calc(100% - 24px);
+    padding: 8px 10px;
+    font-size: 10.5px;
+    letter-spacing: 0.055em;
+  }
+
+  .stageUnit,
+  .stageLabel {
+    gap: 4px;
+  }
+
+  .stageLabel b {
+    font-size: 8px;
   }
 
   .caption {
@@ -176,6 +264,7 @@
     bottom: 76px;
     left: 14px;
     max-width: none;
+    padding: 7px 9px;
     font-size: 14.5px;
     line-height: 1.35;
   }

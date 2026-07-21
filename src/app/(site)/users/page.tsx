@@ -2,7 +2,7 @@ import JumpChips from "@/components/site/JumpChips";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { DataRows, Statement } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
-import { OFFICIAL_LINKS } from "@/lib/officialLinks";
+import { BENCHMARK_STATUS_NOTES } from "@/lib/siteCopy";
 import { createPageMetadata } from "@/lib/siteMetadata";
 import styles from "./users.module.css";
 
@@ -11,7 +11,7 @@ export const metadata = createPageMetadata("users");
 const benefitRows = [
   {
     label: "Faster app feel",
-    body: "Transactions become usable in seconds (estimated) while settlement continues on Cardano L1.",
+    body: "Transactions become usable in seconds while settlement continues on Cardano L1.",
   },
   {
     label: "A clearer exit path",
@@ -24,11 +24,11 @@ const benefitRows = [
 const economicsRows = [
   {
     label: "What you pay",
-    body: "Fees in ADA, estimated 10 to 30x cheaper than L1.",
+    body: "Fees paid in ADA, 10 to 30x lower than L1. No new fee asset is required.",
   },
   {
     label: "What you hold",
-    body: "ADA and the Cardano wallet you already have. Nothing new to buy, bridge, or manage.",
+    body: "ADA for fees. No separate Midgard fee asset to buy, hold, or manage.",
   },
   {
     label: "Where value settles",
@@ -58,18 +58,9 @@ const simplePathRows = [
 
 const statusRows = [
   {
-    label: "Pre-alpha testnet",
-    body: "Midgard will be live soon on Cardano preprod. Do not treat testnet activity as mainnet use.",
-  },
-  {
-    label: "No seed phrases",
-    body: "Midgard will never ask for your seed phrase or private keys.",
-  },
-  {
-    label: "Use official links",
-    body: "Start from the official channels before testing any app, form, or community link.",
-    href: OFFICIAL_LINKS.discord,
-    external: true,
+    label: "Preprod and scam safety",
+    body: "The next public phase runs on Cardano preprod; use test ADA only. There is no Midgard token, sale, or airdrop. Start from official links, and never share a seed phrase or private key.",
+    href: "/official-links",
   },
 ] as const;
 
@@ -83,8 +74,9 @@ export default function UsersPage() {
         compact
         tone="moss"
         label="Users"
-        title="Same apps. Same Cardano security. New speed."
-        sub="Use familiar Cardano apps with estimated-second confirmations, ADA fees estimated 10 to 30x lower than L1, and verified Cardano settlement."
+        title="Faster execution for Cardano apps"
+        sub="Confirmations in seconds, fees paid directly in ADA, and settlement through Cardano L1."
+        body={BENCHMARK_STATUS_NOTES.performanceCost}
         actions={[
           { label: "Learn how it works", href: "/learn", variant: "primary" },
           { label: "Read FAQs", href: "/learn#faq", variant: "ghost" },
@@ -101,11 +93,11 @@ export default function UsersPage() {
         ]}
       />
 
-      <Section id="applications" title="Applications running on Midgard." tight>
+      <Section id="applications" title="Applications coming to Midgard" tight>
         <div
           className={styles.applicationBoard}
           role="img"
-          aria-label="Applications running on Midgard. Coming soon."
+          aria-label="Applications coming to Midgard. Coming soon."
         >
           <div className={styles.applicationTiles} aria-hidden="true">
             {Array.from({ length: 6 }, (_, index) => (
@@ -118,7 +110,7 @@ export default function UsersPage() {
 
       <Section
         id="benefits"
-        title="Why it feels different."
+        title="Why it feels different"
         cols
       >
         <DataRows rows={benefitRows} ariaLabel="User benefits" />
@@ -126,7 +118,7 @@ export default function UsersPage() {
 
       <Section
         id="economics"
-        title="Fees and settlement."
+        title="Fees and settlement"
         cols
       >
         <DataRows rows={economicsRows} ariaLabel="User economics" />
@@ -134,7 +126,7 @@ export default function UsersPage() {
 
       <Section
         id="path"
-        title="The simple path."
+        title="The simple path"
         cols
         aside={
           <Statement
@@ -148,7 +140,7 @@ export default function UsersPage() {
         <DataRows rows={simplePathRows} ariaLabel="Simple Midgard user path" />
       </Section>
 
-      <Section id="status" title="What to know right now." tight cols>
+      <Section id="status" title="What to know right now" tight cols>
         <DataRows rows={statusRows} ariaLabel="User status and safety notes" />
       </Section>
     </main>

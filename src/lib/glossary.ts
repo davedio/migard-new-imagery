@@ -51,10 +51,10 @@ export const GLOSSARY = {
   },
   "soft-confirmation": {
     term: "soft confirmation",
-    def: "The confirmation you can act on: reached in seconds (estimated), backed by the Operator's bond, ahead of final settlement.",
+    def: "The confirmation you can act on: reached in seconds, backed by the Operator's bond, ahead of final settlement.",
   },
   "state-queue": {
-    term: "state queue",
+    term: "State Queue",
     def: "The on-chain queue of committed block headers on Cardano, each awaiting its challenge window before folding into confirmed state.",
   },
   "data-availability": {
@@ -62,7 +62,7 @@ export const GLOSSARY = {
     def: "Block data being public and retrievable so anyone can replay it; Midgard's dedicated layer is in development.",
   },
   "da-committee": {
-    term: "data availability committee",
+    term: "Data Availability Committee",
     def: "The planned set of nodes that attest a block's data is retrievable, separate from the Operators who sequence blocks.",
   },
   "archive-node": {

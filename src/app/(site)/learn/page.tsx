@@ -8,7 +8,7 @@ import SoftConfirmFeed from "@/components/site/SoftConfirmFeed";
 import { DataRows } from "@/components/site/rhythm";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
-import { DEVELOPER_COPY } from "@/lib/siteCopy";
+import { BENCHMARK_STATUS_NOTES, DEVELOPER_COPY } from "@/lib/siteCopy";
 import { createPageMetadata } from "@/lib/siteMetadata";
 import styles from "../how-it-works/page.module.css";
 import learnStyles from "@/components/site/learn.module.css";
@@ -17,9 +17,9 @@ export const metadata = createPageMetadata("learn");
 
 const securityRows = [
   {
-    label: "At launch: contract addresses",
-    body: "Contract addresses and state anchors will be published at launch.",
-    href: "/status",
+    label: "Preprod contracts",
+    body: "Protocol contracts and the static genesis snapshot are public on Cardano preprod.",
+    href: "/developers#contracts",
   },
   {
     label: "During confirmation: Watchers",
@@ -63,35 +63,36 @@ const stripCells = [
   {
     k: "Throughput",
     v: "Up to 300x",
-    s: "Estimated design target.",
+    s: "Execution throughput compared with Cardano L1.",
   },
   {
     k: "Fees",
     v: "Low, stable, paid in ADA",
-    s: "Estimated 10 to 30x cheaper than L1.",
+    s: "10 to 30x cheaper than L1.",
   },
   {
     k: "Security",
     v: "Open source",
-    s: "Public contracts and formal verification work make security claims checkable.",
-    cta: "Review formal verification work",
-    href: OFFICIAL_LINKS.blaster,
+    s: "Public contracts and fault-proof logic make the trust path open to inspection.",
+    cta: "Inspect the protocol source",
+    href: OFFICIAL_LINKS.github,
   },
   {
     k: "Soft confirmations",
     v: "Seconds",
-    s: "Transactions become usable in seconds (estimated) while settlement continues on Cardano.",
+    s: "Transactions become usable in seconds while settlement continues on Cardano.",
   },
   {
     k: "Execution model",
     v: "UTXO-native",
-    s: "Applications keep their UTXO design and gain faster execution, with no EVM translation layer.",
+    s: "Midgard is designed around UTXO transaction logic, without an EVM translation layer.",
   },
 ] as const;
 
 const FAQ_JSONLD = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  description: BENCHMARK_STATUS_NOTES.performanceCostReward,
   mainEntity: FAQ_GROUPS.flatMap((group) =>
     group.items.map((item) => ({
       "@type": "Question",
@@ -120,8 +121,9 @@ export default function LearnPage() {
           <PageHero
             compact
             label="Learn Midgard"
-            title="Midgard Overview."
+            title="Midgard Overview"
             sub="How Midgard works, what makes it checkable, and the terms used across the protocol."
+            body={BENCHMARK_STATUS_NOTES.performanceCostReward}
           />
 
           <JumpChips
@@ -138,7 +140,7 @@ export default function LearnPage() {
 
           <Section
             id="basics"
-            title="Summary view."
+            title="Summary view"
           >
             <ol className={learnStyles.primerList} aria-label="Midgard overview">
               {primerSteps.map((step) => (
@@ -157,8 +159,8 @@ export default function LearnPage() {
 
           <Section
             id="proof-metrics"
-            title="The key numbers."
-            lead="Five indicators: estimated where forward-looking, checkable where source is public."
+            title="The key numbers"
+            lead="Five indicators covering performance, cost, security, and execution."
           >
             <div className={styles.strip} role="list" aria-label="Key performance and security indicators">
               {stripCells.map((item) => (
@@ -195,7 +197,7 @@ export default function LearnPage() {
 
           <Section
             id="security"
-            title="Security, in plain language."
+            title="Security, in plain language"
             lead="What is public, who checks it, and where final state settles."
           >
             <DataRows rows={securityRows} ariaLabel="Security assumptions" />
@@ -207,7 +209,7 @@ export default function LearnPage() {
         <FaqSections cols />
         <Section
           id="glossary"
-          title="Glossary."
+          title="Glossary"
           lead="The language of execution, verification, and settlement, defined in plain English."
           cols
         >

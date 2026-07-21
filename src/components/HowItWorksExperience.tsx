@@ -16,7 +16,6 @@ import {
   journeyStageIndex,
 } from "@/lib/journeyStages";
 import { useMotionPref } from "@/lib/motion";
-import { useSmoothScroll } from "@/lib/useSmoothScroll";
 import { useTheme, themedAsset } from "@/lib/theme";
 
 /* ============================================================
@@ -33,20 +32,11 @@ import { useTheme, themedAsset } from "@/lib/theme";
    Commit -> data availability check -> Watch -> Settle · L1). The detailed textual sections below
    the act reinforce what the 3D just showed.
 
-   This component owns the two RESN-class interaction systems, all
-   desktop + fine-pointer + motion-on only and fully bypassed under
-   reduced motion (so the page reads as normally-stacked sections over
-   a single composed frame):
-
-     1. inertial smooth scroll (useSmoothScroll) — native scrollbar
-        kept, the (site) layout's [data-scroll-content] wrapper is
-        rAF-lerped for weight.
-     2. live visual progress shared by every stage label and indicator.
-
-   Because the experience mounts only on this route and unmounts on
-   navigation, these systems activate ONLY where this component is mounted —
-   useSmoothScroll clears its fixed-layout hijack on unmount, so every
-   other route is untouched.
+   Native scrolling drives the act. Its live visual progress is shared by
+   every stage label and indicator, and the expensive scene work is active
+   only while the pinned journey itself is on screen. Compact, reduced-motion,
+   and resource-constrained devices use the same calm static frame plus the
+   complete six-step recap below it.
    ============================================================ */
 
 // The photoreal tree plate parallax-pans canopy -> roots with live green
@@ -78,12 +68,9 @@ function MotionToggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   );
 }
 
-/* Render fixed overlay layers into <body>, OUTSIDE the smooth-scroll
-   transform wrapper. A `position: fixed` element inside a transformed
-   ancestor is positioned relative to that ancestor and would be dragged
-   by the scroll translate; portaling to body keeps the 3D stage, HUD,
-   cursor and toggle truly viewport-fixed. SSR-safe (renders nothing
-   until mounted). */
+/* Render fixed overlay layers into <body>, outside the scrolling content.
+   Portaling keeps the scene, HUD, and toggle truly viewport-fixed while the
+   journey act moves beneath them. SSR-safe (renders nothing until mounted). */
 function BodyPortal({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -163,6 +150,11 @@ const EXPLAINER_STEPS = [
    "not the same tree". The orb draws its own light path down the measured
    trunk, so the plate needs no painted sap-vein. */
 const WATER_COLOR_JOURNEY_PLATE = "/img/watercolor/journey-descent-hero.avif";
+
+type NavigatorWithResourceHints = Navigator & {
+  deviceMemory?: number;
+  connection?: { saveData?: boolean };
+};
 
 function JourneyAct({
   actRef,
@@ -279,7 +271,7 @@ export default function HowItWorksExperience({
   }, []);
 
   // Truly tiny viewports (landscape phones, embedded webviews) can't host the
-  // pinned 800vh journey — fall back to the static composed frame + the
+  // pinned journey — fall back to the static composed frame + the
   // stacked recap sections (same path reduced motion uses). Laptops always
   // get the ride: the threshold sits below any normal browser window.
   // Mirrors the CSS @media (max-height: 480px) rules in globals.css.
@@ -306,7 +298,33 @@ export default function HowItWorksExperience({
     return () => mq.removeEventListener("change", apply);
   }, []);
 
-  const journeyOn = motionOn && !shortViewport && !compactViewport;
+  // Browser-provided capability hints let weaker laptops take the established
+  // static path before the canvas and long pinned act start. Save-Data is an
+  // explicit signal; four or fewer logical cores / 4 GB or less are common
+  // indicators that the full-screen compositing workload is a poor trade.
+  const [resourceConstrained, setResourceConstrained] = useState(false);
+  const [runtimeFallback, setRuntimeFallback] = useState(false);
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    const nav = navigator as NavigatorWithResourceHints;
+    const cores = nav.hardwareConcurrency || 0;
+    const memory = nav.deviceMemory || 0;
+    const frame = requestAnimationFrame(() => {
+      setResourceConstrained(
+        nav.connection?.saveData === true ||
+          (cores > 0 && cores <= 4) ||
+          (memory > 0 && memory <= 4),
+      );
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const journeyOn =
+    motionOn &&
+    !shortViewport &&
+    !compactViewport &&
+    !resourceConstrained &&
+    !runtimeFallback;
   const advanced = journeyOn && finePointer;
 
   // Always use the TALL plate so EVERY viewport (incl. desktop) genuinely
@@ -314,21 +332,12 @@ export default function HowItWorksExperience({
   // wide/short viewports defeated the "travel down the tree" descent.
   const wide = false;
 
-  // --- inertial smooth scroll (whole-page transform) ---
-  // The hook keeps the native scrollbar but rAF-lerps the (site) layout's
-  // [data-scroll-content] wrapper for weight. We don't read its whole-page
-  // progress for the scene (the journey is scoped to the ACT, below); we keep
-  // the hook for the buttery transform that the act-progress then inherits.
-  const smoothProgressRef = useRef(0);
-  useSmoothScroll(smoothProgressRef, journeyOn);
-
   // --- journey progress, scoped to the ACT span ---
   // The scene plays the FULL canopy -> L1 descent across the tall act, so the
   // transaction is watched settling within it (not stretched over the whole
-  // page behind opaque sections). Computed each rAF from the act element's
-  // rect, which reflects the smooth-scroll transform — so the descent inherits
-  // the inertial smoothing for free. 0 when the act top hits the viewport top;
-  // 1 once its bottom has scrolled up to the viewport bottom.
+  // page behind opaque sections). Native scroll remains the source of truth:
+  // 0 when the act top hits the viewport top; 1 once its bottom reaches the
+  // viewport bottom.
   const actRef = useRef<HTMLElement | null>(null);
   const journeyProgressRef = useRef(0);
   const sceneProgressRef = useRef(0);
@@ -342,32 +351,164 @@ export default function HowItWorksExperience({
   // transaction on the tree — one source of truth, no drift from the comet.
   const packetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
+  // Preload the scene shortly before the act, but make it visible and active
+  // as soon as the act enters the viewport so its first visible edge is never
+  // blank. The floating UI waits for the sticky/pinned interval. At the release
+  // boundary (when the act bottom reaches the viewport bottom), every scene
+  // layer is hidden before later FAQ and glossary content can enter.
+  const [sceneNearby, setSceneNearby] = useState(false);
+  const [actActive, setActActive] = useState(false);
+  const [overlayActive, setOverlayActive] = useState(false);
+  useEffect(() => {
+    let frame = 0;
+
+    const setInactive = () => {
+      setActActive(false);
+      setOverlayActive(false);
+      setSceneNearby(false);
+    };
+    const measure = () => {
+      frame = 0;
+      const act = actRef.current;
+      if (!act || document.visibilityState !== "visible") {
+        setInactive();
+        return;
+      }
+
+      const rect = act.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const nearby =
+        rect.bottom > -viewportHeight && rect.top < viewportHeight * 2;
+      const active = journeyOn
+        ? rect.top < viewportHeight && rect.bottom >= viewportHeight
+        : rect.top < viewportHeight && rect.bottom > 0;
+      const overlay = journeyOn
+        ? rect.top <= 0 && rect.bottom >= viewportHeight
+        : active;
+
+      setSceneNearby(nearby);
+      setActActive(active);
+      setOverlayActive(overlay);
+    };
+    const scheduleMeasure = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState !== "visible") {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        setInactive();
+      } else {
+        scheduleMeasure();
+      }
+    };
+
+    measure();
+    window.addEventListener("scroll", scheduleMeasure, { passive: true });
+    window.addEventListener("resize", scheduleMeasure);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleMeasure);
+      window.removeEventListener("resize", scheduleMeasure);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [journeyOn]);
+
+  // Capability hints are incomplete on many browsers, so verify the real
+  // experience as it runs. Two sustained low-frame-rate windows switch to the
+  // complete static path; a single decode or scroll hitch is not enough.
+  useEffect(() => {
+    if (!actActive || !journeyOn || runtimeFallback) return;
+
+    let raf = 0;
+    let last = 0;
+    let sampleStart = 0;
+    let frames = 0;
+    let slowFrames = 0;
+    let consecutivePoorWindows = 0;
+
+    const tick = (now: number) => {
+      if (!sampleStart) {
+        // Let the plate decode and the compositor warm up before measuring.
+        sampleStart = now + 1000;
+        last = now;
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+      if (now < sampleStart) {
+        last = now;
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+
+      const delta = now - last;
+      last = now;
+      // Ignore a background-tab pause; visibility handling suspends the scene.
+      if (delta < 250) {
+        frames += 1;
+        if (delta > 30) slowFrames += 1;
+      }
+
+      const elapsed = now - sampleStart;
+      if (elapsed >= 2000) {
+        const fps = frames / (elapsed / 1000);
+        const slowRatio = frames > 0 ? slowFrames / frames : 1;
+        const poor = fps < 42 || slowRatio > 0.4;
+        consecutivePoorWindows = poor ? consecutivePoorWindows + 1 : 0;
+
+        if (consecutivePoorWindows >= 2) {
+          setRuntimeFallback(true);
+          return;
+        }
+
+        sampleStart = now;
+        frames = 0;
+        slowFrames = 0;
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [actActive, journeyOn, runtimeFallback]);
+
   // Every label follows the scene's already-eased progress so the transaction,
   // stage card, beat chips, and HUD all change together.
   const stageProgress = useMotionValue(0);
   useEffect(() => {
+    const act = actRef.current;
+    if (!actActive || !act) return;
+
+    if (!journeyOn) {
+      const staticProgress = 0.42;
+      journeyProgressRef.current = staticProgress;
+      sceneProgressRef.current = staticProgress;
+      act.style.setProperty("--journey-p", staticProgress.toFixed(4));
+      stageProgress.set(staticProgress);
+      return;
+    }
+
     let raf = 0;
     const tick = () => {
-      const act = actRef.current;
-      if (act) {
-        const rect = act.getBoundingClientRect();
-        const span = Math.max(1, rect.height - window.innerHeight);
-        journeyProgressRef.current = clamp(-rect.top / span);
-        // drives the intro/cue fade-out in CSS — the scroll cue must clear
-        // long before the released panel can slide under the nav logo.
-        act.style.setProperty("--journey-p", journeyProgressRef.current.toFixed(4));
-        const beats = beatsRef.current;
-        if (beats) {
-          const active = journeyStageIndex(sceneProgressRef.current);
-          if (beats.dataset.active !== String(active)) {
-            beats.dataset.active = String(active);
-            /* mirror the visual active state for assistive tech — only runs
-               when the active beat CHANGES, not every frame */
-            beats.querySelectorAll("button").forEach((btn, i) => {
-              if (i === active) btn.setAttribute("aria-current", "step");
-              else btn.removeAttribute("aria-current");
-            });
-          }
+      const rect = act.getBoundingClientRect();
+      const span = Math.max(1, rect.height - window.innerHeight);
+      journeyProgressRef.current = clamp(-rect.top / span);
+      // drives the intro/cue fade-out in CSS — the scroll cue must clear
+      // long before the released panel can slide under the nav logo.
+      act.style.setProperty("--journey-p", journeyProgressRef.current.toFixed(4));
+      const beats = beatsRef.current;
+      if (beats) {
+        const active = journeyStageIndex(sceneProgressRef.current);
+        if (beats.dataset.active !== String(active)) {
+          beats.dataset.active = String(active);
+          /* mirror the visual active state for assistive tech — only runs
+             when the active beat CHANGES, not every frame */
+          beats.querySelectorAll("button").forEach((btn, i) => {
+            if (i === active) btn.setAttribute("aria-current", "step");
+            else btn.removeAttribute("aria-current");
+          });
         }
       }
       stageProgress.set(sceneProgressRef.current);
@@ -375,12 +516,9 @@ export default function HowItWorksExperience({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [stageProgress]);
+  }, [actActive, journeyOn, stageProgress]);
 
-  // Jump the (real, native) scroll position so the act lands on beat i's
-  // midpoint. The smooth-scroll hook above already lerps window.scrollY into
-  // a buttery transform, so a plain scrollTo here inherits that easing for
-  // free — no separate animation path to keep in sync.
+  // Jump the native scroll position so the act lands on beat i's midpoint.
   const jumpToBeat = useCallback((index: number) => {
     const act = actRef.current;
     if (!act) return;
@@ -394,39 +532,47 @@ export default function HowItWorksExperience({
 
   return (
     <>
-      {/* Fixed/viewport layers live in <body>, escaping the smooth-scroll
-          transform wrapper so they stay truly fixed (see BodyPortal). */}
+      {/* Fixed/viewport layers live in <body> so they stay truly fixed. */}
       <BodyPortal>
-        <div className="scene-stage">
-          <PhotorealBackdrop
-            key={plateSrc}
-            plateSrc={plateSrc}
-            progressRef={journeyProgressRef}
-            visualProgressRef={sceneProgressRef}
-            packetRef={packetRef}
-            motionOn={journeyOn}
-            wide={wide}
-          />
-          {/* the floating on-tree stage badge lives INSIDE .scene-stage so it
-              sits over the plate + post stack; it anchors to the live packet
-              (packetRef) and rides the journey. Tracking is gated to advanced
-              (desktop + fine pointer + motion-on); otherwise a static label. */}
-          <StageGraphic
-            progress={stageProgress}
-            packetRef={packetRef}
-            enabled={advanced}
-          />
-          {/* spine rail + live Watcher readout — desktop, motion-on only */}
-          {advanced ? <JourneyHud progress={stageProgress} /> : null}
-        </div>
+        {sceneNearby ? (
+          <div
+            className="scene-stage"
+            data-journey-active={actActive ? "true" : "false"}
+            aria-hidden={!actActive}
+          >
+            <PhotorealBackdrop
+              key={plateSrc}
+              active={actActive}
+              plateSrc={plateSrc}
+              progressRef={journeyProgressRef}
+              visualProgressRef={sceneProgressRef}
+              packetRef={packetRef}
+              motionOn={journeyOn && actActive}
+              wide={wide}
+            />
+            {/* The on-tree badge exists only while the act owns the viewport,
+                so it cannot drift over the FAQ/glossary that follow. */}
+            {overlayActive ? (
+              <StageGraphic
+                progress={stageProgress}
+                packetRef={packetRef}
+                enabled={advanced}
+              />
+            ) : null}
+            {/* spine rail + live Watcher readout — desktop, motion-on only */}
+            {overlayActive && advanced ? <JourneyHud progress={stageProgress} /> : null}
+          </div>
+        ) : null}
         <MotionToggle on={motionOn} onToggle={toggle} />
       </BodyPortal>
 
-      {/* The scrolling content. The (site) layout wraps this + the footer in
-          [data-scroll-content], which the inertial-scroll hook translates.
-          The journey act is transparent over the fixed plate; the detailed
+      {/* The journey act is transparent over the fixed plate; the detailed
           sections below stay opaque. */}
-      <main className="page-main page-main--how-it-works page-main--hiw-experience">
+      <main
+        className="page-main page-main--how-it-works page-main--hiw-experience"
+        data-journey-mode={journeyOn ? "immersive" : "static"}
+        data-performance-fallback={runtimeFallback ? "true" : undefined}
+      >
         {beforeJourney}
         <JourneyAct
           actRef={actRef}
