@@ -32,7 +32,7 @@ import { useTheme } from "@/lib/theme";
 import { BENCHMARK_STATUS_NOTES, SITE_COPY } from "@/lib/siteCopy";
 
 /* lens diameter in px — keep in sync with .hero-rift__hole in v2.css */
-const HOLE = 56;
+const HOLE = 88;
 
 export default function HeroRiftCursor() {
   const { motionOn } = useMotionPref();
