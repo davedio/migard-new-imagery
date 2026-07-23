@@ -3863,6 +3863,205 @@ h2 em,
   }
 }
 
+/* ------------------------------------------------------------
+   HERO RIFT — a clean circular cursor lens into the OTHER theme's
+   hero world (HeroRiftCursor.tsx). The circle trails the pointer
+   (JS transform) and fades in/out; the world inside counter-
+   translates from the SAME eased position, so the revealed page —
+   art and text — is always pinned to the viewport: only the window
+   moves. data-rift-theme is the theme being REVEALED, so its art
+   grading + scrim + page color are pinned here and do not follow
+   the page's own [data-theme] overrides. */
+.hero-rift {
+  /* body-portaled, ABOVE the hero copy (z 2) and below the fixed nav
+     (z 50): inside the lens the other universe replaces this one,
+     text included — the registered ghost glyphs read as the same
+     text flipping color. pointer-events:none keeps the real page
+     interactive through it. */
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+.hero-rift__hole {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 56px; /* keep in sync with HOLE in HeroRiftCursor.tsx */
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  visibility: hidden;
+  opacity: 0;
+  transform: translate3d(-50vw, -50vh, 0) translate(-50%, -50%);
+  will-change: transform, opacity;
+}
+.hero-rift__world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100svh;
+  will-change: transform;
+}
+.hero-rift[data-rift-theme="light"] .hero-rift__world {
+  background-color: #f4efe4; /* the light minimal-site page body */
+}
+.hero-rift[data-rift-theme="dark"] .hero-rift__world {
+  background-color: #07120b; /* --deep-ink, dark */
+}
+.hero-rift__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 53% 46%; /* matches .hero-tree-stage__img framing */
+}
+.hero-rift[data-rift-theme="light"] .hero-rift__img {
+  filter: saturate(1.12) contrast(1.05);
+}
+.hero-rift[data-rift-theme="dark"] .hero-rift__img {
+  filter: saturate(1.04) contrast(1.06) brightness(0.91);
+}
+.hero-rift__scrim {
+  position: absolute;
+  inset: 0;
+}
+.hero-rift[data-rift-theme="light"] .hero-rift__scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(248, 244, 236, 0.9) 0%,
+      rgba(248, 244, 236, 0.5) 32%,
+      rgba(248, 244, 236, 0.08) 60%,
+      transparent 80%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(248, 244, 236, 0.32) 0%,
+      transparent 20%,
+      transparent 56%,
+      rgba(240, 233, 221, 0.72) 92%,
+      rgba(240, 233, 221, 0.92) 100%
+    );
+}
+.hero-rift[data-rift-theme="dark"] .hero-rift__scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(4, 7, 5, 0.8) 0%,
+      rgba(4, 7, 5, 0.48) 32%,
+      rgba(4, 7, 5, 0.14) 60%,
+      transparent 80%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(4, 7, 5, 0.42) 0%,
+      transparent 20%,
+      transparent 52%,
+      rgba(4, 7, 5, 0.74) 92%,
+      rgba(4, 7, 5, 0.88) 100%
+    );
+}
+@media (max-aspect-ratio: 4 / 5) {
+  .hero-rift__img {
+    object-position: 50% 30%;
+  }
+  .hero-rift[data-rift-theme="light"] .hero-rift__scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(248, 244, 236, 0.58) 0%,
+      rgba(248, 244, 236, 0.12) 26%,
+      transparent 46%,
+      rgba(240, 233, 221, 0.82) 88%,
+      rgba(240, 233, 221, 0.95) 100%
+    );
+  }
+  .hero-rift[data-rift-theme="dark"] .hero-rift__scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(4, 7, 5, 0.66) 0%,
+      rgba(4, 7, 5, 0.3) 26%,
+      rgba(4, 7, 5, 0.2) 46%,
+      rgba(4, 7, 5, 0.78) 88%,
+      rgba(4, 7, 5, 0.9) 100%
+    );
+  }
+}
+/* the other universe's hero copy, cloned inside the rift. The
+   data-theme wrapper re-scopes every [data-theme] descendant rule,
+   and the token blocks below re-declare the core palette (the real
+   theme tokens live on :root[data-theme] and cannot cascade from a
+   nested wrapper — keep these in sync with globals.css). */
+.hero-rift__ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  will-change: transform;
+}
+.hero-rift__ghost .minimal-hero__copy {
+  animation: none; /* the real column's entrance already played */
+}
+.hero-rift__ghost[data-theme="light"] {
+  --gold: #8a6512;
+  --gold-bright: #7d5c10;
+  --gold-dim: rgba(125, 92, 16, 0.6);
+  --gold-line: rgba(125, 92, 16, 0.5);
+  --deep-ink: #f1f4ec;
+  --charcoal: #e6ebe1;
+  --mist: #20301f;
+  --paper: #101c13;
+  --obsidian: #e9eee3;
+  --basalt: #edf1e7;
+  --basalt-2: #e5ebde;
+  --panel: #f3f6ee;
+  --panel-edge: rgba(18, 36, 24, 0.13);
+  --panel-edge-strong: rgba(18, 36, 24, 0.22);
+  --green-bright: #0c7d36;
+  --green-dim: rgba(11, 105, 45, 0.65);
+  --green-ghost: rgba(20, 140, 60, 0.1);
+  --green-glow: rgba(20, 150, 62, 0.28);
+  --text-hi: #0e1b13;
+  --text: #17281d;
+  --text-dim: #24392b;
+  --text-faint: #31483a;
+  --bg-1: #eef3e9;
+  --bg-2: #e7ede1;
+  color: var(--text);
+}
+.hero-rift__ghost[data-theme="dark"] {
+  --gold: #cf9a2e;
+  --gold-bright: #e0a33c;
+  --gold-dim: rgba(207, 154, 46, 0.5);
+  --gold-line: rgba(207, 154, 46, 0.42);
+  --deep-ink: #07120b;
+  --charcoal: #101820;
+  --mist: #d7e2d8;
+  --paper: #f8faf5;
+  --obsidian: #050c08;
+  --basalt: #0b1510;
+  --basalt-2: #0e1b14;
+  --panel: #0c1610;
+  --panel-edge: rgba(215, 226, 216, 0.09);
+  --panel-edge-strong: rgba(215, 226, 216, 0.16);
+  --green-bright: #3be863;
+  --green-dim: rgba(32, 190, 67, 0.55);
+  --green-ghost: rgba(32, 190, 67, 0.12);
+  --green-glow: rgba(32, 190, 67, 0.35);
+  --text-hi: #eaf2ec;
+  --text: #b7c6bc;
+  --text-dim: #8fa39a;
+  --text-faint: #6d7f76;
+  --bg-1: #0a150e;
+  --bg-2: #0c1811;
+  color: var(--text);
+}
+html[data-motion="off"] .hero-rift {
+  display: none;
+}
+
 /* -- light page body behind the minimal home -- */
 [data-theme="light"] .minimal-site {
   color: var(--text);

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import ShatterHeading from "@/components/v2/ShatterHeading";
+import StaticHeroHeading from "@/components/minimal/StaticHeroHeading";
 import DescentPreviewLoop from "@/components/minimal/DescentPreviewLoop";
 import { HeroStage } from "@/components/minimal/HeroStage";
 import { MagneticPartnerBoard } from "@/components/minimal/MagneticPartnerBoard";
@@ -104,7 +104,7 @@ export default function MinimalHome() {
       <HeroStage />
       <section id="top" className="minimal-hero" aria-label={SITE_COPY.hero.title}>
         <div className="minimal-hero__copy">
-          <ShatterHeading as="h1" lines={[...SITE_COPY.hero.titleLines]} />
+          <StaticHeroHeading lines={SITE_COPY.hero.titleLines} />
           <p>{SITE_COPY.hero.lead}</p>
           <p className="minimal-hero__benchmark-note">
             {BENCHMARK_STATUS_NOTES.performanceCostReward}

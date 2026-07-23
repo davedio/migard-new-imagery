@@ -16,6 +16,7 @@
    ============================================================ */
 
 import { useEffect, useRef } from "react";
+import HeroRiftCursor from "@/components/minimal/HeroRiftCursor";
 import { useMotionPref } from "@/lib/motion";
 import { useTheme } from "@/lib/theme";
 
@@ -176,6 +177,8 @@ export function HeroTreeImage() {
         </div>
       </div>
       <div className="hero-tree-stage__scrim" />
+      {/* the parallel-universe cursor tear (self-gates: motion + fine pointer) */}
+      <HeroRiftCursor />
     </div>
   );
 }
