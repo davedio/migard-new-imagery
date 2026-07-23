@@ -3864,16 +3864,17 @@ h2 em,
 }
 
 /* ------------------------------------------------------------
-   HERO RIFT — the cursor tears through the fabric of this theme's
-   universe into the OTHER theme's hero world (HeroRiftCursor.tsx).
-   The hole trails the pointer (JS transform); the world inside
-   counter-translates so the parallel universe stays registered
-   with the viewport. data-rift-theme is the theme being REVEALED,
-   so its art grading + scrim + page color are pinned here and do
-   not follow the page's own [data-theme] overrides. */
+   HERO RIFT — a clean circular cursor lens into the OTHER theme's
+   hero world (HeroRiftCursor.tsx). The circle trails the pointer
+   (JS transform) and fades in/out; the world inside counter-
+   translates from the SAME eased position, so the revealed page —
+   art and text — is always pinned to the viewport: only the window
+   moves. data-rift-theme is the theme being REVEALED, so its art
+   grading + scrim + page color are pinned here and do not follow
+   the page's own [data-theme] overrides. */
 .hero-rift {
   /* body-portaled, ABOVE the hero copy (z 2) and below the fixed nav
-     (z 50): inside the tear the other universe replaces this one,
+     (z 50): inside the lens the other universe replaces this one,
      text included — the registered ghost glyphs read as the same
      text flipping color. pointer-events:none keeps the real page
      interactive through it. */
@@ -3886,18 +3887,14 @@ h2 em,
   position: absolute;
   top: 0;
   left: 0;
-  width: 380px; /* keep in sync with HOLE in HeroRiftCursor.tsx */
-  height: 380px;
-  visibility: hidden;
-  transform: translate3d(-50vw, -50vh, 0) translate(-50%, -50%) scale(0);
-  will-change: transform;
-}
-.hero-rift__cut {
-  position: absolute;
-  inset: 0;
+  width: 220px; /* keep in sync with HOLE in HeroRiftCursor.tsx */
+  height: 220px;
+  border-radius: 50%;
   overflow: hidden;
-  /* the jagged tear outline arrives inline from HeroRiftCursor.tsx
-     (same point list as the SVG rim) */
+  visibility: hidden;
+  opacity: 0;
+  transform: translate3d(-50vw, -50vh, 0) translate(-50%, -50%);
+  will-change: transform, opacity;
 }
 .hero-rift__world {
   position: absolute;
@@ -4060,56 +4057,6 @@ h2 em,
   --bg-1: #0a150e;
   --bg-2: #0c1811;
   color: var(--text);
-}
-/* blurred shadow hugging the inside of the cut: the torn fabric has
-   thickness and shades the world beneath it */
-.hero-rift__depth {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-.hero-rift__depth-shadow {
-  fill: none;
-  stroke: rgba(4, 7, 5, 0.55);
-  stroke-width: 10px;
-  vector-effect: non-scaling-stroke;
-}
-.hero-rift[data-rift-theme="dark"] .hero-rift__depth-shadow {
-  /* shading a night world needs a heavier hand to read */
-  stroke: rgba(0, 0, 0, 0.75);
-  stroke-width: 12px;
-}
-/* the torn edge: paper-backing fringe under a mint sap-light burn.
-   non-scaling strokes keep the edge crisp while the tear opens. */
-.hero-rift__rim {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-.hero-rift__rim path {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-.hero-rift__rim-fringe {
-  stroke: rgba(240, 233, 221, 0.75);
-  stroke-width: 3.5px;
-}
-.hero-rift[data-rift-theme="light"] .hero-rift__rim-fringe {
-  /* tearing OUT of the dark world: its edge burns darker */
-  stroke: rgba(4, 7, 5, 0.65);
-}
-.hero-rift__rim-glow {
-  stroke: rgba(59, 232, 99, 0.55);
-  stroke-width: 6px;
-}
-.hero-rift__rim-core {
-  stroke: rgba(174, 255, 198, 0.9);
-  stroke-width: 1.4px;
 }
 html[data-motion="off"] .hero-rift {
   display: none;
