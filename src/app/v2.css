@@ -3887,8 +3887,8 @@ h2 em,
   position: absolute;
   top: 0;
   left: 0;
-  width: 220px; /* keep in sync with HOLE in HeroRiftCursor.tsx */
-  height: 220px;
+  width: 56px; /* keep in sync with HOLE in HeroRiftCursor.tsx */
+  height: 56px;
   border-radius: 50%;
   overflow: hidden;
   visibility: hidden;
