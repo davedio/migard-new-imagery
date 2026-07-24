@@ -4,12 +4,15 @@
    HeroRiftCursor — the hero's "parallel universe" cursor lens.
 
    Moving the pointer over the home hero opens a clean circular
-   window that reveals the OPPOSITE theme's hero — in light mode
-   the night world (and vice versa): its page color, its plate
+   window that reveals the night world: its page color, its plate
    with its own grading, its scrim, and a ghost clone of the hero
-   copy in the other theme's ink, aligned glyph-for-glyph with the
-   real text. Inside the circle the page inverts; outside, nothing
+   copy in dark-mode ink, aligned glyph-for-glyph with the real
+   text. Inside the circle the page inverts; outside, nothing
    changes.
+
+   LIGHT MODE ONLY (Dave, 2026-07-24): the lens is a teaser that
+   makes you want to flip the theme toggle. Once you're in dark
+   mode you've arrived — no lens back into daylight.
 
    Direction 2026-07-23 (Dave): clean circle, small, no border, no
    zoom, and the revealed world must hold PERFECTLY still — only
@@ -60,7 +63,7 @@ export default function HeroRiftCursor() {
   const worldRef = useRef<HTMLDivElement | null>(null);
   const ghostRef = useRef<HTMLDivElement | null>(null);
 
-  const active = motionOn && finePointer;
+  const active = motionOn && finePointer && theme === "light";
 
   useEffect(() => {
     const hole = holeRef.current;
