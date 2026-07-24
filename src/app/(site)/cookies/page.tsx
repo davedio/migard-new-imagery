@@ -2,7 +2,7 @@ import Link from "next/link";
 import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import styles from "@/components/site/LegalDoc.module.css";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Callout, PageHero, Section } from "@/components/site/ui";
+import { PageHero, Section } from "@/components/site/ui";
 import { createPageMetadata } from "@/lib/siteMetadata";
 
 export const metadata = createPageMetadata("cookies");
@@ -17,7 +17,7 @@ const CATEGORIES = [
   {
     category: "Strictly necessary",
     purpose:
-      "Core site delivery, security, load balancing, and remembering essential preferences (such as a cookie-consent choice).",
+      "Core site delivery, security, load balancing, and remembering essential preferences. Today the only value the Site stores is your light/dark theme choice, kept in your browser's local storage.",
     status:
       "In use. These cannot be switched off through the Site because the Site does not work without them.",
   },
@@ -26,7 +26,7 @@ const CATEGORIES = [
     purpose:
       "Understanding aggregate site usage (pages visited, approximate region, referral source) to improve content.",
     status:
-      "Not active. [If adopted: name the tool, e.g. a privacy-focused analytics provider, its cookie names, durations, and whether IP addresses are truncated; activate consent tooling where required before enabling.]",
+      "Not active. If we ever adopt an analytics tool, we will name it here — with its cookie names and durations — before it runs, and add consent tooling where required.",
   },
   {
     category: "Advertising / social",
@@ -97,7 +97,7 @@ const SECTIONS: readonly LegalSection[] = [
         through the cookie settings link in the footer. Because there is no common standard, the
         Site does not currently respond to &lsquo;Do Not Track&rsquo; signals; where legally
         required, we honor recognized opt-out preference signals such as the Global Privacy
-        Control. [Counsel: confirm GPC posture by jurisdiction.]
+        Control.
       </>,
     ],
   },
@@ -125,21 +125,7 @@ export default function CookiesPage() {
         sub="How this site uses cookies and similar technologies."
       />
       <Section tight>
-        <Callout
-          title="Draft for counsel review (not approved for publication)"
-          body="Last updated: June 11, 2026. Bracketed items are open decisions."
-        />
-        <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: June 11, 2026"
-          sections={SECTIONS}
-          footnote={
-            <>
-              Open items: confirm production hosting and any cookies it sets by default [Vercel
-              staging behavior to be verified]; final analytics decision; consent-management
-              tooling if analytics are enabled; GPC handling.
-            </>
-          }
-        />
+        <LegalDoc meta="Midgard Labs, Inc. · Last updated: July 2026" sections={SECTIONS} />
       </Section>
     </main>
   );

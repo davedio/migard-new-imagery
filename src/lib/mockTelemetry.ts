@@ -7,9 +7,10 @@
    where the numbers come from.
 
    ── SWAP POINT ──────────────────────────────────────────────
-   TODO(live-l2): replace the bounded random walk below with the
-   real Midgard L2 telemetry adapter (websocket or polling) while
-   keeping the exported `Telemetry` type and the
+   Simulated: the bounded random walk below stands in for the
+   real Midgard L2 telemetry adapter (websocket or polling). When
+   the live adapter arrives, swap it in here while keeping the
+   exported `Telemetry` type and the
    `subscribeTelemetry(cb): unsubscribe` signature IDENTICAL.
    Nothing downstream should need to change — that is the whole
    point of the contract (repo pattern: mock-first data behind one

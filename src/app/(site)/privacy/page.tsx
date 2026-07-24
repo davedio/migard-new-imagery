@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
+import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
 import { createPageMetadata } from "@/lib/siteMetadata";
@@ -84,20 +84,6 @@ const SECTIONS: readonly LegalSection[] = [
         as testnet interest intake; understand aggregate Site usage; prevent and investigate
         fraud, abuse, phishing, impersonation, and security incidents; comply with legal
         obligations; and establish, exercise, or defend legal claims.
-      </>,
-    ],
-  },
-  {
-    id: "legal-bases",
-    heading: "Legal Bases (EEA and UK Visitors)",
-    paragraphs: [
-      <>
-        Where the EU or UK General Data Protection Regulation applies, we process personal data on
-        these legal bases: consent (for example, mailing-list subscriptions and any non-essential
-        cookies, which you may withdraw at any time); legitimate interests (operating and securing
-        the Site, preventing abuse, responding to messages, and measuring aggregate usage in a
-        privacy-respecting way); and compliance with legal obligations. Where we rely on
-        legitimate interests, we balance them against your rights and expectations.
       </>,
     ],
   },
@@ -228,10 +214,7 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Contact",
     paragraphs: [
       <>
-        Privacy questions and requests: {contact}.{" "}
-        <ReviewFlag>
-          [Counsel: add the registered entity address if disclosure is required]
-        </ReviewFlag>
+        Privacy questions and requests: {contact}.
       </>,
     ],
   },
@@ -249,16 +232,7 @@ export default function PrivacyPage() {
         sub="How Midgard Labs collects, uses, shares, and retains information on this site."
       />
       <Section tight>
-        <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
-          sections={SECTIONS}
-          footnote={
-            <ReviewFlag>
-              Open counsel items: registered-address disclosure; state privacy-law (e.g., CCPA)
-              applicability review.
-            </ReviewFlag>
-          }
-        />
+        <LegalDoc meta="Midgard Labs, Inc. · Last updated: July 2026" sections={SECTIONS} />
       </Section>
     </main>
   );

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
+import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
@@ -105,15 +105,14 @@ const SECTIONS: readonly LegalSection[] = [
   },
   {
     id: "no-token-promises",
-    heading: "No Token, Airdrop, Points, or Reward Promises",
+    heading: "No Promises or Entitlements",
     paragraphs: [
       <>
-        The Site does not offer or promise any token, airdrop, points program, reward, allocation,
-        yield, or eligibility for any future program, and no such offer should be inferred.
-        Visiting the Site, joining a mailing list, completing a form, connecting a wallet, testing
-        software, or participating in community channels creates no entitlement of any kind. Treat
-        any message, page, or post that promises Midgard tokens, airdrops, points, or rewards as a
-        scam, and verify everything against our{" "}
+        There is no Midgard token. The Site does not offer or promise one, and no such offer
+        should be inferred. Visiting the Site, joining a mailing list, completing a form,
+        connecting a wallet, testing software, or participating in community channels creates no
+        entitlement of any kind. Treat any message, page, or post that promises Midgard tokens
+        or rewards as a scam, and verify everything against our{" "}
         <Link href="/official-links">official channels page</Link>. We will never ask for your
         seed phrase, private keys, or passwords.
       </>,
@@ -226,8 +225,7 @@ const SECTIONS: readonly LegalSection[] = [
         OR THE SITE WILL NOT EXCEED THE GREATER OF ONE HUNDRED U.S. DOLLARS (USD 100) OR THE
         AMOUNTS YOU HAVE PAID US FOR USE OF THE SITE IN THE TWELVE MONTHS BEFORE THE CLAIM AROSE.
         SOME JURISDICTIONS DO NOT ALLOW CERTAIN EXCLUSIONS OR LIMITATIONS, SO SOME OF THE ABOVE
-        MAY NOT APPLY TO YOU.{" "}
-        <ReviewFlag>[Counsel: confirm consumer-law carve-outs by jurisdiction]</ReviewFlag>.
+        MAY NOT APPLY TO YOU.
       </>,
     ],
   },
@@ -316,16 +314,7 @@ export default function TermsPage() {
         sub="The terms that govern access to and use of the Midgard website and documentation pages."
       />
       <Section tight>
-        <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
-          sections={SECTIONS}
-          footnote={
-            <ReviewFlag>
-              Open counsel items: consumer-law carve-outs in the limitation of liability
-              (Section 12); registered address and any jurisdiction-required legal notices.
-            </ReviewFlag>
-          }
-        />
+        <LegalDoc meta="Midgard Labs, Inc. · Last updated: July 2026" sections={SECTIONS} />
       </Section>
     </main>
   );

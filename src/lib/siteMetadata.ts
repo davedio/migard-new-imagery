@@ -99,7 +99,7 @@ export const PAGE_METADATA = {
     path: "/official-links",
     title: "Official Links | Midgard",
     description:
-      "Official Midgard links. If it is not listed here, it is not us. Midgard is pre-alpha; there is no token, sale, or airdrop.",
+      "Official Midgard links. If it is not listed here, it is not us. Midgard is pre-alpha; there is no Midgard token. Fees are paid in ADA.",
     image: "/img/watercolor/rune-stones.webp",
     imageWidth: 2200,
     imageHeight: 1228,

@@ -2,7 +2,7 @@ import Link from "next/link";
 import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import styles from "@/components/site/LegalDoc.module.css";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Callout, PageHero, Section } from "@/components/site/ui";
+import { PageHero, Section } from "@/components/site/ui";
 import { createPageMetadata } from "@/lib/siteMetadata";
 
 export const metadata = createPageMetadata("officialChannels");
@@ -81,9 +81,8 @@ const SECTIONS: readonly LegalSection[] = [
       <>
         We never DM first or ask for seed phrases, private keys, passwords, or device access. We
         never ask you to send funds to verify a wallet, unlock a reward, or migrate assets. There
-        is no Midgard token today: no sale, no airdrop &mdash; anyone selling a Midgard token now
-        is running a scam, and anything about the protocol&rsquo;s future comes through official
-        channels first. Official support occurs only in the public channels above.
+        is no Midgard token. Fees are paid in ADA, and anyone selling a Midgard token is running
+        a scam. Official support occurs only in the public channels above.
       </>,
     ],
   },
@@ -114,24 +113,14 @@ export default function OfficialChannelsPage() {
         actions={[{ label: "See the live link list", href: "/official-links", variant: "primary" }]}
       />
       <Section tight>
-        <Callout
-          title="Draft for review"
-          body={
-            <>
-              Publish only after each listed channel is verified and access-controlled. Last
-              updated: July 24, 2026. The confirmed, maintained link list lives at{" "}
-              <Link href="/official-links">/official-links</Link>.
-            </>
-          }
-        />
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 2026"
           sections={SECTIONS}
           footnote={
             <>
-              Open items: confirmed owners and access controls for each listed account (per the
-              existing account-control checklist); decision on listing additional channels
-              (Discord, YouTube, Telegram, Farcaster) only when actually controlled and
+              The confirmed, maintained link list lives at{" "}
+              <Link href="/official-links">/official-links</Link>. Additional channels (Discord,
+              YouTube, Telegram, Farcaster) will be listed only when actually controlled and
               monitored.
             </>
           }
