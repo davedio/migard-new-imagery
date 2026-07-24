@@ -11,7 +11,7 @@ export const metadata = createPageMetadata("cookies");
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are
    counsel's open decisions and stay until sign-off. */
 
-const contact = <a href="mailto:info@anastasialabs.com">info@anastasialabs.com</a>;
+const contact = <a href="mailto:info@midgardlabs.io">info@midgardlabs.io</a>;
 
 const CATEGORIES = [
   {
@@ -43,8 +43,8 @@ const SECTIONS: readonly LegalSection[] = [
       <>
         This Cookie Notice explains how the Midgard website (operated by Midgard Labs, Inc.) uses
         cookies and similar technologies such as local storage and pixels. It supplements the
-        Midgard <Link href="/privacy">Privacy Policy</Link>. The canonical website address is
-        [TBD: confirm final production URL before publication].
+        Midgard <Link href="/privacy">Privacy Policy</Link>. The canonical website address is{" "}
+        <a href="https://midgardprotocol.io">midgardprotocol.io</a>.
       </>,
     ],
   },
@@ -107,8 +107,7 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         We will update this Notice when our actual use of cookies changes, and the &lsquo;Last
-        updated&rsquo; date will change accordingly. Questions: {contact} [replace with dedicated
-        privacy route when confirmed].
+        updated&rsquo; date will change accordingly. Questions: {contact}.
       </>,
     ],
   },

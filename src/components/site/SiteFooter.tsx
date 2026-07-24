@@ -47,7 +47,6 @@ const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = 
       { label: "Official links", href: "/official-links" },
       { label: "Network status", href: "/status" },
       { label: "Technical specification", href: OFFICIAL_LINKS.technicalSpec, external: true },
-      { label: "Discord", href: OFFICIAL_LINKS.discord, external: true },
       { label: "X · @midgardprotocol", href: OFFICIAL_LINKS.x, external: true },
       { label: "Security Policy", href: OFFICIAL_LINKS.securityPolicy },
       { label: "Terms of Use", href: "/terms" },

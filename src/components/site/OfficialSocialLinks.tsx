@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import { DiscordIcon, GitHubIcon, XIcon } from "@/components/site/BrandIcons";
+import { GitHubIcon, XIcon } from "@/components/site/BrandIcons";
 import { OFFICIAL_LINKS } from "@/lib/officialLinks";
 
 type OfficialSocial = {
-  id: "github" | "x" | "discord";
+  id: "github" | "x";
   label: string;
   action: string;
   href: string;
@@ -25,13 +25,6 @@ export const OFFICIAL_SOCIAL_LINKS: readonly OfficialSocial[] = [
     href: OFFICIAL_LINKS.x,
     icon: (size) => <XIcon size={size} aria-hidden />,
   },
-  {
-    id: "discord",
-    label: "Discord",
-    action: "Join Discord",
-    href: OFFICIAL_LINKS.discord,
-    icon: (size) => <DiscordIcon size={size} aria-hidden />,
-  },
 ] as const;
 
 export function OfficialChannelIcon({
@@ -49,10 +42,6 @@ export function OfficialChannelIcon({
 
   if (normalized === "x" || normalized.includes("twitter")) {
     return <XIcon size={size} aria-hidden />;
-  }
-
-  if (normalized.includes("discord")) {
-    return <DiscordIcon size={size} aria-hidden />;
   }
 
   return null;

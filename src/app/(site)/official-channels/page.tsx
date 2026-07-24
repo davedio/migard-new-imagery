@@ -13,33 +13,28 @@ export const metadata = createPageMetadata("officialChannels");
    list is /official-links — this page is the policy telling of the same
    ground and links there rather than restating current URLs. */
 
-const contact = <a href="mailto:info@anastasialabs.com">info@anastasialabs.com</a>;
+const contact = <a href="mailto:info@midgardlabs.io">info@midgardlabs.io</a>;
 
 const CHANNELS = [
   {
+    channel: "Email",
+    address: "info@midgardlabs.io",
+    notes: "The primary official channel — general, legal, privacy, and security contact.",
+  },
+  {
     channel: "Website and documentation",
-    address: "[TBD: canonical production URL]",
+    address: "midgardprotocol.io",
     notes: "The only official website. Verify the exact domain spelling.",
   },
   {
     channel: "GitHub",
-    address: "github.com/Anastasia-Labs/midgard [confirm canonical org/repo list]",
+    address: "github.com/Anastasia-Labs/midgard",
     notes: "Source code and specifications.",
   },
   {
     channel: "X (Twitter)",
-    address: "[confirm official handle(s), e.g. @... ]",
+    address: "x.com/midgardprotocol (@midgardprotocol)",
     notes: "Announcements. We never DM first.",
-  },
-  {
-    channel: "Discord",
-    address: "[confirm permanent invite URL]",
-    notes: "Community discussion and community-level support.",
-  },
-  {
-    channel: "Email",
-    address: "info@anastasialabs.com [replace with dedicated routes when confirmed]",
-    notes: "General, legal, privacy, and security contact for now.",
   },
 ] as const;
 
@@ -86,8 +81,9 @@ const SECTIONS: readonly LegalSection[] = [
       <>
         We never DM first or ask for seed phrases, private keys, passwords, or device access. We
         never ask you to send funds to verify a wallet, unlock a reward, or migrate assets. There
-        is no Midgard token; any claim otherwise is a scam. Official support occurs only in the
-        public channels above.
+        is no Midgard token today: no sale, no airdrop &mdash; anyone selling a Midgard token now
+        is running a scam, and anything about the protocol&rsquo;s future comes through official
+        channels first. Official support occurs only in the public channels above.
       </>,
     ],
   },
@@ -123,19 +119,19 @@ export default function OfficialChannelsPage() {
           body={
             <>
               Publish only after each listed channel is verified and access-controlled. Last
-              updated: June 11, 2026. The confirmed, maintained link list lives at{" "}
+              updated: July 24, 2026. The confirmed, maintained link list lives at{" "}
               <Link href="/official-links">/official-links</Link>.
             </>
           }
         />
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: June 11, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
           sections={SECTIONS}
           footnote={
             <>
-              Open items: canonical URL; confirmed list of official accounts with owners and
-              access controls (per the existing account-control checklist); decision on listing
-              additional channels (YouTube, Telegram, Farcaster) only when actually controlled and
+              Open items: confirmed owners and access controls for each listed account (per the
+              existing account-control checklist); decision on listing additional channels
+              (Discord, YouTube, Telegram, Farcaster) only when actually controlled and
               monitored.
             </>
           }

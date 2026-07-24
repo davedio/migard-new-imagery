@@ -11,7 +11,7 @@ export const metadata = createPageMetadata("securityPolicy");
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are
    counsel's open decisions and stay until sign-off. */
 
-const contact = <a href="mailto:info@anastasialabs.com">info@anastasialabs.com</a>;
+const contact = <a href="mailto:info@midgardlabs.io">info@midgardlabs.io</a>;
 
 const SECTIONS: readonly LegalSection[] = [
   {
@@ -32,8 +32,8 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Scope",
     paragraphs: [
       <>
-        In scope: the Midgard website and its infrastructure{" "}
-        <ReviewFlag>[canonical URL TBD]</ReviewFlag>; Midgard
+        In scope: the Midgard website and its infrastructure
+        (<a href="https://midgardprotocol.io">midgardprotocol.io</a>); Midgard
         open-source repositories under the official{" "}
         <a href={OFFICIAL_LINKS.github} target="_blank" rel="noopener noreferrer">
           GitHub organization<ExternalLinkNotice />
@@ -43,7 +43,7 @@ const SECTIONS: readonly LegalSection[] = [
         (wallets, explorers, hosting providers, community platforms), which have their own
         policies; social engineering, phishing, or physical attacks against team members or
         contributors; denial-of-service or volumetric testing against any live system; and any
-        system or contract not listed as in scope. When a public testnet bug bounty launches, it
+        system or contract not listed as in scope. If a public testnet bug bounty launches, it
         will be published separately with its own scope, rules, and rewards, and that
         program&rsquo;s terms will govern bounty payments.
       </>,
@@ -54,20 +54,13 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "How to Report",
     paragraphs: [
       <>
-        Report vulnerabilities to {contact}{" "}
-        <ReviewFlag>
-          [replace with dedicated security route, e.g. security@, when confirmed; publish a
-          security.txt file at the canonical domain referencing this policy and the contact]
-        </ReviewFlag>. Include: a description of the issue and its impact; the
+        Report vulnerabilities to {contact}. Include: a description of the issue and its impact; the
         affected component, address, or URL; reproduction steps or a proof of concept; and how we
-        can reach you for follow-up. If the report is sensitive, ask us for an encrypted channel
-        before sending details{" "}
-        <ReviewFlag>[PGP key or secure intake to be published]</ReviewFlag>. Please give us a
+        can reach you for follow-up. If the report is sensitive, ask us for a secure channel
+        before sending details. Please give us a
         reasonable opportunity to remediate before any public disclosure, and coordinate
-        disclosure timing with us; our default coordination window is{" "}
-        <ReviewFlag>
-          90 days from acknowledgment, extendable by agreement for complex protocol issues.
-        </ReviewFlag>
+        disclosure timing with us; our default coordination window is 90 days from
+        acknowledgment, extendable by agreement for complex protocol issues.
       </>,
     ],
   },
@@ -76,8 +69,7 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "What You Can Expect From Us",
     paragraphs: [
       <>
-        We will acknowledge your report promptly{" "}
-        <ReviewFlag>[target: within 3 business days]</ReviewFlag>, keep you
+        We will acknowledge your report within 3 business days, keep you
         informed of progress, remediate confirmed issues as quickly as severity warrants, and
         credit you in our disclosure if you want credit. This policy itself does not create a
         bounty or payment obligation; any rewards exist only under a separately published bounty
@@ -112,8 +104,8 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Contact and Changes",
     paragraphs: [
       <>
-        Security contact: {contact}{" "}
-        <ReviewFlag>[dedicated security route pending]</ReviewFlag>.{" "}
+        Security contact: {contact}. We also publish this contact in a{" "}
+        <a href="/.well-known/security.txt">security.txt</a> file at the canonical domain.
         We may update this policy
         from time to time; the &lsquo;Last updated&rsquo; date will change accordingly.
       </>,
@@ -134,14 +126,12 @@ export default function SecurityPolicyPage() {
       />
       <Section tight>
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 16, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
           sections={SECTIONS}
           footnote={
             <ReviewFlag>
-              Open items: dedicated security route and monitoring owner; PGP key or encrypted
-              intake; security.txt publication; acknowledgment SLA confirmation; alignment with
-              the future testnet bug bounty terms; counsel review of the safe-harbor wording by
-              jurisdiction.
+              Open items: counsel review of the safe-harbor wording; alignment with the future
+              testnet bug bounty terms when that program launches.
             </ReviewFlag>
           }
         />

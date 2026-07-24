@@ -10,7 +10,7 @@ export const metadata = createPageMetadata("privacy");
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are
    counsel's open decisions and stay until sign-off. */
 
-const contact = <a href="mailto:info@anastasialabs.com">info@anastasialabs.com</a>;
+const contact = <a href="mailto:info@midgardlabs.io">info@midgardlabs.io</a>;
 
 const SECTIONS: readonly LegalSection[] = [
   {
@@ -23,12 +23,8 @@ const SECTIONS: readonly LegalSection[] = [
         information when you visit the Midgard website and documentation pages, subscribe to
         updates, submit a form, contact us, or report a security issue (together, the
         &lsquo;Site&rsquo;). The canonical website address is{" "}
-        <ReviewFlag>[TBD: confirm final production URL before publication]</ReviewFlag>. For privacy
-        questions or requests, contact {contact}{" "}
-        <ReviewFlag>
-          [single contact route for the staging period; replace with a dedicated privacy route when
-          confirmed]
-        </ReviewFlag>.
+        <a href="https://midgardprotocol.io">midgardprotocol.io</a>. For privacy questions or
+        requests, contact {contact}.
       </>,
       <>
         This Policy covers the Site only. It does not cover the Midgard protocol itself, which is
@@ -111,21 +107,17 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         We do not sell personal information, and we do not share it for cross-context behavioral
-        advertising. We share information only with: service providers that help us run the Site,
-        such as hosting{" "}
-        <ReviewFlag>[currently Vercel for staging; confirm production hosting]</ReviewFlag>, form
-        and survey tools <ReviewFlag>[currently Google Forms for intake]</ReviewFlag>, email delivery,
-        and analytics if
-        activated, in each case under terms that limit their use of the data; professional
+        advertising. We share information only with: service providers that help us run the Site
+        &mdash; currently Vercel (hosting) and Google (forms and related workspace tools), plus an
+        analytics tool only if one is later adopted and listed in our{" "}
+        <Link href="/cookies">Cookie Notice</Link> &mdash; in each case under terms that limit
+        their use of the data; professional
         advisors such as counsel, auditors, and insurers; authorities or other parties where
         required by law, legal process, or sanctions compliance, or where reasonably necessary to
         protect the rights, safety, or security of any person or of the Site; and successor
         entities in connection with a merger, acquisition, financing, or reorganization, subject
-        to appropriate protections.{" "}
-        <ReviewFlag>
-          [Confirm the final vendor list before publication and keep it current in this section or a
-          linked subprocessor list]
-        </ReviewFlag>.
+        to appropriate protections. We will keep the service-provider list in this section
+        current as it changes.
       </>,
     ],
   },
@@ -153,11 +145,13 @@ const SECTIONS: readonly LegalSection[] = [
         unsubscribe or the list is retired; form submissions and correspondence are kept while we
         work with you and for a reasonable period afterward; security reports are kept while
         remediation and any disclosure coordination are in progress and for record-keeping after;
-        and routine technical logs are kept for a short operational window.{" "}
-        <ReviewFlag>
-          [Counsel and team: confirm specific retention periods per category before publication]
-        </ReviewFlag>. We may retain
-        information longer where required by law or to resolve disputes.
+        and routine technical logs are kept for a limited operational window for security,
+        troubleshooting, and abuse prevention. To determine appropriate retention periods, we
+        consider the amount, nature, and sensitivity of the information, the potential risk of
+        harm from unauthorized use or disclosure, the purposes for which we process it, whether
+        those purposes can be achieved through other means, and applicable legal requirements. We
+        may retain information longer where required by law or to resolve disputes and enforce
+        our agreements.
       </>,
     ],
   },
@@ -166,11 +160,14 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "International Transfers",
     paragraphs: [
       <>
-        We may process and store information in countries other than the one where you live,
-        including the United States, and those countries may have different data-protection rules.
-        Where required, we use appropriate safeguards for cross-border transfers, such as standard
-        contractual clauses.{" "}
-        <ReviewFlag>[Confirm transfer mechanisms with the final vendor list]</ReviewFlag>.
+        We operate from the United States, and our service providers process and store
+        information there. The Site is not directed to individuals in the European Union or the
+        United Kingdom, we do not expect meaningful use from those regions, and we have not
+        appointed an EU or UK representative or a data protection officer. If you access the Site
+        from outside the United States, you do so on your own initiative, you are responsible for
+        compliance with your local law, and you understand that your information will be
+        processed in the United States, which may have different data-protection rules than your
+        jurisdiction.
       </>,
     ],
   },
@@ -231,12 +228,10 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Contact",
     paragraphs: [
       <>
-        Privacy questions and requests: {contact}{" "}
-        <ReviewFlag>[replace with dedicated privacy route when confirmed]</ReviewFlag>.{" "}
+        Privacy questions and requests: {contact}.{" "}
         <ReviewFlag>
-          [Add registered entity address if required by applicable law; confirm whether an EU/UK
-          representative or a data protection officer is required]
-        </ReviewFlag>.
+          [Counsel: add the registered entity address if disclosure is required]
+        </ReviewFlag>
       </>,
     ],
   },
@@ -255,14 +250,12 @@ export default function PrivacyPage() {
       />
       <Section tight>
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 16, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
           sections={SECTIONS}
           footnote={
             <ReviewFlag>
-              Open counsel items: canonical URL; final vendor and subprocessor list (hosting,
-              forms, email, analytics); retention periods per category; cross-border transfer
-              mechanisms; whether GDPR/UK representative or DPO appointment is required; CCPA
-              applicability review; contact-route split; registered address disclosure.
+              Open counsel items: registered-address disclosure; state privacy-law (e.g., CCPA)
+              applicability review.
             </ReviewFlag>
           }
         />
