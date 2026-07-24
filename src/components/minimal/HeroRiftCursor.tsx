@@ -227,9 +227,9 @@ export default function HeroRiftCursor() {
 
   if (!active || !portalReady) return null;
 
-  /* the lens shows the OTHER world */
-  const other = theme === "dark" ? "light" : "dark";
-  const pfx = other === "dark" ? "/dark" : "";
+  /* light-mode-only lens: the revealed world is always the night one */
+  const other = "dark" as const;
+  const pfx = "/dark";
   const V = `${pfx}/img/tree/tree-hero-vista`;
   const P = `${pfx}/img/tree/tree-hero-portrait`;
 
