@@ -261,14 +261,17 @@ const SECTIONS: readonly LegalSection[] = [
     paragraphs: [
       <>
         These Terms are governed by the laws of the State of Wyoming, United States, without
-        regard to conflict-of-laws principles. Any dispute arising out of or relating to these
-        Terms or the Site will be resolved by binding individual arbitration administered by the
-        American Arbitration Association (&lsquo;AAA&rsquo;) under its rules then in effect,
-        except that either party may bring qualifying claims in small-claims court or seek
-        injunctive relief in court to protect intellectual property rights. YOU AND MIDGARD LABS
-        EACH WAIVE THE RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A CLASS OR REPRESENTATIVE
-        ACTION.{" "}
-        <ReviewFlag>[Counsel: confirm enforceability and required consumer exceptions.]</ReviewFlag>
+        regard to conflict-of-laws principles. Before either party files an arbitration, that
+        party will send the other a written notice of the dispute, and the parties will attempt
+        in good faith to resolve it informally for 30 days. Any dispute arising out of or
+        relating to these Terms or the Site that is not resolved informally will be resolved by
+        binding individual arbitration administered by the American Arbitration Association
+        (&lsquo;AAA&rsquo;) under its rules then in effect, except that either party may bring
+        qualifying claims in small-claims court or seek injunctive relief in court to protect
+        intellectual property rights. Except where prohibited by applicable law, any claim under
+        these Terms must be brought within one year after the claim arises, or it is permanently
+        barred. YOU AND MIDGARD LABS EACH WAIVE THE RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A
+        CLASS OR REPRESENTATIVE ACTION.
       </>,
     ],
   },
@@ -319,8 +322,7 @@ export default function TermsPage() {
           footnote={
             <ReviewFlag>
               Open counsel items: consumer-law carve-outs in the limitation of liability
-              (Section 12); arbitration venue, enforceability, and consumer exceptions
-              (Section 15); registered address and any jurisdiction-required legal notices.
+              (Section 12); registered address and any jurisdiction-required legal notices.
             </ReviewFlag>
           }
         />
