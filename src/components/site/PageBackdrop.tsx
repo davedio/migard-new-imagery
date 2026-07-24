@@ -13,7 +13,6 @@ const PALE_DARK_BACKDROPS = new Set([
   "journey-descent",
   "journey-flow-tall",
   "signal-cairn",
-  "sentinel-watch",
   "stepping-stones",
   "stone-gateway",
   "trunk-mist",
