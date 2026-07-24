@@ -111,8 +111,8 @@ const SECTIONS: readonly LegalSection[] = [
         There is no Midgard token. The Site does not offer or promise one, and no such offer
         should be inferred. Visiting the Site, joining a mailing list, completing a form,
         connecting a wallet, testing software, or participating in community channels creates no
-        entitlement of any kind. Treat any message, page, or post that promises Midgard tokens,
-        airdrops, or rewards as a scam, and verify everything against our{" "}
+        entitlement of any kind. Treat any message, page, or post that promises Midgard tokens
+        or rewards as a scam, and verify everything against our{" "}
         <Link href="/official-links">official channels page</Link>. We will never ask for your
         seed phrase, private keys, or passwords.
       </>,

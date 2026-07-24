@@ -30,7 +30,7 @@ export const FAQ_GROUPS = [
       },
       {
         q: "Does Midgard have a token?",
-        a: "There is no Midgard token, sale, or airdrop. Fees are paid in ADA; anyone selling a Midgard token is a scam. Check official links.",
+        a: "There is no Midgard token. Fees are paid in ADA; anyone selling a Midgard token is a scam. Check official links.",
       },
       {
         q: "How is Midgard different from Hydra?",

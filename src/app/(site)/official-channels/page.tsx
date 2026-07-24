@@ -81,8 +81,8 @@ const SECTIONS: readonly LegalSection[] = [
       <>
         We never DM first or ask for seed phrases, private keys, passwords, or device access. We
         never ask you to send funds to verify a wallet, unlock a reward, or migrate assets. There
-        is no Midgard token, sale, or airdrop; anyone selling a Midgard token is running a scam.
-        Official support occurs only in the public channels above.
+        is no Midgard token. Fees are paid in ADA, and anyone selling a Midgard token is running
+        a scam. Official support occurs only in the public channels above.
       </>,
     ],
   },

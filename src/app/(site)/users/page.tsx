@@ -59,7 +59,7 @@ const simplePathRows = [
 const statusRows = [
   {
     label: "Preprod and scam safety",
-    body: "The next public phase runs on Cardano preprod; use test ADA only. There is no Midgard token, sale, or airdrop. Start from official links, and never share a seed phrase or private key.",
+    body: "The next public phase runs on Cardano preprod; use test ADA only. There is no Midgard token. Fees are paid in ADA. Start from official links, and never share a seed phrase or private key.",
     href: "/official-links",
   },
 ] as const;
