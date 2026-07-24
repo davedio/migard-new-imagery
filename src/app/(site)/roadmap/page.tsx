@@ -59,7 +59,7 @@ export default function RoadmapPage() {
       <Section
         id="phases"
         title="Three phases, all checkable"
-        lead="The source and technical specification are public. Check each phase yourself."
+        lead="The source is public; the technical specification is coming soon. Check each phase yourself."
       >
         <CardGrid cols={3}>
           {phases.map((p, i) => (

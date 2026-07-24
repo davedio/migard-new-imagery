@@ -166,9 +166,7 @@ export default function DeveloperLanding() {
           />
           <Card
             title="Technical specification"
-            body="The public working draft of the protocol design, mechanisms, and economic parameters."
-            cta="Read the specification"
-            href={OFFICIAL_LINKS.technicalSpec}
+            body="The specification of the protocol design, mechanisms, and economic parameters is coming soon."
             delay={50}
           />
           <Card

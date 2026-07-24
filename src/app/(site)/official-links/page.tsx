@@ -31,10 +31,8 @@ const canonicalRows = [
   },
   {
     label: "Technical specification",
-    body: "The public working draft published from the official Midgard repository.",
-    meta: "↗",
-    href: OFFICIAL_LINKS.technicalSpec,
-    external: true,
+    body: "Coming soon.",
+    meta: "Coming soon",
   },
   {
     label: "Preprod contracts",

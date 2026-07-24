@@ -216,7 +216,7 @@ export const ECONOMICS_MATRIX = {
     {
       who: "Builders",
       pay: "An ADA-denominated fee model for users, with no separate fee asset.",
-      get: "Faster UTXO execution, with public protocol code and a technical specification to inspect how it works.",
+      get: "Faster UTXO execution, with public protocol code to inspect how it works.",
       href: "/developers#economics",
       cta: "Builder economics",
     },
