@@ -2,7 +2,7 @@ import Link from "next/link";
 import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import styles from "@/components/site/LegalDoc.module.css";
 import PageBackdrop from "@/components/site/PageBackdrop";
-import { Callout, PageHero, Section } from "@/components/site/ui";
+import { PageHero, Section } from "@/components/site/ui";
 import { createPageMetadata } from "@/lib/siteMetadata";
 
 export const metadata = createPageMetadata("officialChannels");
@@ -114,24 +114,14 @@ export default function OfficialChannelsPage() {
         actions={[{ label: "See the live link list", href: "/official-links", variant: "primary" }]}
       />
       <Section tight>
-        <Callout
-          title="Draft for review"
-          body={
-            <>
-              Publish only after each listed channel is verified and access-controlled. Last
-              updated: July 24, 2026. The confirmed, maintained link list lives at{" "}
-              <Link href="/official-links">/official-links</Link>.
-            </>
-          }
-        />
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 2026"
           sections={SECTIONS}
           footnote={
             <>
-              Open items: confirmed owners and access controls for each listed account (per the
-              existing account-control checklist); decision on listing additional channels
-              (Discord, YouTube, Telegram, Farcaster) only when actually controlled and
+              The confirmed, maintained link list lives at{" "}
+              <Link href="/official-links">/official-links</Link>. Additional channels (Discord,
+              YouTube, Telegram, Farcaster) will be listed only when actually controlled and
               monitored.
             </>
           }

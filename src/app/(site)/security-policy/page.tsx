@@ -1,4 +1,4 @@
-import LegalDoc, { ReviewFlag, type LegalSection } from "@/components/site/LegalDoc";
+import LegalDoc, { type LegalSection } from "@/components/site/LegalDoc";
 import { ExternalLinkNotice } from "@/components/site/ExternalLinkNotice";
 import PageBackdrop from "@/components/site/PageBackdrop";
 import { PageHero, Section } from "@/components/site/ui";
@@ -82,8 +82,7 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Safe Harbor and Rules",
     paragraphs: [
       <>
-        <ReviewFlag>
-          We will not pursue or support legal action against you for good-faith security research
+        We will not pursue or support legal action against you for good-faith security research
           that follows this policy, and we will consider such research authorized under applicable
           anti-hacking and anti-circumvention laws to the extent we can grant that authorization.
           To stay within this safe harbor: act in good faith and avoid privacy violations, data
@@ -93,9 +92,8 @@ const SECTIONS: readonly LegalSection[] = [
           or moving assets you do not own (testnet assets included, where doing so would distort
           the environment for others); stop and report immediately if you encounter personal data
           or real-fund exposure; do not test out-of-scope systems; and comply with applicable law.
-          We cannot authorize research against third-party systems, and this safe harbor does not
-          bind third parties or authorities.
-        </ReviewFlag>
+        We cannot authorize research against third-party systems, and this safe harbor does not
+        bind third parties or authorities.
       </>,
     ],
   },
@@ -125,16 +123,7 @@ export default function SecurityPolicyPage() {
         sub="How to report security issues in the Midgard website, repositories, and test-network deployments."
       />
       <Section tight>
-        <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
-          sections={SECTIONS}
-          footnote={
-            <ReviewFlag>
-              Open items: counsel review of the safe-harbor wording; alignment with the future
-              testnet bug bounty terms when that program launches.
-            </ReviewFlag>
-          }
-        />
+        <LegalDoc meta="Midgard Labs, Inc. · Last updated: July 2026" sections={SECTIONS} />
       </Section>
     </main>
   );
