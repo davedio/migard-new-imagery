@@ -29,7 +29,11 @@
   overflow-x: auto;
   border-radius: 999px;
   border: 1px solid var(--panel-edge-strong, rgba(244, 241, 230, 0.17));
-  background: rgba(6, 10, 7, 0.62);
+  /* near-opaque, per the frosted-surface rule (~97%): section text
+     scrolling underneath must never read through the panel — the
+     blur is polish, not the legibility mechanism (2026-07-24 fix:
+     at 0.62 crisp headings showed straight through the pill) */
+  background: rgba(8, 13, 9, 0.95);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: 0 10px 28px rgba(4, 8, 5, 0.18);
@@ -41,7 +45,7 @@
   display: none;
 }
 :global([data-theme="light"]) .panel {
-  background: rgba(250, 246, 238, 0.9);
+  background: rgba(250, 246, 238, 0.97);
   border-color: rgba(73, 55, 23, 0.18);
   box-shadow: 0 10px 28px rgba(54, 45, 30, 0.12);
 }
