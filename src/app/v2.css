@@ -4005,33 +4005,40 @@ h2 em,
   animation: none; /* the real column's entrance already played */
 }
 .hero-rift__ghost[data-theme="light"] {
-  --gold: #8a6512;
-  --gold-bright: #7d5c10;
+  /* FINAL light cascade — globals.css :root[data-theme="light"] as
+     overridden by v2.css:1931 and v2.css:4384 (the ghost must mirror
+     what the light page actually computes, not just the base layer) */
+  --gold: #9b6e18;
+  --gold-bright: #8a6115;
   --gold-dim: rgba(125, 92, 16, 0.6);
   --gold-line: rgba(125, 92, 16, 0.5);
-  --deep-ink: #f1f4ec;
-  --charcoal: #e6ebe1;
-  --mist: #20301f;
-  --paper: #101c13;
-  --obsidian: #e9eee3;
-  --basalt: #edf1e7;
-  --basalt-2: #e5ebde;
-  --panel: #f3f6ee;
-  --panel-edge: rgba(18, 36, 24, 0.13);
-  --panel-edge-strong: rgba(18, 36, 24, 0.22);
+  --deep-ink: #f4efe3;
+  --charcoal: #dfe7d9;
+  --mist: #2c3025;
+  --paper: #15130f;
+  --obsidian: #f0eadf;
+  --basalt: #f7f1e6;
+  --basalt-2: #dfe8da;
+  --panel: #fffaf0;
+  --panel-edge: rgba(14, 27, 19, 0.16);
+  --panel-edge-strong: rgba(14, 27, 19, 0.26);
+  --hairline: rgba(14, 27, 19, 0.2);
+  --hairline-strong: rgba(14, 27, 19, 0.36);
   --green-bright: #0c7d36;
   --green-dim: rgba(11, 105, 45, 0.65);
   --green-ghost: rgba(20, 140, 60, 0.1);
   --green-glow: rgba(20, 150, 62, 0.28);
   --text-hi: #0e1b13;
   --text: #17281d;
-  --text-dim: #24392b;
-  --text-faint: #31483a;
-  --bg-1: #eef3e9;
-  --bg-2: #e7ede1;
+  --text-dim: #263d2e;
+  --text-faint: #344c3d;
+  --bg-1: #f4efe3;
+  --bg-2: #dde7d8;
   color: var(--text);
 }
 .hero-rift__ghost[data-theme="dark"] {
+  /* FINAL dark cascade — globals.css :root as overridden by the
+     v2.css:11 dark layer (bone/sharpened-accent pass) */
   --gold: #cf9a2e;
   --gold-bright: #e0a33c;
   --gold-dim: rgba(207, 154, 46, 0.5);
@@ -4044,19 +4051,77 @@ h2 em,
   --basalt: #0b1510;
   --basalt-2: #0e1b14;
   --panel: #0c1610;
-  --panel-edge: rgba(215, 226, 216, 0.09);
-  --panel-edge-strong: rgba(215, 226, 216, 0.16);
-  --green-bright: #3be863;
+  --panel-edge: rgba(244, 241, 230, 0.09);
+  --panel-edge-strong: rgba(244, 241, 230, 0.17);
+  --hairline: rgba(244, 241, 230, 0.1);
+  --hairline-strong: rgba(244, 241, 230, 0.18);
+  --green-bright: #4ef383;
   --green-dim: rgba(32, 190, 67, 0.55);
   --green-ghost: rgba(32, 190, 67, 0.12);
   --green-glow: rgba(32, 190, 67, 0.35);
-  --text-hi: #eaf2ec;
-  --text: #b7c6bc;
-  --text-dim: #8fa39a;
-  --text-faint: #6d7f76;
+  --text-hi: #f4f1e6;
+  --text: #c0c8ba;
+  --text-dim: #93a094;
+  --text-faint: #6f7d72;
   --bg-1: #0a150e;
   --bg-2: #0c1811;
   color: var(--text);
+}
+/* When the REAL page is light, its "[data-theme=light] …" hero-copy
+   overrides still match INSIDE the dark ghost — the outer
+   <html data-theme="light"> is also an ancestor, and descendant
+   matching ignores which data-theme ancestor is nearer — and they
+   outrank the unqualified dark base rules on specificity. The dark
+   world therefore leaked light headline ink, light dock chrome, and
+   light buttons ("does not fully make text negative", 2026-07-23).
+   These ghost-scoped restorations out-specify the light overrides;
+   keep each in sync with the dark/base rule it mirrors. */
+.hero-rift__ghost[data-theme="dark"] .minimal-hero h1 {
+  color: var(--text-hi); /* mirrors base h1 color */
+  text-shadow: none; /* cancels the light "dawn sky" glow */
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-hero__dock {
+  /* mirrors base .minimal-hero__dock */
+  border-color: rgba(244, 241, 230, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), transparent 64%),
+    rgba(7, 12, 8, 0.46);
+  box-shadow:
+    0 20px 54px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-hero__dock::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(78, 243, 131, 0.1) 46%, rgba(207, 154, 46, 0.08) 58%, transparent);
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-btn--primary {
+  /* mirrors base .minimal-btn--primary */
+  color: #04130a;
+  background: linear-gradient(180deg, #58ff8f, #14b852 66%, #0c8939);
+  border-color: var(--green-bright);
+  box-shadow:
+    0 18px 38px rgba(12, 125, 54, 0.28),
+    0 3px 0 #07652d,
+    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-btn--ghost {
+  /* mirrors base .minimal-btn--ghost + .minimal-btn color/border */
+  color: var(--text-hi);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 60%),
+    rgba(255, 255, 255, 0.04);
+  border-color: var(--hairline-strong);
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-hero-stats {
+  border-block-color: rgba(244, 241, 230, 0.14);
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-hero-stat + .minimal-hero-stat {
+  border-left-color: rgba(244, 241, 230, 0.12);
+}
+.hero-rift__ghost[data-theme="dark"] .minimal-hero-stat:nth-child(-n + 2) {
+  /* color-only: takes effect only where the narrow-viewport rule
+     actually draws this border */
+  border-bottom-color: rgba(244, 241, 230, 0.12);
 }
 html[data-motion="off"] .hero-rift {
   display: none;
