@@ -5970,3 +5970,77 @@ html[data-motion="off"] .hero-rift {
     will-change: auto;
   }
 }
+
+/* ============================================================
+   2026-07-24 LIGHT-MODE LEGIBILITY PASS (Dave: text blends into
+   the paintings; light mode only). Strategy: keep the artwork at
+   full strength and anchor legibility to the TEXT itself — a
+   soft cream halo feathering out behind every typographic
+   element that sits over a painted backdrop, plus slightly
+   deeper mid-page washes where copy actually lives. No hard
+   boxes: the halo dissolves, so brushwork still reads between
+   the lines. Dark mode untouched.
+   ============================================================ */
+
+/* display + heading text: wider, brighter pool */
+[data-theme="light"] .page-main:has(.page-backdrop) .page-hero h1,
+[data-theme="light"] .page-main:has(.page-backdrop) .section h2,
+[data-theme="light"] .page-main:has(.page-backdrop) .section h3,
+[data-theme="light"] .page-main:has(.page-backdrop) .section h4,
+[data-theme="light"] .page-main:has(.page-backdrop) .statement__line {
+  text-shadow:
+    0 0 1px rgba(255, 250, 240, 0.9),
+    0 1px 2px rgba(255, 250, 240, 0.85),
+    0 0 12px rgba(255, 250, 240, 0.85),
+    0 0 26px rgba(255, 250, 240, 0.6);
+}
+
+/* body-size text: tighter halo, enough to lift ink off midtone paint */
+[data-theme="light"] .page-main:has(.page-backdrop) .page-hero .sub,
+[data-theme="light"] .page-main:has(.page-backdrop) .page-hero .body,
+[data-theme="light"] .page-main:has(.page-backdrop) .eyebrow,
+[data-theme="light"] .page-main:has(.page-backdrop) .lead,
+[data-theme="light"] .page-main:has(.page-backdrop) .prose p,
+[data-theme="light"] .page-main:has(.page-backdrop) .prose li,
+[data-theme="light"] .page-main:has(.page-backdrop) .bullets li,
+[data-theme="light"] .page-main:has(.page-backdrop) .card p,
+[data-theme="light"] .page-main:has(.page-backdrop) .layers p,
+[data-theme="light"] .page-main:has(.page-backdrop) .statement__kicker,
+[data-theme="light"] .page-main:has(.page-backdrop) .statement__sub,
+[data-theme="light"] .page-main:has(.page-backdrop) .datarows__label,
+[data-theme="light"] .page-main:has(.page-backdrop) .datarows__body,
+[data-theme="light"] .page-main:has(.page-backdrop) .datarows__meta {
+  text-shadow:
+    0 1px 0 rgba(255, 250, 240, 0.75),
+    0 0 8px rgba(255, 250, 240, 0.9),
+    0 0 18px rgba(255, 250, 240, 0.7);
+}
+
+/* mid-page wash: the copy band gets a touch more cream base while the
+   hero pool and horizon keep the art at full presence */
+[data-theme="light"] .page-backdrop--full .page-backdrop__scrim {
+  background:
+    radial-gradient(110% 80% at 22% 12%, rgba(255, 250, 240, 0.52), rgba(255, 250, 240, 0.22) 48%, transparent 68%),
+    linear-gradient(
+      180deg,
+      rgba(246, 241, 232, 0.04) 0%,
+      rgba(246, 241, 232, 0.12) 34%,
+      rgba(246, 241, 232, 0.26) 58%,
+      rgba(246, 241, 232, 0.4) 78%,
+      rgba(244, 239, 227, 0.5) 100%
+    );
+}
+
+/* section text bands over full-page art: lift the per-section cream
+   wash from near-nothing to a readable base (still translucent) */
+[data-theme="light"] .page-main:not(.page-main--hiw-experience):has(.page-backdrop--full) .section {
+  background:
+    linear-gradient(180deg, rgba(255, 250, 240, 0.34), rgba(255, 250, 240, 0.18)),
+    radial-gradient(760px 360px at 90% 0%, rgba(12, 125, 54, 0.055), transparent 68%);
+}
+[data-theme="light"] .page-main:not(.page-main--hiw-experience):has(.page-backdrop--full) .section:nth-of-type(even) {
+  background:
+    linear-gradient(180deg, rgba(239, 246, 235, 0.32), rgba(255, 250, 240, 0.2)),
+    radial-gradient(760px 360px at 10% 0%, rgba(138, 97, 21, 0.06), transparent 70%),
+    radial-gradient(620px 320px at 94% 96%, rgba(36, 71, 184, 0.045), transparent 72%);
+}
