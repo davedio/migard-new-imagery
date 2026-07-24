@@ -79,13 +79,6 @@ const VERIFY_ROWS: readonly DataRow[] = [
     external: true,
     meta: "↗",
   },
-  {
-    label: "Community",
-    body: "Non-sensitive questions and early builder coordination on Discord.",
-    href: OFFICIAL_LINKS.discord,
-    external: true,
-    meta: "↗",
-  },
 ];
 
 function EcosystemPartners() {

@@ -11,7 +11,7 @@ export const metadata = createPageMetadata("terms");
    (Website Policy Pack 2026-06-11). Text is verbatim; bracketed items are
    counsel's open decisions and stay until sign-off. */
 
-const contact = <a href="mailto:info@anastasialabs.com">info@anastasialabs.com</a>;
+const contact = <a href="mailto:info@midgardlabs.io">info@midgardlabs.io</a>;
 
 const SECTIONS: readonly LegalSection[] = [
   {
@@ -24,12 +24,8 @@ const SECTIONS: readonly LegalSection[] = [
         to these Terms (together, the &lsquo;Site&rsquo;). The Site is operated by Midgard Labs,
         Inc. (&lsquo;Midgard Labs&rsquo;, &lsquo;we&rsquo;, &lsquo;us&rsquo;, or &lsquo;our&rsquo;).
         The canonical website address is{" "}
-        <ReviewFlag>[TBD: confirm final production URL before publication]</ReviewFlag>. You can
-        reach us at {contact}{" "}
-        <ReviewFlag>
-          [single contact route for the staging period; replace with dedicated legal, privacy,
-          support, and security routes when confirmed]
-        </ReviewFlag>.
+        <a href="https://midgardprotocol.io">midgardprotocol.io</a>. You can reach us at{" "}
+        {contact} for all inquiries, including legal, privacy, and security matters.
       </>,
     ],
   },
@@ -101,7 +97,7 @@ const SECTIONS: readonly LegalSection[] = [
       <>
         Nothing on the Site constitutes legal, financial, investment, tax, accounting, or other
         professional advice, and nothing on the Site is an offer, solicitation, or recommendation
-        to buy, sell, hold, stake, bridge, lend, or otherwise transact in any asset or financial
+        to buy, sell, hold, stake, lend, or otherwise transact in any asset or financial
         product. You are solely responsible for evaluating any information on the Site before
         relying on it.
       </>,
@@ -264,27 +260,18 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Governing Law and Dispute Resolution",
     paragraphs: [
       <>
-        <ReviewFlag>
-          [COUNSEL DECISION REQUIRED. Per the peer pattern across comparable projects (Arbitrum
-          Foundation, Optimism, Base), the expected structure is: governing law tied to the
-          operating entity&rsquo;s jurisdiction; mandatory individual arbitration under a named rules
-          body; a class-action and jury-trial waiver; carve-outs for small-claims court and for
-          injunctive relief protecting intellectual property; an informal-resolution step before
-          filing; and a one-year claims period. Do not publish this section until counsel selects
-          governing law, venue, arbitration body, and consumer carve-outs for Midgard Labs, Inc.
-          The placeholder text below marks the structure only.]
-        </ReviewFlag>
-      </>,
-      <>
-        These Terms are governed by the laws of <ReviewFlag>[jurisdiction]</ReviewFlag>, without regard to
-        conflict-of-laws principles. Any dispute arising out of or relating to these Terms or the
-        Site will be resolved by binding individual arbitration administered by{" "}
-        <ReviewFlag>[arbitration body]</ReviewFlag>
-        under its rules then in effect, except that either party may bring qualifying claims in
-        small-claims court or seek injunctive relief in court to protect intellectual property
-        rights. YOU AND MIDGARD LABS EACH WAIVE THE RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A
-        CLASS OR REPRESENTATIVE ACTION.{" "}
-        <ReviewFlag>[Confirm enforceability and required consumer exceptions by jurisdiction.]</ReviewFlag>
+        These Terms are governed by the laws of the State of Wyoming, United States, without
+        regard to conflict-of-laws principles. Before either party files an arbitration, that
+        party will send the other a written notice of the dispute, and the parties will attempt
+        in good faith to resolve it informally for 30 days. Any dispute arising out of or
+        relating to these Terms or the Site that is not resolved informally will be resolved by
+        binding individual arbitration administered by the American Arbitration Association
+        (&lsquo;AAA&rsquo;) under its rules then in effect, except that either party may bring
+        qualifying claims in small-claims court or seek injunctive relief in court to protect
+        intellectual property rights. Except where prohibited by applicable law, any claim under
+        these Terms must be brought within one year after the claim arises, or it is permanently
+        barred. YOU AND MIDGARD LABS EACH WAIVE THE RIGHT TO A JURY TRIAL AND TO PARTICIPATE IN A
+        CLASS OR REPRESENTATIVE ACTION.
       </>,
     ],
   },
@@ -311,8 +298,7 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "Contact",
     paragraphs: [
       <>
-        Questions about these Terms: {contact}{" "}
-        <ReviewFlag>[replace with dedicated legal route when confirmed]</ReviewFlag>.
+        Questions about these Terms: {contact}.
       </>,
     ],
   },
@@ -331,15 +317,12 @@ export default function TermsPage() {
       />
       <Section tight>
         <LegalDoc
-          meta="Midgard Labs, Inc. · Last updated: July 16, 2026"
+          meta="Midgard Labs, Inc. · Last updated: July 24, 2026"
           sections={SECTIONS}
           footnote={
             <ReviewFlag>
-              Open counsel items: canonical URL; governing law, venue, arbitration body, and
-              consumer carve-outs (Section 15); jurisdiction-specific limitation-of-liability
-              adjustments (Section 12); confirmation of the single staging contact route; final
-              entity details and any required legal notices (e.g., registered address) by
-              jurisdiction.
+              Open counsel items: consumer-law carve-outs in the limitation of liability
+              (Section 12); registered address and any jurisdiction-required legal notices.
             </ReviewFlag>
           }
         />

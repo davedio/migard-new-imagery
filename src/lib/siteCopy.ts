@@ -140,13 +140,6 @@ export const SITE_COPY = {
       cta: "Open intake form",
       href: OFFICIAL_LINKS.intakeForm,
     },
-    {
-      intent: "Ask community questions",
-      title: "Discord",
-      body: "Non-sensitive questions, community discussion, and early builder coordination.",
-      cta: "Join Discord",
-      href: OFFICIAL_LINKS.discord,
-    },
   ],
 } as const;
 

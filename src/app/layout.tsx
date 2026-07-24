@@ -62,7 +62,7 @@ const ORG_JSONLD = {
       name: "Midgard Labs, Inc.",
       url: SITE_URL,
       logo: `${SITE_URL}/midgard-icon.png`,
-      sameAs: [OFFICIAL_LINKS.github, OFFICIAL_LINKS.x, OFFICIAL_LINKS.discord],
+      sameAs: [OFFICIAL_LINKS.github, OFFICIAL_LINKS.x],
     },
     {
       "@type": "WebSite",

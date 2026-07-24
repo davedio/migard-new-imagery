@@ -179,10 +179,10 @@ export default function DeveloperLanding() {
             delay={100}
           />
           <Card
-            title="Discord"
-            body="Developer support and updates on the upcoming pre-alpha testnet."
-            cta="Join Discord"
-            href={OFFICIAL_LINKS.discord}
+            title="X · @midgardprotocol"
+            body="Announcements, technical milestones, and updates on the upcoming pre-alpha testnet."
+            cta="Follow on X"
+            href={OFFICIAL_LINKS.x}
             delay={150}
           />
         </CardGrid>
